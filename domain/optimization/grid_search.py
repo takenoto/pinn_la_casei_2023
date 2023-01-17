@@ -33,6 +33,6 @@ def grid_search(
 
         pinn_results.append(pinn_model_results)
 
-    # TODO faz a solução numérica para comparar
+    # TODO faz a solução numérica para comparar, pelo menos um euler vai, vai ser fácil...
 
-    return (pinn_results, best_pinn_index, num_results, best_num_index)
+    return (pinn_results, best_pinn_index, num_results)
