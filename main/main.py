@@ -13,11 +13,7 @@ deepxde.config.set_random_seed(0)
 def main():
 
     run_batch = True
-
-    # TODO aqui seleciona somente o que vai rodar
-
-    # TODO roda somente UM modelo pra ver se vai dar certo
-    # O mesmo que ser só os params da fig2 dentro de uma list [params_fig_2]
+    
     altiok_models_to_run = [get_altiok2006_params().get(2)]  # roda só a fig2
 
     # Parâmetros de processo (será usado em todos)
