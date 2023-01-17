@@ -1,3 +1,5 @@
+import numpy as np
+
 class ConcentrationFlow:
     def __init__(self, volume, X, P, S):
         """

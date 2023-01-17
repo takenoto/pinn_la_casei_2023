@@ -1,3 +1,4 @@
+import numpy as np
 class CSTRState:
     def __init__(self, volume, X, P, S):
         """
