@@ -2,11 +2,13 @@
 
 ## TODO
 - Implementar algum método numérico, como euler
+    - Tem como usar as derivadas da minha própria função? Tipo mando os valores iniciais, pego as derivads, simplesmente multiplico por dt e somo cada uma no seu lugar.
+    - Dá não pq eu retorno é a diferença entre elas e o previsto. Vou ter que reescrever mesmo...
+- Estudar adimensionalização
+    - Testar fazer a adimensionalização de forma simples, com um objeto que é passado e que sozinh se resolve (métodos to nondim e fromnondim para converter e desconverter, aí diz só se é X, S, V, etc)
+- Descobrir como pegar o r² médio do PINN pra selecionar o melhor
 - Criar arquivo com os valores experimentais para plotar tudo junto no fim e comparar
 - Plotar os 3 e comparar
-- Estudar adimensionalização
-- Testar fazer a adimensionalização de forma simples, com um objeto que é passado e que sozinh se resolve
-    (métodos to nondim e fromnondim para converter e desconverter, aí diz só se é X, S, V, etc)
 
 ## Não entendi bem
 - A loss é a soma dos ² da diferença entre a derivada calculada e a que deveria ser?
