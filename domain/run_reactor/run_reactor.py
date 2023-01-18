@@ -115,7 +115,7 @@ def run_reactor(
     model = dde.Model(data, net)
     ### Step 1: Pre-solving by "L-BFGS"
     model.compile("L-BFGS")
-    loss_history, train_state = model.train(iterations=80, epochs=80, display_every=40)
+    loss_history, train_state = model.train(iterations=80, epochs=80)
     ### Step 2: Solving by "adam"
     model.compile("adam", lr=0.0001)
     loss_history, train_state = model.train(
@@ -137,8 +137,7 @@ def run_reactor(
             plt.ylim(
                 [
                     -0.5,
-                    solver_params.non_dim_scaler.V_not_tensor
-                    * process_params.max_reactor_volume
+                    process_params.max_reactor_volume
                     * 1.2,
                 ]
             )
@@ -165,8 +164,7 @@ def run_reactor(
             plt.ylim(
                 [
                     -0.5,
-                    solver_params.non_dim_scaler.S_not_tensor
-                    * process_params.inlet.S
+                    process_params.inlet.S
                     * 1.2,
                 ]
             )
