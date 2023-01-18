@@ -1,3 +1,6 @@
+from domain.optimization.non_dim_scaler import NonDimScaler
+
+
 class SolverParams:
     def __init__(
         self,
@@ -14,6 +17,7 @@ class SolverParams:
         w_P=1,
         w_S=1,
         w_volume=1,
+        non_dim_scaler:NonDimScaler=None,
     ):
         self.num_domain = num_domain
         self.num_boundary = num_boundary
@@ -28,3 +32,6 @@ class SolverParams:
         self.w_P = w_P
         self.w_S = w_S
         self.w_volume = w_volume
+        self.non_dim_scaler = (
+            non_dim_scaler if non_dim_scaler else NonDimScaler(X=1, P=1, S=1, V=1, t=1)
+        )

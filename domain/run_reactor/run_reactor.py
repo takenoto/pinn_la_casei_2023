@@ -1,6 +1,7 @@
 # Foreign imports
 import deepxde as dde
 import numpy as np
+import tensorflow as tf
 import matplotlib.pyplot as plt
 
 # Local imports
@@ -15,7 +16,7 @@ from domain.run_reactor.pinn_reactor_model_results import PINNReactorModelResult
 
 
 def run_reactor(
-    ode_system_preparer:ODEPreparer,
+    ode_system_preparer: ODEPreparer,
     solver_params: SolverParams,
     eq_params: Altiok2006Params,
     process_params: ProcessParams,
@@ -52,12 +53,13 @@ def run_reactor(
     # Xm = eq_params.Xm
 
     # Time
-    t_final = process_params.t_final
 
     # ---------------------------------------
     # ------------- Geometry ----------------
     # ---------------------------------------
-    geom = dde.geometry.TimeDomain(0, t_final)
+    geom = dde.geometry.TimeDomain(
+        0, process_params.t_final / solver_params.non_dim_scaler.t_not_tensor
+    )
 
     # ---------------------------------------
     # --- Initial and Boundary Conditions ---
@@ -67,13 +69,33 @@ def run_reactor(
         return on_initial
 
     ## X
-    ic0 = dde.icbc.IC(geom, lambda x: initial_state.X[0], boundary, component=0)
+    ic0 = dde.icbc.IC(
+        geom,
+        lambda x: initial_state.X[0] / solver_params.non_dim_scaler.X,
+        boundary,
+        component=0,
+    )
     ## P
-    ic1 = dde.icbc.IC(geom, lambda x: initial_state.P[0], boundary, component=1)
+    ic1 = dde.icbc.IC(
+        geom,
+        lambda x: initial_state.P[0] / solver_params.non_dim_scaler.P,
+        boundary,
+        component=1,
+    )
     ## S
-    ic2 = dde.icbc.IC(geom, lambda x: initial_state.S[0], boundary, component=2)
+    ic2 = dde.icbc.IC(
+        geom,
+        lambda x: initial_state.S[0] / solver_params.non_dim_scaler.S,
+        boundary,
+        component=2,
+    )
     ## Volume
-    ic3 = dde.icbc.IC(geom, lambda x: initial_state.volume[0], boundary, component=3)
+    ic3 = dde.icbc.IC(
+        geom,
+        lambda x: initial_state.volume[0] / solver_params.non_dim_scaler.V,
+        boundary,
+        component=3,
+    )
 
     # ---------------------------------------
     # --------- Solving the System ----------
@@ -90,10 +112,10 @@ def run_reactor(
         solver_params.layer_size, solver_params.activation, solver_params.initializer
     )
     ## SOLVING
-    ### Step 1: Pre-solving by "L-BFGS"
     model = dde.Model(data, net)
-    model.compile("L-BFGS", lr=0.0001)
-    loss_history, train_state = model.train(iterations=40, epochs=40, display_every=40)
+    ### Step 1: Pre-solving by "L-BFGS"
+    model.compile("L-BFGS")
+    loss_history, train_state = model.train(iterations=80, epochs=80, display_every=40)
     ### Step 2: Solving by "adam"
     model.compile("adam", lr=0.0001)
     loss_history, train_state = model.train(
@@ -107,21 +129,47 @@ def run_reactor(
     # ---------------------------------------
     if plot_params.show_volume_with_flows:
         plt.plot(
-            train_state.X_test,
-            train_state.y_pred_test[:, 3],
+            solver_params.non_dim_scaler.t_not_tensor * train_state.X_test,
+            solver_params.non_dim_scaler.V_not_tensor * train_state.y_pred_test[:, 3],
             label="reactor volume (L)",
         )
         if plot_params.force_y_lim:
-            plt.ylim([-0.5, process_params.max_reactor_volume * 1.2])
+            plt.ylim(
+                [
+                    -0.5,
+                    solver_params.non_dim_scaler.V_not_tensor
+                    * process_params.max_reactor_volume
+                    * 1.2,
+                ]
+            )
         plt.legend()
         plt.show()
 
     if plot_params.show_concentrations:
-        plt.plot(train_state.X_test, train_state.y_pred_test[:, 0], label="conc X")
-        plt.plot(train_state.X_test, train_state.y_pred_test[:, 1], label="conc P")
-        plt.plot(train_state.X_test, train_state.y_pred_test[:, 2], label="conc S")
+        plt.plot(
+            solver_params.non_dim_scaler.t_not_tensor * train_state.X_test,
+            solver_params.non_dim_scaler.X_not_tensor * train_state.y_pred_test[:, 0],
+            label="conc X",
+        )
+        plt.plot(
+            solver_params.non_dim_scaler.t_not_tensor * train_state.X_test,
+            solver_params.non_dim_scaler.P_not_tensor * train_state.y_pred_test[:, 1],
+            label="conc P",
+        )
+        plt.plot(
+            solver_params.non_dim_scaler.t_not_tensor * train_state.X_test,
+            solver_params.non_dim_scaler.S_not_tensor * train_state.y_pred_test[:, 2],
+            label="conc S",
+        )
         if plot_params.force_y_lim:
-            plt.ylim([-0.5, process_params.inlet.S * 1.2])
+            plt.ylim(
+                [
+                    -0.5,
+                    solver_params.non_dim_scaler.S_not_tensor
+                    * process_params.inlet.S
+                    * 1.2,
+                ]
+            )
         plt.legend()
         plt.show()
 

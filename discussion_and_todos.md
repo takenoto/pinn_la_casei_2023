@@ -1,6 +1,25 @@
 # Discussion
 
 ## TODO
+- Erro: modo com NonDim não faz sentido.
+    - Fig2 chega n estacionario em 8h sem o non_dim.
+        - Resolvido com modificações. Parece ser ainda aquele bug entre versões específicas do numpy e do tensorflow. Resolvi assim:
+        `
+        non_dim_rX = (
+                   mult(mult( mult(div(scaler.t, scaler.X)
+                    , mu_max)
+                    , mult(X , scaler.X))
+                    , div(mult(S,scaler.S),add(K_S, mult(S,scaler.S))))
+                    * f_x_calc_func()
+                    * h_p_calc_func()
+                )
+        `
+    - Para NonDim com tudo = 1 deveria ser EXATAMENTE o mesmo resultado e não tá dando
+    Teste mais, veja onde causa.
+    - Testes já realizados:
+        - Xo=0, tudo (X, P, S e V) permanece constante num reator batelada. OK!
+        - zerar manualmente a derivada de dx OK
+        - zerar uma a uma as derivadas, tudo fica reta. O problema realmente parece ser no rX.
 - Implementar algum método numérico, como euler
     - Tem como usar as derivadas da minha própria função? Tipo mando os valores iniciais, pego as derivads, simplesmente multiplico por dt e somo cada uma no seu lugar.
     - Dá não pq eu retorno é a diferença entre elas e o previsto. Vou ter que reescrever mesmo...
@@ -9,6 +28,7 @@
 - Descobrir como pegar o r² médio do PINN pra selecionar o melhor
 - Criar arquivo com os valores experimentais para plotar tudo junto no fim e comparar
 - Plotar os 3 e comparar
+- Falar com amaro sobre bugs específicos do tensorflow... melhor pytorch??? Olha esse arrudeio pro erro do numpy, depende totalmente da versão: https://stackoverflow.com/questions/50678620/typeerror-input-b-of-matmul-op-has-type-float32-that-does-not-match-type-in
 
 ## Não entendi bem
 - A loss é a soma dos ² da diferença entre a derivada calculada e a que deveria ser?

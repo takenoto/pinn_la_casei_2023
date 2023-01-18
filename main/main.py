@@ -23,17 +23,10 @@ def main():
 
         eq_params = altiok_models_to_run[0]
 
-        initial_state = CSTRState(
-            volume=5,
-            X=eq_params.Xo,
-            P=eq_params.Po,
-            S=eq_params.So,
-        )
-
         process_params = ProcessParams(
             max_reactor_volume=5,
             inlet=ConcentrationFlow(
-                volume=0,
+                volume=0.0,
                 X=eq_params.Xo,
                 P=eq_params.Po,
                 S=eq_params.So,
@@ -45,7 +38,7 @@ def main():
             solver_params_list=None,
             eq_params=eq_params,
             process_params=process_params,
-            initial_state=initial_state,
+            # initial_state=initial_state,
             # A saída sempre é 0 (reator fechado)
             f_out_value_calc=lambda max_reactor_volume, f_in_v, volume: 0,
         )
