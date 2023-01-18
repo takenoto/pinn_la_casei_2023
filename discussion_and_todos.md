@@ -1,6 +1,18 @@
 # Discussion
 
+## Conclusões
+- O que discutir nos tópicos do trabalho:
+    - Relação entre pesos (testar um a um) e convergência
+    - Relação entre fatores de adimensionalidade/escala (testar um a um) e convergência
+        - O volume já deu pra ver que quanto maior scaler.V pior é a solução final, menos condizente
+        com a realidade
+        - O problema NÃO é o fato de não corrigir a concentração (que é m/V) porque se fosse pra corrigir o volume dessa eq, teria que corrigir também o fator de escala da massa, e ia ser justamente o inverso do volume, fim.
+
 ## TODO
+    - PRIORIDADE: GRIDSEARCH FUNCIONAL
+    - PRIORIDADE 2: Como salvar os arquivos?
+    - TODO faça primeiro só 2 e veja como se sai o loop
+- Várias vezes a única coisa errada é o volume, que sobe ou cai erroneamente e faz as concentrações parecerem constantes ou irem para locais errados, mas isso é tudo em função da variação sem sentido (não consegue convergir o volume). Testar aumentar o peso dele.
 - Erro: modo com NonDim não faz sentido.
     - Fig2 chega n estacionario em 8h sem o non_dim.
         - Resolvido com modificações. Parece ser ainda aquele bug entre versões específicas do numpy e do tensorflow. Resolvi assim:
