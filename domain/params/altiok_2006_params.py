@@ -17,7 +17,6 @@ class Altiok2006Params:
         self.Xo = np.array([Xo])
         self.Po = np.array([Po])
         self.So = np.array([So])
-        self.So = np.array([So])
         self.mu_max = np.array([mu_max])
         self.K_S = np.array([K_S])
         self.alpha = np.array([alpha])
