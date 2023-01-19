@@ -58,23 +58,6 @@ def main():
             f_out_value_calc=lambda max_reactor_volume, f_in_v, volume: 0,
         )
 
-        # plot_xpsv(
-        #     num_results[0].t,
-        #     num_results[0].X,
-        #     num_results[0].P,
-        #     num_results[0].S,
-        #     num_results[0].V,
-        #     scaler=num_results[0].scaler,
-        # )
-
-        # plot_xpsv(
-        #     num_result.t,
-        #     num_result.X,
-        #     num_result.P,
-        #     num_result.S,
-        #     num_result.V,
-        #     scaler=num_result.scaler,
-        # )
         # ----------------------------
         # PINN
         # ----------------------------
@@ -96,9 +79,7 @@ def main():
             scaler=[n.non_dim_scaler for n in num_results] + [pinn.solver_params.non_dim_scaler for pinn in pinn_results],
             suffix=[n.model_name for n in num_results] + [pinn.model_name for pinn in pinn_results],
         )
-        # plot_xpsv(
-        #     pinn.t, pinn.X, pinn.P, pinn.S, pinn.V, scaler=pinn.solver_params.scaler
-        # )
+
 
         print('--------------------')
         print("!!!!!!FINISED!!!!!!")
