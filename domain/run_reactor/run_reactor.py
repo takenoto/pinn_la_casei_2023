@@ -23,8 +23,9 @@ def run_reactor(
     initial_state: CSTRState,
     plot_params: PlotParams,
     f_out_value_calc,
-):
+)->PINNReactorModelResults:
     # TODO permitir passar um endereço pra salvar as imagens dos gráficos, loss_function e afins
+    # NÃO! O objetivo dessa função deve ser só calcular. printar, salvar, tudo por fora.
     """
     Runs a reactor that supports both outlet and inlet.
     The outlet can be controlled using the f_out_value_calc(max_reactor_volume, f_in_v, volume)
@@ -113,16 +114,27 @@ def run_reactor(
     )
     ## SOLVING
     model = dde.Model(data, net)
+    # TODO checar se a implementação dos weights está correta.
+    # Li a documentação e a fonte mas não consegui encontrar explicações de como usar
+    # E do pq os números serem o dobro em quantidade dos de entrada (p/8 variáveis são 16 pesos)
+    w = solver_params.loss_weights
+    loss_weights = [w[0], w[1], w[2], w[3], w[0], w[1], w[2], w[3]]# solver_params.loss_weights
     ### Step 1: Pre-solving by "L-BFGS"
-    model.compile("L-BFGS")
-    loss_history, train_state = model.train(iterations=80, epochs=80)
+    if(solver_params.l_bfgs.do_pre_optimization):
+        model.compile("L-BFGS", loss_weights=loss_weights)
+        model.train()
+
     ### Step 2: Solving by "adam"
-    model.compile("adam", lr=0.0001)
+    model.compile("adam", lr=solver_params.adam_lr, loss_weights=loss_weights)
     loss_history, train_state = model.train(
         epochs=solver_params.adam_epochs, display_every=solver_params.adam_display_every
     )
+    ### Step 3: Post optmization
+    if(solver_params.l_bfgs.do_post_optimization):
+        model.compile("L-BFGS", loss_weights=loss_weights)
+        loss_history, train_state = model.train()
 
-    dde.saveplot(loss_history, train_state, issave=True, isplot=True)
+    dde.saveplot(loss_history, train_state, issave=False, isplot=True)
 
     # ---------------------------------------
     # -------------- PLOTTING ---------------
@@ -184,4 +196,10 @@ def run_reactor(
         process_params,
         initial_state,
         f_out_value_calc,
+        best_step=train_state.best_step,
+        best_loss_test=train_state.best_loss_test,
+        best_loss_train=train_state.best_loss_train,
+        best_y=train_state.best_y,
+        best_ystd=train_state.best_ystd,
+        best_metrics=train_state.best_metrics,
     )

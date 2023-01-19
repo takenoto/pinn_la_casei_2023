@@ -46,6 +46,9 @@ class ODEPreparer:
             solver_params = self.solver_params
             f_out_value_calc = self.f_out_value_calc
 
+            # Nondim Scale
+            scaler = solver_params.non_dim_scaler
+
             # --------------------------
             # Volume & flows
 
@@ -57,7 +60,7 @@ class ODEPreparer:
             f_out = f_out_value_calc(
                 max_reactor_volume=process_params.max_reactor_volume,
                 f_in_v=f_in,
-                volume=V,
+                volume=V*scaler.V,
             )
 
             # --------------------------
@@ -69,10 +72,6 @@ class ODEPreparer:
             dS_dt = dde.grad.jacobian(y, x, i=2)
 
             if solver_params.non_dim_scaler is not None:
-                # --------------------------
-                # Nondim Scale
-                scaler = solver_params.non_dim_scaler
-
                 # Equações auxiliares. Usadas para operações matemática e contornar um erro
                 # específico de versões entre numpy e tensorflow
                 def div(x, y):
@@ -131,36 +130,41 @@ class ODEPreparer:
                 non_dim_rS = (scaler.t / scaler.S) * (
                     -(1 / Y_PS) * non_dim_rP * (scaler.P / scaler.t) - ms * X * scaler.X
                 )
+                
+                # Última mudança: adicionei o scaler t aos inlets
+                # e o scaler V/t no volume, talvez por isso desse problema
 
                 return [
-                    solver_params.w_X
-                    * (
+                    1#solver_params.w_X
+                    * 
+                    (
                         dX_dt * V * scaler.V
                         - (
                             non_dim_rX * V * scaler.V
-                            + f_in * inlet.X  # * scaler.X
-                            - f_out * X * scaler.X
+                            + f_in * inlet.X *scaler.t/scaler.X
+                            - f_out * X * scaler.t
                         )
                     ),
-                    solver_params.w_P
+                    1#solver_params.w_P
                     * (
                         dP_dt * V * scaler.V
                         - (
                             non_dim_rP * V * scaler.V
-                            + f_in * inlet.P  # * scaler.P
-                            - f_out * P * scaler.P
+                            + f_in * inlet.P*scaler.t / scaler.P
+                            - f_out * P *scaler.t
                         )
                     ),
-                    solver_params.w_S
+                    1#solver_params.w_S
                     * (
                         dS_dt * V * scaler.V
                         - (
                             non_dim_rS * V * scaler.V
-                            + f_in * inlet.S  # * scaler.S
-                            - f_out * S * scaler.S
+                            + f_in * inlet.S*scaler.t / scaler.S
+                            - f_out * S *scaler.t
                         )
                     ),
-                    solver_params.w_volume * (dV_dt - (f_in - f_out)),
+                   1# solver_params.w_volume
+                   * (dV_dt*(scaler.V/scaler.t) - (f_in - f_out)),
                 ]
 
             # --------------------------

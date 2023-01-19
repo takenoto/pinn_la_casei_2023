@@ -10,6 +10,12 @@ class PINNReactorModelResults:
         process_params,
         initial_state,
         f_out_value_calc,
+        best_step,
+        best_loss_test,
+        best_loss_train,
+        best_y,
+        best_ystd,
+        best_metrics,
     ):
         self.model = model
         self.loss_history = loss_history
@@ -22,6 +28,13 @@ class PINNReactorModelResults:
         self.process_params = process_params
         self.initial_state = initial_state
         self.f_out_value_calc = f_out_value_calc
+
+        self.best_step = best_step
+        self.best_loss_test = best_loss_test
+        self.best_loss_train = best_loss_train
+        self.best_y = best_y
+        self.best_ystd = best_ystd
+        self.best_metrics = best_metrics
         """
         Function used to calculate the reactor's outlet flow (volume/time) 
         """
