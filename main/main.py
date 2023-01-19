@@ -100,11 +100,9 @@ def main():
         #     pinn.t, pinn.X, pinn.P, pinn.S, pinn.V, scaler=pinn.solver_params.scaler
         # )
 
-        print("Concluído!!!!!!")
-        print(pinn_results)
-        print(best_pinn_index)
-        print(num_results)
-        print(best_num_index)
+        print('--------------------')
+        print("!!!!!!FINISED!!!!!!")
+        print('--------------------')
 
 
 if __name__ == "__main__":
