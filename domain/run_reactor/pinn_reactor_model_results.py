@@ -2,6 +2,7 @@
 class PINNReactorModelResults:
     def __init__(
         self,
+        model_name,
         model,
         loss_history,
         train_state,
@@ -10,6 +11,11 @@ class PINNReactorModelResults:
         process_params,
         initial_state,
         f_out_value_calc,
+        t,
+        X,
+        P,
+        S,
+        V,
         best_step,
         best_loss_test,
         best_loss_train,
@@ -17,6 +23,7 @@ class PINNReactorModelResults:
         best_ystd,
         best_metrics,
     ):
+        self.model_name=model_name
         self.model = model
         self.loss_history = loss_history
         self.train_state = train_state
@@ -28,6 +35,11 @@ class PINNReactorModelResults:
         self.process_params = process_params
         self.initial_state = initial_state
         self.f_out_value_calc = f_out_value_calc
+
+        self.t = t
+        self.X = X
+        self.P = P
+        self.S = S
 
         self.best_step = best_step
         self.best_loss_test = best_loss_test

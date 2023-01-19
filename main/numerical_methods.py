@@ -33,25 +33,25 @@ def run_numerical_methods(
     # ---------------------------------------------------------
     # Numerical Calculation
     euler = EulerMethod()
-    num_result = euler.solve(
+    num_result1 = euler.solve(
         initial_state,
         eq_params,
         process_params,
         f_out_value_calc,
-        scaler=scaler,
-        t_discretization_points=250,
+        non_dim_scaler=scaler,
+        t_discretization_points=60,
+        name="euler 60p"
+    )
+
+    num_result2 = euler.solve(
+        initial_state,
+        eq_params,
+        process_params,
+        f_out_value_calc,
+        non_dim_scaler=scaler,
+        t_discretization_points=4,
+        name="euler 4p"
     )
     # ---------------------------------------------------------
-    # Tudo adimensionalizado:
-    plot_xpsv(
-        num_result.t, num_result.X, num_result.P, num_result.S, num_result.V, scaler=None
-    )
 
-    plot_xpsv(
-        num_result.t, num_result.X, num_result.P, num_result.S, num_result.V, scaler=scaler
-    )
-    # TODO cria método plot XPS results e nele vc passa
-    # os XP e S
-    # Aí plota tudo aqui, nessa func externa
-
-    return [NumericSolverModelResults(model=euler, model_name="euler 1")]
+    return [num_result1, num_result2]

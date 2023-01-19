@@ -19,13 +19,15 @@ class EulerMethod:
         eq_params: Altiok2006Params,
         process_params: ProcessParams,
         f_out_value_calc,
-        scaler: NonDimScaler,
+        non_dim_scaler: NonDimScaler,
         t_discretization_points,
+        name
     ):
         """
         Returns the result of the simulation
         t, X, P, S, V, dt
         """
+        scaler = non_dim_scaler
         t_space = np.linspace(
             start=0,
             stop=process_params.t_final / scaler.t_not_tensor,
@@ -132,11 +134,12 @@ class EulerMethod:
 
         return NumericSolverModelResults(
             model=self,
-            model_name="euler",
+            model_name=name if name else "euler",
             X=X_array,
             P=P_array,
             S=S_array,
             V=V_array,
             t=t_space,
             dt=dt,
+            non_dim_scaler=scaler
         )

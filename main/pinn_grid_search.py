@@ -28,10 +28,9 @@ def run_pinn_grid_search(
     """
     assert f_out_value_calc is not None, "f_out_value_calc is necessary"
 
-
     if solver_params_list is None:
-        #---------------------------------------
-        #---------------------------------------
+        # ---------------------------------------
+        # ---------------------------------------
         solver_params_list = [
             SolverParams(
                 num_domain=num_domain,
@@ -54,7 +53,7 @@ def run_pinn_grid_search(
                 ),
             )
             for num_domain in [600]
-            for adam_epochs in [14500]
+            for adam_epochs in [4000]  # 14500]
             for layer_size in [
                 # # Muito espalhadas
                 # [1] + [8] * 22 + [4],
@@ -63,17 +62,20 @@ def run_pinn_grid_search(
                 # [1] + [140] * 2 + [4],
                 # [1] + [320] * 1 + [4],
                 # Equilibradas
-                # [1] + [22] * 3 + [4],                
-                [1] + [36] * 4 + [4],                
-                # [1] + [80] * 5 + [4],                
+                # [1] + [22] * 3 + [4],
+                [1] + [36] * 4 + [4],
+                # [1] + [80] * 5 + [4],
+                
             ]
-            for l_bfgs in [SolverLBFGSParams(do_pre_optimization=True, do_post_optimization=False)]
+            for l_bfgs in [
+                SolverLBFGSParams(do_pre_optimization=True, do_post_optimization=False)
+            ]
             # Basicamente um teste com adimensionalização e um sem
-            for X_scaler in [2]#, eq_params.Xm]
-            for P_scaler in [1]#, eq_params.Pm]
-            for S_scaler in [1]#, eq_params.So]
-            for V_scaler in [1]#process_params.max_reactor_volume]#, process_params.max_reactor_volume ]
-            for t_scaler in [2]#1]#, process_params.t_final]
+            for X_scaler in [1]  # , eq_params.Xm]
+            for P_scaler in [1]  # , eq_params.Pm]
+            for S_scaler in [1]  # , eq_params.So]
+            for V_scaler in [1]  # process_params.max_reactor_volume]#, process_params.max_reactor_volume ]
+            for t_scaler in [1, 30]  # 1]#, process_params.t_final]
             for X_weight in [1]
             for P_weight in [1]
             for S_weight in [1]
@@ -103,7 +105,7 @@ def run_pinn_grid_search(
             S=eq_params.So,
         )
         process_params = ProcessParams(max_reactor_volume=5, inlet=inlet, t_final=16)
-    
+
     # Se plot params for nulo cria um padrão
     plot_params = plot_params if plot_params else PlotParams(force_y_lim=True)
 
@@ -112,7 +114,6 @@ def run_pinn_grid_search(
         eq_params=eq_params,
         process_params=process_params,
         initial_state=initial_state,
-        plot_params=plot_params,  
         f_out_value_calc=f_out_value_calc,
     )
 

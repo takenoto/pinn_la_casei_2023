@@ -1,5 +1,5 @@
 class NumericSolverModelResults:
-    def __init__(self, model_name, model, X, P, S, V, t, dt):
+    def __init__(self, model_name, model, X, P, S, V, t, dt, non_dim_scaler):
         """
         model_name é algo como "euler" ou "runge_kutta"
         O resto são os parâmetros de solução numérica
@@ -12,3 +12,4 @@ class NumericSolverModelResults:
         self.V = V
         self.t = t
         self.dt = dt
+        self.non_dim_scaler = non_dim_scaler

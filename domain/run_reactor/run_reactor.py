@@ -21,7 +21,6 @@ def run_reactor(
     eq_params: Altiok2006Params,
     process_params: ProcessParams,
     initial_state: CSTRState,
-    plot_params: PlotParams,
     f_out_value_calc,
 )->PINNReactorModelResults:
     # TODO permitir passar um endereço pra salvar as imagens dos gráficos, loss_function e afins
@@ -38,22 +37,6 @@ def run_reactor(
     Returns the trained model with its loss_history and train_data AND the parameters
     used to achieve these results.
     """
-
-    # ---------------------------------------
-    # ------------ Parameters ---------------
-    # ---------------------------------------
-    # mu_max = eq_params.mu_max
-    # K_S = eq_params.K_S
-    # alpha = eq_params.alpha
-    # beta = eq_params.beta
-    # Y_PS = eq_params.Y_PS
-    # ms = eq_params.ms
-    # f = eq_params.f
-    # h = eq_params.h
-    # Pm = eq_params.Pm
-    # Xm = eq_params.Xm
-
-    # Time
 
     # ---------------------------------------
     # ------------- Geometry ----------------
@@ -114,11 +97,9 @@ def run_reactor(
     )
     ## SOLVING
     model = dde.Model(data, net)
-    # TODO checar se a implementação dos weights está correta.
-    # Li a documentação e a fonte mas não consegui encontrar explicações de como usar
-    # E do pq os números serem o dobro em quantidade dos de entrada (p/8 variáveis são 16 pesos)
     w = solver_params.loss_weights
     loss_weights = [w[0], w[1], w[2], w[3], w[0], w[1], w[2], w[3]]# solver_params.loss_weights
+    
     ### Step 1: Pre-solving by "L-BFGS"
     if(solver_params.l_bfgs.do_pre_optimization):
         model.compile("L-BFGS", loss_weights=loss_weights)
@@ -134,68 +115,28 @@ def run_reactor(
         model.compile("L-BFGS", loss_weights=loss_weights)
         loss_history, train_state = model.train()
 
-    dde.saveplot(loss_history, train_state, issave=False, isplot=True)
+    # dde.saveplot(loss_history, train_state, issave=False, isplot=False)
 
-    # ---------------------------------------
-    # -------------- PLOTTING ---------------
-    # ---------------------------------------
-    if plot_params.show_volume_with_flows:
-        plt.plot(
-            solver_params.non_dim_scaler.t_not_tensor * train_state.X_test,
-            solver_params.non_dim_scaler.V_not_tensor * train_state.y_pred_test[:, 3],
-            label="reactor volume (L)",
-        )
-        if plot_params.force_y_lim:
-            plt.ylim(
-                [
-                    -0.5,
-                    process_params.max_reactor_volume
-                    * 1.2,
-                ]
-            )
-        plt.legend()
-        plt.show()
-
-    if plot_params.show_concentrations:
-        plt.plot(
-            solver_params.non_dim_scaler.t_not_tensor * train_state.X_test,
-            solver_params.non_dim_scaler.X_not_tensor * train_state.y_pred_test[:, 0],
-            label="conc X",
-        )
-        plt.plot(
-            solver_params.non_dim_scaler.t_not_tensor * train_state.X_test,
-            solver_params.non_dim_scaler.P_not_tensor * train_state.y_pred_test[:, 1],
-            label="conc P",
-        )
-        plt.plot(
-            solver_params.non_dim_scaler.t_not_tensor * train_state.X_test,
-            solver_params.non_dim_scaler.S_not_tensor * train_state.y_pred_test[:, 2],
-            label="conc S",
-        )
-        if plot_params.force_y_lim:
-            plt.ylim(
-                [
-                    -0.5,
-                    process_params.inlet.S
-                    * 1.2,
-                ]
-            )
-        plt.legend()
-        plt.show()
 
     # ---------------------------------------
     # ------------- FINISHING ---------------
     # ---------------------------------------
 
     return PINNReactorModelResults(
-        model,
-        loss_history,
-        train_state,
-        solver_params,
-        eq_params,
-        process_params,
-        initial_state,
-        f_out_value_calc,
+        model=model,
+        model_name=None,
+        loss_history=loss_history,
+        train_state=train_state,
+        solver_params=solver_params,
+        eq_params=eq_params,
+        process_params=process_params,
+        initial_state=initial_state,
+        f_out_value_calc=f_out_value_calc,
+        t = train_state.X_test,
+        X = train_state.best_y[:,0],
+        P = train_state.best_y[:,1],
+        S = train_state.best_y[:,2],
+        V = train_state.best_y[:,3],
         best_step=train_state.best_step,
         best_loss_test=train_state.best_loss_test,
         best_loss_train=train_state.best_loss_train,

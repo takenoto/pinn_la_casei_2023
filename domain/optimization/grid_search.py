@@ -20,14 +20,14 @@ def __get_best_pinn(pinn_models):
 
         i_pinn_error = np.sum(pinn.best_loss_test) # The error of this pinn
 
-        if best_pinn_error is None:
+        if best_pinn_test_error is None:
             best_pinn_test_error = i_pinn_error
         else:
             if best_pinn_test_error > i_pinn_error:
                 best_pinn_test_error = i_pinn_error
                 best_pinn_test_index = i
 
-    return best_pinn_index, best_pinn_test_error
+    return best_pinn_test_index, best_pinn_test_error
 
 
 def grid_search(
@@ -48,6 +48,7 @@ def grid_search(
         pinn_model_results = pinn_system_caller.call(
             solver_params=solver_params,
         )
+        pinn_model_results.model_name=f'pinn {i+1}'
 
         pinn_results.append(pinn_model_results)
     #---------------------------------------------------------
