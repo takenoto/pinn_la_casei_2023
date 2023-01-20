@@ -14,7 +14,12 @@ from main.numerical_methods import run_numerical_methods
 from main.plot_xpsv import plot_xpsv, multiplot_xpsv, XPSVPlotArg
 
 from main.plotting.simple_color_bar import plot_simple_color_bar
-from main.plotting.surface_3d import plot_3d_surface, plot_3d_surface_ts_step_error
+from main.plotting.surface_3d import (
+    plot_3d_surface,
+    plot_3d_surface_ts_step_error,
+    plot_3d_lines,
+    PlotPINN3DArg,
+)
 
 
 # For obtaining fully reproducible results
@@ -48,18 +53,6 @@ num_colors = [
 
 
 def main():
-
-    plot_3d_surface_ts_step_error()
-
-    # plot_3d_surface(
-    #     title="t_s, error and number of steps",
-    #     x_label="number_of_steps",
-    #     y_label="t_s",
-    #     z_label="loss",
-    # )
-    # plot_simple_color_bar(title='t_s, error and number of steps', x_label='number_of_steps', y_label='t_s')
-
-    return
 
     run_batch = True
 
@@ -110,6 +103,17 @@ def main():
             f_out_value_calc=lambda max_reactor_volume, f_in_v, volume: 0,
         )
 
+        plot_3d_lines(
+            pinns = [
+                PlotPINN3DArg(
+                    adam_epochs=p.solver_params.adam_epochs,
+                    best_loss_test=p.best_loss_test,
+                    t_not_tensor=p.solver_params.non_dim_scaler.t_not_tensor,
+                )
+                for p in pinn_results
+            ])
+
+
         multiplot_xpsv(
             title="Concentrations over time for different methods",
             y_label="g/L",
@@ -125,7 +129,7 @@ def main():
             + [pinn.model_name for pinn in pinn_results],
             plot_args=[
                 XPSVPlotArg(
-                    ls="-",
+                    ls=":",
                     color=num_colors[i % len(num_colors)],
                     linewidth=7.0,
                     alpha=0.25,
@@ -134,13 +138,27 @@ def main():
             ]
             + [
                 XPSVPlotArg(
-                    ls=":",
+                    ls="-",
                     color=pinn_colors[i % len(pinn_colors)],
-                    linewidth=2,
+                    linewidth=4,
                     alpha=1,
                 )
                 for i in range(len(pinn_results))
             ],
+        )
+
+        # FIXME dá um erro estranho nas configs que tá, mas em outras deu certo?????????
+        # Dá esse erro quando o adam é só 1 valor: 300
+        # É só nesse último gráfico
+        plot_3d_surface_ts_step_error(
+            pinns=[
+                PlotPINN3DArg(
+                    adam_epochs=p.solver_params.adam_epochs,
+                    best_loss_test=p.best_loss_test,
+                    t_not_tensor=p.solver_params.non_dim_scaler.t_not_tensor,
+                )
+                for p in pinn_results
+            ]
         )
 
         print("--------------------")

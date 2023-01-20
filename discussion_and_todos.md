@@ -1,8 +1,11 @@
 # Discussion
 
+# TODOs novos
+- Ver influência da relação peso (weight) vs constante de adimensionalidade
+
 ## Conclusões
 - O que discutir nos tópicos do trabalho:
-    - Relação entre pesos (testar um a um) e convergência
+    - Relação entre pesos (testar um a um), constantes de adimensionalidade e convergência
     - Relação entre fatores de adimensionalidade/escala (testar um a um) e convergência
         - O volume já deu pra ver que quanto maior scaler.V pior é a solução final, menos condizente
         com a realidade

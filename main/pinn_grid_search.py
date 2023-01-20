@@ -85,7 +85,7 @@ def run_pinn_grid_search(
                 ),
             )
             for num_domain in [600]
-            for adam_epochs in [3200]#4000]  # 14500]
+            for adam_epochs in [300, 1200]#4000]  # 14500]
             for layer_size in [
                 # # Muito espalhadas
                 # [1] + [8] * 22 + [4],

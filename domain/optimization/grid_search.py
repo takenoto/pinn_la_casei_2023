@@ -41,14 +41,16 @@ def grid_search(
 
     #---------------------------------------------------------
     for i in range(len(solver_params_list)):
-        print("\n--------------------------------------\n")
-        print(f"---------GRIDSEARCH: SIM Nº {i}----------")
-        print("\n--------------------------------------\n")
+        
         solver_params = solver_params_list[i]
+        name=solver_params.name
+        print("\n--------------------------------------\n")
+        print(f"---------GRIDSEARCH: SIM {name} ----------")
+        print("\n--------------------------------------\n")
         pinn_model_results = pinn_system_caller.call(
             solver_params=solver_params,
         )
-        pinn_model_results.model_name=f'pinn {i+1}'
+        
 
         pinn_results.append(pinn_model_results)
     #---------------------------------------------------------

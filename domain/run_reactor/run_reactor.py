@@ -124,7 +124,7 @@ def run_reactor(
 
     return PINNReactorModelResults(
         model=model,
-        model_name=None,
+        model_name=solver_params.name,
         loss_history=loss_history,
         train_state=train_state,
         solver_params=solver_params,

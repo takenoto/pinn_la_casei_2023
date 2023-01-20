@@ -14,6 +14,7 @@ class SolverLBFGSParams:
 class SolverParams:
     def __init__(
         self,
+        name,
         num_domain,
         num_boundary,
         num_test,
@@ -27,6 +28,10 @@ class SolverParams:
         loss_weights=[1,1,1,1],
         non_dim_scaler:NonDimScaler=None,
     ):
+        self.name = name if name else None
+        """
+        A name that explains, defines or identify this solver_params objects
+        """
         self.num_domain = num_domain
         self.num_boundary = num_boundary
         self.num_test = num_test
