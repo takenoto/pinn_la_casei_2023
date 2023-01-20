@@ -11,14 +11,55 @@ from domain.params.process_params import ProcessParams
 from domain.flow.concentration_flow import ConcentrationFlow
 from main.pinn_grid_search import run_pinn_grid_search
 from main.numerical_methods import run_numerical_methods
-from main.plot_xpsv import plot_xpsv, multiplot_xpsv
+from main.plot_xpsv import plot_xpsv, multiplot_xpsv, XPSVPlotArg
+
+from main.plotting.simple_color_bar import plot_simple_color_bar
+from main.plotting.surface_3d import plot_3d_surface, plot_3d_surface_ts_step_error
 
 
 # For obtaining fully reproducible results
 deepxde.config.set_random_seed(0)
 
+xp_colors = ["#F2545B"]
+"""
+Cores apra dados experimentais
+"""
+
+pinn_colors = [
+    "#7293A0",
+    "#C2E812",
+    "#ED9B40",
+    "#B4869F",
+    "#45B69C",
+    "#FFE66D",
+    "#E78F8E",
+    "#861388",
+    "#34312D",
+]
+"""
+Lista de cores que representam diversos pinns
+Ordem: RGBA
+"""
+
+num_colors = [
+    "#F39B6D",
+    "#F0C987",
+]
+
 
 def main():
+
+    plot_3d_surface_ts_step_error()
+
+    # plot_3d_surface(
+    #     title="t_s, error and number of steps",
+    #     x_label="number_of_steps",
+    #     y_label="t_s",
+    #     z_label="loss",
+    # )
+    # plot_simple_color_bar(title='t_s, error and number of steps', x_label='number_of_steps', y_label='t_s')
+
+    return
 
     run_batch = True
 
@@ -69,21 +110,42 @@ def main():
             f_out_value_calc=lambda max_reactor_volume, f_in_v, volume: 0,
         )
 
-        
         multiplot_xpsv(
+            title="Concentrations over time for different methods",
+            y_label="g/L",
+            x_label="time (h)",
             t=[n.t for n in num_results] + [pinn.t for pinn in pinn_results],
             X=[n.X for n in num_results] + [pinn.X for pinn in pinn_results],
             P=None,
             S=None,
             V=None,
-            scaler=[n.non_dim_scaler for n in num_results] + [pinn.solver_params.non_dim_scaler for pinn in pinn_results],
-            suffix=[n.model_name for n in num_results] + [pinn.model_name for pinn in pinn_results],
+            scaler=[n.non_dim_scaler for n in num_results]
+            + [pinn.solver_params.non_dim_scaler for pinn in pinn_results],
+            suffix=[n.model_name for n in num_results]
+            + [pinn.model_name for pinn in pinn_results],
+            plot_args=[
+                XPSVPlotArg(
+                    ls="-",
+                    color=num_colors[i % len(num_colors)],
+                    linewidth=7.0,
+                    alpha=0.25,
+                )
+                for i in range(len(num_results))
+            ]
+            + [
+                XPSVPlotArg(
+                    ls=":",
+                    color=pinn_colors[i % len(pinn_colors)],
+                    linewidth=2,
+                    alpha=1,
+                )
+                for i in range(len(pinn_results))
+            ],
         )
 
-
-        print('--------------------')
+        print("--------------------")
         print("!!!!!!FINISED!!!!!!")
-        print('--------------------')
+        print("--------------------")
 
 
 if __name__ == "__main__":

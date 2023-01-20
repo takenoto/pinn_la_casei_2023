@@ -1,3 +1,4 @@
+import tensorflow as tf
 import numpy as np
 
 from domain.params.altiok_2006_params import Altiok2006Params
@@ -12,12 +13,11 @@ from domain.flow.concentration_flow import ConcentrationFlow
 
 from domain.reactions_ode_system_preparers.ode_preparer import ODEPreparer
 
-import tensorflow as tf
 
 
 def run_pinn_grid_search(
     solver_params_list=None,
-    eq_params=None,
+    eq_params:Altiok2006Params=None,
     process_params: ProcessParams = None,
     initial_state: CSTRState = None,
     plot_params: PlotParams = None,
@@ -29,10 +29,42 @@ def run_pinn_grid_search(
     assert f_out_value_calc is not None, "f_out_value_calc is necessary"
 
     if solver_params_list is None:
+
+        # Tudo que não explicitamente setado aqui será considerado = 1
+        scalers_to_try = {
+            "default": {"t": 1},
+            "case 0": {"t": process_params.t_final},
+            "case 1": {
+                "t": 1
+                / (eq_params.mu_max * eq_params.So / (eq_params.K_S + eq_params.So))
+            },
+            "case 2": {
+                "t": eq_params.alpha
+                * eq_params.So
+                * (eq_params.K_S + eq_params.So)
+                / eq_params.mu_max
+            },
+            "case 3": {
+                "t": (1 / eq_params.Y_PS)
+                * eq_params.alpha
+                * (eq_params.K_S + eq_params.So)
+                / eq_params.mu_max
+            },
+            "case 4": {
+                "t": process_params.max_reactor_volume / process_params.inlet.volume
+                if process_params.inlet.volume > 0
+                else 1
+            },
+        }
         # ---------------------------------------
         # ---------------------------------------
+
+        def get_thing_for_key(scaler_key, thing_key, default=np.array([1])):
+            return np.array(scalers_to_try[scaler_key].get(thing_key, default)).item()
+
         solver_params_list = [
             SolverParams(
+                name=f'pinn {scaler_key}:t_s={"{0:.2f}".format(get_thing_for_key(scaler_key, "t"))}',
                 num_domain=num_domain,
                 num_boundary=10,
                 num_test=1000,
@@ -45,15 +77,15 @@ def run_pinn_grid_search(
                 initializer="Glorot uniform",
                 loss_weights=[X_weight, P_weight, S_weight, V_weight],
                 non_dim_scaler=NonDimScaler(
-                    X=X_scaler,
-                    P=P_scaler,
-                    S=S_scaler,
-                    V=V_scaler,
-                    t=t_scaler,
+                    X=get_thing_for_key(scaler_key, 'X'),
+                    P=get_thing_for_key(scaler_key, 'P'),
+                    S=get_thing_for_key(scaler_key, 'S'),
+                    V=get_thing_for_key(scaler_key, 'V'),
+                    t=get_thing_for_key(scaler_key, 't'),
                 ),
             )
             for num_domain in [600]
-            for adam_epochs in [4000]  # 14500]
+            for adam_epochs in [3200]#4000]  # 14500]
             for layer_size in [
                 # # Muito espalhadas
                 # [1] + [8] * 22 + [4],
@@ -63,19 +95,15 @@ def run_pinn_grid_search(
                 # [1] + [320] * 1 + [4],
                 # Equilibradas
                 # [1] + [22] * 3 + [4],
-                [1] + [36] * 4 + [4],
+                [1] + [20]*2 + [4]
+                # PRINCIPAL -->>>>>>>>  # [1] + [36] * 4 + [4],
                 # [1] + [80] * 5 + [4],
-                
             ]
             for l_bfgs in [
-                SolverLBFGSParams(do_pre_optimization=True, do_post_optimization=False)
+                SolverLBFGSParams(do_pre_optimization=True, do_post_optimization=False),
             ]
             # Basicamente um teste com adimensionalização e um sem
-            for X_scaler in [1]  # , eq_params.Xm]
-            for P_scaler in [1]  # , eq_params.Pm]
-            for S_scaler in [1]  # , eq_params.So]
-            for V_scaler in [1]  # process_params.max_reactor_volume]#, process_params.max_reactor_volume ]
-            for t_scaler in [1, 30]  # 1]#, process_params.t_final]
+            for scaler_key in scalers_to_try
             for X_weight in [1]
             for P_weight in [1]
             for S_weight in [1]
