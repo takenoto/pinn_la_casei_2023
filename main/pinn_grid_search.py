@@ -15,66 +15,69 @@ from domain.reactions_ode_system_preparers.ode_preparer import ODEPreparer
 
 
 # Parâmetros default
-_adam_epochs = [1000, 1000]#,100, 500, 1100]#, 1200]#4000]  # 14500]
+_adam_epochs_default = 1000  # [1000, 1000]#,100, 500, 1100]#, 1200]#4000]  # 14500]
+# Variando apenas t_s, temos:
 
+def _default_cases_to_try(eq_params, process_params):
+    return  {
+    # "default": {"t": 1},
+    "case 0": {"t_s": process_params.t_final},
+    "case 1": {
+        "t_s": 1 / (eq_params.mu_max * eq_params.So / (eq_params.K_S + eq_params.So))
+    },
+    "case 2": {
+        "t_s": eq_params.alpha
+        * eq_params.So
+        * (eq_params.K_S + eq_params.So)
+        / eq_params.mu_max
+    },
+    "case 3": {
+        "t_s": (1 / eq_params.Y_PS)
+        * eq_params.alpha
+        * (eq_params.K_S + eq_params.So)
+        / eq_params.mu_max
+    },
+    "case 4": {
+        "t_s": process_params.max_reactor_volume / process_params.inlet.volume
+        if process_params.inlet.volume > 0
+        else 1
+    },
+}
 
 
 def run_pinn_grid_search(
     solver_params_list=None,
-    eq_params:Altiok2006Params=None,
+    eq_params: Altiok2006Params = None,
     process_params: ProcessParams = None,
     initial_state: CSTRState = None,
     plot_params: PlotParams = None,
     f_out_value_calc=None,
-    adam_epochs = _adam_epochs,
+    cases_to_try=None,
 ):
     """
     f_out_value_calc --> f_out_value_calc(max_reactor_volume, f_in_v, volume)
     """
-    
+
     assert f_out_value_calc is not None, "f_out_value_calc is necessary"
+    assert cases_to_try is not None, "cases_to_try is necessary"
 
     if solver_params_list is None:
 
-        # Tudo que não explicitamente setado aqui será considerado = 1
-        scalers_to_try = {
-            # "default": {"t": 1},
-            "case 0": {"t": process_params.t_final},
-            "case 1": {
-                "t": 1
-                / (eq_params.mu_max * eq_params.So / (eq_params.K_S + eq_params.So))
-            },
-            "case 2": {
-                "t": eq_params.alpha
-                * eq_params.So
-                * (eq_params.K_S + eq_params.So)
-                / eq_params.mu_max
-            },
-            "case 3": {
-                "t": (1 / eq_params.Y_PS)
-                * eq_params.alpha
-                * (eq_params.K_S + eq_params.So)
-                / eq_params.mu_max
-            },
-            "case 4": {
-                "t": process_params.max_reactor_volume / process_params.inlet.volume
-                if process_params.inlet.volume > 0
-                else 1
-            },
-        }
         # ---------------------------------------
         # ---------------------------------------
 
-        def get_thing_for_key(scaler_key, thing_key, default=np.array([1])):
-            return np.array(scalers_to_try[scaler_key].get(thing_key, default)).item()
+        def get_thing_for_key(case_key, thing_key, default=np.array([1])):
+            return np.array(cases_to_try[case_key].get(thing_key, default)).item()
 
         solver_params_list = [
             SolverParams(
-                name=f'pinn {scaler_key}:t_s={"{0:.2f}".format(get_thing_for_key(scaler_key, "t"))}',
+                name=f'pinn {scaler_key}:t_s={"{0:.2f}".format(get_thing_for_key(scaler_key, "t_s"))}',
                 num_domain=num_domain,
                 num_boundary=10,
                 num_test=1000,
-                adam_epochs=adam_epochs,
+                adam_epochs=get_thing_for_key(
+                    case_key, "adam_epochs", default=_adam_epochs_default
+                ),
                 adam_display_every=3000,
                 adam_lr=0.0001,
                 l_bfgs=l_bfgs,
@@ -83,15 +86,14 @@ def run_pinn_grid_search(
                 initializer="Glorot uniform",
                 loss_weights=[X_weight, P_weight, S_weight, V_weight],
                 non_dim_scaler=NonDimScaler(
-                    X=get_thing_for_key(scaler_key, 'X'),
-                    P=get_thing_for_key(scaler_key, 'P'),
-                    S=get_thing_for_key(scaler_key, 'S'),
-                    V=get_thing_for_key(scaler_key, 'V'),
-                    t=get_thing_for_key(scaler_key, 't'),
+                    X=get_thing_for_key(scaler_key, "X_s"),
+                    P=get_thing_for_key(scaler_key, "P_s"),
+                    S=get_thing_for_key(scaler_key, "S_s"),
+                    V=get_thing_for_key(scaler_key, "V_s"),
+                    t=get_thing_for_key(scaler_key, "t_s"),
                 ),
             )
             for num_domain in [600]
-            for adam_epochs in _adam_epochs
             for layer_size in [
                 # # Muito espalhadas
                 # [1] + [8] * 22 + [4],
@@ -101,7 +103,9 @@ def run_pinn_grid_search(
                 # [1] + [320] * 1 + [4],
                 # Equilibradas
                 # [1] + [22] * 3 + [4],
-                [1] + [8]*2 + [4]
+                [1]
+                + [8] * 2
+                + [4]
                 # PRINCIPAL -->>>>>>>>  # [1] + [36] * 4 + [4],
                 # [1] + [80] * 5 + [4],
             ]
@@ -109,7 +113,7 @@ def run_pinn_grid_search(
                 SolverLBFGSParams(do_pre_optimization=True, do_post_optimization=False),
             ]
             # Basicamente um teste com adimensionalização e um sem
-            for scaler_key in scalers_to_try
+            for case_key in cases_to_try
             for X_weight in [1]
             for P_weight in [1]
             for S_weight in [1]
