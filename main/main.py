@@ -1,5 +1,7 @@
 # python -m main.main
 
+from timeit import default_timer as timer
+
 import numpy as np
 import deepxde
 
@@ -12,6 +14,11 @@ from domain.flow.concentration_flow import ConcentrationFlow
 from main.pinn_grid_search import run_pinn_grid_search
 from main.numerical_methods import run_numerical_methods
 from main.plot_xpsv import plot_xpsv, multiplot_xpsv, XPSVPlotArg
+from main.plotting.plot_pinn_3d_arg import PlotPINN3DArg
+from main.plotting.pinn_conversor import get_ts_step_loss_as_xyz
+from domain.run_reactor.pinn_reactor_model_results import PINNReactorModelResults
+from domain.params.solver_params import SolverParams
+from domain.optimization.non_dim_scaler import NonDimScaler
 
 from main.plotting.simple_color_bar import plot_simple_color_bar
 from main.plotting.surface_3d import (
@@ -20,6 +27,7 @@ from main.plotting.surface_3d import (
     plot_3d_lines,
     PlotPINN3DArg,
 )
+from main.plotting.plot_lines_error_compare import plot_lines_error_compare
 
 
 # For obtaining fully reproducible results
@@ -53,7 +61,7 @@ num_colors = [
 
 
 def main():
-
+    
     run_batch = True
 
     altiok_models_to_run = [get_altiok2006_params().get(2)]  # roda só a fig2
@@ -95,6 +103,10 @@ def main():
         # ----------------------------
         # PINN
         # ----------------------------
+        # TODO aqui deve receber uma função como nomeador de cada ponto e usar lá
+        # E todos os pontos iterados são expostos explicitamente
+
+        start_time = timer()
         pinn_results, best_pinn_test_index, best_pin_test_error = run_pinn_grid_search(
             solver_params_list=None,
             eq_params=eq_params,
@@ -102,17 +114,30 @@ def main():
             initial_state=initial_state,
             f_out_value_calc=lambda max_reactor_volume, f_in_v, volume: 0,
         )
+        end_time = timer()
+        print(f"elapsed pinn grid time = {end_time - start_time} secs")
 
-        plot_3d_lines(
-            pinns = [
-                PlotPINN3DArg(
-                    adam_epochs=p.solver_params.adam_epochs,
-                    best_loss_test=p.best_loss_test,
-                    t_not_tensor=p.solver_params.non_dim_scaler.t_not_tensor,
-                )
-                for p in pinn_results
-            ])
+        # --------------------------------------
+        # PLOTTING
+        # --------------------------------------
 
+        # Plot simple color bar with ts, step, loss as x, y, z
+        ts, step, loss = get_ts_step_loss_as_xyz(pinns=pinn_results)
+        if False:
+            plot_simple_color_bar(
+                title="Time scaling factor, number of steps and error",
+                x=ts,
+                y=step,
+                z=loss,
+                x_label="t_s",
+                y_label="step",
+                z_label="loss",
+            )
+
+        if False:
+            plot_lines_error_compare(
+            pinns=pinn_results
+            )
 
         multiplot_xpsv(
             title="Concentrations over time for different methods",
@@ -123,6 +148,8 @@ def main():
             P=None,
             S=None,
             V=None,
+            y_lim=[0, eq_params.So*1.1],
+            err = [0 for n in num_results] + [pinn.best_loss_test for pinn in pinn_results],
             scaler=[n.non_dim_scaler for n in num_results]
             + [pinn.solver_params.non_dim_scaler for pinn in pinn_results],
             suffix=[n.model_name for n in num_results]
@@ -147,19 +174,7 @@ def main():
             ],
         )
 
-        # FIXME dá um erro estranho nas configs que tá, mas em outras deu certo?????????
-        # Dá esse erro quando o adam é só 1 valor: 300
-        # É só nesse último gráfico
-        plot_3d_surface_ts_step_error(
-            pinns=[
-                PlotPINN3DArg(
-                    adam_epochs=p.solver_params.adam_epochs,
-                    best_loss_test=p.best_loss_test,
-                    t_not_tensor=p.solver_params.non_dim_scaler.t_not_tensor,
-                )
-                for p in pinn_results
-            ]
-        )
+        plot_3d_surface_ts_step_error(pinns=pinn_results)
 
         print("--------------------")
         print("!!!!!!FINISED!!!!!!")

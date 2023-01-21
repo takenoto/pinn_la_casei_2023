@@ -14,6 +14,10 @@ from domain.flow.concentration_flow import ConcentrationFlow
 from domain.reactions_ode_system_preparers.ode_preparer import ODEPreparer
 
 
+# Parâmetros default
+_adam_epochs = [1000, 1000]#,100, 500, 1100]#, 1200]#4000]  # 14500]
+
+
 
 def run_pinn_grid_search(
     solver_params_list=None,
@@ -22,17 +26,19 @@ def run_pinn_grid_search(
     initial_state: CSTRState = None,
     plot_params: PlotParams = None,
     f_out_value_calc=None,
+    adam_epochs = _adam_epochs,
 ):
     """
     f_out_value_calc --> f_out_value_calc(max_reactor_volume, f_in_v, volume)
     """
+    
     assert f_out_value_calc is not None, "f_out_value_calc is necessary"
 
     if solver_params_list is None:
 
         # Tudo que não explicitamente setado aqui será considerado = 1
         scalers_to_try = {
-            "default": {"t": 1},
+            # "default": {"t": 1},
             "case 0": {"t": process_params.t_final},
             "case 1": {
                 "t": 1
@@ -85,7 +91,7 @@ def run_pinn_grid_search(
                 ),
             )
             for num_domain in [600]
-            for adam_epochs in [300, 1200]#4000]  # 14500]
+            for adam_epochs in _adam_epochs
             for layer_size in [
                 # # Muito espalhadas
                 # [1] + [8] * 22 + [4],
@@ -95,7 +101,7 @@ def run_pinn_grid_search(
                 # [1] + [320] * 1 + [4],
                 # Equilibradas
                 # [1] + [22] * 3 + [4],
-                [1] + [20]*2 + [4]
+                [1] + [8]*2 + [4]
                 # PRINCIPAL -->>>>>>>>  # [1] + [36] * 4 + [4],
                 # [1] + [80] * 5 + [4],
             ]

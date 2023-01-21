@@ -44,9 +44,9 @@ def grid_search(
         
         solver_params = solver_params_list[i]
         name=solver_params.name
-        print("\n--------------------------------------\n")
-        print(f"---------GRIDSEARCH: SIM {name} ----------")
-        print("\n--------------------------------------\n")
+        # print("\n--------------------------------------\n")
+        # print(f"---------GRIDSEARCH: SIM {name} ----------")
+        # print("\n--------------------------------------\n")
         pinn_model_results = pinn_system_caller.call(
             solver_params=solver_params,
         )
