@@ -18,31 +18,6 @@ from domain.reactions_ode_system_preparers.ode_preparer import ODEPreparer
 _adam_epochs_default = 1000  # [1000, 1000]#,100, 500, 1100]#, 1200]#4000]  # 14500]
 # Variando apenas t_s, temos:
 
-def _default_cases_to_try(eq_params, process_params):
-    return  {
-    # "default": {"t": 1},
-    "case 0": {"t_s": process_params.t_final},
-    "case 1": {
-        "t_s": 1 / (eq_params.mu_max * eq_params.So / (eq_params.K_S + eq_params.So))
-    },
-    "case 2": {
-        "t_s": eq_params.alpha
-        * eq_params.So
-        * (eq_params.K_S + eq_params.So)
-        / eq_params.mu_max
-    },
-    "case 3": {
-        "t_s": (1 / eq_params.Y_PS)
-        * eq_params.alpha
-        * (eq_params.K_S + eq_params.So)
-        / eq_params.mu_max
-    },
-    "case 4": {
-        "t_s": process_params.max_reactor_volume / process_params.inlet.volume
-        if process_params.inlet.volume > 0
-        else 1
-    },
-}
 
 
 def run_pinn_grid_search(
@@ -71,7 +46,7 @@ def run_pinn_grid_search(
 
         solver_params_list = [
             SolverParams(
-                name=f'pinn {scaler_key}:t_s={"{0:.2f}".format(get_thing_for_key(scaler_key, "t_s"))}',
+                name=f'pinn {case_key}',
                 num_domain=num_domain,
                 num_boundary=10,
                 num_test=1000,
@@ -86,11 +61,11 @@ def run_pinn_grid_search(
                 initializer="Glorot uniform",
                 loss_weights=[X_weight, P_weight, S_weight, V_weight],
                 non_dim_scaler=NonDimScaler(
-                    X=get_thing_for_key(scaler_key, "X_s"),
-                    P=get_thing_for_key(scaler_key, "P_s"),
-                    S=get_thing_for_key(scaler_key, "S_s"),
-                    V=get_thing_for_key(scaler_key, "V_s"),
-                    t=get_thing_for_key(scaler_key, "t_s"),
+                    X=get_thing_for_key(case_key, "X_s"),
+                    P=get_thing_for_key(case_key, "P_s"),
+                    S=get_thing_for_key(case_key, "S_s"),
+                    V=get_thing_for_key(case_key, "V_s"),
+                    t=get_thing_for_key(case_key, "t_s"),
                 ),
             )
             for num_domain in [600]
@@ -104,7 +79,7 @@ def run_pinn_grid_search(
                 # Equilibradas
                 # [1] + [22] * 3 + [4],
                 [1]
-                + [8] * 2
+                + [12] * 2
                 + [4]
                 # PRINCIPAL -->>>>>>>>  # [1] + [36] * 4 + [4],
                 # [1] + [80] * 5 + [4],
