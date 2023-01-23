@@ -40,6 +40,7 @@ class PINNReactorModelResults:
         self.X = X
         self.P = P
         self.S = S
+        self.V = V
 
         self.best_step = best_step
         self.best_loss_test = best_loss_test
