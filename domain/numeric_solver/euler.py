@@ -65,7 +65,7 @@ class EulerMethod:
             f_out = f_out_value_calc(
                 max_reactor_volume=process_params.max_reactor_volume,
                 f_in_v=f_in,
-                volume=V * scaler.V,
+                volume=V * scaler.V_not_tensor,
             )
 
             non_dim_rX = (scaler.t_not_tensor / scaler.X_not_tensor)*(
