@@ -1,0 +1,28 @@
+## ref: https://matplotlib.org/stable/tutorials/introductory/customizing.html
+
+## Os semitítulos para vários subplots:
+axes.titlesize : 9
+axes.titleweight : semibold
+
+# Não faço ideia do que seja... provavelmente as labels mesmo
+axes.labelsize : 12
+
+axes.titlepad : 4
+axes.labelpad:  3
+
+legend.title_fontsize : 14
+
+lines.linewidth : 2
+lines.markersize : 10
+xtick.labelsize : 10
+ytick.labelsize : 10
+
+## Title
+figure.titlesize : 16
+
+## FONTS
+font.size : 9
+font.family : sans-serif
+front.serif : Crimson Pro, Alegreya, Times New Roman
+font.sans-serif : Open Sans, Alegreya Sans, Sans Serif, Arial
+font.weight:  light

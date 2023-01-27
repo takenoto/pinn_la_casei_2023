@@ -6,6 +6,9 @@ import numpy as np
 import deepxde
 import tensorflow as tf
 
+import matplotlib.pyplot as plt
+import matplotlib as mpl
+
 
 from domain.params.altiok_2006_params import get_altiok2006_params
 from domain.reactor.cstr_state import CSTRState
@@ -15,6 +18,7 @@ from domain.flow.concentration_flow import ConcentrationFlow
 from main.pinn_grid_search import run_pinn_grid_search
 from main.numerical_methods import run_numerical_methods
 from main.plot_xpsv import plot_xpsv, multiplot_xpsv, XPSVPlotArg
+from main.plotting import *
 from main.plotting.plot_pinn_3d_arg import PlotPINN3DArg
 from main.plotting.pinn_conversor import get_ts_step_loss_as_xyz
 from domain.run_reactor.pinn_reactor_model_results import PINNReactorModelResults
@@ -163,6 +167,10 @@ def plot_compare_pinns_and_num(pinns, nums, eq_params, title=None):
 
 def main():
 
+    plt.style.use('./main/plotting/plot_styles.mplstyle')
+
+    run_batch_ts_test = True
+
     run_cstr = True
 
     run_fed_batch = True
@@ -179,6 +187,67 @@ def main():
         P=eq_params.Po,
         S=eq_params.So,
     )
+
+    if run_batch_ts_test:
+        """
+        Teste da influência de t_s usando o reator batelada
+        """        
+        process_params = ProcessParams(
+            max_reactor_volume=5,
+            inlet=ConcentrationFlow(
+                volume=0.0,
+                X=eq_params.Xo,
+                P=eq_params.Po,
+                S=eq_params.So,
+            ),
+            t_final=12,
+        )
+
+        start_time = timer()
+        pinn_results, best_pinn_test_index, best_pin_test_error = run_pinn_grid_search(
+            solver_params_list=None,
+            eq_params=eq_params,
+            process_params=process_params,
+            initial_state=initial_state,
+            f_out_value_calc=lambda max_reactor_volume, f_in_v, volume: 0,
+            cases_to_try=cases_to_try_batch_vary_ts(eq_params, process_params),
+        )
+        end_time = timer()
+        print(f"elapsed batch T_S pinn grid time = {end_time - start_time} secs")
+
+        # num_results = run_numerical_methods(
+        #     initial_state=initial_state,
+        #     eq_params=eq_params,
+        #     process_params=process_params,
+        #     f_out_value_calc=lambda max_reactor_volume, f_in_v, volume: 0,
+        # )
+
+        # Cria dict pra plotar
+        items = {}
+        for p in range(len(pinn_results)):
+            pinn = pinn_results[p]
+            items[p+1] = {
+                # To tentando fazer: de 1 a nº de steps
+                'x': pinn.loss_history.steps,
+                'y': np.sum(pinn.loss_history.loss_test, axis=1),
+                'title': pinn.model_name,
+                'color':'tab:orange'
+            }
+
+        # Serão 6. Faremos 2 rows, 3 columns
+        plot_comparer_multiple_grid(
+            nrows=2,
+            ncols=3,
+            items = items,
+            suptitle=None,
+            title_for_each=True,
+            gridspec_kw={"hspace": 0.4, "wspace": 0.25},
+        supxlabel='epochs (adam)',
+        supylabel='loss (test)'
+        )
+
+
+        return
 
     if run_cstr:
         initial_state = CSTRState(

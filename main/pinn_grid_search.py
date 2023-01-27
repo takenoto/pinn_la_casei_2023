@@ -16,8 +16,7 @@ from domain.reactions_ode_system_preparers.ode_preparer import ODEPreparer
 
 # Parâmetros default
 _adam_epochs_default = 1000  # [1000, 1000]#,100, 500, 1100]#, 1200]#4000]  # 14500]
-# Variando apenas t_s, temos:
-
+_layer_size_default = [1] + [12] * 2 + [4]
 
 
 def run_pinn_grid_search(
@@ -42,21 +41,33 @@ def run_pinn_grid_search(
         # ---------------------------------------
 
         def get_thing_for_key(case_key, thing_key, default=np.array([1])):
-            return np.array(cases_to_try[case_key].get(thing_key, default)).item()
+            if thing_key not in ["layer_size", "lbfgs_pre", "lbfgs_post"]:
+                return np.array(cases_to_try[case_key].get(thing_key, default)).item()
+            else:
+                return cases_to_try[case_key].get(thing_key, default)
 
         solver_params_list = [
             SolverParams(
-                name=f'pinn {case_key}',
-                num_domain=num_domain,
+                name=f"{case_key}",
+                num_domain=get_thing_for_key(case_key, "num_domain", default=600),
                 num_boundary=10,
-                num_test=1000,
+                num_test=get_thing_for_key(case_key, "num_test", default=1000),
                 adam_epochs=get_thing_for_key(
                     case_key, "adam_epochs", default=_adam_epochs_default
                 ),
                 adam_display_every=3000,
                 adam_lr=0.0001,
-                l_bfgs=l_bfgs,
-                layer_size=layer_size,
+                l_bfgs=SolverLBFGSParams(
+                    do_pre_optimization=get_thing_for_key(
+                        case_key, "lbfgs_pre", default=True
+                    ),
+                    do_post_optimization=get_thing_for_key(
+                        case_key, "lbfgs_post", default=False
+                    ),
+                ),
+                layer_size=get_thing_for_key(
+                    case_key, "layer_size", default=_layer_size_default
+                ),
                 activation="tanh",
                 initializer="Glorot uniform",
                 loss_weights=[X_weight, P_weight, S_weight, V_weight],
@@ -68,25 +79,6 @@ def run_pinn_grid_search(
                     t=get_thing_for_key(case_key, "t_s"),
                 ),
             )
-            for num_domain in [600]
-            for layer_size in [
-                # # Muito espalhadas
-                # [1] + [8] * 22 + [4],
-                # [1] + [4] * 40 + [4],
-                # # Muito concentradas
-                # [1] + [140] * 2 + [4],
-                # [1] + [320] * 1 + [4],
-                # Equilibradas
-                # [1] + [22] * 3 + [4],
-                [1]
-                + [12] * 2
-                + [4]
-                # PRINCIPAL -->>>>>>>>  # [1] + [36] * 4 + [4],
-                # [1] + [80] * 5 + [4],
-            ]
-            for l_bfgs in [
-                SolverLBFGSParams(do_pre_optimization=True, do_post_optimization=False),
-            ]
             # Basicamente um teste com adimensionalização e um sem
             for case_key in cases_to_try
             for X_weight in [1]
