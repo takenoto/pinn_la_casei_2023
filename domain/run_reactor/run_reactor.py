@@ -116,8 +116,7 @@ def run_reactor(
         loss_history, train_state = model.train()
 
     # dde.saveplot(loss_history, train_state, issave=False, isplot=False)
-
-
+    
     # ---------------------------------------
     # ------------- FINISHING ---------------
     # ---------------------------------------
