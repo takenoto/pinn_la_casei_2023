@@ -62,7 +62,7 @@ Ordem: RGBA
 """
 
 num_colors = [
-    'b',
+    "b",
     "#F39B6D",
     "#F0C987",
 ]
@@ -167,7 +167,7 @@ def plot_compare_pinns_and_num(pinns, nums, eq_params, title=None):
 
 def main():
 
-    plt.style.use('./main/plotting/plot_styles.mplstyle')
+    plt.style.use("./main/plotting/plot_styles.mplstyle")
 
     run_batch_ts_test = True
 
@@ -188,10 +188,56 @@ def main():
         S=eq_params.So,
     )
 
+    if True:
+        # Só o caso 6, pedido pelo amaro
+        process_params = ProcessParams(
+            max_reactor_volume=5,
+            inlet=ConcentrationFlow(
+                volume=0.0,
+                X=eq_params.Xo,
+                P=eq_params.Po,
+                S=eq_params.So,
+            ),
+            t_final=12,
+        )
+        pinn_results, best_pinn_test_index, best_pin_test_error = run_pinn_grid_search(
+            solver_params_list=None,
+            eq_params=eq_params,
+            process_params=process_params,
+            initial_state=initial_state,
+            f_out_value_calc=lambda max_reactor_volume, f_in_v, volume: 0,
+            cases_to_try=only_case_6_v3_for_ts(eq_params, process_params),
+        )
+        pinns = pinn_results
+        title = 'Concentrations over time for case 6 (t_S)'
+        multiplot_xpsv(
+            title=title if title else "Concentrations over time for different methods",
+            y_label="g/L",
+            x_label="time (h)",
+            t=[pinn.t for pinn in pinns],
+            X=[pinn.X for pinn in pinns],
+            P=[pinn.P for pinn in pinns],
+            S=[pinn.S for pinn in pinns],
+            V=None,
+            # y_lim=[0, eq_params.Xo * 10,
+            scaler=[pinn.solver_params.non_dim_scaler for pinn in pinns],
+            suffix=[pinn.model_name for pinn in pinns],
+            plot_args=[
+                XPSVPlotArg(
+                    ls="--",
+                    color=pinn_colors[i % len(pinn_colors)],
+                    linewidth=4,
+                    alpha=1,
+                )
+                for i in range(len(pinns))
+            ],
+        )
+        pass
+
     if run_batch_ts_test:
         """
         Teste da influência de t_s usando o reator batelada
-        """        
+        """
         process_params = ProcessParams(
             max_reactor_volume=5,
             inlet=ConcentrationFlow(
@@ -226,26 +272,25 @@ def main():
         items = {}
         for p in range(len(pinn_results)):
             pinn = pinn_results[p]
-            items[p+1] = {
+            items[p + 1] = {
                 # To tentando fazer: de 1 a nº de steps
-                'x': pinn.loss_history.steps,
-                'y': np.sum(pinn.loss_history.loss_test, axis=1),
-                'title': pinn.model_name,
-                'color':'tab:orange'
+                "x": pinn.loss_history.steps,
+                "y": np.sum(pinn.loss_history.loss_test, axis=1),
+                "title": pinn.model_name,
+                "color": "tab:orange",
             }
 
         # Serão 6. Faremos 2 rows, 3 columns
         plot_comparer_multiple_grid(
             nrows=2,
             ncols=3,
-            items = items,
+            items=items,
             suptitle=None,
             title_for_each=True,
             gridspec_kw={"hspace": 0.4, "wspace": 0.25},
-        supxlabel='epochs (adam)',
-        supylabel='loss (test)'
+            supxlabel="epochs (adam)",
+            supylabel="loss (test)",
         )
-
 
         return
 
@@ -269,7 +314,7 @@ def main():
         )
 
         def cstr_f_out_calc_numeric(max_reactor_volume, f_in_v, volume):
-            return f_in_v*(1 + (99*volume/max_reactor_volume))/100
+            return f_in_v * (1 + (99 * volume / max_reactor_volume)) / 100
             if volume >= max_reactor_volume:
                 return f_in_v
             else:
@@ -277,12 +322,14 @@ def main():
 
         def cstr_f_out_calc_tensorflow(max_reactor_volume, f_in_v, volume):
             # FIXME por enquanto é simplesmente = à de entrada. Foi o que deu pra executar.
-            return f_in_v*(1 + (99*volume/max_reactor_volume))/100
+            return f_in_v * (1 + (99 * volume / max_reactor_volume)) / 100
             # f_in_v = tf.keras.backend.get_value(f_in_v)
             # volume = tf.keras.backend.get_value(volume)
             # max_reactor_volume = tf.keras.backend.get_value(max_reactor_volume)
             return tf.cond(
-                tf.greater_equal(tf.cast(volume, tf.float32), tf.cast(max_reactor_volume, tf.float32)),
+                tf.greater_equal(
+                    tf.cast(volume, tf.float32), tf.cast(max_reactor_volume, tf.float32)
+                ),
                 lambda: tf.cast(f_in_v, tf.float32),
                 lambda: 0.0,
             )

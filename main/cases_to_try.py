@@ -17,10 +17,27 @@ LAYER SIZE
 
 """
 
-default_adam_epochs = 18000
-default_layer_size = [1] + [36] * 4 + [4]
+default_adam_epochs = 16000
+# default_layer_size = [1] + [36] * 4 + [4]
+default_layer_size = [1] + [22] * 4 + [4]
 default_num_domain = 800
 default_num_test = 1000
+
+
+def only_case_6_v3_for_ts(eq_params, process_params):
+    lbfgs_pre = True
+    _layer_size = [1] + [22] * 3 + [4]
+    _adam_epochs = 7000
+    return {
+        "case 6": {
+            "ts": 1 / eq_params.mu_max,
+            'layer_size':_layer_size,
+            'adam_epochs':_adam_epochs,
+            'lbfgs_pre':lbfgs_pre
+            
+            }
+            
+            }
 
 
 def cases_to_try_batch_vary_ts(eq_params, process_params):
@@ -29,7 +46,9 @@ def cases_to_try_batch_vary_ts(eq_params, process_params):
     Testa diferentes t_s para layer_size fixa e num_domain=800
     """
 
-    lbfgs_pre = False
+    lbfgs_pre = True
+    _layer_size = [1] + [32] * 4 + [4]
+    _adam_epochs = 16000
 
     dictionary = {
         "case 1": {
@@ -57,14 +76,13 @@ def cases_to_try_batch_vary_ts(eq_params, process_params):
             # if process_params.inlet.volume > 0
             # else 1,
         },
-        "case 6":
-            {'ts':1/eq_params.mu_max}
+        "case 6": {"ts": 1 / eq_params.mu_max},
     }
 
     # Now put the default variables in each case:
     for key in dictionary:
-        dictionary[key]["adam_epochs"] = default_adam_epochs
-        dictionary[key]["layer_size"] = default_layer_size
+        dictionary[key]["adam_epochs"] = _adam_epochs
+        dictionary[key]["layer_size"] = _layer_size
         dictionary[key]["num_domain"] = default_num_domain
         dictionary[key]["lbfgs_pre"] = lbfgs_pre
         dictionary[key]["lbfgs_post"] = False

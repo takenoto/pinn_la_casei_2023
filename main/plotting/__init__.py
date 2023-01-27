@@ -17,7 +17,9 @@ def plot_comparer_multiple_grid(
     supxlabel=None,
     supylabel=None,
     sharey=True,
-    sharex=True):
+    sharex=True,
+    yscale='log'
+    ):
     """
     x and y are the keys to access the x and y values in the dictionary
 
@@ -32,6 +34,9 @@ def plot_comparer_multiple_grid(
     Tem que ser uma lista pra que eu saiba a ordem
     Pode ter uma cor pra cada valor de y, mas no caso a lista tem que ter a mesma dimensão do vetor y ou apenas 1.
     Não é possível especificar cor só pra 2 de 3 por exemplo.
+
+    yscale pode ser 'log' ou 'linear' por exemplo. Mais em # https://matplotlib.org/3.1.3/gallery/pyplots/pyplot_scales.html
+    
     """
     i = items
 
@@ -65,6 +70,8 @@ def plot_comparer_multiple_grid(
             else:
                 ax.plot(i[s + 1][x], i[s + 1][y])
             _y_count += 1
+    if yscale:
+        plt.yscale(yscale)
     plt.show()
     return
 

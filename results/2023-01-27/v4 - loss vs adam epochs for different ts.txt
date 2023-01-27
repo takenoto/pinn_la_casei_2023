@@ -1,0 +1,3 @@
+ lbfgs_pre = False
+    _layer_size = [1] + [32] * 4 + [4]
+    _adam_epochs = 16000
