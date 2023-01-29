@@ -10,7 +10,10 @@ import matplotlib.pyplot as plt
 import matplotlib as mpl
 
 
-from domain.params.altiok_2006_params import get_altiok2006_params
+from domain.params.altiok_2006_params import (
+    get_altiok2006_params,
+    get_altiok2006_xp_data,
+)
 from domain.reactor.cstr_state import CSTRState
 from domain.reactions_ode_system_preparers.ode_preparer import ODEPreparer
 from domain.params.process_params import ProcessParams
@@ -169,6 +172,12 @@ def main():
 
     plt.style.use("./main/plotting/plot_styles.mplstyle")
 
+    run_compare_fedbatch_batch_and_cstr = True
+
+    run_case_6_check_layer_size = True
+
+    run_case_6_ts_comparison_pinn_and_numeric = True
+
     run_batch_ts_test = True
 
     run_cstr = True
@@ -188,8 +197,19 @@ def main():
         S=eq_params.So,
     )
 
-    if True:
-        # Só o caso 6, pedido pelo amaro
+    if run_compare_fedbatch_batch_and_cstr:
+        # Plota X, P, S e V de batch, fed-batch e cstr
+        # Apenas para o melhor case (t6) e o melhor case de layer_size!
+        # TODO
+        assert False, "ainda não implementado"
+        pass
+
+    if run_case_6_check_layer_size:
+        assert False, "ainda não implementado"
+        # TODO usar essa func pra chamar:
+        iterate_layer_size_with_caset6(eq_params, process_params, use_lbfgs_pre=True)
+        # Checa a influência da layer_size para o t_s do case 6 -  EM BATCH
+        # Case t6: comparando valores de erro para 9 redes, com e sem pré-otimização por lbfg-s
         process_params = ProcessParams(
             max_reactor_volume=5,
             inlet=ConcentrationFlow(
@@ -198,7 +218,22 @@ def main():
                 P=eq_params.Po,
                 S=eq_params.So,
             ),
-            t_final=12,
+            t_final=10.2,
+        )
+        pass
+
+    if run_case_6_ts_comparison_pinn_and_numeric:
+        # Case t6: XPS comparando com euler e experimental
+        # Só o caso 6, pedido pelo amaro - em BATCH
+        process_params = ProcessParams(
+            max_reactor_volume=5,
+            inlet=ConcentrationFlow(
+                volume=0.0,
+                X=eq_params.Xo,
+                P=eq_params.Po,
+                S=eq_params.So,
+            ),
+            t_final=10.2,
         )
         pinn_results, best_pinn_test_index, best_pin_test_error = run_pinn_grid_search(
             solver_params_list=None,
@@ -209,32 +244,68 @@ def main():
             cases_to_try=only_case_6_v3_for_ts(eq_params, process_params),
         )
         pinns = pinn_results
-        title = 'Concentrations over time for case 6 (t_S)'
-        multiplot_xpsv(
-            title=title if title else "Concentrations over time for different methods",
-            y_label="g/L",
-            x_label="time (h)",
-            t=[pinn.t for pinn in pinns],
-            X=[pinn.X for pinn in pinns],
-            P=[pinn.P for pinn in pinns],
-            S=[pinn.S for pinn in pinns],
-            V=None,
-            # y_lim=[0, eq_params.Xo * 10,
-            scaler=[pinn.solver_params.non_dim_scaler for pinn in pinns],
-            suffix=[pinn.model_name for pinn in pinns],
-            plot_args=[
-                XPSVPlotArg(
-                    ls="--",
-                    color=pinn_colors[i % len(pinn_colors)],
-                    linewidth=4,
-                    alpha=1,
-                )
-                for i in range(len(pinns))
-            ],
+
+        xp_data = get_altiok2006_xp_data(2)
+
+        num_results = run_numerical_methods(
+            initial_state=initial_state,
+            eq_params=eq_params,
+            process_params=process_params,
+            f_out_value_calc=lambda max_reactor_volume, f_in_v, volume: 0,
+            # Para ter as mesmas dimensões do pinn:
+            t_discretization_points=[240],
+        )
+
+        title = "Concentrations over time for case 6: pinn, numeric (euler) and experimental"
+
+        # Prepara dict para plotar
+        items = {}
+        pinn = pinn_results[0]
+        num = num_results[0]
+        titles = ["Cell", "Lactic Acid", "Lactose"]
+        pinn_vals = [pinn.X, pinn.P, pinn.S]
+        num_vals = [num.X, num.P, num.S]
+        xp_vals = [xp_data.X, xp_data.P, xp_data.S]
+        for i in range(3):
+            items[i + 1] = {
+                "title": titles[i],
+                "cases": [
+                    # Numeric
+                    {"x": num.t, "y": num_vals[i], "color": pinn_colors[0], "l": "-"},
+                    # PINN
+                    {"x": pinn.t, "y": pinn_vals[i], "color": pinn_colors[1], "l": "--"},
+                    # Experimental data
+                    {
+                        "x": xp_data.t,
+                        "y": xp_vals[i],
+                        "color": pinn_colors[2],
+                        "l": "None",
+                        'marker':'D'
+                    },
+                ],
+                # Isso aqui n serve pra nada:
+                # "x": pinn.loss_history.steps,
+                # "y": [np.sum(pinn.loss_history.loss_test, axis=1)],
+            }
+
+        plot_comparer_multiple_grid(
+            # precisa ser mais afastado pq y não é shared
+            gridspec_kw={"hspace": 0.6, "wspace": 0.25},
+            yscale='linear',
+            sharey=False,
+            nrows=1,
+            ncols=3,
+            items=items,
+            suptitle=None,
+            title_for_each=True,
+            supxlabel="time (h)",
+            supylabel="g/L",
         )
         pass
 
     if run_batch_ts_test:
+        # Teste dos cases de t_s mantendo fixos layer_size, epochs e lbfgs
+        # Plota loss por step
         """
         Teste da influência de t_s usando o reator batelada
         """
@@ -246,7 +317,7 @@ def main():
                 P=eq_params.Po,
                 S=eq_params.So,
             ),
-            t_final=12,
+            t_final=10.2,
         )
 
         start_time = timer()
@@ -260,13 +331,6 @@ def main():
         )
         end_time = timer()
         print(f"elapsed batch T_S pinn grid time = {end_time - start_time} secs")
-
-        # num_results = run_numerical_methods(
-        #     initial_state=initial_state,
-        #     eq_params=eq_params,
-        #     process_params=process_params,
-        #     f_out_value_calc=lambda max_reactor_volume, f_in_v, volume: 0,
-        # )
 
         # Cria dict pra plotar
         items = {}
@@ -287,12 +351,10 @@ def main():
             items=items,
             suptitle=None,
             title_for_each=True,
-            gridspec_kw={"hspace": 0.4, "wspace": 0.25},
             supxlabel="epochs (adam)",
             supylabel="loss (test)",
         )
-
-        return
+        pass
 
     if run_cstr:
         initial_state = CSTRState(
@@ -416,7 +478,7 @@ def main():
                 P=eq_params.Po,
                 S=eq_params.So,
             ),
-            t_final=10,
+            t_final=10.2,
         )
         # ----------------------------
         # NUMERICAL
