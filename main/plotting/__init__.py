@@ -1,8 +1,10 @@
 # ref: https://matplotlib.org/stable/gallery/subplots_axes_and_figures/subplots_demo.html
+# marker style ref : https://matplotlib.org/stable/api/markers_api.html
 
 import matplotlib.pyplot as plt
 
 
+# TODO passar fig_size
 def plot_comparer_multiple_grid(
     nrows,
     ncols,
@@ -13,12 +15,13 @@ def plot_comparer_multiple_grid(
     title_key="title",
     color_key="color",
     title_for_each=True,
-    gridspec_kw={"hspace": 0.45, "wspace": 0.3},
+    gridspec_kw={"hspace": 0.3, "wspace": 0.09},
     supxlabel=None,
     supylabel=None,
     sharey=True,
     sharex=True,
-    yscale='log'
+    yscale='log',
+    figsize=(5.5, 3.5),
     ):
     """
     x and y are the keys to access the x and y values in the dictionary
@@ -40,7 +43,7 @@ def plot_comparer_multiple_grid(
     """
     i = items
 
-    fig, axes_normal = plt.subplots(nrows=nrows, ncols=ncols, gridspec_kw=gridspec_kw, sharex=sharex, sharey=sharey)
+    fig, axes_normal = plt.subplots(figsize=figsize, nrows=nrows, ncols=ncols, gridspec_kw=gridspec_kw, sharex=sharex, sharey=sharey)
 
     if suptitle:
         fig.suptitle(suptitle, y=0.94)
@@ -56,20 +59,34 @@ def plot_comparer_multiple_grid(
     for s in range(len(axes)):
         ax = axes[s]
         ax.set_title(i[s + 1][title_key])
-        _y_count = 0
-        for y in y_keys:
-            if isinstance(i[s + 1][color_key], list):
-                if len(i[s + 1][color_key]) > 1:
-                    color = i[s + 1][color_key][_y_count]
+
+        # Se tiver a key 'cases', então os ys e xs estão vindo em pares (o x não é o mesmo pra todos)
+        if 'cases' in i[s+1].keys():
+            for d in i[s+1]['cases']:
+                # Itera lista de cases, plotando x, y e color
+                ___color = d.get('color', 'b')
+                ___x = d['x']
+                ___y = d['y']
+                ___line_args = d.get('l', 'None')
+                ___marker = d.get('marker', None)
+                ax.plot(___x, ___y, linestyle=___line_args, color=___color, marker=___marker, markersize=3)
+
+        else:
+            _y_count = 0
+            for y in y_keys:
+                # Determina a color:
+                if isinstance(i[s + 1][color_key], list):
+                    if len(i[s + 1][color_key]) > 1:
+                        color = i[s + 1][color_key][_y_count]
+                    else:
+                        color = i[s + 1][color_key][0]
                 else:
-                    color = i[s + 1][color_key][0]
-            else:
-                color = i[s + 1][color_key]
-            if(color is not None):
-                ax.plot(i[s + 1][x], i[s + 1][y], color)
-            else:
-                ax.plot(i[s + 1][x], i[s + 1][y])
-            _y_count += 1
+                    color = i[s + 1][color_key]
+                if(color is not None):
+                    ax.plot(i[s + 1][x], i[s + 1][y], color)
+                else:
+                    ax.plot(i[s + 1][x], i[s + 1][y])
+                _y_count += 1
     if yscale:
         plt.yscale(yscale)
     plt.show()
@@ -77,17 +94,33 @@ def plot_comparer_multiple_grid(
 
 
 if __name__ == "__main__":
+    plt.style.use("./main/plotting/plot_styles.mplstyle")
+
     # Exemplo funcionando:
     plot_comparer_multiple_grid(
+        yscale='linear',
         nrows=2,
         ncols=2,
         items={
+            # Caso tenha vários cases, pode fazer assim:
             1: {
-                "x": [1, 2, 3],
-                "y": [4, 5, 1],
-                "color": "tab:blue",
-                "title": "blue bar",
+                'title':'multiple ys',
+                'cases':
+                [
+                    # "l" são os line_args, pra dizer se é tracejado -- linha - pontilhado : etc
+                    {'x': [-2, 2, 3], 'y':[4, 5, 1.5], 'color':'tab:orange', 'l':'None', 'marker':'D'},
+                    {'x': [1, 0, 5], 'y':[3.5, 4, 0.1], 'color':'green', 'l':'--'},
+                    {'x': [1, 2, 6], 'y':[3, 2, 3], 'color':'r', 'l':'-'},
+                ]
             },
+            # Caso a keyword 'case' não exista, segue normalmente:
+            # 1: {
+            #     "x": [1, 2, 3],
+            #     "y": [4, 5, 1],
+            #     # "color": "tab:blue",
+            #     'color':'o r',
+            #     "title": "blue bar",
+            # },
             2: {
                 "x": [1, 9, 3],
                 "y": [3, -5, 6],
@@ -109,7 +142,7 @@ if __name__ == "__main__":
         },
         suptitle=None,  #'Super colors',
         title_for_each=True,
-        gridspec_kw={"hspace": 0.4, "wspace": 0.25},
+        gridspec_kw={"hspace": 0.3, "wspace": 0.09},
         supxlabel="Bananas",
         supylabel="Oranges",
     )
