@@ -23,7 +23,6 @@ def run_reactor(
     initial_state: CSTRState,
     f_out_value_calc,
 )->PINNReactorModelResults:
-    # TODO permitir passar um endereço pra salvar as imagens dos gráficos, loss_function e afins
     # NÃO! O objetivo dessa função deve ser só calcular. printar, salvar, tudo por fora.
     """
     Runs a reactor that supports both outlet and inlet.
