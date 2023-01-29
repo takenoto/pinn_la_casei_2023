@@ -23,6 +23,6 @@ figure.titlesize : 16
 ## FONTS
 font.size : 12
 font.family : sans-serif
-front.serif : Crimson Pro, Alegreya, Times New Roman
+font.serif : Crimson Pro, Alegreya, Times New Roman
 font.sans-serif : Open Sans, Alegreya Sans, Sans Serif, Arial
 font.weight:  light
