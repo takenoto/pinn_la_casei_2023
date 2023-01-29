@@ -96,6 +96,58 @@ def get_altiok2006_params():
     }
 
 
+class XpData:
+    def __init__(self, t, X, P, S):
+        self.t = t
+        self.X = X
+        self.P = P
+        self.S = S
+
+
+def get_altiok2006_xp_data(xp_num=None):
+    if xp_num == 2:
+        return XpData(
+            t=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+            X=[
+                1.45,
+                1.80,
+                2.09,
+                2.42,
+                3.07,
+                3.80,
+                4.65,
+                5.10,
+                4.84,
+                4.70,
+            ],
+            P=[
+                5.50,
+                5.80,
+                6.10,
+                7.50,
+                9.50,
+                12.00,
+                16.00,
+                17.80,
+                18.50,
+                18.60,
+            ],
+            S=[
+                21.40,
+                19.00,
+                16.90,
+                14.50,
+                10.00,
+                6.50,
+                2.50,
+                0.10,
+                0.03,
+                0.03,
+            ],
+        )
+    assert False
+
+
 def test():
     """
     Testa se a classe está funcionando adequadamente
