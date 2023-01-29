@@ -24,12 +24,60 @@ default_num_domain = 800
 default_num_test = 1000
 
 
+
+def iterate_layer_size_with_caset6(eq_params, process_params, use_lbfgs_pre=True):
+    lbfgs_pre = use_lbfgs_pre
+    _adam_epochs = 18000
+
+    dictionary = {
+        # 3 muito espalhadas:
+        't6_lay1':{
+            'layer_size': [1] + [4] * 16 + [4],
+        },
+        't6_lay2':{
+            'layer_size': [1] + [6] * 12 + [4],
+        },
+        't6_lay3':{
+            'layer_size': [1] + [8] * 10 + [4],
+        },
+        # 3 muito concentradas
+        't6_lay4':{
+            'layer_size': [1] + [120] * 3 + [4],
+        },
+        't6_lay5':{
+            'layer_size': [1] + [200] * 2 + [4],
+        },
+        't6_lay6':{
+            'layer_size': [1] + [300] * 2 + [4],
+        },
+        # Equilibradas
+        't6_lay7':{
+            'layer_size': [1] + [22] * 4 + [4],
+        },
+        't6_lay8':{
+            'layer_size': [1] + [36] * 4 + [4],
+        },
+        't6_lay9':{
+            'layer_size': [1] + [80] * 5 + [4],
+        },
+    }
+
+
+    for key in dictionary:
+        dictionary[key]["adam_epochs"] = _adam_epochs
+        dictionary[key]["num_domain"] = default_num_domain
+        dictionary[key]["lbfgs_pre"] = lbfgs_pre
+        dictionary[key]["lbfgs_post"] = False
+
+    return dictionary
+
+
 def only_case_6_v3_for_ts(eq_params, process_params):
     lbfgs_pre = True
-    _layer_size = [1] + [22] * 3 + [4]
-    _adam_epochs = 7000
+    _layer_size = [1] + [22] * 4 + [4]
+    _adam_epochs = 18000
     return {
-        "case 6": {
+        "case t_6": {
             "ts": 1 / eq_params.mu_max,
             'layer_size':_layer_size,
             'adam_epochs':_adam_epochs,
@@ -39,6 +87,8 @@ def only_case_6_v3_for_ts(eq_params, process_params):
             
             }
 
+    
+
 
 def cases_to_try_batch_vary_ts(eq_params, process_params):
 
@@ -47,36 +97,36 @@ def cases_to_try_batch_vary_ts(eq_params, process_params):
     """
 
     lbfgs_pre = True
-    _layer_size = [1] + [32] * 4 + [4]
-    _adam_epochs = 16000
+    _layer_size = [1] + [22] * 4 + [4]
+    _adam_epochs = 18000
 
     dictionary = {
-        "case 1": {
+        "case t_1": {
             "t_s": process_params.t_final,
         },
-        "case 2": {
+        "case t_2": {
             "t_s": 1
             / (eq_params.mu_max * eq_params.So / (eq_params.K_S + eq_params.So))
         },
-        "case 3": {
+        "case t_3": {
             "t_s": eq_params.alpha
             * eq_params.So
             * (eq_params.K_S + eq_params.So)
             / eq_params.mu_max
         },
-        "case 4": {
+        "case t_4": {
             "t_s": (1 / eq_params.Y_PS)
             * eq_params.alpha
             * (eq_params.K_S + eq_params.So)
             / eq_params.mu_max,
         },
-        "case 5": {
+        "case t_5": {
             "t_s": 1
             # process_params.max_reactor_volume / process_params.inlet.volume
             # if process_params.inlet.volume > 0
             # else 1,
         },
-        "case 6": {"ts": 1 / eq_params.mu_max},
+        "case t_6": {"ts": 1 / eq_params.mu_max},
     }
 
     # Now put the default variables in each case:
