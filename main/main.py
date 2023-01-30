@@ -172,7 +172,7 @@ def main():
 
     plt.style.use("./main/plotting/plot_styles.mplstyle")
 
-    run_compare_fedbatch_batch_and_cstr = True
+    run_compare_fedbatch_batch_and_cstr = False
 
     run_case_6_check_layer_size = True
 
@@ -205,9 +205,6 @@ def main():
         pass
 
     if run_case_6_check_layer_size:
-        assert False, "ainda não implementado"
-        # TODO usar essa func pra chamar:
-        iterate_layer_size_with_caset6(eq_params, process_params, use_lbfgs_pre=True)
         # Checa a influência da layer_size para o t_s do case 6 -  EM BATCH
         # Case t6: comparando valores de erro para 9 redes, com e sem pré-otimização por lbfg-s
         process_params = ProcessParams(
@@ -219,6 +216,66 @@ def main():
                 S=eq_params.So,
             ),
             t_final=10.2,
+        )
+
+        # pinns_cases_3 = iterate_layer_size_with_caset6(eq_params,
+        #     process_params,
+        #     use_lbfgs_pre=True,
+        #     ts_case_num=3)
+        pinns_cases_6 = iterate_layer_size_with_caset6(eq_params,
+            process_params,
+            use_lbfgs_pre=False,
+            ts_case_num=6)
+
+        start_time = timer()
+        pinns_6, best_pinn_test_index_6, best_pin_test_error_6 = run_pinn_grid_search(
+            solver_params_list=None,
+            eq_params=eq_params,
+            process_params=process_params,
+            initial_state=initial_state,
+            f_out_value_calc=lambda max_reactor_volume, f_in_v, volume: 0,
+            cases_to_try=pinns_cases_6,
+        )
+        end_time = timer()
+        print(f"elapsed batch t6 layers pinn grid time = {end_time - start_time} secs")
+        # pinns_3, best_pinn_test_index_3, best_pin_test_error_3 = run_pinn_grid_search(
+        #     solver_params_list=None,
+        #     eq_params=eq_params,
+        #     process_params=process_params,
+        #     initial_state=initial_state,
+        #     f_out_value_calc=lambda max_reactor_volume, f_in_v, volume: 0,
+        #     cases_to_try=pinns_cases_3,
+        # )
+
+        # pinns yol e nol tem as mesmas dimensões.
+        # Agora itera e preenche o dict pra plotar
+        # Prepara dict para plotar
+        items = {}
+        p6 = pinns_6
+        # p3 = pinns_3
+        for i in range(len(p6)):
+            items[i + 1] = {
+                "title": p6[i].model_name,
+                "cases": [
+                    # PINN - case ts6
+                    {"x": p6[i].loss_history.steps, "y": np.sum(p6[i].loss_history.loss_test, axis=1), "color": pinn_colors[1], "l": "-"},
+                ],
+            }
+
+        plot_comparer_multiple_grid(
+            # labels=['loss, case ts6', 'loss, case ts3'],
+            figsize=(7.2, 6.5),
+            gridspec_kw={"hspace": 0.35, "wspace": 0.14},
+            yscale='log',
+            sharey=True,
+            sharex=False,
+            nrows=3,
+            ncols=3,
+            items=items,
+            suptitle=None,
+            title_for_each=True,
+            supxlabel="steps",
+            supylabel="loss",
         )
         pass
 
