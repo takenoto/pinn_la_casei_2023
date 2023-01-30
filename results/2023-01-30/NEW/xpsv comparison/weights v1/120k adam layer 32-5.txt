@@ -1,0 +1,47 @@
+	_layer_size = [1] + [32] * 5 + [4]
+
+	# NOVO Nº EPOCHS
+        case_to_use_b['t_5']['adam_epochs'] = 120000
+        case_to_use_fb['t_5']['adam_epochs'] = 120000
+        case_to_use_cstr['t_5']['adam_epochs'] = 120000
+
+        # BATCH
+        case_to_use_b['t_5']['w_X'] = 5
+        case_to_use_b['t_5']['w_V'] = 10
+        
+        # FED BATCH - melhor weight em 
+        case_to_use_fb['t_5']['w_P'] = 3
+
+        # CSTR - melhor weight em case 3
+        case_to_use_fb['t_5']['w_X'] = 3
+
+----------------------------
+
+Best model at step 114000:
+  train loss: 1.28e-06
+  test loss: 1.28e-06
+  test metric: []
+
+'train' took 381.746958 s
+
+----------------------------
+
+Best model at step 120000:
+  train loss: 1.42e+00
+  test loss: 3.96e+00
+  test metric: []
+
+'train' took 401.057235 s
+
+----------------------------
+
+Best model at step 120000:
+  train loss: 2.17e+00
+  test loss: 6.55e+00
+  test metric: []
+
+'train' took 426.755074 s
+
+----------------------------
+
+elapsed time for CSTR, BATCH & FEDBATCH XPSV = 1213.8658277 secs

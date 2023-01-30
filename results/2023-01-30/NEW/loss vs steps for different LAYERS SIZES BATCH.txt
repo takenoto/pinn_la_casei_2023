@@ -1,0 +1,37 @@
+elapsed batch t_best layers pinn grid time = 1180.5543394000001 secs
+model = t_lay1
+best error for model = 0.0009341966360807419
+------------
+model = t_lay2
+best error for model = 0.0004152143083047122
+------------
+model = t_lay3
+best error for model = 0.18256831169128418
+------------
+model = t_lay4
+best error for model = 0.3064882159233093
+------------
+model = t_lay5
+best error for model = 0.3046906292438507
+------------
+model = t_lay6
+best error for model = 0.0005951040075160563
+------------
+model = t_lay7
+best error for model = 0.3019980490207672
+------------
+model = t_lay8
+best error for model = 0.00022389841615222394
+------------
+model = t_lay9
+best error for model = 0.0004420240584295243
+------------
+model = t_lay10
+best error for model = 0.0003857129777316004
+------------
+model = t_lay11
+best error for model = 0.3112529516220093
+------------
+model = t_lay12
+best error for model = 3.292535257060081e-05
+------------

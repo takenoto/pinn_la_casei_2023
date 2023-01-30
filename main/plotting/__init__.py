@@ -1,7 +1,8 @@
 # ref: https://matplotlib.org/stable/gallery/subplots_axes_and_figures/subplots_demo.html
 # marker style ref : https://matplotlib.org/stable/api/markers_api.html
-
 import matplotlib.pyplot as plt
+
+# TODO receber nbins e eixo, x e y,
 
 
 # TODO colocar modo de salvar imagem automaticamente recebendo nome/path
@@ -23,7 +24,7 @@ def plot_comparer_multiple_grid(
     sharex=True,
     yscale='log',
     figsize=(5.5, 3.5),
-    labels=None # lista estilo ['a', 'b', 'c']
+    labels=None, # lista estilo ['a', 'b', 'c']
     ):
     """
     x and y are the keys to access the x and y values in the dictionary
@@ -60,7 +61,9 @@ def plot_comparer_multiple_grid(
     axes = axes_normal.flat  # Axes flattened in a list
     for s in range(len(axes)):
         ax = axes[s]
-        ax.set_title(i[s + 1][title_key])
+        has_title = i[s + 1].get(title_key, None)
+        if has_title:
+            ax.set_title(i[s + 1][title_key])
 
         # Se tiver a key 'cases', então os ys e xs estão vindo em pares (o x não é o mesmo pra todos)
         if 'cases' in i[s+1].keys():
@@ -71,30 +74,43 @@ def plot_comparer_multiple_grid(
                 ___y = d['y']
                 ___line_args = d.get('l', 'None')
                 ___marker = d.get('marker', None)
-                ax.plot(___x, ___y, linestyle=___line_args, color=___color, marker=___marker, markersize=3)
+                if ___x is None or ___y is None:
+                    pass
+                else:
+                    ax.plot(___x, ___y, linestyle=___line_args, color=___color, marker=___marker, markersize=3)
+                pass
+            pass
 
-        else:
-            _y_count = 0
-            for y in y_keys:
-                # Determina a color:
-                if isinstance(i[s + 1][color_key], list):
-                    if len(i[s + 1][color_key]) > 1:
-                        color = i[s + 1][color_key][_y_count]
-                    else:
-                        color = i[s + 1][color_key][0]
-                else:
-                    color = i[s + 1][color_key]
-                if(color is not None):
-                    ax.plot(i[s + 1][x], i[s + 1][y], color)
-                else:
-                    ax.plot(i[s + 1][x], i[s + 1][y])
-                _y_count += 1
+        ax_y_label = i[s+1].get('y_label', None)
+        ax_x_label = i[s+1].get('x_label', None)
+        ax_yscale = i[s+1].get('ax_yscale', None)
+        ax_nbinsx = i[s+1].get('nbinxs', None)
+        ax_nbinsy = i[s+1].get('nbinsy', None)
+        y_majlocator = i[s+1].get('y_majlocator', None)
+        y_minlocator = i[s+1].get('y_minlocator', None)
+        if ax_y_label:
+            ax.set_ylabel(ax_y_label)
+        if ax_x_label:
+            ax.set_xlabel(ax_x_label)
+        if ax_yscale:
+            ax.set_yscale(ax_yscale)
+        if ax_nbinsx:
+            ax.locator_params(nbins=ax_nbinsx, axis='x')
+        if ax_nbinsy:
+            ax.locator_params(nbins=ax_nbinsy, axis='y')
+        if y_majlocator:
+            ax.yaxis.set_major_locator(y_majlocator)
+        if y_minlocator:
+            ax.yaxis.set_minor_locator(y_minlocator)
+        pass
+    
     if yscale:
         plt.yscale(yscale)
     if labels:
         fig.legend(labels, loc='upper center', #bbox_to_anchor=(1,-0.1), 
             ncol=len(labels), bbox_transform=fig.transFigure)
 
+    # plt.tight_layout()
     plt.show()
     return
 
@@ -107,16 +123,20 @@ if __name__ == "__main__":
         figsize=(7,6.5),
         labels=['a', 'b', 'c', 'd', 'e', 'f', 'g'],
         yscale='linear',
+        sharey=False,
+        sharex=False,
         nrows=2,
         ncols=2,
         items={
             # Caso tenha vários cases, pode fazer assim:
             1: {
+                'nbinsy':20,
+                'y_label': 'y turbo colorido',
                 'title':'multiple ys',
                 'cases':
                 [
                     # "l" são os line_args, pra dizer se é tracejado -- linha - pontilhado : etc
-                    {'x': [-2, 2, 3], 'y':[4, 5, 1.5], 'color':'tab:orange', 'l':'None', 'marker':'D'},
+                    {'x': [-2, 2, 3], 'y':[4, 5, 1.5], 'color':'tab:orange', 'l':'None', 'marker':'D',},
                     {'x': [1, 0, 5], 'y':[3.5, 4, 0.1], 'color':'green', 'l':'--'},
                     {'x': [1, 2, 6], 'y':[3, 2, 3], 'color':'r', 'l':'-'},
                 ]
@@ -130,8 +150,11 @@ if __name__ == "__main__":
             #     "title": "blue bar",
             # },
             2: {
+                'y_majlocator': plt.LogLocator(base=10, numticks=4),
+                'ax_yscale': 'log',
+                'x_label': 'Liter',
                 "x": [1, 9, 3],
-                "y": [3, -5, 6],
+                "y": [3271, 5000, 6000],
                 "color": "tab:orange",
                 "title": "super_laranja",
             },

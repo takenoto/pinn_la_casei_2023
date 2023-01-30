@@ -70,7 +70,11 @@ def run_pinn_grid_search(
                 ),
                 activation="tanh",
                 initializer="Glorot uniform",
-                loss_weights=[X_weight, P_weight, S_weight, V_weight],
+                loss_weights=[
+                    get_thing_for_key(case_key, "w_X", 1), 
+                    get_thing_for_key(case_key, "w_P", 1), 
+                    get_thing_for_key(case_key, "w_S", 1), 
+                    get_thing_for_key(case_key, "w_V", 1)],
                 non_dim_scaler=NonDimScaler(
                     X=get_thing_for_key(case_key, "X_s"),
                     P=get_thing_for_key(case_key, "P_s"),
@@ -81,10 +85,6 @@ def run_pinn_grid_search(
             )
             # Basicamente um teste com adimensionalização e um sem
             for case_key in cases_to_try
-            for X_weight in [1]
-            for P_weight in [1]
-            for S_weight in [1]
-            for V_weight in [1]
         ]
 
     # ---------------------------------------

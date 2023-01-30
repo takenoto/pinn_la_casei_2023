@@ -1,0 +1,29 @@
+elapsed time for WEIGHT test = 2785.1088443999997 secs
+
+******
+_layer_size = [1] + [22] * 3 + [4]
+
+_adam_epochs = 30000
+
+*******
+
+Lembre que o número do "w" será index + 1
+
+*******
+
+best index for batch:
+8 -> Ou seja, w9
+best error for batch:
+0.00014995551
+
+
+best index for fedbatch:
+2 -> Ou seja, w3
+best error for fedbatch:
+1.4259005
+
+
+best index for cstr:
+1 -> Ou seja, w2
+best error for cstr:
+0.00036470048
