@@ -18,30 +18,31 @@
 ----------------------------
 
 Best model at step 120000:
-  train loss: 6.25e-06
-  test loss: 1.08e-02
+  train loss: 5.65e+00
+  test loss: 5.69e+00
   test metric: []
 
-'train' took 184.228958 s
+'train' took 1005.581661 s
 
 ----------------------------
 
 Best model at step 120000:
-  train loss: 8.05e-01
-  test loss: 8.03e-01
+  train loss: 1.86e+00
+  test loss: 4.62e+03
   test metric: []
 
-'train' took 194.583911 s
+'train' took 806.950414 s
 
 ----------------------------
 
 Best model at step 120000:
-  train loss: 6.06e+01
-  test loss: 6.60e+01
+  train loss: 3.11e-06
+  test loss: 4.26e+00
   test metric: []
 
-'train' took 199.150425 s
+'train' took 827.979871 s
 
 ----------------------------
 
-elapsed time for CSTR, BATCH & FEDBATCH XPSV = 582.1075161 secs
+Starting Numerical Methods
+elapsed time for CSTR, BATCH & FEDBATCH XPSV = 2644.4909285999997 secs

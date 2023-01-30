@@ -352,6 +352,9 @@ def main():
         case_to_use_b['t_5']['adam_epochs'] = 120000
         case_to_use_fb['t_5']['adam_epochs'] = 120000
         case_to_use_cstr['t_5']['adam_epochs'] = 120000
+        case_to_use_b['t_5']['layer_size'] = [1] + [90] * 3 + [4]
+        case_to_use_fb['t_5']['layer_size'] = [1] + [90] * 3 + [4]
+        case_to_use_cstr['t_5']['layer_size'] = [1] + [90] * 3 + [4]
 
         # BATCH
         case_to_use_b['t_5']['w_X'] = 5
