@@ -4,7 +4,8 @@
 import matplotlib.pyplot as plt
 
 
-# TODO passar fig_size
+# TODO colocar modo de salvar imagem automaticamente recebendo nome/path
+# TODO importante pra que não dependa de ficar plotando toda hora e posas rodar de de uma vez
 def plot_comparer_multiple_grid(
     nrows,
     ncols,
@@ -22,6 +23,7 @@ def plot_comparer_multiple_grid(
     sharex=True,
     yscale='log',
     figsize=(5.5, 3.5),
+    labels=None # lista estilo ['a', 'b', 'c']
     ):
     """
     x and y are the keys to access the x and y values in the dictionary
@@ -89,6 +91,10 @@ def plot_comparer_multiple_grid(
                 _y_count += 1
     if yscale:
         plt.yscale(yscale)
+    if labels:
+        fig.legend(labels, loc='upper center', #bbox_to_anchor=(1,-0.1), 
+            ncol=len(labels), bbox_transform=fig.transFigure)
+
     plt.show()
     return
 
@@ -98,6 +104,8 @@ if __name__ == "__main__":
 
     # Exemplo funcionando:
     plot_comparer_multiple_grid(
+        figsize=(7,6.5),
+        labels=['a', 'b', 'c', 'd', 'e', 'f', 'g'],
         yscale='linear',
         nrows=2,
         ncols=2,
