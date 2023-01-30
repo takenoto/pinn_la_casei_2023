@@ -25,12 +25,15 @@ default_num_test = 1000
 
 
 
-def iterate_layer_size_with_caset6(eq_params, process_params, use_lbfgs_pre=True):
+def iterate_layer_size_with_caset6(eq_params, process_params, use_lbfgs_pre=True, ts_case_num=6):
     lbfgs_pre = use_lbfgs_pre
     _adam_epochs = 18000
+    _adam_epochs = 30000
+    # _adam_epochs = 2000
+    # _adam_epochs = 10
 
     dictionary = {
-        # 3 muito espalhadas:
+        # Espalhadas: neurônio/camada <= 4
         't6_lay1':{
             'layer_size': [1] + [4] * 16 + [4],
         },
@@ -40,25 +43,29 @@ def iterate_layer_size_with_caset6(eq_params, process_params, use_lbfgs_pre=True
         't6_lay3':{
             'layer_size': [1] + [8] * 10 + [4],
         },
-        # 3 muito concentradas
+        # Concentradas:
+        # relação neuronio/nº camda > 20
         't6_lay4':{
-            'layer_size': [1] + [120] * 3 + [4],
+            # 'layer_size': [1] + [90] * 2 + [4],
+            'layer_size': [1] + [42] * 2 + [4],
         },
         't6_lay5':{
-            'layer_size': [1] + [200] * 2 + [4],
+            # 'layer_size': [1] + [120] * 1 + [4],
+            'layer_size': [1] + [80] * 1 + [4],
         },
         't6_lay6':{
-            'layer_size': [1] + [300] * 2 + [4],
+            # 'layer_size': [1] + [150] * 1 + [4],
+            'layer_size': [1] + [100] * 2 + [4],
         },
-        # Equilibradas
+        # Equilibradas: relação neurônio/camada >4 e <=20
         't6_lay7':{
-            'layer_size': [1] + [22] * 4 + [4],
+            'layer_size': [1] + [22] * 3 + [4],
         },
         't6_lay8':{
-            'layer_size': [1] + [36] * 4 + [4],
+            'layer_size': [1] + [30] * 3 + [4],
         },
         't6_lay9':{
-            'layer_size': [1] + [80] * 5 + [4],
+            'layer_size': [1] + [60] * 3 + [4],
         },
     }
 
@@ -68,6 +75,13 @@ def iterate_layer_size_with_caset6(eq_params, process_params, use_lbfgs_pre=True
         dictionary[key]["num_domain"] = default_num_domain
         dictionary[key]["lbfgs_pre"] = lbfgs_pre
         dictionary[key]["lbfgs_post"] = False
+        # Case 6:
+        if ts_case_num == 6:
+            dictionary[key]['ts'] = 1 / eq_params.mu_max,
+        elif ts_case_num == 5:
+            dictionary[key]['ts'] = 1,
+        elif ts_case_num == 3:
+            dictionary[key]['ts'] = eq_params.alpha* eq_params.So* (eq_params.K_S + eq_params.So)/ eq_params.mu_max
 
     return dictionary
 
