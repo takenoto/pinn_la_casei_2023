@@ -172,6 +172,8 @@ def main():
 
     plt.style.use("./main/plotting/plot_styles.mplstyle")
 
+    run_fedbatch_cstr_nondim_test = False
+    
     run_batch_ts_test = False
 
     run_case_6_check_layer_size = False
@@ -247,6 +249,82 @@ def main():
             ),
             t_final=24*4,
         )
+
+    if run_fedbatch_cstr_nondim_test:
+        print('RUN FED-BATCH + CSTR NON DIM TEST')
+        # Testa valores de adimensinalização para cstr e fed batch e determina
+        # em quais eles performam melhor
+        cases_fed_batch = cases_non_dim(eq_params, process_params_feed_cstr)
+        cases_cstr = cases_non_dim(eq_params, process_params_feed_cstr)
+
+        start_time = timer()
+
+        print('\n---------------\n')
+        print('STARTING FED BATCH')
+        # Fed batch
+        p_fb, p_fb_i, p_fb_e = run_pinn_grid_search(
+            solver_params_list=None,
+            eq_params=eq_params,
+            process_params=process_params_feed_on,
+            initial_state=initial_state_fed_batch,
+            f_out_value_calc=lambda max_reactor_volume, f_in_v, volume: 0,
+            cases_to_try=cases_fed_batch
+        )
+        print('\n---------------\n')
+        print('STARTING CSTR')
+        # CSTR
+        def cstr_f_out_calc_tensorflow(max_reactor_volume, f_in_v, volume):
+            # estou assumindo que já começa no estado estacionário:
+            return f_in_v*tf.math.pow(volume/max_reactor_volume, 7)
+        p_cstr, p_cstr_i, p_cstr_e = run_pinn_grid_search(
+            solver_params_list=None,
+            eq_params=eq_params,
+            process_params=process_params_feed_cstr,
+            initial_state=initial_state_cstr,
+            f_out_value_calc=cstr_f_out_calc_tensorflow,
+            cases_to_try=cases_cstr)
+        
+        end_time = timer()
+        
+        # PLOTTING
+        items = {}
+        for i in range(len(p_fb)):
+            items[i + 1] = {
+                "title": p_fb[i].model_name,
+                "cases": [
+                    {"x": p_fb[i].loss_history.steps, "y": np.sum(p_fb[i].loss_history.loss_test, axis=1), "color": pinn_colors[2], "l": "--"},
+                    {"x": p_cstr[i].loss_history.steps, "y": np.sum(p_cstr[i].loss_history.loss_test, axis=1), "color": pinn_colors[3], "l": ":"},
+                ],
+            }
+
+        print(f"elapsed time for NONDIM test = {end_time - start_time} secs")
+
+        plot_comparer_multiple_grid(
+            labels=['Fed-Batch', 'CSTR'],
+            figsize=(8.6, 6),
+            gridspec_kw={"hspace": 0.25, "wspace": 0.11},
+            yscale='log',
+            sharey=True,
+            sharex=True,
+            nrows=2,
+            ncols=3,
+            items=items,
+            suptitle=None,
+            title_for_each=True,
+            supxlabel="epochs",
+            supylabel="loss (test)",
+        )
+
+
+        print('best index for fedbatch:')
+        print(p_fb_i)
+        print('best error for fedbatch:')
+        print(p_fb_e)
+        print('best index for cstr:')
+        print(p_cstr_i)
+        print('best error for cstr:')
+        print(p_cstr_e)
+
 
     if run_weights:
         # DEMORA APROXIMADAMENTE 30 MINUTOS
@@ -349,22 +427,35 @@ def main():
         # case_to_use['t_6']['adam_epochs'] = 10
 
         # NOVO Nº EPOCHS
-        case_to_use_b['t_5']['adam_epochs'] = 120000
-        case_to_use_fb['t_5']['adam_epochs'] = 120000
-        case_to_use_cstr['t_5']['adam_epochs'] = 120000
-        case_to_use_b['t_5']['layer_size'] = [1] + [90] * 3 + [4]
-        case_to_use_fb['t_5']['layer_size'] = [1] + [90] * 3 + [4]
-        case_to_use_cstr['t_5']['layer_size'] = [1] + [90] * 3 + [4]
+        case_to_use_b['t_5']['adam_epochs'] = 800#00
+        case_to_use_fb['t_5']['adam_epochs'] = 800#00
+        case_to_use_cstr['t_5']['adam_epochs'] = 800#00
+        case_to_use_b['t_5']['layer_size'] = [1] + [32] * 5 + [4]
+        case_to_use_fb['t_5']['layer_size'] = [1] + [22] * 3 + [4]
+        case_to_use_cstr['t_5']['layer_size'] = [1] + [22] * 2 + [4]
 
+        case_to_use_b['t_5']['lbfgs_pre'] = True
+        case_to_use_fb['t_5']['lbfgs_pre'] = True
+        case_to_use_cstr['t_5']['lbfgs_pre'] = True
+        case_to_use_b['t_5']['lbfgs_post'] = True
+        case_to_use_fb['t_5']['lbfgs_post'] = True
+        case_to_use_cstr['t_5']['lbfgs_post'] = True
+        
         # BATCH
-        case_to_use_b['t_5']['w_X'] = 5
-        case_to_use_b['t_5']['w_V'] = 10
+        # case_to_use_b['t_5']['w_X'] = 5
+        # case_to_use_b['t_5']['w_V'] = 10
         
         # FED BATCH - melhor weight em 
-        case_to_use_fb['t_5']['w_P'] = 3
+        # # case_to_use_fb['t_5']['w_P'] = 3
+        case_to_use_fb['t_5']['V_s'] = 5
+        case_to_use_fb['t_5']['X_s'] = eq_params.Xm
+        case_to_use_fb['t_5']['P_s'] = eq_params.Pm
+        case_to_use_fb['t_5']['S_s'] = eq_params.So
 
         # CSTR - melhor weight em case 3
-        case_to_use_fb['t_5']['w_X'] = 3
+        case_to_use_cstr['t_5']['w_X'] = 3
+        case_to_use_cstr['t_5']['V_s'] = 5
+        case_to_use_cstr['t_5']['X_s'] = eq_params.Xm
 
 
         start_time = timer()

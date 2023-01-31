@@ -1,0 +1,5 @@
+O fedbatch é muito mais sensível ao emprego de Xm como fator de adimensionalidade, perdendo capacidade de convergir. Possivelmente tem algo relacionado com o termo (1-X/Xm) e com o fato de S e P dependerem diretamente de X, daí 1 errinho extrapola todos os outros.
+
+Resumindo, se o volume em algum momento estacionar ele dá conta.
+
+Se crescer indefinidamente, ele dá um erro absurdo. Na verdade talvez ele só tenha se dado bem com os outros valores (X, P, S) por estagnarem. se crescessem muito o fim talvez fosse o mesmo.

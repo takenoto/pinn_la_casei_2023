@@ -1,0 +1,12 @@
+elapsed time for NONDIM test = 2162.3350967 secs
+best index for fedbatch:
+3
+best error for fedbatch:
+0.0060335547
+best index for cstr:
+5
+best error for cstr:
+1.8342581
+--------------------
+!!!!!!FINISED!!!!!!
+--------------------

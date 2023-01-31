@@ -154,6 +154,64 @@ def only_case_6_v3_for_ts(eq_params):
 
     return d
 
+def cases_non_dim(eq_params, process_params):
+    lbfgs_pre = False
+    # _layer_size = [1] + [32] * 5 + [4]
+    # _adam_epochs = 50000
+    _layer_size = [1] + [22] * 3 + [4]
+    _adam_epochs = 80000
+
+
+    dic = {
+        'n1':{
+            'V_s': 1,
+            'X_s': 1,
+            'P_s': 1,
+            'S_s': 1,
+        }, # É tudo 1
+        'n_2':{
+            'V_s':process_params.max_reactor_volume,
+        },
+        'n_2':{
+            'V_s':process_params.inlet.volume if process_params.inlet.volume > 0 else 1,
+            'X_s': 1,
+            'P_s': 1,
+            'S_s': 1,
+        },
+        'n_3':{
+            'V_s': process_params.max_reactor_volume,
+            'X_s': eq_params.Xo,
+            'P_s': eq_params.Po,
+            'S_s': eq_params.So,
+        },
+        'n_4':{
+            'V_s': process_params.max_reactor_volume,
+            'X_s': eq_params.Xm,
+            'P_s': eq_params.Pm,
+            'S_s': eq_params.So,
+        },
+        'n_5':{
+            'V_s': 1,
+            'X_s': 1,#eq_params.Xm, se ligar dá erro, vai tudo pra NaN no Fedbatch
+            'P_s': eq_params.Pm,
+            'S_s': eq_params.So,
+        },
+        'n_6':{
+            'V_s': process_params.max_reactor_volume,
+            'X_s': eq_params.Xm,
+            'P_s': 1,
+            'S_s': 1
+        }
+
+    }
+
+    for key in dic:
+        dic[key]["adam_epochs"] = _adam_epochs
+        dic[key]["layer_size"] = _layer_size
+        dic[key]["num_domain"] = default_num_domain
+        dic[key]["lbfgs_pre"] = lbfgs_pre
+        dic[key]["lbfgs_post"] = False
+    return dic
 
 def cases_to_try_batch_vary_ts(eq_params, process_params):
 
@@ -208,8 +266,10 @@ def cases_to_try_batch_vary_ts(eq_params, process_params):
 
 def NEW_cases_to_try_WEIGHTS():
     lbfgs_pre = False
-    _layer_size = [1] + [22] * 3 + [4]
-    _adam_epochs = 30000
+    # _layer_size = [1] + [22] * 3 + [4]
+    _layer_size = [1] + [32] * 5 + [4]
+    # _adam_epochs = 30000
+    _adam_epochs = 45000
 
     dictionary = {
         "W1": {
