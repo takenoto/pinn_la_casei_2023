@@ -68,7 +68,7 @@ def run_pinn_grid_search(
                 layer_size=get_thing_for_key(
                     case_key, "layer_size", default=_layer_size_default
                 ),
-                activation="tanh",
+                activation=get_thing_for_key(case_key, "activation", default="tanh"),
                 initializer="Glorot uniform",
                 loss_weights=[
                     get_thing_for_key(case_key, "w_X", 1), 
