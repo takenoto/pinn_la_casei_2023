@@ -1,0 +1,205 @@
+elapsed time for BATCH NONDIM test = 174.62803219999998 secs
+0
+1
+2
+3
+Starting Numerical Methods
+Pinn best index = 0
+Pinn best error = 3.3473999792477116e-05
+
+
+-----------------------------
+
+CONFIG
+
+def batch_nondim_v2(
+    eq_params, process_params
+): 
+
+    dictionary = { 
+        '60x3':{
+            'layer_size': [1] + [60] * 3 + [4],
+        },
+        '60x3 X':{
+            'layer_size': [1] + [60] * 3 + [4],
+            'X_s':eq_params.Xo
+        },
+        '60x3 V':{
+            'layer_size': [1] + [60] * 3 + [4],
+            'V_s':process_params.max_reactor_volume
+            },
+        '60x3 nondim':{
+            'layer_size': [1] + [60] * 3 + [4],
+            'X_s':eq_params.Xo,
+            'P_s': eq_params.Po,
+            'S_s': eq_params.So,
+            'V_s':process_params.max_reactor_volume,
+            # 't_s':process_params.t_final
+            },
+        
+        
+    }
+
+    for key in dictionary:
+        dictionary[key]["adam_epochs"] = 25000 #70000
+        dictionary[key]['activation'] = 'tanh'
+        dictionary[key]['num_domain'] = 70
+        dictionary[key]['num_test'] = 70
+        dictionary[key]["lbfgs_pre"] = False
+        dictionary[key]["lbfgs_post"] = True
+
+    return dictionary
+
+
+-----------------------------
+
+Warning: epochs is deprecated and will be removed in a future version. Use iterations instead.
+Initializing variables...
+2023-03-14 08:19:01.233097: I tensorflow/compiler/mlir/mlir_graph_optimization_pass.cc:357] MLIR V1 optimization pass is not enabled
+Training model...
+
+Step      Train loss                                                                          Test loss
+                                                       Test metric
+0         [1.20e-02, 1.08e-01, 2.18e-01, 3.05e-02, 1.32e+00, 3.60e+01, 4.58e+02, 2.50e+01]    [1.19e-02, 1.08e-01, 2.13e-01, 2.63e-02, 1.32e+00, 3.60e+01, 4.58e+02, 2.50e+01]    []
+25000     [1.84e-04, 5.42e-04, 1.06e-03, 3.15e-05, 1.53e-05, 3.55e-08, 1.31e-08, 1.89e-07]    [1.70e-04, 5.50e-04, 1.21e-03, 2.86e-05, 1.53e-05, 3.55e-08, 1.31e-08, 1.89e-07]    []
+
+Best model at step 25000:
+  train loss: 1.83e-03
+  test loss: 1.97e-03
+  test metric: []
+
+'train' took 32.888335 s
+
+Compiling model...
+'compile' took 0.679906 s
+
+Training model...
+
+Step      Train loss                                                                          Test loss
+                                                       Test metric
+25000     [1.84e-04, 5.42e-04, 1.06e-03, 3.15e-05, 1.53e-05, 3.55e-08, 1.31e-08, 1.89e-07]    [1.70e-04, 5.50e-04, 1.21e-03, 2.86e-05, 1.53e-05, 3.55e-08, 1.31e-08, 1.89e-07]    []
+25733     [6.42e-06, 5.62e-06, 1.17e-05, 5.15e-06, 1.81e-10, 2.95e-10, 1.78e-10, 1.28e-09]    [7.65e-06, 5.75e-06, 1.46e-05, 5.48e-06, 1.81e-10, 2.95e-10, 1.78e-10, 1.28e-09]    []
+
+Best model at step 25733:
+  train loss: 2.89e-05
+  test loss: 3.35e-05
+  test metric: []
+
+'train' took 5.710295 s
+
+Compiling model...
+Building feed-forward neural network...
+'build' took 0.055401 s
+
+'compile' took 1.029576 s
+
+Warning: epochs is deprecated and will be removed in a future version. Use iterations instead.
+Initializing variables...
+Training model...
+
+Step      Train loss                                                                          Test loss
+                                                       Test metric
+0         [1.06e-05, 6.06e-05, 1.48e-04, 8.31e-04, 1.00e+00, 3.60e+01, 4.58e+02, 2.50e+01]    [1.18e-05, 6.31e-05, 1.55e-04, 5.33e-04, 1.00e+00, 3.60e+01, 4.58e+02, 2.50e+01]    []
+25000     [2.96e-05, 1.92e-04, 3.68e-04, 1.31e-05, 2.96e-08, 8.91e-08, 4.98e-08, 5.51e-07]    [3.12e-05, 1.83e-04, 3.85e-04, 7.83e-06, 2.96e-08, 8.91e-08, 4.98e-08, 5.51e-07]    []
+
+Best model at step 25000:
+  train loss: 6.03e-04
+  test loss: 6.08e-04
+  test metric: []
+
+'train' took 36.821820 s
+
+Compiling model...
+'compile' took 0.749541 s
+
+Training model...
+
+Step      Train loss                                                                          Test loss
+                                                       Test metric
+25000     [2.96e-05, 1.92e-04, 3.68e-04, 1.31e-05, 2.96e-08, 8.91e-08, 4.98e-08, 5.51e-07]    [3.12e-05, 1.83e-04, 3.85e-04, 7.83e-06, 2.96e-08, 8.91e-08, 4.98e-08, 5.51e-07]    []
+25262     [7.97e-06, 2.04e-05, 6.00e-05, 1.07e-05, 1.42e-06, 2.48e-10, 4.98e-09, 7.13e-10]    [8.31e-06, 2.17e-05, 7.12e-05, 7.22e-06, 1.42e-06, 2.48e-10, 4.98e-09, 7.13e-10]    []
+
+Best model at step 25262:
+  train loss: 1.01e-04
+  test loss: 1.10e-04
+  test metric: []
+
+'train' took 6.097005 s
+
+Compiling model...
+Building feed-forward neural network...
+'build' took 0.052179 s
+
+'compile' took 1.158903 s
+
+Warning: epochs is deprecated and will be removed in a future version. Use iterations instead.
+Initializing variables...
+Training model...
+
+Step      Train loss                                                                          Test loss
+                                                       Test metric
+0         [6.24e-07, 7.99e-08, 1.33e-06, 4.53e-04, 1.32e+00, 3.60e+01, 4.58e+02, 1.00e+00]    [7.10e-07, 9.30e-08, 9.90e-07, 3.28e-04, 1.32e+00, 3.60e+01, 4.58e+02, 1.00e+00]    []
+25000     [1.24e-04, 1.07e-04, 2.68e-04, 9.25e-03, 3.65e-06, 3.64e-12, 2.46e-09, 9.96e-05]    [1.44e-04, 1.30e-04, 3.13e-04, 1.06e-02, 3.65e-06, 3.64e-12, 2.46e-09, 9.96e-05]    []
+
+Best model at step 25000:
+  train loss: 9.85e-03
+  test loss: 1.13e-02
+  test metric: []
+
+'train' took 33.927393 s
+
+Compiling model...
+'compile' took 0.870354 s
+
+Training model...
+
+Step      Train loss                                                                          Test loss
+                                                       Test metric
+25000     [1.24e-04, 1.07e-04, 2.68e-04, 9.25e-03, 3.65e-06, 3.64e-12, 2.46e-09, 9.96e-05]    [1.44e-04, 1.30e-04, 3.13e-04, 1.06e-02, 3.65e-06, 3.64e-12, 2.46e-09, 9.96e-05]    []
+25020     [1.24e-04, 1.07e-04, 2.68e-04, 9.25e-03, 3.64e-06, 8.19e-12, 2.65e-09, 9.86e-05]    [1.44e-04, 1.32e-04, 3.18e-04, 1.06e-02, 3.64e-06, 8.19e-12, 2.65e-09, 9.86e-05]    []
+
+Best model at step 25020:
+  train loss: 9.85e-03
+  test loss: 1.13e-02
+  test metric: []
+
+'train' took 1.447729 s
+
+Compiling model...
+Building feed-forward neural network...
+'build' took 0.052098 s
+
+'compile' took 1.100918 s
+
+Warning: epochs is deprecated and will be removed in a future version. Use iterations instead.
+Initializing variables...
+Training model...
+
+Step      Train loss                                                                          Test loss
+                                                       Test metric
+0         [4.95e-05, 7.94e-05, 1.28e-05, 8.76e-04, 1.00e+00, 1.00e+00, 1.00e+00, 1.00e+00]    [4.06e-05, 8.03e-05, 1.41e-05, 7.71e-04, 1.00e+00, 1.00e+00, 1.00e+00, 1.00e+00]    []
+25000     [6.46e-05, 2.90e-05, 2.11e-04, 5.08e-06, 8.23e-07, 9.70e-09, 7.87e-07, 2.19e-07]    [2.04e-05, 5.40e-06, 2.52e-04, 5.74e-06, 8.23e-07, 9.70e-09, 7.87e-07, 2.19e-07]    []
+
+Best model at step 25000:
+  train loss: 3.12e-04
+  test loss: 2.86e-04
+  test metric: []
+
+'train' took 36.920783 s
+
+Compiling model...
+'compile' took 0.914030 s
+
+Training model...
+
+Step      Train loss                                                                          Test loss
+                                                       Test metric
+25000     [6.46e-05, 2.90e-05, 2.11e-04, 5.08e-06, 8.23e-07, 9.70e-09, 7.87e-07, 2.19e-07]    [2.04e-05, 5.40e-06, 2.52e-04, 5.74e-06, 8.23e-07, 9.70e-09, 7.87e-07, 2.19e-07]    []
+25429     [2.10e-05, 8.76e-06, 3.68e-05, 3.77e-06, 2.48e-08, 3.15e-10, 4.09e-08, 4.04e-09]    [2.55e-05, 1.09e-05, 3.95e-05, 4.00e-06, 2.48e-08, 3.15e-10, 4.09e-08, 4.04e-09]    []
+
+Best model at step 25429:
+  train loss: 7.03e-05
+  test loss: 8.00e-05
+  test metric: []
+
+'train' took 13.177360 s

@@ -1,0 +1,1 @@
+Mudei forma de adimensionalizar, antes adimensionalizava parte mas a rede ainda previa o valor "cheio" por assim dizer

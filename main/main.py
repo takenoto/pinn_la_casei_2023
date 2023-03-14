@@ -168,9 +168,17 @@ def plot_compare_pinns_and_num(pinns, nums, eq_params, title=None):
         plot_lines_error_compare(pinns=pinns, group_by="t_s")
 
 
+
+    
+
 def main():
+    deepxde.config.set_random_seed(0)
 
     plt.style.use("./main/plotting/plot_styles.mplstyle")
+
+    run_batch_nondim_test_v2 = True
+
+    run_cstr_convergence_test = True
 
     run_fedbatch_cstr_nondim_test = False
     
@@ -250,6 +258,200 @@ def main():
             t_final=24*4,
         )
 
+    if run_batch_nondim_test_v2:
+        print('RUN BATCH NEW NONDIM TEST')
+        start_time = timer()
+        cases = batch_nondim_v2(eq_params, process_params_feed_cstr)
+        pinns, p_best_index, p_best_error = run_pinn_grid_search(
+            solver_params_list=None,
+            eq_params=eq_params,
+            process_params=process_params_feed_off,
+            initial_state=initial_state,
+            f_out_value_calc=lambda max_reactor_volume, f_in_v, volume: 0,
+            cases_to_try=cases
+        )
+        end_time = timer()
+        print(f"elapsed time for BATCH NONDIM test = {end_time - start_time} secs")
+        items = {}
+        for i in range(len(pinns)):
+            print(i)
+            items[i + 1] = {
+                "title": pinns[i].model_name,
+                "cases": [
+                    {"x": pinns[i].loss_history.steps, "y": np.sum(pinns[i].loss_history.loss_test, axis=1), "color": pinn_colors[0], "l": "-"},
+                    {"x": pinns[i].loss_history.steps, "y": np.sum(pinns[i].loss_history.loss_train, axis=1), "color": pinn_colors[1], "l": "--"},
+                ],
+            }
+
+        plot_comparer_multiple_grid(
+            labels=['Loss (teste)', 'Loss (treino)'],
+            figsize=(7.2, 8.2),
+            gridspec_kw={"hspace": 0.35, "wspace": 0.14},
+            yscale='log',
+            sharey=True,
+            sharex=True,
+            nrows=2,
+            ncols=2,
+            items=items,
+            suptitle=None,
+            title_for_each=True,
+            supxlabel="epochs",
+            supylabel="loss (test)",
+        )
+            
+        num_results = run_numerical_methods(
+            eq_params=eq_params,
+            process_params=process_params_feed_off,
+            initial_state=initial_state,
+            f_out_value_calc= lambda max_reactor_volume, f_in_v, volume: 0,
+            t_discretization_points=[240],
+        )
+
+        # PLOTAR O MELHOR DOS PINNS
+        items = {}
+        print(f'Pinn best index = {p_best_index}')
+        print(f'Pinn best error = {p_best_error}')
+       
+        #  Plotar todos os resultados, um a um
+        num = num_results[0]
+        for pinn in pinns:
+            items = {}
+            titles = ["X", "P", "S", "V"]
+            pinn_vals = [pinn.X, pinn.P, pinn.S, pinn.V]
+            num_vals = [num.X,
+            num.P,
+            num.S,
+            num.V]
+            for i in range(4):
+                items[i + 1] = {
+                    "title": titles[i],
+                    "cases": [
+                        # Numeric
+                        {"x": num.t, "y": num_vals[i], "color": pinn_colors[0], "l": "-"},
+                        # PINN
+                        {"x": pinn.t, "y": pinn_vals[i], "color": pinn_colors[1], "l": "--"},
+                    ],
+                }
+
+            plot_comparer_multiple_grid(
+                suptitle=pinn.model_name,
+                labels=['Euler', 'PINN'],
+                figsize=(6, 8),
+                gridspec_kw={"hspace": 0.6, "wspace": 0.25},
+                yscale='linear',
+                sharey=False,
+                nrows=4,
+                ncols=1,
+                items=items,
+                title_for_each=True,
+                supxlabel="time (h)",
+                supylabel="g/L",
+            )
+
+        
+        pass
+
+    if run_cstr_convergence_test:
+        print('RUN CSTR NEW CONVERGENCE TEST')
+        start_time = timer()
+        cases = iterate_cstr_convergence(eq_params, process_params_feed_cstr)
+        def cstr_f_out_calc_tensorflow(max_reactor_volume, f_in_v, volume):
+            # estou assumindo que já começa no estado estacionário:
+            return f_in_v*tf.math.pow(volume/max_reactor_volume, 7)
+        pinns, p_best_index, p_best_error = run_pinn_grid_search(
+            solver_params_list=None,
+            eq_params=eq_params,
+            process_params=process_params_feed_cstr,
+            initial_state=initial_state_cstr,
+            f_out_value_calc=cstr_f_out_calc_tensorflow,
+            cases_to_try=cases
+        )
+        end_time = timer()
+        print(f"elapsed time for CSTR CONVERGENCE test = {end_time - start_time} secs")
+        items = {}
+        for i in range(len(pinns)):
+            print(i)
+            items[i + 1] = {
+                "title": pinns[i].model_name,
+                "cases": [
+                    {"x": pinns[i].loss_history.steps, "y": np.sum(pinns[i].loss_history.loss_test, axis=1), "color": pinn_colors[0], "l": "-"},
+                    {"x": pinns[i].loss_history.steps, "y": np.sum(pinns[i].loss_history.loss_train, axis=1), "color": pinn_colors[1], "l": "--"},
+                ],
+            }
+
+        plot_comparer_multiple_grid(
+            labels=['Loss (teste)', 'Loss (treino)'],
+            figsize=(7.2, 8.2),
+            gridspec_kw={"hspace": 0.35, "wspace": 0.14},
+            yscale='log',
+            sharey=True,
+            sharex=True,
+            nrows=3,
+            ncols=3,
+            items=items,
+            suptitle=None,
+            title_for_each=True,
+            supxlabel="epochs",
+            supylabel="loss (test)",
+        )
+
+        # Cálculo numérico
+        def cstr_f_out_calc_numeric(max_reactor_volume, f_in_v, volume):
+            return f_in_v*pow(volume/max_reactor_volume, 7)
+            
+        num_results = run_numerical_methods(
+            eq_params=eq_params,
+            process_params=process_params_feed_cstr,
+            initial_state=initial_state_cstr,
+            f_out_value_calc= cstr_f_out_calc_numeric,
+            t_discretization_points=[240],
+        )
+
+        # PLOTAR O MELHOR DOS PINNS
+        items = {}
+        print(f'Pinn best index = {p_best_index}')
+        print(f'Pinn best error = {p_best_error}')
+       
+        #  Plotar todos os resultados, um a um
+        num = num_results[0]
+        for pinn in pinns:
+            items = {}
+            titles = ["X", "P", "S", "V"]
+            pinn_vals = [pinn.X, pinn.P, pinn.S, pinn.V]
+            num_vals = [num.X, num.P, num.S, num.V]
+            for i in range(4):
+                items[i + 1] = {
+                    "title": titles[i],
+                    "cases": [
+                        # Numeric
+                        {"x": num.t, "y": num_vals[i], "color": pinn_colors[0], "l": "-"},
+                        # PINN
+                        {"x": pinn.t, "y": pinn_vals[i], "color": pinn_colors[1], "l": "--"},
+                    ],
+                }
+
+            plot_comparer_multiple_grid(
+                suptitle=pinn.model_name,
+                labels=['Euler', 'PINN'],
+                figsize=(6, 8),
+                gridspec_kw={"hspace": 0.6, "wspace": 0.25},
+                yscale='linear',
+                sharey=False,
+                nrows=4,
+                ncols=1,
+                items=items,
+                title_for_each=True,
+                supxlabel="time (h)",
+                supylabel="g/L",
+            )
+
+        
+        pass
+    #---------------------------------------------------------------
+    #---------------------------------------------------------------
+    #---------------------------------------------------------------
+
+
     if run_fedbatch_cstr_nondim_test:
         print('RUN FED-BATCH + CSTR NON DIM TEST')
         # Testa valores de adimensinalização para cstr e fed batch e determina
@@ -296,7 +498,7 @@ def main():
                     {"x": p_cstr[i].loss_history.steps, "y": np.sum(p_cstr[i].loss_history.loss_test, axis=1), "color": pinn_colors[3], "l": ":"},
                 ],
             }
-
+    
         print(f"elapsed time for NONDIM test = {end_time - start_time} secs")
 
         plot_comparer_multiple_grid(

@@ -23,6 +23,91 @@ default_layer_size = [1] + [22] * 4 + [4]
 default_num_domain = 800
 default_num_test = 1000
 
+def batch_nondim_v2(
+    eq_params, process_params
+): 
+
+    dictionary = { 
+        '60x3':{
+            'layer_size': [1] + [60] * 3 + [4],
+        },
+        '60x3 X':{
+            'layer_size': [1] + [60] * 3 + [4],
+            'X_s':eq_params.Xo
+        },
+        '60x3 V':{
+            'layer_size': [1] + [60] * 3 + [4],
+            'V_s':process_params.max_reactor_volume
+            },
+        '60x3 nondim':{
+            'layer_size': [1] + [60] * 3 + [4],
+            'X_s':eq_params.Xo,
+            'P_s': eq_params.Po,
+            'S_s': eq_params.So,
+            'V_s':process_params.max_reactor_volume,
+            # 't_s':process_params.t_final
+            },
+        
+        
+    }
+
+    for key in dictionary:
+        dictionary[key]["adam_epochs"] = 25000 #70000
+        dictionary[key]['activation'] = 'tanh'
+        dictionary[key]['num_domain'] = 70
+        dictionary[key]['num_test'] = 70
+        dictionary[key]["lbfgs_pre"] = False
+        dictionary[key]["lbfgs_post"] = True
+
+    return dictionary
+
+def iterate_cstr_convergence(
+    eq_params, process_params
+): 
+
+    dictionary = { 
+        '60x3':{
+            'layer_size': [1] + [60] * 3 + [4],
+        },
+        '60x5':{
+            'layer_size': [1] + [60] * 5 + [4],
+        },
+        '60x7':{
+            'layer_size': [1] + [60] * 7 + [4],
+        },
+        '120x3':{
+            'layer_size': [1] + [120] * 3 + [4],
+        },
+        '120x5':{
+            'layer_size': [1] + [120] * 5 + [4],
+        },
+        '120x7':{
+            'layer_size': [1] + [120] * 7 + [4],
+        },
+        '240x3':{
+            'layer_size': [1] + [240] * 3 + [4],
+        },
+        '240x5':{
+            'layer_size': [1] + [240] * 5 + [4],
+        },
+        '240x7':{
+            'layer_size': [1] + [240] * 5 + [4],
+        },
+        
+    }
+
+    for key in dictionary:
+        dictionary[key]["adam_epochs"] = 100 #70000
+        # dictionary[key]["num_domain"] = 1500 #2000
+        # dictionary[key]["num_test"] = 3000 #2000
+        dictionary[key]['activation'] = 'tanh'
+        dictionary[key]['num_domain'] = 70
+        dictionary[key]['num_test'] = 70
+        dictionary[key]["lbfgs_pre"] = False #True
+        dictionary[key]["lbfgs_post"] = True
+
+    return dictionary
+
 
 def iterate_layer_size_with_caset6(
     eq_params, process_params, use_lbfgs_pre=True, ts_case_num=5

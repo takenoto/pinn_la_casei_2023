@@ -55,7 +55,7 @@ def run_pinn_grid_search(
                 adam_epochs=get_thing_for_key(
                     case_key, "adam_epochs", default=_adam_epochs_default
                 ),
-                adam_display_every=3000,
+                adam_display_every=30000,
                 adam_lr=0.0001,
                 l_bfgs=SolverLBFGSParams(
                     do_pre_optimization=get_thing_for_key(
@@ -69,7 +69,7 @@ def run_pinn_grid_search(
                     case_key, "layer_size", default=_layer_size_default
                 ),
                 activation=get_thing_for_key(case_key, "activation", default="tanh"),
-                initializer="Glorot uniform",
+                initializer=get_thing_for_key(case_key, "initializer", default="Glorot uniform"),
                 loss_weights=[
                     get_thing_for_key(case_key, "w_X", 1), 
                     get_thing_for_key(case_key, "w_P", 1), 

@@ -1,0 +1,61 @@
+Mais uma vez, só o tanh 32x4 prestou
+
+----------------------------
+
+def iterate_cstr_convergence(
+    eq_params, process_params
+):
+    
+    # selu ficou horrível  
+    dictionary = {
+        'cstr-1':{
+            'layer_size': [1] + [14] * 3 + [4],
+            'activation':'swish',
+            'initializer': 'Glorot uniform'
+        },
+        'cstr-2':{
+            'layer_size': [1] + [14] * 3 + [4],
+            'activation':'tanh',
+            'initializer': 'Glorot uniform'
+        },
+        'cstr-3':{
+            'layer_size': [1] + [14] * 3 + [4],
+            'activation':'relu',
+            'initializer': 'Glorot uniform'
+        },
+        'cstr-4':{
+            #FIXME erro, era pra ser 14x3
+            'layer_size': [1] + [14] * 7 + [4],
+            'activation':'selu',
+            'initializer': 'Glorot uniform'
+        },
+        'cstr-5':{
+            'layer_size': [1] + [32] * 4 + [4],
+            'activation':'swish',
+            'initializer': 'Glorot uniform'
+        },
+        'cstr-6':{
+            'layer_size': [1] + [32] * 4 + [4],
+            'activation':'tanh',
+            'initializer': 'Glorot uniform'
+        },
+        'cstr-7':{
+            'layer_size': [1] + [32] * 4 + [4],
+            'activation':'relu',
+            'initializer': 'Glorot uniform'
+        },
+        'cstr-8':{
+            'layer_size': [1] + [32] * 4 + [4],
+            'activation':'selu',
+            'initializer': 'Glorot uniform'
+        },
+    }
+
+    for key in dictionary:
+        dictionary[key]["adam_epochs"] = 45000 #default_adam_epochs
+        dictionary[key]["num_domain"] = default_num_domain
+        dictionary[key]["num_test"] = default_num_test
+        dictionary[key]["lbfgs_pre"] = False
+        dictionary[key]["lbfgs_post"] = False
+
+    return dictionary

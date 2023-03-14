@@ -1,0 +1,433 @@
+elapsed time for CSTR CONVERGENCE test = 5072.2848554 secs
+Starting Numerical Methods
+Pinn best index = 1
+Pinn best error = 0.05128997564315796
+
+-----------------------
+
+CONFIGS:
+
+def iterate_cstr_convergence(
+    eq_params, process_params
+): 
+    dictionary = {
+        '60x4 swish-0':{
+            'layer_size': [1] + [60] * 4 + [4],
+            'activation':'swish',
+            'initializer': 'Glorot uniform',
+            'num_domain': 100,
+            'num_test': 100,
+        },
+        '60x4 selu-0':{
+            'layer_size': [1] + [60] * 4 + [4],
+            'activation':'selu',
+            'initializer': 'Glorot uniform',
+            'num_domain': 100,
+            'num_test': 100,
+        },
+        # Adimensionalização X
+       '60x4 swish-1X':{
+            'layer_size': [1] + [60] * 4 + [4],
+            'activation':'swish',
+            'initializer': 'Glorot uniform',
+            'X_s': eq_params.Xo,
+            'num_domain': 300,
+            'num_test': 300,
+        },
+        '60x4 selu-1X':{
+            'layer_size': [1] + [60] * 4 + [4],
+            'activation':'selu',
+            'initializer': 'Glorot uniform',
+            'X_s': eq_params.Xo,
+            'num_domain': 300,
+            'num_test': 300,
+        },
+        # Adimensionalização V
+       '60x4 swish-1V':{
+            'layer_size': [1] + [60] * 4 + [4],
+            'activation':'swish',
+            'initializer': 'Glorot uniform',
+            'V_s': process_params.max_reactor_volume,
+            'num_domain': 300,
+            'num_test': 300,
+        },
+        '60x4 selu-1V':{
+            'layer_size': [1] + [60] * 4 + [4],
+            'activation':'selu',
+            'initializer': 'Glorot uniform',
+            'V_s': process_params.max_reactor_volume,
+            'num_domain': 300,
+            'num_test': 300,
+        },
+        # Adimensionalização t
+       '60x4 swish-1t':{
+            'layer_size': [1] + [60] * 4 + [4],
+            'activation':'swish',
+            'initializer': 'Glorot uniform',
+            'V_s': process_params.max_reactor_volume,
+            'X_s': eq_params.Xo,
+            't_s': process_params.t_final,
+            'num_domain': 300,
+            'num_test': 300,
+        },
+        '60x4 selu-1t':{
+            'layer_size': [1] + [60] * 4 + [4],
+            'activation':'selu',
+            'initializer': 'Glorot uniform',
+            'V_s': process_params.max_reactor_volume,
+            'X_s': eq_params.Xo,
+            't_s': process_params.t_final,
+            'num_domain': 300,
+            'num_test': 300,
+        },
+        # # Redução de neuronios, aumento de camadas
+        # '60x4 swish-2':{
+        #     'layer_size': [1] + [12] * 6 + [4],
+        #     'activation':'swish',
+        #     'initializer': 'Glorot uniform',
+        #     'num_domain': 300,
+        #     'num_test': 300,
+        # },
+        # '60x4 selu-2':{
+        #     'layer_size': [1] + [12] * 6 + [4],
+        #     'activation':'tanh',
+        #     'initializer': 'Glorot uniform',
+        #     'num_domain': 300,
+        #     'num_test': 300,
+        # },
+        
+    }
+
+-------------------------------------------
+TERMINAL:
+-------------------------------------------
+RUN CSTR NEW CONVERGENCE TEST
+Compiling model...
+Building feed-forward neural network...
+C:\Python39\lib\site-packages\deepxde\nn\tensorflow_compat_v1\fnn.py:114: UserWarning: `tf.layers.dense` is deprecated and will be removed in a future version. Please use `tf.keras.layers.Dense` instead.
+  return tf.layers.dense(
+'build' took 0.084695 s
+
+2023-03-10 11:51:26.225962: I tensorflow/core/platform/cpu_feature_guard.cc:193] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX AVX2
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+'compile' took 1.882845 s
+
+Warning: epochs is deprecated and will be removed in a future version. Use iterations instead.
+Initializing variables...
+2023-03-10 11:51:28.062875: I tensorflow/compiler/mlir/mlir_graph_optimization_pass.cc:357] MLIR V1 optimization pass is not enabled
+Training model...
+
+Step      Train loss                                                                          Test loss
+                                                Test metric
+0         [3.21e+02, 2.10e+03, 2.70e+03, 7.50e-01, 1.32e+00, 3.60e+01, 4.58e+02, 1.00e+00]    [2.08e+02, 1.47e+03, 1.67e+03, 7.90e-01, 1.32e+00, 3.60e+01, 4.58e+02, 1.00e+00]    []
+30000     [5.53e-04, 1.15e-03, 9.74e-04, 8.79e-03, 3.45e-08, 1.46e-07, 2.07e-06, 1.14e+00]    [6.38e-01, 1.31e+01, 3.72e+00, 3.98e+00, 3.45e-08, 1.46e-07, 2.07e-06, 1.14e+00]    []
+60000     [1.92e-04, 1.38e-04, 2.84e-04, 6.21e-04, 6.82e-10, 1.04e-08, 2.17e-07, 1.06e+00]    [1.36e+00, 2.91e+01, 5.85e+00, 5.68e+00, 6.82e-10, 1.04e-08, 2.17e-07, 1.06e+00]    []
+
+Best model at step 60000:
+  train loss: 1.06e+00
+  test loss: 4.31e+01
+  test metric: []
+
+'train' took 161.678207 s
+
+Compiling model...
+'compile' took 1.263606 s
+
+Training model...
+
+Step      Train loss                                                                          Test loss
+                                                Test metric
+60000     [1.92e-04, 1.38e-04, 2.84e-04, 6.21e-04, 6.82e-10, 1.04e-08, 2.17e-07, 1.06e+00]    [1.36e+00, 2.91e+01, 5.85e+00, 5.68e+00, 6.82e-10, 1.04e-08, 2.17e-07, 1.06e+00]    []
+60023     [1.92e-04, 1.09e-04, 2.22e-04, 6.20e-04, 6.94e-10, 1.05e-08, 2.17e-07, 1.06e+00]    [1.36e+00, 2.91e+01, 5.85e+00, 5.68e+00, 6.94e-10, 1.05e-08, 2.17e-07, 1.06e+00]    []
+
+Best model at step 60023:
+  train loss: 1.06e+00
+  test loss: 4.31e+01
+  test metric: []
+
+'train' took 1.434272 s
+
+Compiling model...
+Building feed-forward neural network...
+'build' took 0.063978 s
+
+'compile' took 1.178764 s
+
+Warning: epochs is deprecated and will be removed in a future version. Use iterations instead.
+Initializing variables...
+Training model...
+
+Step      Train loss                                                                          Test loss
+                                                Test metric
+0         [3.41e+01, 9.95e+01, 4.55e+02, 1.69e+00, 1.32e+00, 3.60e+01, 4.58e+02, 1.00e+00]    [2.06e+01, 9.48e+01, 3.80e+02, 1.27e+00, 1.32e+00, 3.60e+01, 4.58e+02, 1.00e+00]    []
+30000     [2.44e-02, 2.60e-01, 3.44e+00, 6.70e-02, 2.57e+00, 4.43e-05, 2.90e+02, 1.05e+01]    [2.66e-02, 2.28e-01, 1.57e-01, 6.84e-02, 2.57e+00, 4.43e-05, 2.90e+02, 1.05e+01]    []
+60000     [7.40e-03, 9.25e-02, 2.52e-02, 5.69e-03, 8.30e-05, 3.04e-05, 4.03e-06, 2.43e-05]    [7.62e-03, 1.16e-01, 3.17e-02, 6.23e-03, 8.30e-05, 3.04e-05, 4.03e-06, 2.43e-05]    []
+
+Best model at step 60000:
+  train loss: 1.31e-01
+  test loss: 1.61e-01
+  test metric: []
+
+'train' took 135.902964 s
+
+Compiling model...
+'compile' took 0.890886 s
+
+Training model...
+
+Step      Train loss                                                                          Test loss
+                                                Test metric
+60000     [7.40e-03, 9.25e-02, 2.52e-02, 5.69e-03, 8.30e-05, 3.04e-05, 4.03e-06, 2.43e-05]    [7.62e-03, 1.16e-01, 3.17e-02, 6.23e-03, 8.30e-05, 3.04e-05, 4.03e-06, 2.43e-05]    []
+60054     [3.28e-03, 9.42e-03, 3.01e-03, 4.91e-03, 3.64e-06, 6.85e-06, 3.64e-08, 4.52e-06]    [3.09e-03, 2.88e-02, 1.41e-02, 5.38e-03, 3.64e-06, 6.85e-06, 3.64e-08, 4.52e-06]    []
+
+Best model at step 60054:
+  train loss: 2.06e-02
+  test loss: 5.13e-02
+  test metric: []
+
+'train' took 1.736731 s
+
+Compiling model...
+Building feed-forward neural network...
+'build' took 0.083373 s
+
+'compile' took 1.989162 s
+
+Warning: epochs is deprecated and will be removed in a future version. Use iterations instead.
+Initializing variables...
+Training model...
+
+Step      Train loss                                                                          Test loss
+                                                Test metric
+0         [1.13e+04, 1.53e+05, 3.31e+05, 1.23e+02, 1.00e+00, 3.60e+01, 4.58e+02, 1.00e+00]    [4.52e+06, 6.51e+07, 1.40e+08, 1.03e+02, 1.00e+00, 3.60e+01, 4.58e+02, 1.00e+00]    []
+30000     [1.35e-02, 1.74e-01, 3.54e-01, 2.27e+00, 4.12e-05, 4.75e-06, 9.74e-06, 1.31e+00]    [1.33e-02, 1.77e-01, 3.74e-01, 2.32e+00, 4.12e-05, 4.75e-06, 9.74e-06, 1.31e+00]    []
+60000     [7.94e-02, 1.84e+00, 3.84e+00, 1.98e+00, 4.40e-06, 3.95e-08, 3.41e-07, 1.15e+00]    [7.97e-02, 1.84e+00, 3.84e+00, 2.02e+00, 4.40e-06, 3.95e-08, 3.41e-07, 1.15e+00]    []
+
+Best model at step 30000:
+  train loss: 4.12e+00
+  test loss: 4.19e+00
+  test metric: []
+
+'train' took 508.020076 s
+
+Compiling model...
+'compile' took 1.542541 s
+
+Training model...
+
+Step      Train loss                                                                          Test loss
+                                                Test metric
+60000     [7.94e-02, 1.84e+00, 3.84e+00, 1.98e+00, 4.40e-06, 3.95e-08, 3.41e-07, 1.15e+00]    [7.97e-02, 1.84e+00, 3.84e+00, 2.02e+00, 4.40e-06, 3.95e-08, 3.41e-07, 1.15e+00]    []
+60638     [3.79e-02, 2.53e-02, 2.61e-02, 1.27e+00, 5.57e-04, 7.38e-05, 3.16e-05, 1.14e+00]    [3.74e-02, 2.35e-02, 4.20e-02, 1.29e+00, 5.57e-04, 7.38e-05, 3.16e-05, 1.14e+00]    []
+
+Best model at step 60638:
+  train loss: 2.50e+00
+  test loss: 2.54e+00
+  test metric: []
+
+'train' took 27.182545 s
+
+Compiling model...
+Building feed-forward neural network...
+'build' took 0.073902 s
+
+'compile' took 1.573429 s
+
+Warning: epochs is deprecated and will be removed in a future version. Use iterations instead.
+Initializing variables...
+Training model...
+
+Step      Train loss                                                                          Test loss
+                                                Test metric
+0         [2.11e+00, 6.00e+01, 3.86e+02, 1.00e+00, 1.00e+00, 3.60e+01, 4.58e+02, 1.00e+00]    [2.52e+00, 6.58e+01, 4.04e+02, 1.01e+00, 1.00e+00, 3.60e+01, 4.58e+02, 1.00e+00]    []
+30000     [3.47e-02, 4.11e-01, 6.57e-02, 1.08e-01, 2.55e-05, 8.05e-05, 1.86e-05, 1.43e+00]    [7.84e-02, 4.13e-01, 1.10e+00, 3.70e-01, 2.55e-05, 8.05e-05, 1.86e-05, 1.43e+00]    []
+60000     [2.76e-03, 1.34e-02, 1.63e-01, 7.90e-02, 5.41e-05, 5.80e-04, 2.36e-02, 1.22e+00]    [2.83e-01, 3.47e-02, 8.02e-01, 3.67e-01, 5.41e-05, 5.80e-04, 2.36e-02, 1.22e+00]    []
+
+Best model at step 60000:
+  train loss: 1.50e+00
+  test loss: 2.73e+00
+  test metric: []
+
+'train' took 503.721035 s
+
+Compiling model...
+'compile' took 1.247201 s
+
+Training model...
+
+Step      Train loss                                                                          Test loss
+                                                Test metric
+60000     [2.76e-03, 1.34e-02, 1.63e-01, 7.90e-02, 5.41e-05, 5.80e-04, 2.36e-02, 1.22e+00]    [2.83e-01, 3.47e-02, 8.02e-01, 3.67e-01, 5.41e-05, 5.80e-04, 2.36e-02, 1.22e+00]    []
+60077     [3.00e-03, 5.16e-03, 1.18e-02, 8.55e-02, 1.21e-05, 3.30e-06, 3.81e-03, 1.19e+00]    [2.85e-01, 3.27e-02, 7.98e-01, 3.65e-01, 1.21e-05, 3.30e-06, 3.81e-03, 1.19e+00]    []
+
+Best model at step 60077:
+  train loss: 1.30e+00
+  test loss: 2.67e+00
+  test metric: []
+
+'train' took 3.414460 s
+
+Compiling model...
+Building feed-forward neural network...
+'build' took 0.082719 s
+
+'compile' took 2.402093 s
+
+Warning: epochs is deprecated and will be removed in a future version. Use iterations instead.
+Initializing variables...
+Training model...
+
+Step      Train loss                                                                          Test loss
+                                                Test metric
+0         [1.44e+00, 4.37e+01, 4.20e+02, 9.96e-01, 1.32e+00, 3.60e+01, 4.58e+02, 4.00e-02]    [1.45e+00, 4.40e+01, 4.18e+02, 1.00e+00, 1.32e+00, 3.60e+01, 4.58e+02, 4.00e-02]    []
+30000     [1.89e-01, 6.91e-01, 2.52e-01, 2.23e+00, 2.53e-03, 8.59e-07, 8.05e-05, 1.01e-01]    [1.65e-01, 6.67e-01, 2.32e-01, 2.26e+00, 2.53e-03, 8.59e-07, 8.05e-05, 1.01e-01]    []
+60000     [1.38e-01, 8.33e-01, 1.84e+00, 1.97e+00, 9.81e-06, 5.86e-07, 2.75e-07, 6.66e-02]    [1.40e-01, 7.99e-01, 1.76e+00, 2.00e+00, 9.81e-06, 5.86e-07, 2.75e-07, 6.66e-02]    []
+
+Best model at step 30000:
+  train loss: 3.47e+00
+  test loss: 3.43e+00
+  test metric: []
+
+'train' took 776.360855 s
+
+Compiling model...
+'compile' took 1.882732 s
+
+Training model...
+
+Step      Train loss                                                                          Test loss
+                                                Test metric
+60000     [1.38e-01, 8.33e-01, 1.84e+00, 1.97e+00, 9.81e-06, 5.86e-07, 2.75e-07, 6.66e-02]    [1.40e-01, 7.99e-01, 1.76e+00, 2.00e+00, 9.81e-06, 5.86e-07, 2.75e-07, 6.66e-02]    []
+60020     [1.38e-01, 8.33e-01, 1.84e+00, 1.97e+00, 9.81e-06, 5.86e-07, 2.75e-07, 6.66e-02]    [1.40e-01, 7.99e-01, 1.76e+00, 2.00e+00, 9.81e-06, 5.86e-07, 2.75e-07, 6.66e-02]    []
+
+Best model at step 30000:
+  train loss: 3.47e+00
+  test loss: 3.43e+00
+  test metric: []
+
+'train' took 4.062923 s
+
+Compiling model...
+Building feed-forward neural network...
+'build' took 0.070631 s
+
+'compile' took 1.716050 s
+
+Warning: epochs is deprecated and will be removed in a future version. Use iterations instead.
+Initializing variables...
+Training model...
+
+Step      Train loss                                                                          Test loss
+                                                Test metric
+0         [2.32e+00, 5.60e+01, 3.78e+02, 1.10e+00, 1.32e+00, 3.60e+01, 4.58e+02, 4.00e-02]    [2.30e+00, 5.56e+01, 3.80e+02, 1.08e+00, 1.32e+00, 3.60e+01, 4.58e+02, 4.00e-02]    []
+30000     [2.40e-01, 1.08e+00, 7.01e-02, 2.42e+00, 8.99e-04, 1.43e-04, 5.47e-05, 1.10e-01]    [2.44e-01, 1.07e+00, 8.38e-02, 2.49e+00, 8.99e-04, 1.43e-04, 5.47e-05, 1.10e-01]    []
+60000     [1.84e-01, 6.37e-01, 8.74e-02, 2.18e+00, 7.23e-04, 5.76e-06, 3.64e-05, 7.83e-02]    [1.66e-01, 6.42e-01, 1.01e-01, 2.30e+00, 7.23e-04, 5.76e-06, 3.64e-05, 7.83e-02]    []
+
+Best model at step 60000:
+  train loss: 3.17e+00
+  test loss: 3.29e+00
+  test metric: []
+
+'train' took 633.835940 s
+
+Compiling model...
+'compile' took 1.426137 s
+
+Training model...
+
+Step      Train loss                                                                          Test loss
+                                                Test metric
+60000     [1.84e-01, 6.37e-01, 8.74e-02, 2.18e+00, 7.23e-04, 5.76e-06, 3.64e-05, 7.83e-02]    [1.66e-01, 6.42e-01, 1.01e-01, 2.30e+00, 7.23e-04, 5.76e-06, 3.64e-05, 7.83e-02]    []
+60078     [9.37e-02, 1.34e-02, 2.02e-02, 2.25e+00, 6.88e-04, 7.82e-06, 3.67e-05, 7.80e-02]    [7.94e-02, 2.14e-02, 3.35e-02, 2.37e+00, 6.88e-04, 7.82e-06, 3.67e-05, 7.80e-02]    []
+
+Best model at step 60078:
+  train loss: 2.46e+00
+  test loss: 2.59e+00
+  test metric: []
+
+'train' took 5.208873 s
+
+Compiling model...
+Building feed-forward neural network...
+'build' took 0.078480 s
+
+'compile' took 2.582978 s
+
+Warning: epochs is deprecated and will be removed in a future version. Use iterations instead.
+Initializing variables...
+Training model...
+
+Step      Train loss                                                                          Test loss
+                                                Test metric
+0         [9.22e+03, 3.32e+05, 4.22e+06, 1.00e+00, 1.00e+00, 3.60e+01, 4.58e+02, 4.00e-02]    [9.22e+03, 3.32e+05, 4.22e+06, 1.00e+00, 1.00e+00, 3.60e+01, 4.58e+02, 4.00e-02]    []
+30000     [3.18e-01, 6.87e-03, 7.09e-02, 3.20e+00, 1.54e-01, 8.03e+00, 2.46e+02, 9.30e-01]    [2.79e-01, 6.53e-03, 6.80e-02, 3.19e+00, 1.54e-01, 8.03e+00, 2.46e+02, 9.30e-01]    []
+60000     [1.14e+00, 3.72e-03, 2.02e-02, 1.42e+00, 1.60e-03, 1.32e+00, 2.24e+02, 8.47e-01]    [1.01e+00, 3.28e-03, 1.86e-02, 1.42e+00, 1.60e-03, 1.32e+00, 2.24e+02, 8.47e-01]    []
+
+Best model at step 60000:
+  train loss: 2.29e+02
+  test loss: 2.29e+02
+  test metric: []
+
+'train' took 1287.056731 s
+
+Compiling model...
+'compile' took 2.065829 s
+
+Training model...
+
+Step      Train loss                                                                          Test loss
+                                                Test metric
+60000     [1.14e+00, 3.72e-03, 2.02e-02, 1.42e+00, 1.60e-03, 1.32e+00, 2.24e+02, 8.47e-01]    [1.01e+00, 3.28e-03, 1.86e-02, 1.42e+00, 1.60e-03, 1.32e+00, 2.24e+02, 8.47e-01]    []
+60021     [1.14e+00, 2.65e-03, 2.38e-02, 1.42e+00, 1.60e-03, 1.32e+00, 2.24e+02, 8.47e-01]    [1.00e+00, 2.37e-03, 2.16e-02, 1.42e+00, 1.60e-03, 1.32e+00, 2.24e+02, 8.47e-01]    []
+
+Best model at step 60021:
+  train loss: 2.29e+02
+  test loss: 2.29e+02
+  test metric: []
+
+'train' took 5.598397 s
+
+Compiling model...
+Building feed-forward neural network...
+'build' took 0.063898 s
+
+'compile' took 1.956870 s
+
+Warning: epochs is deprecated and will be removed in a future version. Use iterations instead.
+Initializing variables...
+Training model...
+
+Step      Train loss                                                                          Test loss
+                                                Test metric
+0         [7.47e+03, 2.92e+05, 4.45e+06, 1.01e+00, 1.00e+00, 3.60e+01, 4.58e+02, 4.00e-02]    [7.49e+03, 2.92e+05, 4.45e+06, 1.01e+00, 1.00e+00, 3.60e+01, 4.58e+02, 4.00e-02]    []
+30000     [7.17e-01, 1.79e+00, 1.13e+01, 5.77e+01, 8.61e-01, 3.12e+01, 4.02e+02, 1.63e+00]    [7.04e-01, 1.86e+00, 1.13e+01, 5.52e+01, 8.61e-01, 3.12e+01, 4.02e+02, 1.63e+00]    []
+60000     [5.71e-01, 2.00e+00, 1.11e+01, 2.43e+01, 7.23e-01, 2.65e+01, 3.57e+02, 1.31e+00]    [5.42e-01, 2.01e+00, 1.12e+01, 2.40e+01, 7.23e-01, 2.65e+01, 3.57e+02, 1.31e+00]    []
+
+Best model at step 60000:
+  train loss: 4.24e+02
+  test loss: 4.23e+02
+  test metric: []
+
+'train' took 984.072714 s
+
+Compiling model...
+'compile' took 1.717851 s
+
+Training model...
+
+Step      Train loss                                                                          Test loss
+                                                Test metric
+60000     [5.71e-01, 2.00e+00, 1.11e+01, 2.43e+01, 7.23e-01, 2.65e+01, 3.57e+02, 1.31e+00]    [5.42e-01, 2.01e+00, 1.12e+01, 2.40e+01, 7.23e-01, 2.65e+01, 3.57e+02, 1.31e+00]    []
+60022     [5.07e-01, 6.63e-01, 7.58e-01, 2.42e+01, 7.23e-01, 2.65e+01, 3.57e+02, 1.31e+00]    [4.87e-01, 6.68e-01, 7.90e-01, 2.39e+01, 7.23e-01, 2.65e+01, 3.57e+02, 1.31e+00]    []
+
+Best model at step 60022:
+  train loss: 4.12e+02
+  test loss: 4.11e+02
+  test metric: []
+
+'train' took 5.576272 s
+
+elapsed time for CSTR CONVERGENCE test = 5072.2848554 secs
+Starting Numerical Methods
+Pinn best index = 1
+Pinn best error = 0.05128997564315796

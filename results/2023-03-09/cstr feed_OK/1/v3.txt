@@ -1,0 +1,56 @@
+Ficou um lixo também
+---------------------------
+
+dictionary = {
+        'cstr-1':{
+            'layer_size': [1] + [16] * 3 + [4],
+            'activation':'relu',
+            'initializer': 'Glorot uniform'
+        },
+        'cstr-2':{
+            'layer_size': [1] + [16] * 3 + [4],
+            'activation':'tanh',
+            'initializer': 'Glorot uniform'
+        },
+        'cstr-3':{
+            'layer_size': [1] + [22] * 3 + [4],
+            'activation':'relu',
+            'initializer': 'Glorot uniform'
+        },
+        'cstr-4':{
+            'layer_size': [1] + [22] * 3 + [4],
+            'activation':'tanh',
+            'initializer': 'Glorot uniform'
+        },
+        'cstr-5':{
+            'layer_size': [1] + [32] * 3 + [4],
+            'activation':'relu',
+            'initializer': 'Glorot uniform'
+        },
+        'cstr-6':{
+            'layer_size': [1] + [32] * 3 + [4],
+            'activation':'tanh',
+            'initializer': 'Glorot uniform'
+        },
+        # 'cstr-7':{
+        #     'layer_size': [1] + [44] * 3 + [4],
+        #     'activation':'swish',
+        #     'initializer': 'Glorot uniform'
+        # },
+        # 'cstr-8':{
+        #     'layer_size': [1] + [44] * 3 + [4],
+        #     'activation':'tanh',
+        #     'initializer': 'Glorot uniform'
+        # },
+    }
+
+    for key in dictionary:
+        dictionary[key]["adam_epochs"] = 80000 #default_adam_epochs
+        dictionary[key]["num_domain"] = default_num_domain
+        dictionary[key]["num_test"] = default_num_test
+        dictionary[key]["lbfgs_pre"] = False
+        dictionary[key]["lbfgs_post"] = False
+        dictionary[key]['V_s']= process_params.max_reactor_volume,
+        # dictionary[key]['X_s']= eq_params.Xo,
+        # dictionary[key]['P_s']= eq_params.Po,
+        # dictionary[key]['S_s']= eq_params.So,
