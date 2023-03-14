@@ -52,24 +52,24 @@ class ODEPreparer:
             # --------------------------
             # Volume & flows
 
-            V = y[:, 3:4]
+            V_nondim = y[:, 3:4]
 
-            dV_dt = dde.grad.jacobian(y, x, i=3)
+            dV_dt_nondim = dde.grad.jacobian(y, x, i=3)
             f_in = inlet.volume
 
             f_out = f_out_value_calc(
                 max_reactor_volume=process_params.max_reactor_volume,
                 f_in_v=f_in,
-                volume=V*scaler.V,
+                volume=V_nondim*scaler.V,
             )
 
             # --------------------------
             # X P S
-            X, P, S = y[:, 0:1], y[:, 1:2], y[:, 2:3]
+            X_nondim, P_nondim, S_nondim = y[:, 0:1], y[:, 1:2], y[:, 2:3]
 
-            dX_dt = dde.grad.jacobian(y, x, i=0)
-            dP_dt = dde.grad.jacobian(y, x, i=1)
-            dS_dt = dde.grad.jacobian(y, x, i=2)
+            dX_dt_nondim = dde.grad.jacobian(y, x, i=0)
+            dP_dt_nondim = dde.grad.jacobian(y, x, i=1)
+            dS_dt_nondim = dde.grad.jacobian(y, x, i=2)
 
             if solver_params.non_dim_scaler is not None:
                 # Equações auxiliares. Usadas para operações matemática e contornar um erro
@@ -100,7 +100,7 @@ class ODEPreparer:
                     return tf.pow(
                         tf.math.subtract(
                             tf.cast(1, tf.float32),
-                            tf.math.divide(tf.math.multiply(X, scaler.X), Xm),
+                            tf.math.divide(tf.math.multiply(X_nondim, scaler.X), Xm),
                         ),
                         f,
                     )
@@ -109,30 +109,64 @@ class ODEPreparer:
                     return tf.pow(
                         tf.math.subtract(
                             tf.cast(1, tf.float32),
-                            tf.math.divide(tf.math.multiply(P, scaler.P), Pm),
+                            tf.math.divide(tf.math.multiply(P_nondim, scaler.P), Pm),
                         ),
                         h,
                     )
 
 
                 non_dim_rX = (
-                    mult(
-                        mult(mult(div(scaler.t, scaler.X), mu_max), mult(X, scaler.X)),
-                        div(mult(S, scaler.S), add(K_S, mult(S, scaler.S))),
+                  mult(
+                        mult(mult(div(scaler.t, scaler.X), mu_max), X_nondim),# mult(X_nondim, scaler.X)),
+                        div(mult(S_nondim, scaler.S), add(K_S, mult(S_nondim, scaler.S))),
                     )
                     * f_x_calc_func()
                     * h_p_calc_func()
                 )
 
                 non_dim_rP = (scaler.t / scaler.P) * (
-                    alpha * (scaler.X / scaler.t) * non_dim_rX + beta * X * scaler.X
+                    alpha * (scaler.X / scaler.t) * non_dim_rX + beta * X_nondim * scaler.X/scaler.t
                 )
                 non_dim_rS = (scaler.t / scaler.S) * (
-                    -(1 / Y_PS) * non_dim_rP * (scaler.P / scaler.t) - ms * X * scaler.X
+                    -(1 / Y_PS) * non_dim_rP * (scaler.P / scaler.t) - ms * X_nondim * scaler.X/scaler.t
                 )
                 
                 # Última mudança: adicionei o scaler t aos inlets
                 # e o scaler V/t no volume, talvez por isso desse problema
+                
+                # NOVO NONDIM
+                return [
+                    1
+                    * 
+                    (
+                        dX_dt_nondim * V_nondim
+                        - (
+                            non_dim_rX * V_nondim
+                            + f_in/scaler.V * inlet.X *scaler.t/scaler.X
+                            - f_out/scaler.V * X_nondim * scaler.t
+                        )
+                    ),
+                    1
+                    * (
+                        dP_dt_nondim * V_nondim
+                        - (
+                            non_dim_rP * V_nondim
+                            + f_in/scaler.V * inlet.P *scaler.t/scaler.P
+                            - f_out/scaler.V * P_nondim * scaler.t
+                        )
+                    ),
+                    1
+                    * (
+                        dS_dt_nondim * V_nondim
+                        - (
+                            non_dim_rS * V_nondim
+                            + f_in/scaler.V * inlet.S *scaler.t/scaler.S
+                            - f_out/scaler.V * S_nondim * scaler.t
+                        )
+                    ),
+                   1
+                   * (dV_dt_nondim - ((f_in - f_out)*(scaler.t/scaler.V))),
+                ]
 
                 return [
                     1#solver_params.w_X

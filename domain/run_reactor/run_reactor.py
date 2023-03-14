@@ -120,6 +120,7 @@ def run_reactor(
     # ------------- FINISHING ---------------
     # ---------------------------------------
 
+
     return PINNReactorModelResults(
         model=model,
         model_name=solver_params.name,
@@ -130,11 +131,11 @@ def run_reactor(
         process_params=process_params,
         initial_state=initial_state,
         f_out_value_calc=f_out_value_calc,
-        t = train_state.X_test,
-        X = train_state.best_y[:,0],
-        P = train_state.best_y[:,1],
-        S = train_state.best_y[:,2],
-        V = train_state.best_y[:,3],
+        t = solver_params.non_dim_scaler.t_not_tensor*train_state.X_test,
+        X = solver_params.non_dim_scaler.X_not_tensor*train_state.best_y[:,0],
+        P = solver_params.non_dim_scaler.P_not_tensor*train_state.best_y[:,1],
+        S = solver_params.non_dim_scaler.S_not_tensor*train_state.best_y[:,2],
+        V = solver_params.non_dim_scaler.V_not_tensor*train_state.best_y[:,3],
         best_step=train_state.best_step,
         best_loss_test=train_state.best_loss_test,
         best_loss_train=train_state.best_loss_train,
