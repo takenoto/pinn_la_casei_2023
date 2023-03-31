@@ -28,36 +28,78 @@ def batch_nondim_v2(
 ): 
 
     dictionary = { 
-        '60x3':{
-            'layer_size': [1] + [60] * 3 + [4],
+        '24x3':{
+            'layer_size': [1] + [24] * 3 + [4],
         },
-        '60x3 X':{
-            'layer_size': [1] + [60] * 3 + [4],
+        '24x3 X':{
+            'layer_size': [1] + [24] * 3 + [4],
             'X_s':eq_params.Xo
         },
-        '60x3 V':{
-            'layer_size': [1] + [60] * 3 + [4],
-            'V_s':process_params.max_reactor_volume
-            },
-        '60x3 nondim':{
-            'layer_size': [1] + [60] * 3 + [4],
+        '24x3 nondim':{
+            'layer_size': [1] + [24] * 3 + [4],
             'X_s':eq_params.Xo,
             'P_s': eq_params.Po,
             'S_s': eq_params.So,
             'V_s':process_params.max_reactor_volume,
             # 't_s':process_params.t_final
             },
+        '24x6':{
+            'layer_size': [1] + [24] * 6 + [4],
+        },
+        '24x6 X':{
+            'layer_size': [1] + [24] * 6 + [4],
+            'X_s':eq_params.Xo
+        },
+        '24x6 nondim':{
+            'layer_size': [1] + [24] * 6 + [4],
+            'X_s':eq_params.Xo,
+            'P_s': eq_params.Po,
+            'S_s': eq_params.So,
+            'V_s':process_params.max_reactor_volume,
+            # 't_s':process_params.t_final
+            },
+        '24x6':{
+            'layer_size': [1] + [24] * 9 + [4],
+        },
+        '24x6 X':{
+            'layer_size': [1] + [24] * 9 + [4],
+            'X_s':eq_params.Xo
+        },
+        '24x6 nondim':{
+            'layer_size': [1] + [24] * 9 + [4],
+            'X_s':eq_params.Xo,
+            'P_s': eq_params.Po,
+            'S_s': eq_params.So,
+            'V_s':process_params.max_reactor_volume,
+            # 't_s':process_params.t_final
+            },
+        # '60x3':{
+        #     'layer_size': [1] + [60] * 3 + [4],
+        # },
+        # '60x3 X':{
+        #     'layer_size': [1] + [60] * 3 + [4],
+        #     'X_s':eq_params.Xo
+        # },
+        # '60x3 nondim':{
+        #     'layer_size': [1] + [60] * 3 + [4],
+        #     'X_s':eq_params.Xo,
+        #     'P_s': eq_params.Po,
+        #     'S_s': eq_params.So,
+        #     'V_s':process_params.max_reactor_volume,
+        #     # 't_s':process_params.t_final
+        #     },
+        
         
         
     }
 
     for key in dictionary:
-        dictionary[key]["adam_epochs"] = 25000 #70000
+        dictionary[key]["adam_epochs"] = 100 #25000 #70000
         dictionary[key]['activation'] = 'tanh'
         dictionary[key]['num_domain'] = 70
         dictionary[key]['num_test'] = 70
         dictionary[key]["lbfgs_pre"] = False
-        dictionary[key]["lbfgs_post"] = True
+        dictionary[key]["lbfgs_post"] = Faslse #True
 
     return dictionary
 
