@@ -166,40 +166,44 @@ class ODEPreparer:
                     ),
                    1
                    * (dV_dt_nondim - ((f_in - f_out)*(scaler.t/scaler.V))),
+                   X_nondim if X_nondim<0 else 0,
+                   P_nondim if P_nondim<0 else 0,
+                   S_nondim if S_nondim<0 else 0,
+                   V_nondim if V_nondim<0 else 0
                 ]
 
-                return [
-                    1#solver_params.w_X
-                    * 
-                    (
-                        dX_dt * V * scaler.V
-                        - (
-                            non_dim_rX * V * scaler.V
-                            + f_in * inlet.X *scaler.t/scaler.X
-                            - f_out * X * scaler.t
-                        )
-                    ),
-                    1#solver_params.w_P
-                    * (
-                        dP_dt * V * scaler.V
-                        - (
-                            non_dim_rP * V * scaler.V
-                            + f_in * inlet.P*scaler.t / scaler.P
-                            - f_out * P *scaler.t
-                        )
-                    ),
-                    1#solver_params.w_S
-                    * (
-                        dS_dt * V * scaler.V
-                        - (
-                            non_dim_rS * V * scaler.V
-                            + f_in * inlet.S*scaler.t / scaler.S
-                            - f_out * S *scaler.t
-                        )
-                    ),
-                   1# solver_params.w_volume
-                   * (dV_dt*(scaler.V/scaler.t) - (f_in - f_out)),
-                ]
+                # return [
+                #     1#solver_params.w_X
+                #     * 
+                #     (
+                #         dX_dt * V * scaler.V
+                #         - (
+                #             non_dim_rX * V * scaler.V
+                #             + f_in * inlet.X *scaler.t/scaler.X
+                #             - f_out * X * scaler.t
+                #         )
+                #     ),
+                #     1#solver_params.w_P
+                #     * (
+                #         dP_dt * V * scaler.V
+                #         - (
+                #             non_dim_rP * V * scaler.V
+                #             + f_in * inlet.P*scaler.t / scaler.P
+                #             - f_out * P *scaler.t
+                #         )
+                #     ),
+                #     1#solver_params.w_S
+                #     * (
+                #         dS_dt * V * scaler.V
+                #         - (
+                #             non_dim_rS * V * scaler.V
+                #             + f_in * inlet.S*scaler.t / scaler.S
+                #             - f_out * S *scaler.t
+                #         )
+                #     ),
+                #    1# solver_params.w_volume
+                #    * (dV_dt*(scaler.V/scaler.t) - (f_in - f_out)),
+                # ]
 
             # --------------------------
             # Reactions
