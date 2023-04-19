@@ -188,13 +188,13 @@ def main():
             yscale='log',
             sharey=True,
             sharex=True,
-            nrows=4,
-            ncols=4,
+            nrows=3,
+            ncols=5,
             items=items,
             suptitle=None,
             title_for_each=True,
             supxlabel="epochs",
-            supylabel="loss (test)",
+            supylabel="loss",
         )
             
         num_results = run_numerical_methods(
@@ -217,7 +217,7 @@ def main():
             # prediction = pinn.model.predict(np.array([[0, 0.5, 1, 2, 4]]))
             # prediction = pinn.model.predict(np.vstack(np.ravel([0, 0.5, 1, 2, 4],)))
             pred_start_time = timer()
-            prediction = pinn.model.predict(np.vstack(np.ravel(num.t,)))
+            prediction = pinn.model.predict(np.vstack(np.ravel(num.t*pinn.solver_params.non_dim_scaler.t_not_tensor,)))
             pred_end_time = timer()
             pred_time = pred_end_time - pred_start_time
             print(f'name = {pinn.model_name}')
@@ -229,10 +229,10 @@ def main():
             titles = ["X", "P", "S", "V"]
             # pinn_vals = [pinn.X, pinn.P, pinn.S, pinn.V]
             pinn_vals = [
-                prediction[:, 0],#pinn.X,
-                prediction[:, 1],#pinn.P,
-                prediction[:, 2],#pinn.S,
-                prediction[:, 3],#pinn.V]
+                prediction[:, 0]*pinn.solver_params.non_dim_scaler.X_not_tensor,#pinn.X,
+                prediction[:, 1]*pinn.solver_params.non_dim_scaler.P_not_tensor,#pinn.P,
+                prediction[:, 2]*pinn.solver_params.non_dim_scaler.S_not_tensor,#pinn.S,
+                prediction[:, 3]*pinn.solver_params.non_dim_scaler.V_not_tensor,#pinn.V]
             ]
             num_vals = [num.X,
             num.P,

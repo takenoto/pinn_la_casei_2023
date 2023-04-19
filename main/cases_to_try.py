@@ -34,14 +34,8 @@ def batch_tests_fixed_neurons_number(eq_params, process_params):
         #-------------
         # 720
         #-------------
-        f'720x1 {func}':{
-            'layer_size': [1] + [720] * 1 + [4],
-        },
         f'360x2 {func}':{
             'layer_size': [1] + [360] * 2 + [4],
-        },
-        f'240x3 {func}':{
-            'layer_size': [1] + [240] * 3 + [4],
         },
         f'180x4 {func}':{
             'layer_size': [1] + [180] * 4 + [4],
@@ -52,23 +46,14 @@ def batch_tests_fixed_neurons_number(eq_params, process_params):
         f'90x8 {func}':{
             'layer_size': [1] + [90] * 8 + [4],
         },
-        f'80x9 {func}':{
-            'layer_size': [1] + [80] * 9 + [4],
-        },
         f'72x10 {func}':{
             'layer_size': [1] + [72] * 10 + [4],
         },
         #-------------
         # 360
         #-------------
-        f'360x1 {func}':{
-            'layer_size': [1] + [360] * 1 + [4],
-        },
         f'180x2 {func}':{
             'layer_size': [1] + [180] * 2 + [4],
-        },
-        f'120x3 {func}':{
-            'layer_size': [1] + [120] * 3 + [4],
         },
         f'90x4 {func}':{
             'layer_size': [1] + [90] * 4 + [4],
@@ -79,66 +64,37 @@ def batch_tests_fixed_neurons_number(eq_params, process_params):
         f'45x8 {func}':{
             'layer_size': [1] + [45] * 8 + [4],
         },
-        f'40x9 {func}':{
-            'layer_size': [1] + [40] * 9+ [4],
-        },
         f'36x10 {func}':{
             'layer_size': [1] + [36] * 10 + [4],
         },
-        # -----------------------
-        # --LAYERS AND NEURONS---
-        # -----------------------
+        #-------------
+        # 180
+        #-------------
+        f'90x2 {func}':{
+            'layer_size': [1] + [90] * 2 + [4],
+        },
+        f'45x4 {func}':{
+            'layer_size': [1] + [45] * 4 + [4],
+        },
+        f'30x6 {func}':{
+            'layer_size': [1] + [30] * 6 + [4],
+        },
+        f'23x8 {func}':{
+            'layer_size': [1] + [23] * 8 + [4],
+        },
+        f'18x10 {func}':{
+            'layer_size': [1] + [18] * 10 + [4],
+        },
     }
-    # dictionary = { 
-    #     f'80x3 {func}':{
-    #         'layer_size': [1] + [80] * 3 + [4],
-    #     },
-    #     f'120x2 {func}':{
-    #         'layer_size': [1] + [120] * 1 + [4],
-    #     },
-    #     f'240x1 {func}':{
-    #         'layer_size': [1] + [240] * 1 + [4],
-    #         },
-    #     f'60x3 {func}':{
-    #         'layer_size': [1] + [60] * 3 + [4],
-    #     },
-    #     f'90x2 {func}':{
-    #         'layer_size': [1] + [90] * 2 + [4],
-    #         'X_s':eq_params.Xo
-    #     },
-    #     f'180x1 {func}':{
-    #         'layer_size': [1] + [180] * 1 + [4],
-    #         },
-    #     f'30x3 {func}':{
-    #         'layer_size': [1] + [30] * 3 + [4],
-    #     },
-    #     f'60x2 {func}':{
-    #         'layer_size': [1] + [60] * 2 + [4],
-    #         'X_s':eq_params.Xo
-    #     },
-    #     f'90x1 {func}':{
-    #         'layer_size': [1] + [90] * 1 + [4]
-    #         },
-    #     f'20x3 {func}':{
-    #         'layer_size': [1] + [20] * 3 + [4],
-    #     },
-    #     f'40x2 {func}':{
-    #         'layer_size': [1] + [40] * 2 + [4],
-    #         'X_s':eq_params.Xo
-    #     },
-    #     f'60x1 {func}':{
-    #         'layer_size': [1] + [60] * 1 + [4]
-    #         },
-    # }
 
 
     for key in dictionary:
-        dictionary[key]["adam_epochs"] = 200 #30000 #100 #25000 #70000
+        dictionary[key]["adam_epochs"] = 30000
         dictionary[key]['activation'] = func
         dictionary[key]['num_domain'] = 300
         dictionary[key]['num_test'] = 300
         dictionary[key]["lbfgs_pre"] = False
-        dictionary[key]["lbfgs_post"] = False #True #True
+        dictionary[key]["lbfgs_post"] = True
 
     return dictionary
 

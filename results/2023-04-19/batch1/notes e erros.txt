@@ -1,0 +1,112 @@
+Tempo total = 6221.585055 secs
+
+Esses tempos de pred longo tão errados mds
+Pq o tensorflow tá abrindo e fechando cocooooooooooooooooooo
+
+----------------------
+
+name = 360x2 tanh
+train time = 585.7069834 s
+best loss test = 0.306988924741745
+best loss train = 0.3006664216518402
+pred time = 4.6662321999974665 s
+
+
+name = 180x4 tanh
+train time = 802.0489255 s
+best loss test = 2.9204253223724663e-05
+best loss train = 2.8490578188211657e-05
+pred time = 2.6167273000028217 s
+
+
+name = 120x6 tanh
+train time = 445.2818145000001 s
+best loss test = 8.387041816604324e-06
+best loss train = 8.3394752437016e-06
+pred time = 2.5891407000017352 s
+
+name = 90x8 tanh
+train time = 612.5237183999998 s
+best loss test = 1.1409756552893668e-05
+best loss train = 1.1755869309126865e-05
+pred time = 2.5108364000043366 s
+
+
+name = 72x10 tanh
+train time = 443.1210479000001 s
+best loss test = 1.2471504305722192e-05
+best loss train = 1.3088269042782485e-05
+pred time = 2.8246808999974746 s
+
+
+
+name = 180x2 tanh
+train time = 205.77414759999965 s
+best loss test = 0.3563920855522156
+best loss train = 0.3549797534942627
+pred time = 3.627851199998986 s
+
+
+name = 90x4 tanh
+train time = 475.7317256000001 s
+best loss test = 3.4101401979569346e-05
+best loss train = 3.533114067977294e-05
+pred time = 6.082668399998511 s
+
+
+name = 60x6 tanh
+train time = 327.5744829 s
+best loss test = 2.7498095732880756e-05
+best loss train = 2.8859241865575314e-05
+pred time = 11.979637200005527 s
+
+
+name = 45x8 tanh
+train time = 262.7030786 s
+best loss test = 3.5181292332708836e-05
+best loss train = 3.5319681046530604e-05
+pred time = 24.730503800004954 s
+
+
+name = 36x10 tanh
+train time = 190.83325960000002 s
+best loss test = 4.8773108574096113e-05
+best loss train = 4.7836692829150707e-05
+pred time = 24.405201300003682 s
+
+
+
+name = 90x2 tanh
+train time = 196.52669629999946 s
+best loss test = 0.3233571946620941
+best loss train = 0.3201969265937805
+pred time = 33.223957499998505 s
+
+
+
+name = 45x4 tanh
+train time = 1194.8008557000003 s
+best loss test = 8.597872692917008e-06
+best loss train = 8.67852122610202e-06
+pred time = 39.366567199998826 s
+
+
+name = 30x6 tanh
+train time = 114.65904180000052 s
+best loss test = 6.428985943784937e-05
+best loss train = 5.85170419071801e-05
+pred time = 36.98467900000105 s
+
+
+name = 23x8 tanh
+train time = 217.72556619999978 s
+best loss test = 0.33775174617767334
+best loss train = 0.334873765707016
+pred time = 44.783787699998356 s
+
+
+name = 18x10 tanh
+train time = 146.30265940000027 s
+best loss test = 4.649179754778743e-05
+best loss train = 1.4531262877426343e-06
+pred time = 23.512310499994783 s
