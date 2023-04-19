@@ -4,6 +4,7 @@ from timeit import default_timer as timer
 
 import numpy as np
 import deepxde
+import deepxde as dde 
 import tensorflow as tf
 
 import matplotlib.pyplot as plt
@@ -157,6 +158,9 @@ def main():
         print('RUN BATCH NEW NONDIM TEST')
         start_time = timer()
         cases = batch_nondim_v2(eq_params, process_params_feed_cstr)
+        # FIXME
+        # TODO ajeitar é outro teste separado...
+        cases = batch_tests_fixed_neurons_number(eq_params, process_params_feed_cstr)
         pinns, p_best_index, p_best_error = run_pinn_grid_search(
             solver_params_list=None,
             eq_params=eq_params,
@@ -169,7 +173,6 @@ def main():
         print(f"elapsed time for BATCH NONDIM test = {end_time - start_time} secs")
         items = {}
         for i in range(len(pinns)):
-            print(i)
             items[i + 1] = {
                 "title": pinns[i].model_name,
                 "cases": [
@@ -180,13 +183,13 @@ def main():
 
         plot_comparer_multiple_grid(
             labels=['Loss (teste)', 'Loss (treino)'],
-            figsize=(7.2*1.5, 8.2*1.5),
+            figsize=(7.2*2, 8.2*2),
             gridspec_kw={"hspace": 0.35, "wspace": 0.14},
             yscale='log',
             sharey=True,
             sharex=True,
-            nrows=2,
-            ncols=2,
+            nrows=4,
+            ncols=4,
             items=items,
             suptitle=None,
             title_for_each=True,
@@ -199,7 +202,7 @@ def main():
             process_params=process_params_feed_off,
             initial_state=initial_state,
             f_out_value_calc= lambda max_reactor_volume, f_in_v, volume: 0,
-            t_discretization_points=[240],
+            t_discretization_points=[400],
         )
 
         # PLOTAR O MELHOR DOS PINNS
@@ -207,12 +210,30 @@ def main():
         print(f'Pinn best index = {p_best_index}')
         print(f'Pinn best error = {p_best_error}')
        
-        #  Plotar todos os resultados, um a um
+        # Plotar todos os resultados, um a um
         num = num_results[0]
         for pinn in pinns:
+            # x_pred = dde.geometry.TimeDomain(0, pinn.process_params.t_final / pinn.solver_params.non_dim_scaler.t_not_tensor)
+            # prediction = pinn.model.predict(np.array([[0, 0.5, 1, 2, 4]]))
+            # prediction = pinn.model.predict(np.vstack(np.ravel([0, 0.5, 1, 2, 4],)))
+            pred_start_time = timer()
+            prediction = pinn.model.predict(np.vstack(np.ravel(num.t,)))
+            pred_end_time = timer()
+            pred_time = pred_end_time - pred_start_time
+            print(f'name = {pinn.model_name}')
+            print(f'train time = {pinn.total_training_time} s')
+            print(f'best loss test = {pinn.best_loss_test}')
+            print(f'best loss train = {pinn.best_loss_train}')
+            print(f'pred time = {pred_time} s')
             items = {}
             titles = ["X", "P", "S", "V"]
-            pinn_vals = [pinn.X, pinn.P, pinn.S, pinn.V]
+            # pinn_vals = [pinn.X, pinn.P, pinn.S, pinn.V]
+            pinn_vals = [
+                prediction[:, 0],#pinn.X,
+                prediction[:, 1],#pinn.P,
+                prediction[:, 2],#pinn.S,
+                prediction[:, 3],#pinn.V]
+            ]
             num_vals = [num.X,
             num.P,
             num.S,
@@ -224,7 +245,7 @@ def main():
                         # Numeric
                         {"x": num.t, "y": num_vals[i], "color": pinn_colors[0], "l": "-"},
                         # PINN
-                        {"x": pinn.t, "y": pinn_vals[i], "color": pinn_colors[1], "l": "--"},
+                        {"x": num.t, "y": pinn_vals[i], "color": pinn_colors[1], "l": "--"},
                     ],
                 }
 
@@ -235,8 +256,8 @@ def main():
                 gridspec_kw={"hspace": 0.6, "wspace": 0.25},
                 yscale='linear',
                 sharey=False,
-                nrows=3,
-                ncols=3,
+                nrows=2,
+                ncols=2,
                 items=items,
                 title_for_each=True,
                 supxlabel="tempo (h)",

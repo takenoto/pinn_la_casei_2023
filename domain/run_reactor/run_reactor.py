@@ -3,6 +3,7 @@ import deepxde as dde
 import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
+from timeit import default_timer as timer
 
 # Local imports
 from domain.params.solver_params import SolverParams
@@ -97,8 +98,14 @@ def run_reactor(
     ## SOLVING
     model = dde.Model(data, net)
     w = solver_params.loss_weights
-    loss_weights = [w[0], w[1], w[2], w[3], w[0], w[1], w[2], w[3]]# solver_params.loss_weights
+    loss_weights = [
+        # Os 1ºs são da pde, os 3 útilmos do ajuste físico (proibir menor que zero)
+        # Equece, não deu certo
+        w[0], w[1], w[2], w[3], #w[0],# w[1], w[2], w[3],
+        # Esses são do teste eu acho, e os de cima do train? embora não faça o menor sentido...
+        w[0], w[1], w[2], w[3],]# solver_params.loss_weights
     
+    start_time = timer()
     ### Step 1: Pre-solving by "L-BFGS"
     if(solver_params.l_bfgs.do_pre_optimization):
         model.compile("L-BFGS", loss_weights=loss_weights)
@@ -113,13 +120,13 @@ def run_reactor(
     if(solver_params.l_bfgs.do_post_optimization):
         model.compile("L-BFGS", loss_weights=loss_weights)
         loss_history, train_state = model.train()
-
+    end_time = timer()
+    total_training_time = end_time - start_time
     # dde.saveplot(loss_history, train_state, issave=False, isplot=False)
     
     # ---------------------------------------
     # ------------- FINISHING ---------------
     # ---------------------------------------
-
 
     return PINNReactorModelResults(
         model=model,
@@ -142,4 +149,5 @@ def run_reactor(
         best_y=train_state.best_y,
         best_ystd=train_state.best_ystd,
         best_metrics=train_state.best_metrics,
+        total_training_time=total_training_time,
     )

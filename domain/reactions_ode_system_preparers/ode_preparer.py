@@ -135,7 +135,7 @@ class ODEPreparer:
                 # e o scaler V/t no volume, talvez por isso desse problema
                 
                 # NOVO NONDIM
-                return [
+                loss_pde = [
                     1
                     * 
                     (
@@ -166,11 +166,34 @@ class ODEPreparer:
                     ),
                    1
                    * (dV_dt_nondim - ((f_in - f_out)*(scaler.t/scaler.V))),
-                   X_nondim if X_nondim<0 else 0,
-                   P_nondim if P_nondim<0 else 0,
-                   S_nondim if S_nondim<0 else 0,
-                   V_nondim if V_nondim<0 else 0
                 ]
+
+                #Não funcina nem com cond nem com where xisde
+                # loss_pde_X = (tf.cond(tf.less(X_nondim, tf.cast(0, tf.float32)), true_fn=lambda:X_nondim, false_fn=lambda:tf.cast(0, tf.float32))).numpy()
+                # loss_pde_X = tf.where(tf.less(tf.squeeze(X_nondim), 0),
+                #     true_fn=lambda:X_nondim,
+                #     false_fn=lambda:tf.cast(0, tf.float32)#sub(X_nondim,X_nondim)
+                #     )
+                # loss_pde_P = tf.cond(tf.less(tf.squeeze(P_nondim), 0),
+                #     true_fn=lambda:P_nondim,
+                #     false_fn=lambda:tf.cast(0, tf.float32)#sub(X_nondim,X_nondim)
+                #     )
+                # loss_pde_S = tf.cond(tf.less(tf.squeeze(S_nondim), 0),
+                #     true_fn=lambda:S_nondim,
+                #     false_fn=lambda:tf.cast(0, tf.float32)#sub(X_nondim,X_nondim)
+                #     )
+                # loss_pde_V = tf.cond(tf.less(tf.squeeze(V_nondim), 0),
+                #     true_fn=lambda:V_nondim,
+                #     false_fn=lambda:tf.cast(0, tf.float32)#sub(X_nondim,X_nondim)
+                #     )
+                
+                # loss_pde.append(loss_pde_X)
+                # loss_pde.append(loss_pde_P)
+                # loss_pde.append(loss_pde_S)
+                # loss_pde.append(loss_pde_V)
+
+
+                return loss_pde
 
                 # return [
                 #     1#solver_params.w_X

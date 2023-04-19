@@ -22,6 +22,7 @@ class PINNReactorModelResults:
         best_y=None,
         best_ystd=None,
         best_metrics=None,
+        total_training_time=None
     ):
         self.model_name=model_name
         self.model = model
@@ -48,6 +49,8 @@ class PINNReactorModelResults:
         self.best_y = best_y
         self.best_ystd = best_ystd
         self.best_metrics = best_metrics
+
+        self.total_training_time = total_training_time
         """
         Function used to calculate the reactor's outlet flow (volume/time) 
         """
