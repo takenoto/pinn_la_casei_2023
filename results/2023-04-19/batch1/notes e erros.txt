@@ -3,6 +3,13 @@ Tempo total = 6221.585055 secs
 Esses tempos de pred longo tão errados mds
 Pq o tensorflow tá abrindo e fechando cocooooooooooooooooooo
 
+
+Acho que o 18x10 tem baixa loss apesar o gráfico absurdo porque atendeu às equações. O x zerou, tudo ficou estagnado (!!!!!!!!!), encontrou um ponto que obedece ao equacionamento, embora na prática não tenha sentido.
+
+
+Pinn best index = 2
+Pinn best error = 8.387041816604324e-06
+
 ----------------------
 
 name = 360x2 tanh
