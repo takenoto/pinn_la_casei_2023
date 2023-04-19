@@ -1,0 +1,76 @@
+TOTAL TIME
+3345.5386986000003 secs
+
+Pinn best index = 8
+Pinn best error = 3.78590812033508e-05
+
+-------------------------
+
+name = 22x2 tanh
+train time = 45.0591613 s
+best loss test = 0.035004012286663055
+best loss train = 0.03547099977731705
+pred time = 1.479942499999197 s
+
+
+name = 22x3 tanh
+train time = 65.9602873 s
+best loss test = 9.221554500982165e-05
+best loss train = 0.00010686439782148227
+pred time = 1.4609942999995837 s
+
+
+name = 22x4 tanh
+train time = 101.76990169999999 s
+best loss test = 0.0006420433637686074
+best loss train = 0.0006618300103582442
+pred time = 1.4584478999995554 s
+
+
+name = 22x5 tanh
+train time = 163.6162685 s
+best loss test = 0.00013644809951074421
+best loss train = 0.0001422090717824176
+pred time = 1.3977174000001469 s
+
+
+
+name = 22x6 tanh
+train time = 218.9106187 s
+best loss test = 0.0002471448096912354
+best loss train = 0.000263426685705781
+pred time = 1.381700500000079 s
+
+
+name = 22x7 tanh
+train time = 422.7497376 s
+best loss test = 9.383844735566527e-05
+best loss train = 9.675247565610334e-05
+pred time = 1.3650128999997833 s
+
+
+name = 22x8 tanh
+train time = 450.17063069999995 s
+best loss test = 0.0003722076362464577
+best loss train = 0.00037600676296278834
+pred time = 1.327552800000376 s
+
+
+name = 22x9 tanh
+train time = 509.16759690000004 s
+best loss test = 0.3664686977863312
+best loss train = 0.3658874034881592
+pred time = 1.3223679000002448 s
+
+name = 22x10 tanh
+train time = 675.5169159 s
+best loss test = 3.78590812033508e-05
+best loss train = 4.107042695977725e-05
+pred time = 1.2923601000002236 s
+
+
+name = 22x12 tanh
+train time = 692.4886917999997 s
+best loss test = 0.003777263918891549
+best loss train = 1.0922138926616753e-06
+pred time = 1.2376472999994803 s

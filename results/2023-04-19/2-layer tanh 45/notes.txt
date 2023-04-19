@@ -1,0 +1,80 @@
+TEMPO TOTAL
+1931.6338151 secs
+
+Pinn best index = 4
+Pinn best error = 8.346907634404488e-06
+
+TODOS 30K ADAMS! + 1 etapa LBFGS
+
+Aparentemente predição fica mais rápida com aumento do número de camadas, mesmo que neurons totais aumentem muito lol???????????
+
+
+------------------------
+
+
+name = 45x2 tanh
+train time = 50.1717808 s
+best loss test = 7.336396083701402e-05
+best loss train = 7.553586328867823e-05
+pred time = 1.4787727000002633 s
+
+name = 45x3 tanh
+train time = 65.3616681 s
+best loss test = 0.00031183133251033723
+best loss train = 0.0003109087410848588
+pred time = 1.4616149999997106 s
+
+name = 45x4 tanh
+train time = 90.4347488 s
+best loss test = 0.31985417008399963
+best loss train = 0.31013333797454834
+pred time = 1.445275600000059 s
+
+name = 45x5 tanh
+train time = 105.41792810000001 s
+best loss test = 2.0138588297413662e-05
+best loss train = 2.0459330698940903e-05
+pred time = 1.4918698999999833 s
+
+
+name = 45x6 tanh
+train time = 134.3705258 s
+best loss test = 8.346907634404488e-06
+best loss train = 8.26418363431003e-06
+pred time = 1.483212999999978 s
+
+
+name = 45x7 tanh
+train time = 177.02162510000005 s
+best loss test = 1.837719901232049e-05
+best loss train = 1.8017719412455335e-05
+pred time = 1.3915791999997964 s
+
+
+name = 45x8 tanh
+train time = 250.67946189999998 s
+best loss test = 1.890239400381688e-05
+best loss train = 1.9139848518534563e-05
+pred time = 1.3742231999999603 s
+
+
+name = 45x9 tanh
+train time = 300.2285849 s
+best loss test = 2.511744969524443e-05
+best loss train = 2.5300696506747045e-05
+pred time = 1.3345029000001887 s
+
+
+name = 45x10 tanh
+train time = 342.2662579 s
+best loss test = 5.609665822703391e-05
+best loss train = 4.4080978113925084e-05
+pred time = 1.3433522000000266 s
+
+
+name = 45x12 tanh
+train time = 415.55508639999994 s
+best loss test = 2.13177663681563e-05
+best loss train = 2.3295267965295352e-05
+pred time = 1.2487928000000466 s
+

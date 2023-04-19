@@ -1,3 +1,9 @@
+OPERAÇÃO BATELADA!
+SEM NONDIMS!
+
+
+--------------------
+
 def batch_tests_fixed_neurons_number(eq_params, process_params):
     func = 'tanh'
     #neurons total fixo em 360?

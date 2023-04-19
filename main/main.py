@@ -161,6 +161,7 @@ def main():
         # FIXME
         # TODO ajeitar é outro teste separado...
         cases = batch_tests_fixed_neurons_number(eq_params, process_params_feed_cstr)
+        cases = change_layer_fix_neurons_number(eq_params, process_params_feed_cstr)
         pinns, p_best_index, p_best_error = run_pinn_grid_search(
             solver_params_list=None,
             eq_params=eq_params,
@@ -188,7 +189,7 @@ def main():
             yscale='log',
             sharey=True,
             sharex=True,
-            nrows=3,
+            nrows=2,
             ncols=5,
             items=items,
             suptitle=None,
