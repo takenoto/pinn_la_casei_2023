@@ -1,0 +1,80 @@
+TOTAL TIME
+2427.6900831000003 secs
+
+Predição swish é bem mais custosa que a tanh mas lol?????
+
+-----------------------------
+
+
+
+name = 22x2 swish
+train time = 46.79991029999999 s
+best loss test = 0.3401722013950348
+best loss train = 0.3371852934360504
+pred time = 2.7527100000002065 s
+
+
+name = 22x3 swish
+train time = 68.5240082 s
+best loss test = 0.0027448751498013735
+best loss train = 0.002680916339159012
+pred time = 2.853248100000201 s
+
+
+name = 22x4 swish
+train time = 95.3247538 s
+best loss test = 0.2939959168434143
+best loss train = 0.288467675447464
+pred time = 2.6423350000000028 s
+
+
+name = 22x5 swish
+train time = 138.09646169999996 s
+best loss test = 454.48175048828125
+best loss train = 454.4942932128906
+pred time = 2.5815964000003078 s
+
+
+name = 22x6 swish
+train time = 131.86008270000002 s
+best loss test = 0.0005176130216568708
+best loss train = 0.0005232721450738609
+pred time = 2.643674899999951 s
+
+
+name = 22x7 swish
+train time = 223.10112700000002 s
+best loss test = 0.28976768255233765
+best loss train = 0.28475841879844666
+pred time = 2.6846793999998226 s
+
+
+name = 22x8 swish
+train time = 266.36054850000005 s
+best loss test = 0.0032269288785755634
+best loss train = 0.0032902550883591175
+pred time = 2.6984355999998115 s
+
+
+
+
+name = 22x9 swish
+train time = 357.14736819999996 s
+best loss test = 0.001112676691263914
+best loss train = 0.0011509928153827786
+pred time = 2.432520999999724 s
+
+
+name = 22x10 swish
+train time = 277.64850760000013 s
+best loss test = 0.0004603017005138099
+best loss train = 0.0004540466470643878
+pred time = 2.4629676999998082 s
+
+
+
+name = 22x12 swish
+train time = 822.7170659999999 s
+best loss test = 0.0013239328982308507
+best loss train = 0.0013543380191549659
+pred time = 2.2396511000001738 s

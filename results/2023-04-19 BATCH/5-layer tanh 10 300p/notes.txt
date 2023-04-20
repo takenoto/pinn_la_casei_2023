@@ -1,0 +1,70 @@
+TOTAL TIME = 565.7148784999999 secs
+
+Pinn best index = 8
+Pinn best error = 0.00028698862297460437
+
+--------------------
+
+name = 10x2 tanh
+train time = 30.417902499999997 s
+best loss test = 0.3149353265762329
+best loss train = 0.3090190291404724
+pred time = 1.49725269999999 s
+
+name = 10x3 tanh
+train time = 36.589301999999996 s
+best loss test = 0.33004000782966614
+best loss train = 0.34820130467414856
+pred time = 1.4931000000001404 s
+
+name = 10x4 tanh
+train time = 46.527496799999994 s
+best loss test = 0.002160340314731002
+best loss train = 0.002212979132309556
+pred time = 1.5562750999999935 s
+
+name = 10x5 tanh
+train time = 45.10367179999999 s
+best loss test = 0.000596635218244046
+best loss train = 0.0003797040262725204
+pred time = 1.4496907000000192 s
+
+name = 10x6 tanh
+train time = 50.01614759999998 s
+best loss test = 0.5261140465736389
+best loss train = 0.00012002242874586955
+pred time = 1.3965239000001475 s
+
+name = 10x7 tanh
+train time = 56.54823759999999 s
+best loss test = 0.01040086429566145
+best loss train = 1.4093143363425042e-05
+pred time = 1.379180599999927 s
+
+
+name = 10x8 tanh
+train time = 62.1061234 s
+best loss test = 0.0007175933569669724
+best loss train = 9.543987289362121e-06
+pred time = 1.3978520000000572 s
+
+
+name = 10x9 tanh
+train time = 69.4631101 s
+best loss test = 1.302128791809082
+best loss train = 1.302128791809082
+pred time = 1.5149375999999393 s
+
+
+name = 10x10 tanh
+train time = 78.57533590000003 s
+best loss test = 0.00028698862297460437
+best loss train = 1.38493996928446e-05
+pred time = 1.4139201999998932 s
+
+
+name = 10x12 tanh
+train time = 90.25504590000003 s
+best loss test = 0.0009912136010825634
+best loss train = 7.381396426353604e-05
+pred time = 1.3115258999998787 s

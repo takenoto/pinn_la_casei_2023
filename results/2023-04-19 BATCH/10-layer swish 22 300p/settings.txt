@@ -1,0 +1,47 @@
+def change_layer_fix_neurons_number(eq_params, process_params):
+    func = 'swish'
+    # TODO rodar tb com swish e selu
+    neurons = 22
+    dictionary = { 
+        f'{neurons}x2 {func}':{
+            'layer_size': [1] + [neurons] * 2 + [4],
+        },
+        f'{neurons}x3 {func}':{
+            'layer_size': [1] + [neurons] * 3 + [4],
+        },
+        f'{neurons}x4 {func}':{
+            'layer_size': [1] + [neurons] * 4 + [4],
+        },
+        f'{neurons}x5 {func}':{
+            'layer_size': [1] + [neurons] * 5 + [4],
+        },
+        f'{neurons}x6 {func}':{
+            'layer_size': [1] + [neurons] * 6 + [4],
+        },
+        f'{neurons}x7 {func}':{
+            'layer_size': [1] + [neurons] * 7 + [4],
+        },
+        f'{neurons}x8 {func}':{
+            'layer_size': [1] + [neurons] * 8 + [4],
+        },
+        f'{neurons}x9 {func}':{
+            'layer_size': [1] + [neurons] * 9 + [4],
+        },
+        f'{neurons}x10 {func}':{
+            'layer_size': [1] + [neurons] * 10 + [4],
+        },
+        f'{neurons}x12 {func}':{
+            'layer_size': [1] + [neurons] * 12 + [4],
+        },
+    }
+
+
+    for key in dictionary:
+        dictionary[key]["adam_epochs"] = 30000
+        dictionary[key]['activation'] = func
+        dictionary[key]['num_domain'] = 300
+        dictionary[key]['num_test'] = 300
+        dictionary[key]["lbfgs_pre"] = False
+        dictionary[key]["lbfgs_post"] = True
+
+    return dictionary

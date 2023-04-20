@@ -1,0 +1,81 @@
+TOTAL TIME = 16865.7135079 secs
+
+Pinn best index = 2
+Pinn best error = 0.00027715243049897254
+
+O tempo desse primeiro pode estar errado pq ainda foi carregar o tensorflow zzzz
+
+------------------------------
+
+
+name = 150x2 swish
+train time = 281.0957795 s
+best loss test = 0.3430834710597992
+best loss train = 0.3391129970550537
+pred time = 40.644432599998254 s
+
+name = 150x3 swish
+train time = 490.31562399999996 s
+best loss test = 0.29753926396369934
+best loss train = 0.293371319770813
+pred time = 10.35913889999938 s
+
+
+name = 150x4 swish
+train time = 812.0816586999999 s
+best loss test = 0.00027715243049897254
+best loss train = 0.00027456347015686333
+pred time = 14.302123299999948 s
+
+
+name = 150x5 swish
+train time = 681.7983400999999 s
+best loss test = 0.35493722558021545
+best loss train = 0.350570946931839
+pred time = 26.3258711999988 s
+
+
+name = 150x6 swish
+train time = 906.156853 s
+best loss test = 520.282470703125
+best loss train = 520.282470703125
+pred time = 19.4201447000014 s
+
+
+name = 150x7 swish
+train time = 1514.0071753000002 s
+best loss test = 0.30872300267219543
+best loss train = 0.3038910925388336
+pred time = 5.181409500000882 s
+
+
+name = 150x8 swish
+train time = 2083.1132988 s
+best loss test = 0.0005889657768420875
+best loss train = 0.0006024354370310903
+pred time = 3.271058599999378 s
+
+
+
+name = 150x9 swish
+train time = 2455.0230171999992 s
+best loss test = 520.2825317382812
+best loss train = 520.2825317382812
+pred time = 4.008918299998186 s
+
+
+name = 150x10 swish
+train time = 3155.9189596999986 s
+best loss test = 0.04365859553217888
+best loss train = 0.04405473545193672
+pred time = 5.728040900001361 s
+
+
+name = 150x12 swish
+train time = 4484.998795300002 s
+best loss test = 0.000858007580973208
+best loss train = 0.0008450305322185159
+pred time = 3.180772199997591 s
+
+
+

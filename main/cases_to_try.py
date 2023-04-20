@@ -27,9 +27,10 @@ default_num_test = 1000
 # Uma com tanh, uma com selu, uma com swish
 
 def change_layer_fix_neurons_number(eq_params, process_params):
+    # TODO rodar teste em paralelo pra comparar as 2 funções loss
+    # TODO sei lá. Deixa tudo tanh, swish tá um coco tb...
     func = 'tanh'
-    # TODO rodar tb com swish e selu
-    neurons = 10
+    neurons = 45
     dictionary = { 
         f'{neurons}x2 {func}':{
             'layer_size': [1] + [neurons] * 2 + [4],
@@ -65,7 +66,7 @@ def change_layer_fix_neurons_number(eq_params, process_params):
 
 
     for key in dictionary:
-        dictionary[key]["adam_epochs"] = 30000
+        dictionary[key]["adam_epochs"] = 10 #30000
         dictionary[key]['activation'] = func
         dictionary[key]['num_domain'] = 300
         dictionary[key]['num_test'] = 300

@@ -77,6 +77,8 @@ def main():
 
     plt.style.use("./main/plotting/plot_styles.mplstyle")
 
+    run_cstr_nondim_test = True
+
     run_batch_nondim_test_v2 = True
 
     run_cstr_convergence_test = True
@@ -154,12 +156,126 @@ def main():
             t_final=24*4,
         )
 
+    if run_cstr_nondim_test:
+
+        print('RUN CSTR NEW NONDIM TEST')
+        start_time = timer()
+        cases = change_layer_fix_neurons_number(eq_params, process_params_feed_cstr)
+        def cstr_f_out_calc_tensorflow(max_reactor_volume, f_in_v, volume):
+            # estou assumindo que já começa no estado estacionário:
+            return f_in_v*tf.math.pow(volume/max_reactor_volume, 7)
+        pinns, p_best_index, p_best_error = run_pinn_grid_search(
+            solver_params_list=None,
+            eq_params=eq_params,
+            process_params=process_params_feed_cstr,
+            initial_state=initial_state_cstr,
+            f_out_value_calc=cstr_f_out_calc_tensorflow,
+            cases_to_try=cases
+        )
+        end_time = timer()
+        print(f"elapsed time for BATCH NONDIM test = {end_time - start_time} secs")
+        items = {}
+        for i in range(len(pinns)):
+            items[i + 1] = {
+                "title": pinns[i].model_name,
+                "cases": [
+                    {"x": pinns[i].loss_history.steps, "y": np.sum(pinns[i].loss_history.loss_test, axis=1), "color": pinn_colors[0], "l": "-"},
+                    {"x": pinns[i].loss_history.steps, "y": np.sum(pinns[i].loss_history.loss_train, axis=1), "color": pinn_colors[1], "l": "--"},
+                ],
+            }
+
+        plot_comparer_multiple_grid(
+            labels=['Loss (teste)', 'Loss (treino)'],
+            figsize=(7.2*2, 8.2*2),
+            gridspec_kw={"hspace": 0.35, "wspace": 0.14},
+            yscale='log',
+            sharey=True,
+            sharex=True,
+            nrows=2,
+            ncols=5,
+            items=items,
+            suptitle=None,
+            title_for_each=True,
+            supxlabel="epochs",
+            supylabel="loss",
+        )
+
+        def cstr_f_out_calc_numeric(max_reactor_volume, f_in_v, volume):
+            return f_in_v*pow(volume/max_reactor_volume, 7)    
+        num_results = run_numerical_methods(
+            eq_params=eq_params,
+            process_params=process_params_feed_cstr,
+            initial_state=initial_state_cstr,
+            f_out_value_calc= cstr_f_out_calc_numeric,
+            t_discretization_points=[240],
+        )
+
+        # PLOTAR O MELHOR DOS PINNS
+        items = {}
+        print(f'Pinn best index = {p_best_index}')
+        print(f'Pinn best error = {p_best_error}')
+       
+        # Plotar todos os resultados, um a um
+        num = num_results[0]
+        for pinn in pinns:
+            # x_pred = dde.geometry.TimeDomain(0, pinn.process_params.t_final / pinn.solver_params.non_dim_scaler.t_not_tensor)
+            # prediction = pinn.model.predict(np.array([[0, 0.5, 1, 2, 4]]))
+            # prediction = pinn.model.predict(np.vstack(np.ravel([0, 0.5, 1, 2, 4],)))
+            pred_start_time = timer()
+            prediction = pinn.model.predict(np.vstack(np.ravel(num.t*pinn.solver_params.non_dim_scaler.t_not_tensor,)))
+            pred_end_time = timer()
+            pred_time = pred_end_time - pred_start_time
+            print(f'name = {pinn.model_name}')
+            print(f'train time = {pinn.total_training_time} s')
+            print(f'best loss test = {pinn.best_loss_test}')
+            print(f'best loss train = {pinn.best_loss_train}')
+            print(f'pred time = {pred_time} s')
+            items = {}
+            titles = ["X", "P", "S", "V"]
+            # pinn_vals = [pinn.X, pinn.P, pinn.S, pinn.V]
+            pinn_vals = [
+                prediction[:, 0]*pinn.solver_params.non_dim_scaler.X_not_tensor,#pinn.X,
+                prediction[:, 1]*pinn.solver_params.non_dim_scaler.P_not_tensor,#pinn.P,
+                prediction[:, 2]*pinn.solver_params.non_dim_scaler.S_not_tensor,#pinn.S,
+                prediction[:, 3]*pinn.solver_params.non_dim_scaler.V_not_tensor,#pinn.V]
+            ]
+            num_vals = [num.X,
+            num.P,
+            num.S,
+            num.V]
+            for i in range(4):
+                items[i + 1] = {
+                    "title": titles[i],
+                    "cases": [
+                        # Numeric
+                        {"x": num.t, "y": num_vals[i], "color": pinn_colors[0], "l": "-"},
+                        # PINN
+                        {"x": num.t, "y": pinn_vals[i], "color": pinn_colors[1], "l": "--"},
+                    ],
+                }
+
+            plot_comparer_multiple_grid(
+                suptitle=pinn.model_name,
+                labels=['Euler', 'PINN'],
+                figsize=(6*1.5, 8*1.5),
+                gridspec_kw={"hspace": 0.6, "wspace": 0.25},
+                yscale='linear',
+                sharey=False,
+                nrows=2,
+                ncols=2,
+                items=items,
+                title_for_each=True,
+                supxlabel="tempo (h)",
+                supylabel="g/L",
+            )
+
+        
+        pass
+
     if run_batch_nondim_test_v2:
         print('RUN BATCH NEW NONDIM TEST')
         start_time = timer()
         cases = batch_nondim_v2(eq_params, process_params_feed_cstr)
-        # FIXME
-        # TODO ajeitar é outro teste separado...
         cases = batch_tests_fixed_neurons_number(eq_params, process_params_feed_cstr)
         cases = change_layer_fix_neurons_number(eq_params, process_params_feed_cstr)
         pinns, p_best_index, p_best_error = run_pinn_grid_search(

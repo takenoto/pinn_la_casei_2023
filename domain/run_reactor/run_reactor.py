@@ -105,20 +105,49 @@ def run_reactor(
         # Esses são do teste eu acho, e os de cima do train? embora não faça o menor sentido...
         w[0], w[1], w[2], w[3],]# solver_params.loss_weights
     
+    #------- CUSTOM LOSS --------------
+    # REFS:
+    # https://github.com/lululxvi/deepxde/issues/174
+    # https://github.com/lululxvi/deepxde/issues/504
+    # https://github.com/lululxvi/deepxde/issues/467
+    loss = None
+    loss_version = 2
+
+    def X_cons(y_true, y_pred):
+        print('XIS!')
+        print(y_true)
+        print(y_pred)
+        if y_pred[0]<0:
+            return y_pred[0]
+        return 0
+
+    if loss_version is None:
+        loss = 'MSE'
+    elif loss_version == 2:
+        def lossv2(y_true, y_pred):
+            # Ref: https://towardsdatascience.com/custom-loss-function-in-tensorflow-eebcd7fed17a
+            mse = tf.reduce_mean(tf.square(y_pred - y_true))
+            # Se menor que 0, retorna o proprio valor
+            consservation = tf.reduce_mean(tf.minimum(y_pred, 0))
+            # conservation = tf.cond(tf.less(y_pred, tf.multiply(y_pred, 0)), lambda: y_pred, lambda: tf.multiply(y_pred, 0))
+            return mse + consservation
+        loss = lossv2 #['MSE', X_cons] -> Acho que essa sintaxe é quando tá treinando várias coisas
+    # TODO como faz???????
+
     start_time = timer()
     ### Step 1: Pre-solving by "L-BFGS"
     if(solver_params.l_bfgs.do_pre_optimization):
-        model.compile("L-BFGS", loss_weights=loss_weights)
+        model.compile("L-BFGS", loss_weights=loss_weights, loss=loss)
         model.train()
 
     ### Step 2: Solving by "adam"
-    model.compile("adam", lr=solver_params.adam_lr, loss_weights=loss_weights)
+    model.compile("adam", lr=solver_params.adam_lr, loss_weights=loss_weights, loss=loss)
     loss_history, train_state = model.train(
         epochs=solver_params.adam_epochs, display_every=solver_params.adam_display_every
     )
     ### Step 3: Post optmization
     if(solver_params.l_bfgs.do_post_optimization):
-        model.compile("L-BFGS", loss_weights=loss_weights)
+        model.compile("L-BFGS", loss_weights=loss_weights, loss=loss)
         loss_history, train_state = model.train()
     end_time = timer()
     total_training_time = end_time - start_time
