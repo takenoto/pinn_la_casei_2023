@@ -111,7 +111,7 @@ def run_reactor(
     # https://github.com/lululxvi/deepxde/issues/504
     # https://github.com/lululxvi/deepxde/issues/467
     loss = None
-    loss_version = 2
+    loss_version = None
 
     def X_cons(y_true, y_pred):
         print('XIS!')
@@ -129,6 +129,9 @@ def run_reactor(
             mse = tf.reduce_mean(tf.square(y_pred - y_true))
             # Se menor que 0, retorna o proprio valor
             consservation = tf.reduce_mean(tf.minimum(y_pred, 0))
+            # acho que posso fazer o if, só tenho que somar  ou passar o mean de todos
+            # https://stackoverflow.com/questions/34875944/how-to-write-a-custom-loss-function-in-tensorflow
+            # 
             # conservation = tf.cond(tf.less(y_pred, tf.multiply(y_pred, 0)), lambda: y_pred, lambda: tf.multiply(y_pred, 0))
             return mse + consservation
         loss = lossv2 #['MSE', X_cons] -> Acho que essa sintaxe é quando tá treinando várias coisas

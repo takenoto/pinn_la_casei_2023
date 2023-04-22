@@ -26,179 +26,201 @@ default_num_test = 1000
 # TODO faz 3 configs boas repetindo
 # Uma com tanh, uma com selu, uma com swish
 
+
 def change_layer_fix_neurons_number(eq_params, process_params):
-    # TODO rodar teste em paralelo pra comparar as 2 funções loss
-    # TODO sei lá. Deixa tudo tanh, swish tá um coco tb...
-    func = 'tanh'
-    neurons = 45
-    dictionary = { 
-        f'{neurons}x2 {func}':{
-            'layer_size': [1] + [neurons] * 2 + [4],
+
+    # com 70 p aparentemente tinha ficado super bom, posso usar ele de base
+    # tanh 126x2 explode
+    # 25x6 nondim t explode tb
+    # Como o melhor do teste 126 foi NONDIM sem t, vou manter
+    func = "tanh"
+    neurons = 70
+    dictionary = {
+        f"{neurons}x4 {func} NONDIM": {
+            "layer_size": [1] + [neurons] * 4 + [4],
         },
-        f'{neurons}x3 {func}':{
-            'layer_size': [1] + [neurons] * 3 + [4],
+        f"{neurons}x10 {func} NONDIM": {
+            "layer_size": [1] + [neurons] * 10 + [4],
+            },
+        f"{neurons}x20 {func} NONDIM": {
+            "layer_size": [1] + [neurons] * 20 + [4],
         },
-        f'{neurons}x4 {func}':{
-            'layer_size': [1] + [neurons] * 4 + [4],
+        f"{int(neurons*3)}x4{func} NONDIM": {
+            "layer_size": [1] + [int(neurons*3)] * 4 + [4],
         },
-        f'{neurons}x5 {func}':{
-            'layer_size': [1] + [neurons] * 5 + [4],
+        f"{int(neurons*3)}x10 {func} NONDIM": {
+            "layer_size": [1] + [int(neurons*3)] * 10 + [4],
         },
-        f'{neurons}x6 {func}':{
-            'layer_size': [1] + [neurons] * 6 + [4],
+        f"{int(neurons*3)}x20 {func} NONDIM": {
+            "layer_size": [1] + [int(neurons*3)] * 20 + [4],
+            't_S': process_params.t_final
         },
-        f'{neurons}x7 {func}':{
-            'layer_size': [1] + [neurons] * 7 + [4],
+        f"{int(neurons*5)}x4{func} NONDIM": {
+            "layer_size": [1] + [int(neurons*5)] * 4 + [4],
         },
-        f'{neurons}x8 {func}':{
-            'layer_size': [1] + [neurons] * 8 + [4],
+        f"{int(neurons*5)}x10 {func} NONDIM": {
+            "layer_size": [1] + [int(neurons*5)] * 10 + [4],
         },
-        f'{neurons}x9 {func}':{
-            'layer_size': [1] + [neurons] * 9 + [4],
+        f"{int(neurons*5)}x20 {func} NONDIM": {
+            "layer_size": [1] + [int(neurons*5)] * 20 + [4],
+            't_S': process_params.t_final
         },
-        f'{neurons}x10 {func}':{
-            'layer_size': [1] + [neurons] * 10 + [4],
-        },
-        f'{neurons}x12 {func}':{
-            'layer_size': [1] + [neurons] * 12 + [4],
-        },
+        # f"{neurons*2}x8 {func} NONDIM": {
+        #     "layer_size": [1] + [neurons * 2] * 8 + [4],
+        # },
+        # f"{neurons*2}x12 {func} NONDIM": {
+        #     "layer_size": [1] + [neurons * 2] * 12 + [4],
+        # },
     }
 
-
     for key in dictionary:
-        dictionary[key]["adam_epochs"] = 10 #30000
-        dictionary[key]['activation'] = func
-        dictionary[key]['num_domain'] = 300
-        dictionary[key]['num_test'] = 300
+        # NONDIM:
+        if True:
+            dictionary[key]["X_s"] = eq_params.Xm
+            dictionary[key]["P_s"] = eq_params.Pm
+            dictionary[key]["S_s"] = eq_params.So
+            dictionary[key]["V_s"] = process_params.max_reactor_volume
+            # dictionary[key]["t_s"] = process_params.t_final
+
+    # Agora add os que não são adimensionalizados
+    dictionary[f"{int(neurons*5)}x4 {func} NORMAL"] = {
+        "layer_size": [1] + [int(neurons*5)] * 4 + [4],
+    }
+    # dictionary[f"{neurons}8 {func} NORMAL"] = {
+    #     "layer_size": [1] + [neurons] * 8 + [4],
+    # }
+    dictionary[f"{int(neurons*5)}x10 {func} NORMAL"] = {
+        "layer_size": [1] + [int(neurons*5)] * 10 + [4],
+    }
+    dictionary[f"{int(neurons*5)}x20 {func} NORMAL"] = {
+        "layer_size": [1] + [int(neurons*5)] * 20 + [4],
+    }
+
+    # TRAINING
+    for key in dictionary:
+        dictionary[key]["adam_epochs"] = 30000
+        dictionary[key]["activation"] = func
+        dictionary[key]["num_domain"] = 300#1000
+        dictionary[key]["num_test"] = 300#1000
         dictionary[key]["lbfgs_pre"] = False
-        dictionary[key]["lbfgs_post"] = True
+        dictionary[key]["lbfgs_post"] = False #True
 
     return dictionary
 
+
 def batch_tests_fixed_neurons_number(eq_params, process_params):
-    func = 'tanh'
-    #neurons total fixo em 360?
-    dictionary = { 
+    func = "tanh"
+    # neurons total fixo em 360?
+    dictionary = {
         # -----------------------
         # -----FIXED NEURONS-----
         # -----------------------
-        #-------------
+        # -------------
         # 720
-        #-------------
-        f'360x2 {func}':{
-            'layer_size': [1] + [360] * 2 + [4],
+        # -------------
+        f"360x2 {func}": {
+            "layer_size": [1] + [360] * 2 + [4],
         },
-        f'180x4 {func}':{
-            'layer_size': [1] + [180] * 4 + [4],
+        f"180x4 {func}": {
+            "layer_size": [1] + [180] * 4 + [4],
         },
-        f'120x6 {func}':{
-            'layer_size': [1] + [120] * 6 + [4],
+        f"120x6 {func}": {
+            "layer_size": [1] + [120] * 6 + [4],
         },
-        f'90x8 {func}':{
-            'layer_size': [1] + [90] * 8 + [4],
+        f"90x8 {func}": {
+            "layer_size": [1] + [90] * 8 + [4],
         },
-        f'72x10 {func}':{
-            'layer_size': [1] + [72] * 10 + [4],
+        f"72x10 {func}": {
+            "layer_size": [1] + [72] * 10 + [4],
         },
-        #-------------
+        # -------------
         # 360
-        #-------------
-        f'180x2 {func}':{
-            'layer_size': [1] + [180] * 2 + [4],
+        # -------------
+        f"180x2 {func}": {
+            "layer_size": [1] + [180] * 2 + [4],
         },
-        f'90x4 {func}':{
-            'layer_size': [1] + [90] * 4 + [4],
+        f"90x4 {func}": {
+            "layer_size": [1] + [90] * 4 + [4],
         },
-        f'60x6 {func}':{
-            'layer_size': [1] + [60] * 6 + [4],
+        f"60x6 {func}": {
+            "layer_size": [1] + [60] * 6 + [4],
         },
-        f'45x8 {func}':{
-            'layer_size': [1] + [45] * 8 + [4],
+        f"45x8 {func}": {
+            "layer_size": [1] + [45] * 8 + [4],
         },
-        f'36x10 {func}':{
-            'layer_size': [1] + [36] * 10 + [4],
+        f"36x10 {func}": {
+            "layer_size": [1] + [36] * 10 + [4],
         },
-        #-------------
+        # -------------
         # 180
-        #-------------
-        f'90x2 {func}':{
-            'layer_size': [1] + [90] * 2 + [4],
+        # -------------
+        f"90x2 {func}": {
+            "layer_size": [1] + [90] * 2 + [4],
         },
-        f'45x4 {func}':{
-            'layer_size': [1] + [45] * 4 + [4],
+        f"45x4 {func}": {
+            "layer_size": [1] + [45] * 4 + [4],
         },
-        f'30x6 {func}':{
-            'layer_size': [1] + [30] * 6 + [4],
+        f"30x6 {func}": {
+            "layer_size": [1] + [30] * 6 + [4],
         },
-        f'23x8 {func}':{
-            'layer_size': [1] + [23] * 8 + [4],
+        f"23x8 {func}": {
+            "layer_size": [1] + [23] * 8 + [4],
         },
-        f'18x10 {func}':{
-            'layer_size': [1] + [18] * 10 + [4],
+        f"18x10 {func}": {
+            "layer_size": [1] + [18] * 10 + [4],
         },
     }
 
-
     for key in dictionary:
         dictionary[key]["adam_epochs"] = 30000
-        dictionary[key]['activation'] = func
-        dictionary[key]['num_domain'] = 300
-        dictionary[key]['num_test'] = 300
+        dictionary[key]["activation"] = func
+        dictionary[key]["num_domain"] = 300
+        dictionary[key]["num_test"] = 300
         dictionary[key]["lbfgs_pre"] = False
         dictionary[key]["lbfgs_post"] = True
 
     return dictionary
 
-def batch_nondim_v2(
-    eq_params, process_params
-): 
 
-    dictionary = { 
-        '24x3':{
-            'layer_size': [1] + [24] * 3 + [4],
+def batch_nondim_v2(eq_params, process_params):
+
+    dictionary = {
+        "24x3": {
+            "layer_size": [1] + [24] * 3 + [4],
         },
-        '24x3 X':{
-            'layer_size': [1] + [24] * 3 + [4],
-            'X_s':eq_params.Xo
-        },
-        '24x3 nondim':{
-            'layer_size': [1] + [24] * 3 + [4],
-            'X_s':eq_params.Xo,
-            'P_s': eq_params.Po,
-            'S_s': eq_params.So,
-            'V_s':process_params.max_reactor_volume,
+        "24x3 X": {"layer_size": [1] + [24] * 3 + [4], "X_s": eq_params.Xo},
+        "24x3 nondim": {
+            "layer_size": [1] + [24] * 3 + [4],
+            "X_s": eq_params.Xo,
+            "P_s": eq_params.Po,
+            "S_s": eq_params.So,
+            "V_s": process_params.max_reactor_volume,
             # 't_s':process_params.t_final
-            },
-        '24x6':{
-            'layer_size': [1] + [24] * 6 + [4],
         },
-        '24x6 X':{
-            'layer_size': [1] + [24] * 6 + [4],
-            'X_s':eq_params.Xo
+        "24x6": {
+            "layer_size": [1] + [24] * 6 + [4],
         },
-        '24x6 nondim':{
-            'layer_size': [1] + [24] * 6 + [4],
-            'X_s':eq_params.Xo,
-            'P_s': eq_params.Po,
-            'S_s': eq_params.So,
-            'V_s':process_params.max_reactor_volume,
+        "24x6 X": {"layer_size": [1] + [24] * 6 + [4], "X_s": eq_params.Xo},
+        "24x6 nondim": {
+            "layer_size": [1] + [24] * 6 + [4],
+            "X_s": eq_params.Xo,
+            "P_s": eq_params.Po,
+            "S_s": eq_params.So,
+            "V_s": process_params.max_reactor_volume,
             # 't_s':process_params.t_final
-            },
-        '24x6':{
-            'layer_size': [1] + [24] * 9 + [4],
         },
-        '24x6 X':{
-            'layer_size': [1] + [24] * 9 + [4],
-            'X_s':eq_params.Xo
+        "24x6": {
+            "layer_size": [1] + [24] * 9 + [4],
         },
-        '24x6 nondim':{
-            'layer_size': [1] + [24] * 9 + [4],
-            'X_s':eq_params.Xo,
-            'P_s': eq_params.Po,
-            'S_s': eq_params.So,
-            'V_s':process_params.max_reactor_volume,
+        "24x6 X": {"layer_size": [1] + [24] * 9 + [4], "X_s": eq_params.Xo},
+        "24x6 nondim": {
+            "layer_size": [1] + [24] * 9 + [4],
+            "X_s": eq_params.Xo,
+            "P_s": eq_params.Po,
+            "S_s": eq_params.So,
+            "V_s": process_params.max_reactor_volume,
             # 't_s':process_params.t_final
-            },
+        },
         # '60x3':{
         #     'layer_size': [1] + [60] * 3 + [4],
         # },
@@ -214,64 +236,59 @@ def batch_nondim_v2(
         #     'V_s':process_params.max_reactor_volume,
         #     # 't_s':process_params.t_final
         #     },
-        
-        
-        
     }
 
     for key in dictionary:
-        dictionary[key]["adam_epochs"] = 100 #25000 #70000
-        dictionary[key]['activation'] = 'tanh'
-        dictionary[key]['num_domain'] = 70
-        dictionary[key]['num_test'] = 70
+        dictionary[key]["adam_epochs"] = 100  # 25000 #70000
+        dictionary[key]["activation"] = "tanh"
+        dictionary[key]["num_domain"] = 70
+        dictionary[key]["num_test"] = 70
         dictionary[key]["lbfgs_pre"] = False
-        dictionary[key]["lbfgs_post"] = False #True
+        dictionary[key]["lbfgs_post"] = False  # True
 
     return dictionary
 
-def iterate_cstr_convergence(
-    eq_params, process_params
-): 
 
-    dictionary = { 
-        '60x3':{
-            'layer_size': [1] + [60] * 3 + [4],
+def iterate_cstr_convergence(eq_params, process_params):
+
+    dictionary = {
+        "60x3": {
+            "layer_size": [1] + [60] * 3 + [4],
         },
-        '60x5':{
-            'layer_size': [1] + [60] * 5 + [4],
+        "60x5": {
+            "layer_size": [1] + [60] * 5 + [4],
         },
-        '60x7':{
-            'layer_size': [1] + [60] * 7 + [4],
+        "60x7": {
+            "layer_size": [1] + [60] * 7 + [4],
         },
-        '120x3':{
-            'layer_size': [1] + [120] * 3 + [4],
+        "120x3": {
+            "layer_size": [1] + [120] * 3 + [4],
         },
-        '120x5':{
-            'layer_size': [1] + [120] * 5 + [4],
+        "120x5": {
+            "layer_size": [1] + [120] * 5 + [4],
         },
-        '120x7':{
-            'layer_size': [1] + [120] * 7 + [4],
+        "120x7": {
+            "layer_size": [1] + [120] * 7 + [4],
         },
-        '240x3':{
-            'layer_size': [1] + [240] * 3 + [4],
+        "240x3": {
+            "layer_size": [1] + [240] * 3 + [4],
         },
-        '240x5':{
-            'layer_size': [1] + [240] * 5 + [4],
+        "240x5": {
+            "layer_size": [1] + [240] * 5 + [4],
         },
-        '240x7':{
-            'layer_size': [1] + [240] * 5 + [4],
+        "240x7": {
+            "layer_size": [1] + [240] * 5 + [4],
         },
-        
     }
 
     for key in dictionary:
-        dictionary[key]["adam_epochs"] = 100 #70000
+        dictionary[key]["adam_epochs"] = 100  # 70000
         # dictionary[key]["num_domain"] = 1500 #2000
         # dictionary[key]["num_test"] = 3000 #2000
-        dictionary[key]['activation'] = 'tanh'
-        dictionary[key]['num_domain'] = 70
-        dictionary[key]['num_test'] = 70
-        dictionary[key]["lbfgs_pre"] = False #True
+        dictionary[key]["activation"] = "tanh"
+        dictionary[key]["num_domain"] = 70
+        dictionary[key]["num_test"] = 70
+        dictionary[key]["lbfgs_pre"] = False  # True
         dictionary[key]["lbfgs_post"] = True
 
     return dictionary
@@ -382,7 +399,7 @@ def only_case_6_v3_for_ts_CSTR(eq_params):
         #     'adam_epochs':_adam_epochs,
         #     'lbfgs_pre':lbfgs_pre,
         #     }
-        "t_5": {"t_s": 1, 'lbfgs_pre':lbfgs_pre, 'adam_epochs':_adam_epochs}
+        "t_5": {"t_s": 1, "lbfgs_pre": lbfgs_pre, "adam_epochs": _adam_epochs}
     }
 
 
@@ -402,10 +419,16 @@ def only_case_6_v3_for_ts(eq_params):
         #     'adam_epochs':_adam_epochs,
         #     'lbfgs_pre':lbfgs_pre,
         #     },
-        "t_5": {"t_s": 1, 'layer_size': _layer_size, 'lbfgs_pre':lbfgs_pre, 'adam_epochs':_adam_epochs},
+        "t_5": {
+            "t_s": 1,
+            "layer_size": _layer_size,
+            "lbfgs_pre": lbfgs_pre,
+            "adam_epochs": _adam_epochs,
+        },
     }
 
     return d
+
 
 def cases_non_dim(eq_params, process_params):
     lbfgs_pre = False
@@ -414,48 +437,48 @@ def cases_non_dim(eq_params, process_params):
     _layer_size = [1] + [22] * 3 + [4]
     _adam_epochs = 80000
 
-
     dic = {
-        'n1':{
-            'V_s': 1,
-            'X_s': 1,
-            'P_s': 1,
-            'S_s': 1,
-        }, # É tudo 1
-        'n_2':{
-            'V_s':process_params.max_reactor_volume,
+        "n1": {
+            "V_s": 1,
+            "X_s": 1,
+            "P_s": 1,
+            "S_s": 1,
+        },  # É tudo 1
+        "n_2": {
+            "V_s": process_params.max_reactor_volume,
         },
-        'n_2':{
-            'V_s':process_params.inlet.volume if process_params.inlet.volume > 0 else 1,
-            'X_s': 1,
-            'P_s': 1,
-            'S_s': 1,
+        "n_2": {
+            "V_s": process_params.inlet.volume
+            if process_params.inlet.volume > 0
+            else 1,
+            "X_s": 1,
+            "P_s": 1,
+            "S_s": 1,
         },
-        'n_3':{
-            'V_s': process_params.max_reactor_volume,
-            'X_s': eq_params.Xo,
-            'P_s': eq_params.Po,
-            'S_s': eq_params.So,
+        "n_3": {
+            "V_s": process_params.max_reactor_volume,
+            "X_s": eq_params.Xo,
+            "P_s": eq_params.Po,
+            "S_s": eq_params.So,
         },
-        'n_4':{
-            'V_s': process_params.max_reactor_volume,
-            'X_s': eq_params.Xm,
-            'P_s': eq_params.Pm,
-            'S_s': eq_params.So,
+        "n_4": {
+            "V_s": process_params.max_reactor_volume,
+            "X_s": eq_params.Xm,
+            "P_s": eq_params.Pm,
+            "S_s": eq_params.So,
         },
-        'n_5':{
-            'V_s': 1,
-            'X_s': 1,#eq_params.Xm, se ligar dá erro, vai tudo pra NaN no Fedbatch
-            'P_s': eq_params.Pm,
-            'S_s': eq_params.So,
+        "n_5": {
+            "V_s": 1,
+            "X_s": 1,  # eq_params.Xm, se ligar dá erro, vai tudo pra NaN no Fedbatch
+            "P_s": eq_params.Pm,
+            "S_s": eq_params.So,
         },
-        'n_6':{
-            'V_s': process_params.max_reactor_volume,
-            'X_s': eq_params.Xm,
-            'P_s': 1,
-            'S_s': 1
-        }
-
+        "n_6": {
+            "V_s": process_params.max_reactor_volume,
+            "X_s": eq_params.Xm,
+            "P_s": 1,
+            "S_s": 1,
+        },
     }
 
     for key in dic:
@@ -465,6 +488,7 @@ def cases_non_dim(eq_params, process_params):
         dic[key]["lbfgs_pre"] = lbfgs_pre
         dic[key]["lbfgs_post"] = False
     return dic
+
 
 def cases_to_try_batch_vary_ts(eq_params, process_params):
 

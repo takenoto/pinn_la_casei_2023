@@ -1,0 +1,71 @@
+def change_layer_fix_neurons_number(eq_params, process_params):
+    # TODO rodar teste em paralelo pra comparar as 2 funções loss
+    # TODO sei lá. Deixa tudo tanh, swish tá um coco tb...
+    # TODO tanh 126 x 6
+    # com 70 p aparentemente tinha ficado super bom, posso usar ele de base
+    # tanh 126x2 explode
+    # 25x6 nondim t explode tb
+    func = "tanh"
+    neurons = 126 #250
+    dictionary = {
+        f"{neurons}x6 {func} NONDIM": {
+            "layer_size": [1] + [neurons] * 6 + [4],
+        },
+        f"{neurons}x6 {func} NONDIM T": {
+            "layer_size": [1] + [neurons] * 6 + [4],
+            't_S': process_params.t_final
+        },
+        # f"{neurons}x8 {func} NONDIM": {
+        #     "layer_size": [1] + [neurons] * 8 + [4],
+        # },
+        # f"{neurons}x12 {func} NONDIM": {
+        #     "layer_size": [1] + [neurons] * 12 + [4],
+        # },
+        f"{neurons/2}x6 {func} NONDIM": {
+            "layer_size": [1] + [int(neurons / 2)] * 6 + [4],
+        },
+        f"{neurons/2}x6 {func} NONDIM T": {
+            "layer_size": [1] + [int(neurons / 2)] * 6 + [4],
+            't_S': process_params.t_final
+        },
+        # f"{neurons*2}x8 {func} NONDIM": {
+        #     "layer_size": [1] + [neurons * 2] * 8 + [4],
+        # },
+        # f"{neurons*2}x12 {func} NONDIM": {
+        #     "layer_size": [1] + [neurons * 2] * 12 + [4],
+        # },
+    }
+
+    for key in dictionary:
+        # NONDIM:
+        if True:
+            dictionary[key]["X_s"] = eq_params.Xm
+            dictionary[key]["P_s"] = eq_params.Pm
+            dictionary[key]["S_s"] = eq_params.So
+            dictionary[key]["V_s"] = process_params.max_reactor_volume
+            # dictionary[key]["t_s"] = process_params.t_final
+
+    # Agora add os que não são adimensionalizados
+    dictionary[f"{neurons}x6 {func} NORMAL"] = {
+        "layer_size": [1] + [neurons] * 6 + [4],
+    }
+    # dictionary[f"{neurons}8 {func} NORMAL"] = {
+    #     "layer_size": [1] + [neurons] * 8 + [4],
+    # }
+    dictionary[f"{neurons}x12 {func} NORMAL"] = {
+        "layer_size": [1] + [neurons] * 12 + [4],
+    }
+    # dictionary[f"{neurons}x12 {func} NORMAL"] = {
+    #     "layer_size": [1] + [neurons] * 12 + [4],
+    # }
+
+    # TRAINING
+    for key in dictionary:
+        dictionary[key]["adam_epochs"] = 30000
+        dictionary[key]["activation"] = func
+        dictionary[key]["num_domain"] = 300#1000
+        dictionary[key]["num_test"] = 300#1000
+        dictionary[key]["lbfgs_pre"] = False
+        dictionary[key]["lbfgs_post"] = True
+
+    return dictionary

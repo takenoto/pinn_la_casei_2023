@@ -161,6 +161,7 @@ def main():
         print('RUN CSTR NEW NONDIM TEST')
         start_time = timer()
         cases = change_layer_fix_neurons_number(eq_params, process_params_feed_cstr)
+        # cases = batch_tests_fixed_neurons_number(eq_params, process_params_feed_cstr)
         def cstr_f_out_calc_tensorflow(max_reactor_volume, f_in_v, volume):
             # estou assumindo que já começa no estado estacionário:
             return f_in_v*tf.math.pow(volume/max_reactor_volume, 7)
@@ -191,8 +192,8 @@ def main():
             yscale='log',
             sharey=True,
             sharex=True,
-            nrows=2,
-            ncols=5,
+            nrows=4,
+            ncols=3,
             items=items,
             suptitle=None,
             title_for_each=True,
@@ -243,6 +244,28 @@ def main():
             num.P,
             num.S,
             num.V]
+            # TODO calcular erro l ABSOLUTO
+            
+            # Armazena os 4 erros
+            error_L = []
+            # Calcula os erros de X P S V
+            for u in range(len(num_vals)):
+                diff = np.subtract(pinn_vals[u], num_vals[u])
+                total_error = 0
+                # Pega ponto a ponto e soma o absoluto
+                for value in diff:
+                    total_error += abs(value)
+                
+                error_L.append(
+                    total_error/len(pinn_vals[u])
+                )
+            print('ERROR XPSV')
+            print(f'X = {error_L[0]}')
+            print(f'P = {error_L[1]}')
+            print(f'S = {error_L[2]}')
+            print(f'V = {error_L[3]}')
+            print(f'total = {np.sum(error_L)}')
+
             for i in range(4):
                 items[i + 1] = {
                     "title": titles[i],

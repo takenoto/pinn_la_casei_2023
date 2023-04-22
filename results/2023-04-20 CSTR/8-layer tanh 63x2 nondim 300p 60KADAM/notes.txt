@@ -1,0 +1,93 @@
+TOTAL TIME
+
+6637.7959857999995 secs
+
+Pinn best index = 1
+Pinn best error = 2.197506887569034e-08
+
+Pelo visto 6 camdas é pouco.
+O Erro L de todos tá igual (37!!!!!)
+Se bem que no normal (sem adim.) fez foi aumentar indo pra 12 camadas...
+
+Adimensionalização reduziu o erro em aprox. 50%!
+(71 ou 152 pra 37!)
+
+-----------------------------------
+
+
+name = 126x6 tanh NONDIM
+train time = 815.8389444999999 s
+best loss test = 2.6364155019109603e-06
+best loss train = 2.626099558256101e-06
+pred time = 0.8915235000004031 s
+ERROR XPSV
+X = 2.9384196318294973
+P = 14.863864410948969
+S = 19.242942587167217
+V = 0.00482776075181506
+total = 37.050054390697504
+
+
+name = 126x6 tanh NONDIM T
+train time = 1010.8899891 s
+best loss test = 2.197506887569034e-08
+best loss train = 3.266120174316711e-08
+pred time = 0.8874706000005972 s
+ERROR XPSV
+X = 2.93685374310676
+P = 14.852656512491125
+S = 19.262323685914474
+V = 0.002243340292736646
+total = 37.05407728180509
+
+
+name = 63.0x6 tanh NONDIM
+train time = 387.61378990000026 s
+best loss test = 7.465954467988922e-07
+best loss train = 7.51353582018055e-07
+pred time = 0.8830636999991839 s
+ERROR XPSV
+X = 2.9379591271386913
+P = 14.839645601344325
+S = 19.261917659074264
+V = 0.002341228411291055
+total = 37.04186361596857
+
+
+name = 63.0x6 tanh NONDIM T
+train time = 447.2999281000002 s
+best loss test = 3.024680594876372e-08
+best loss train = 3.5102836193345865e-08
+pred time = 0.9015374000009615 s
+ERROR XPSV
+X = 2.937235301942266
+P = 14.84709836744489
+S = 19.25995897892137
+V = 0.0022106592410836615
+total = 37.046503307549614
+
+
+name = 126x6 tanh NORMAL
+train time = 1099.3292873 s
+best loss test = 0.0014687959337607026
+best loss train = 1.0761150406324305e-06
+pred time = 0.8054831999997987 s
+ERROR XPSV
+X = 6.632461477329962
+P = 28.40826330088796
+S = 36.03105818452114
+V = 0.07945080840791813
+total = 71.15123377114698
+
+
+name = 126x12 tanh NORMAL
+train time = 2876.7618128999998 s
+best loss test = 5986.583984375
+best loss train = 1.4482661485671997
+pred time = 0.756047299999409 s
+ERROR XPSV
+X = 2.9896998730407516
+P = 25.523832413337836
+S = 116.75104202664872
+V = 8.82804214333984
+total = 154.09261645636715

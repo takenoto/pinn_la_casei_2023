@@ -1,0 +1,84 @@
+TEMPO TOTAL
+10268.5296882 secs
+
+nenhum bom de fato, alguns meramente indo na direção certa
+vários com valoes negativos e nada a ver
+
+Pinn best index = 9
+Pinn best error = 1.3271672287373804e-05
+
+--------------------------
+
+
+name = 45x2 tanh
+train time = 148.7108628 s
+best loss test = 1.9841454029083252
+best loss train = 0.0002212755789514631
+pred time = 1.6021603000008326 s
+
+
+name = 45x3 tanh
+train time = 235.6671174 s
+best loss test = 2326.580810546875
+best loss train = 1.3289313316345215
+pred time = 1.524198900000556 s
+
+
+name = 45x4 tanh
+train time = 332.92740219999996 s
+best loss test = 2.621920585632324
+best loss train = 2.6125776767730713
+pred time = 1.5469825999989553 s
+
+
+name = 45x5 tanh
+train time = 468.03506889999994 s
+best loss test = 2.222965955734253
+best loss train = 1.3255987167358398
+pred time = 1.6282658000000083 s
+
+
+
+name = 45x6 tanh
+train time = 638.261913 s
+best loss test = 0.00012409139890223742
+best loss train = 1.1688191079883836e-05
+pred time = 1.544079999999667 s
+
+
+
+name = 45x7 tanh
+train time = 876.1429470999999 s
+best loss test = 6024.01318359375
+best loss train = 1.805200008675456e-05
+pred time = 1.489892300000065 s
+
+
+
+name = 45x8 tanh
+train time = 1231.7244538999998 s
+best loss test = 59.13779067993164
+best loss train = 1.3203685283660889
+pred time = 1.5678877999998804 s
+
+
+name = 45x9 tanh
+train time = 1738.2135454999998 s
+best loss test = 1.3671385049819946
+best loss train = 1.324712872505188
+pred time = 1.4361061999989033 s
+
+
+name = 45x10 tanh
+train time = 2016.1365452 s
+best loss test = 46.98436737060547
+best loss train = 3.63939705039229e-07
+pred time = 1.4430632000003243 s
+
+
+
+name = 45x12 tanh
+train time = 2582.5644770999997 s
+best loss test = 1.3271672287373804e-05
+best loss train = 1.411705312648337e-07
+pred time = 1.320284299999912 s
