@@ -1,0 +1,173 @@
+TOTAL TIME
+ 41397.4934328 secs
+
+
+Pinn best index = 2
+Pinn best error = 5.8034071770407536e-08
+
+ESSES FORAM SEM LBFGS!!!
+
+--------------------------
+
+
+name = 70x4 tanh NONDIM
+train time = 194.177282 s
+best loss test = 1.9939699313908932e-07
+best loss train = 2.173314328501874e-07
+pred time = 1.448583500001405 s
+ERROR XPSV
+X = 2.9375675638622414
+P = 14.842415844432729
+S = 19.260007719626227
+V = 0.002357715748113908
+total = 37.04234884366931
+
+
+
+
+name = 70x10 tanh NONDIM
+train time = 543.9154808000001 s
+best loss test = 1.6116028689339146e-07
+best loss train = 1.777963376525804e-07
+pred time = 1.400494699999399 s
+ERROR XPSV
+X = 2.9302554056154064
+P = 14.82954774402799
+S = 19.37313991827786
+V = 0.0027208164871694407
+total = 37.13566388440843
+
+
+
+name = 70x20 tanh NONDIM
+train time = 1518.6009348000002 s
+best loss test = 5.8034071770407536e-08
+best loss train = 7.226586262731871e-08
+pred time = 1.4773050000003423 s
+ERROR XPSV
+X = 2.9367371233410013
+P = 14.845900590253091
+S = 19.263891513774986
+V = 0.0024486609627778033
+total = 37.048977888331855
+
+
+name = 210x4tanh NONDIM
+train time = 483.6255329999999 s
+best loss test = 1.1489462852478027
+best loss train = 1.1490232944488525
+pred time = 1.3925553000008222 s
+ERROR XPSV
+X = nan
+P = nan
+S = nan
+V = nan
+total = nan
+
+
+
+name = 210x10 tanh NONDIM
+train time = 1576.1733310000004 s
+best loss test = 1.1440354585647583
+best loss train = 1.1436129808425903
+pred time = 1.3965157999991789 s
+ERROR XPSV
+X = nan
+P = nan
+S = nan
+V = nan
+total = nan
+
+
+name = 210x20 tanh NONDIM
+train time = 3338.8751279 s
+best loss test = 1.1463578939437866
+best loss train = 1.1464548110961914
+pred time = 1.3865904999984195 s
+ERROR XPSV
+X = nan
+P = nan
+S = nan
+V = nan
+total = nan
+
+
+
+name = 350x4tanh NONDIM
+train time = 1564.1336475999997 s
+best loss test = 1.1496073007583618
+best loss train = 1.151955485343933
+pred time = 1.4585877000063192 s
+ERROR XPSV
+X = nan
+P = nan
+S = nan
+V = nan
+total = nan
+
+
+name = 350x10 tanh NONDIM
+train time = 3245.3593036 s
+best loss test = 1.1398425102233887
+best loss train = 1.1392093896865845
+pred time = 1.336244699996314 s
+ERROR XPSV
+X = nan
+P = nan
+S = nan
+V = nan
+total = nan
+
+
+name = 350x20 tanh NONDIM
+train time = 7235.191688699999 s
+best loss test = 1.1457585096359253
+best loss train = 1.146276831626892
+pred time = 1.4554770000031567 s
+ERROR XPSV
+X = nan
+P = nan
+S = nan
+V = nan
+total = nan
+
+
+
+name = 350x4 tanh NORMAL
+train time = 1874.2768552999987 s
+best loss test = 0.020648999139666557
+best loss train = 0.015790458768606186
+pred time = 1.2994581000020844 s
+ERROR XPSV
+X = 6.629065309177471
+P = 27.82513513940793
+S = 36.00061587732002
+V = 0.060298229151822653
+total = 70.51511455505725
+
+
+name = 350x10 tanh NORMAL
+train time = 5377.1954023 s
+best loss test = 2009.275634765625
+best loss train = 1.3960280418395996
+pred time = 1.3993724000029033 s
+ERROR XPSV
+X = 19.774454674811803
+P = 100.28663314286095
+S = 2.2274970536020615
+V = 8.81567789440843
+total = 131.10426276568325
+
+
+
+name = 350x20 tanh NORMAL
+train time = 14445.544775799997 s
+best loss test = 0.23041675984859467
+best loss train = 0.0036157129798084497
+pred time = 1.2001127999974415 s
+ERROR XPSV
+X = 6.635561268240841
+P = 28.31423880361738
+S = 34.99706922075824
+V = 0.086702102088088
+total = 70.03357139470455

@@ -112,6 +112,7 @@ def run_reactor(
     # https://github.com/lululxvi/deepxde/issues/467
     loss = None
     loss_version = None
+    mini_batch = solver_params.mini_batch #None # Tamanho da mini-batch
 
     def X_cons(y_true, y_pred):
         print('XIS!')
@@ -144,9 +145,14 @@ def run_reactor(
         model.train()
 
     ### Step 2: Solving by "adam"
+    pde_resampler = None
+    if mini_batch:
+        pde_resampler = dde.callbacks.PDEPointResampler(period=10)
     model.compile("adam", lr=solver_params.adam_lr, loss_weights=loss_weights, loss=loss)
     loss_history, train_state = model.train(
-        epochs=solver_params.adam_epochs, display_every=solver_params.adam_display_every
+        epochs=solver_params.adam_epochs, 
+        display_every=solver_params.adam_display_every,
+        callbacks=[pde_resampler]  if pde_resampler else None
     )
     ### Step 3: Post optmization
     if(solver_params.l_bfgs.do_post_optimization):

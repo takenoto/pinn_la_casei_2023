@@ -192,7 +192,7 @@ def main():
             yscale='log',
             sharey=True,
             sharex=True,
-            nrows=4,
+            nrows=2,
             ncols=3,
             items=items,
             suptitle=None,
