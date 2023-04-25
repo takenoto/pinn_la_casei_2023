@@ -1,0 +1,85 @@
+def change_layer_fix_neurons_number(eq_params, process_params):
+
+    # com 70 p aparentemente tinha ficado super bom, posso usar ele de base
+    # tanh 126x2 explode
+    # 25x6 nondim t explode tb
+    # Como o melhor do teste 126 foi NONDIM sem t, vou manter
+    func = "swish"
+    neurons = 85
+    dictionary = {
+        f"{neurons}x8 {func}": {
+            "layer_size": [1] + [neurons] * 8 + [4],
+            'activation':'swish'
+        },
+        f"{neurons}x8 tanh": {
+            "layer_size": [1] + [neurons] * 8 + [4],
+            'activation': 'tanh',
+            },
+        f"{neurons}x8 tanh NONDIM": {
+            "layer_size": [1] + [neurons] * 8 + [4],
+            'activation': 'tanh',
+            'X_S': eq_params.Xm,
+            "P_s": eq_params.Pm,
+            "S_s":eq_params.So,
+            "V_s": process_params.max_reactor_volume
+            },
+        f"{neurons}x8 {func} mb-10": {
+            "layer_size": [1] + [neurons] * 8 + [4],
+            'activation':'swish',
+            'mini_batch':10
+        },
+        f"{neurons}x8 tanh mb-10": {
+            "layer_size": [1] + [neurons] * 8 + [4],
+            'activation': 'tanh',
+            'mini_batch':10
+            },
+        f"{neurons}x8 tanh NONDIM mb-10": {
+            "layer_size": [1] + [neurons] * 8 + [4],
+            'activation': 'tanh',
+            'X_S': eq_params.Xm,
+            "P_s": eq_params.Pm,
+            "S_s":eq_params.So,
+            "V_s": process_params.max_reactor_volume,
+            'mini_batch':10
+            },
+        # f"{neurons*2}x8 {func} NONDIM": {
+        #     "layer_size": [1] + [neurons * 2] * 8 + [4],
+        # },
+        # f"{neurons*2}x12 {func} NONDIM": {
+        #     "layer_size": [1] + [neurons * 2] * 12 + [4],
+        # },
+    }
+
+    # for key in dictionary:
+    #     # NONDIM:
+    #     if True:
+    #         dictionary[key]["X_s"] = eq_params.Xm
+    #         dictionary[key]["P_s"] = eq_params.Pm
+    #         dictionary[key]["S_s"] = eq_params.So
+    #         dictionary[key]["V_s"] = process_params.max_reactor_volume
+    #         # dictionary[key]["t_s"] = process_params.t_final
+
+    # Agora add os que não são adimensionalizados
+    # dictionary[f"{int(neurons*5)}x4 {func} NORMAL"] = {
+    #     "layer_size": [1] + [int(neurons*5)] * 4 + [4],
+    # }
+    # # dictionary[f"{neurons}8 {func} NORMAL"] = {
+    # #     "layer_size": [1] + [neurons] * 8 + [4],
+    # # }
+    # dictionary[f"{int(neurons*5)}x10 {func} NORMAL"] = {
+    #     "layer_size": [1] + [int(neurons*5)] * 10 + [4],
+    # }
+    # dictionary[f"{int(neurons*5)}x20 {func} NORMAL"] = {
+    #     "layer_size": [1] + [int(neurons*5)] * 20 + [4],
+    # }
+
+    # TRAINING
+    for key in dictionary:
+        dictionary[key]["adam_epochs"] = 250 #1000 #45000
+        # dictionary[key]["activation"] = func
+        dictionary[key]["num_domain"] = 70 #1000#300#1000
+        dictionary[key]["num_test"] = 70 #1000#300#1000
+        dictionary[key]["lbfgs_pre"] = False
+        dictionary[key]["lbfgs_post"] = True #True
+
+    return dictionary
