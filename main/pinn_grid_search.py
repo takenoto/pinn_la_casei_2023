@@ -55,7 +55,7 @@ def run_pinn_grid_search(
                 adam_epochs=get_thing_for_key(
                     case_key, "adam_epochs", default=_adam_epochs_default
                 ),
-                adam_display_every=30000,
+                adam_display_every=5000,#30000,
                 adam_lr=0.0001,
                 l_bfgs=SolverLBFGSParams(
                     do_pre_optimization=get_thing_for_key(
