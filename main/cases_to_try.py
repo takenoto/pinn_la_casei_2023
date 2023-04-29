@@ -29,61 +29,91 @@ default_num_test = 1000
 #TODO usa isso dde.optimizers.set_LBFGS_options()
 #pra ver as configs padrão do lbfgs que to usando e anotar na metodologia
 def change_layer_fix_neurons_number(eq_params, process_params):
+    # Mais uma vez testei antes de rodar
+    # Com 100p tá tudo OK... roda que é uma beleza, sem Nans
+    # TODO
+    # sgd
+    # Usar SGD no lugar de adam
+    # https://stats.stackexchange.com/questions/365778/what-should-i-do-when-my-neural-network-doesnt-generalize-well
+    # https://arxiv.org/abs/1712.07628 
+
     func = 'tanh'
-    #Tenh o nondim de 180x4 no teste anterior, já
+    n_epochs = 20#35000 #2000
+    neurons = 400 #90 #100
+    # Obs: 200x14 adam 70p parece razoável?
+    # TODO LR atual é 0.000005 antes 0.00005 (um 0 a menos) por isso 1 modelo não rodava
+    # tente varia LR pra ver o ponto de quebra
     dictionary = { 
-        f'180x4 {func}':{
-            'layer_size': [1] + [180] * 4 + [4],
-        },
-        # f'180x6 {func}':{
-        #     'layer_size': [1] + [180] * 6 + [4],
+        # NAN
+        # f'200x8 {func} adam':{
+        #     "adam_epochs": n_epochs,
+        #     'layer_size': [1] + [200] * 8 + [4],
         # },
-        # f'180x10 {func}':{
-        #     'layer_size': [1] + [180] * 10 + [4],
+        # NAN
+        # f'200x10 {func} adam':{
+        #     "adam_epochs": n_epochs,
+        #     'layer_size': [1] + [200] * 10 + [4],
         # },
-        f'180x4 {func} mb50':{
-            'layer_size': [1] + [180] * 4 + [4],
-            'mini-batch':50
-        },
-        # f'180x6 {func} mb50':{
-        #     'layer_size': [1] + [180] * 6 + [4],
-        #     'mini-batch':50
-        # },
-        # f'180x10 {func} mb50':{
-        #     'layer_size': [1] + [180] * 10 + [4],
-        #     'mini-batch':50
-        # },
-        f'180x4 {func} nondim':{
-            'layer_size': [1] + [180] * 4 + [4],
+        f'{neurons}x4 {func} sgd nondim':{
+            "sgd_epochs": n_epochs,
+            'layer_size': [1] + [neurons] * 4 + [4],
             'X_S': eq_params.Xm,
             "P_s": eq_params.Pm,
             "S_s":eq_params.So,
-            "V_s": process_params.max_reactor_volume
+            "V_s": process_params.max_reactor_volume,
         },
-        # f'180x6 {func} nondim':{
-        #     'layer_size': [1] + [180] * 6 + [4],
-        #     'X_S': eq_params.Xm,
-        #     "P_s": eq_params.Pm,
-        #     "S_s":eq_params.So,
-        #     "V_s": process_params.max_reactor_volume
-        # },
-        # f'180x10 {func} nondim':{
-        #     'layer_size': [1] + [180] * 10 + [4],
-        #     'X_S': eq_params.Xm,
-        #     "P_s": eq_params.Pm,
-        #     "S_s":eq_params.So,
-        #     "V_s": process_params.max_reactor_volume
-        # },
+        f'{neurons}x6 {func} sgd nondim':{
+            "sgd_epochs": n_epochs,
+            'layer_size': [1] + [neurons] * 6 + [4],
+            'X_S': eq_params.Xm,
+            "P_s": eq_params.Pm,
+            "S_s":eq_params.So,
+            "V_s": process_params.max_reactor_volume,
+        },
+        f'{neurons}x8 {func} sgd nondim':{
+            "sgd_epochs": n_epochs,
+            'layer_size': [1] + [neurons] * 8 + [4],
+            'X_S': eq_params.Xm,
+            "P_s": eq_params.Pm,
+            "S_s":eq_params.So,
+            "V_s": process_params.max_reactor_volume,
+        },
+        f'{neurons}x4 {func} sgd':{
+            "sgd_epochs": n_epochs,
+            'layer_size': [1] + [neurons] * 4 + [4],
+        },
+        f'{neurons}x6 {func} sgd':{
+            "sgd_epochs": n_epochs,
+            'layer_size': [1] + [neurons] * 6 + [4],
+        },
+        f'{neurons}x8 {func} sgd':{
+            "sgd_epochs": n_epochs,
+            'layer_size': [1] + [neurons] * 8 + [4],
+        },
+         f'{neurons}x4 {func} adam':{
+            "adam_epochs": n_epochs,
+            'layer_size': [1] + [neurons] * 4 + [4],
+        },
+        f'{neurons}x6 {func} adam':{
+            "adam_epochs": n_epochs,
+            'layer_size': [1] + [neurons] * 6 + [4],
+        },
+        f'{neurons}x8 {func} adam':{
+            "adam_epochs": n_epochs,
+            'layer_size': [1] + [neurons] * 8 + [4],
+        },
     }
 
 
     for key in dictionary:
-        dictionary[key]["adam_epochs"] = 45000
+        # dictionary[key]["adam_epochs"] = 1000 #85000
         dictionary[key]['activation'] = func
-        dictionary[key]['num_domain'] = 2500#10000
-        dictionary[key]['num_test'] = 2500#10000
+        dictionary[key]['num_domain'] = 300
+        dictionary[key]['num_test'] = 300
         dictionary[key]["lbfgs_pre"] = False
-        dictionary[key]["lbfgs_post"] = True
+        dictionary[key]["lbfgs_post"] = False#True
+        dictionary[key]['LR'] = 0.000005
+        dictionary
 
     return dictionary
 

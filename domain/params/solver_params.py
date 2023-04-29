@@ -20,6 +20,7 @@ class SolverParams:
         num_test=None,
         adam_epochs=None,
         adam_display_every=None,
+        sgd_epochs=None,
         adam_lr=None,
         l_bfgs:SolverLBFGSParams=SolverLBFGSParams(),
         layer_size=None,
@@ -38,6 +39,7 @@ class SolverParams:
         self.num_test = num_test
         self.adam_epochs = adam_epochs
         self.adam_display_every = adam_display_every
+        self.sgd_epochs = sgd_epochs
         self.adam_lr = adam_lr
         self.l_bfgs = l_bfgs if l_bfgs else SolverLBFGSParams(pre_optimization=False, post_optimization=False)
         self.layer_size = layer_size

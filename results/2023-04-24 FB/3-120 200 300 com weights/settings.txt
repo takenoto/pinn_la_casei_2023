@@ -1,0 +1,76 @@
+def change_layer_fix_neurons_number(eq_params, process_params):
+    # Mais uma vez testei antes de rodar
+    # Com 100p tá tudo OK... roda que é uma beleza, sem Nans
+    func = 'tanh'
+    dictionary = { 
+        f'120x4 {func} wP3 wS10':{
+            'layer_size': [1] + [120] * 4 + [4],
+            'w_S':10,
+            'w_P': 3,
+        },
+        f'120x8 {func} wP3 wS10':{
+            'layer_size': [1] + [120] * 8 + [4],
+            'w_S':10,
+            'w_P': 3,
+        },
+        f'120x10 {func} wP3 wS10':{
+            'layer_size': [1] + [120] * 10 + [4],
+            'w_S':10,
+            'w_P': 3,
+        },
+        f'200x4 {func} wP3 wS10':{
+            'layer_size': [1] + [200] * 4 + [4],
+            'w_S':10,
+            'w_P': 3,
+        },
+        f'200x8 {func} wP3 wS10':{
+            'layer_size': [1] + [200] * 8 + [4],
+            'w_S':10,
+            'w_P': 3,
+        },
+        f'200x10 {func} wP3 wS10':{
+            'layer_size': [1] + [200] * 10 + [4],
+            'w_S':10,
+            'w_P': 3,
+        },
+        f'300x4 {func} wP3 wS10':{
+            'layer_size': [1] + [300] * 4 + [4],
+            'w_S':10,
+            'w_P': 3,
+        },
+        f'300x8 {func} wP3 wS10':{
+            'layer_size': [1] + [300] * 8 + [4],
+            'w_S':10,
+            'w_P': 3,
+        },
+        f'300x10 {func} wP3 wS10':{
+            'layer_size': [1] + [300] * 10 + [4],
+            'w_S':10,
+            'w_P': 3,
+        },
+        # f'180x6 {func} nondim':{
+        #     'layer_size': [1] + [180] * 6 + [4],
+        #     'X_S': eq_params.Xm,
+        #     "P_s": eq_params.Pm,
+        #     "S_s":eq_params.So,
+        #     "V_s": process_params.max_reactor_volume
+        # },
+        # f'180x10 {func} nondim':{
+        #     'layer_size': [1] + [180] * 10 + [4],
+        #     'X_S': eq_params.Xm,
+        #     "P_s": eq_params.Pm,
+        #     "S_s":eq_params.So,
+        #     "V_s": process_params.max_reactor_volume
+        # },
+    }
+
+
+    for key in dictionary:
+        dictionary[key]["adam_epochs"] = 85000
+        dictionary[key]['activation'] = func
+        dictionary[key]['num_domain'] = 300
+        dictionary[key]['num_test'] = 300
+        dictionary[key]["lbfgs_pre"] = False
+        dictionary[key]["lbfgs_post"] = True
+
+    return dictionary

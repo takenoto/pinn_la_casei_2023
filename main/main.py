@@ -193,7 +193,7 @@ def main():
             sharey=True,
             sharex=True,
             nrows=3,
-            ncols=1,
+            ncols=3,
             items=items,
             suptitle=None,
             title_for_each=True,

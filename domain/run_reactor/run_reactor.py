@@ -148,16 +148,29 @@ def run_reactor(
     pde_resampler = None
     if mini_batch:
         pde_resampler = dde.callbacks.PDEPointResampler(period=10)
-    model.compile("adam", lr=solver_params.adam_lr, loss_weights=loss_weights, loss=loss)
-    loss_history, train_state = model.train(
-        epochs=solver_params.adam_epochs, 
-        display_every=solver_params.adam_display_every,
-        callbacks=[pde_resampler]  if pde_resampler else None
-    )
+
+
+    if solver_params.adam_epochs:
+        model.compile("adam", lr=solver_params.adam_lr, loss_weights=loss_weights, loss=loss)
+        loss_history, train_state = model.train(
+            epochs=solver_params.adam_epochs, 
+            display_every=solver_params.adam_display_every,
+            callbacks=[pde_resampler]  if pde_resampler else None
+        )
+
+
+    if solver_params.sgd_epochs:
+        model.compile("sgd", lr=solver_params.adam_lr, loss_weights=loss_weights, loss=loss)
+        loss_history, train_state = model.train(
+            epochs=solver_params.sgd_epochs, 
+            display_every=solver_params.adam_display_every,
+            callbacks=[pde_resampler]  if pde_resampler else None,
+            model_save_path=solver_params.name
+        )
     ### Step 3: Post optmization
     if(solver_params.l_bfgs.do_post_optimization):
         model.compile("L-BFGS", loss_weights=loss_weights, loss=loss)
-        loss_history, train_state = model.train()
+        loss_history, train_state = model.train(model_save_path=solver_params.name)
     end_time = timer()
     total_training_time = end_time - start_time
     # dde.saveplot(loss_history, train_state, issave=False, isplot=False)

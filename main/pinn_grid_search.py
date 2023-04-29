@@ -53,10 +53,11 @@ def run_pinn_grid_search(
                 num_boundary=10,
                 num_test=get_thing_for_key(case_key, "num_test", default=1000),
                 adam_epochs=get_thing_for_key(
-                    case_key, "adam_epochs", default=_adam_epochs_default
+                    case_key, "adam_epochs", default=None
                 ),
-                adam_display_every=5000,#30000,
-                adam_lr=0.0001,
+                adam_display_every=2000, #5000,#30000,
+                sgd_epochs=get_thing_for_key(case_key, "sgd_epochs", default=None),
+                adam_lr=get_thing_for_key(case_key, "LR", default=0.0001),
                 l_bfgs=SolverLBFGSParams(
                     do_pre_optimization=get_thing_for_key(
                         case_key, "lbfgs_pre", default=True

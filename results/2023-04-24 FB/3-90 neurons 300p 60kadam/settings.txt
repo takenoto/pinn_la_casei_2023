@@ -1,0 +1,114 @@
+def change_layer_fix_neurons_number(eq_params, process_params):
+    # TODO todos esses funcionaram em 100 adams. Se estourar,
+    # tá acontecendo em um ponto e por algum motivo ele não salva os anteriores...
+    # OBS
+    # 90x8 {func} nondim mb100 e mb150 deram nan mesmo em 100p e foram substituídos
+    func = 'tanh'
+    dictionary = { 
+        f'90x4 {func}':{
+            'layer_size': [1] + [90] * 4 + [4],
+        },
+        f'90x8 {func}':{
+            'layer_size': [1] + [90] * 8 + [4],
+        },
+        f'90x10 {func}':{
+            'layer_size': [1] + [90] * 10 + [4],
+        },
+        f'90x4 {func} mb100':{
+            'layer_size': [1] + [180] * 4 + [4],
+            'mini-batch':100
+        },
+        f'90x8 {func} mb100':{
+            'layer_size': [1] + [180] * 8 + [4],
+            'mini-batch':100
+        },
+        f'90x10 {func} mb100':{
+            'layer_size': [1] + [180] * 10 + [4],
+            'mini-batch':100
+        },
+        f'90x4 {func} nondim':{
+            'layer_size': [1] + [90] * 4 + [4],
+            'X_S': eq_params.Xm,
+            "P_s": eq_params.Pm,
+            "S_s":eq_params.So,
+            "V_s": process_params.max_reactor_volume
+        },
+        f'90x8 {func} nondim':{
+            'layer_size': [1] + [90] * 8 + [4],
+            'X_S': eq_params.Xm,
+            "P_s": eq_params.Pm,
+            "S_s":eq_params.So,
+            "V_s": process_params.max_reactor_volume
+        },
+        f'90x10 {func} nondim':{
+            'layer_size': [1] + [90] * 10 + [4],
+            'X_S': eq_params.Xm,
+            "P_s": eq_params.Pm,
+            "S_s":eq_params.So,
+            "V_s": process_params.max_reactor_volume
+        },
+        f'90x4 {func} nondim mb100':{
+            'layer_size': [1] + [90] * 4 + [4],
+            'X_S': eq_params.Xm,
+            "P_s": eq_params.Pm,
+            "S_s":eq_params.So,
+            "V_s": process_params.max_reactor_volume,
+            'mini-batch':100
+        },
+        f'90x14 {func} nondim mb100':{
+            'layer_size': [1] + [90] * 14 + [4],
+            'X_S': eq_params.Xm,
+            "P_s": eq_params.Pm,
+            "S_s":eq_params.So,
+            "V_s": process_params.max_reactor_volume,
+            'mini-batch':100
+        },
+        f'90x10 {func} nondim mb100':{
+            'layer_size': [1] + [90] * 10 + [4],
+            'X_S': eq_params.Xm,
+            "P_s": eq_params.Pm,
+            "S_s":eq_params.So,
+            "V_s": process_params.max_reactor_volume,
+            'mini-batch':100
+        },
+        f'90x4 {func} wP3 wS10':{
+            'layer_size': [1] + [90] * 4 + [4],
+            'w_S':10,
+            'w_P': 3,
+        },
+        f'90x8 {func} wP3 wS10':{
+            'layer_size': [1] + [90] * 8 + [4],
+            'w_S':10,
+            'w_P': 3,
+        },
+        f'90x10 {func} wP3 wS10':{
+            'layer_size': [1] + [90] * 10 + [4],
+            'w_S':10,
+            'w_P': 3,
+        },
+        # f'180x6 {func} nondim':{
+        #     'layer_size': [1] + [180] * 6 + [4],
+        #     'X_S': eq_params.Xm,
+        #     "P_s": eq_params.Pm,
+        #     "S_s":eq_params.So,
+        #     "V_s": process_params.max_reactor_volume
+        # },
+        # f'180x10 {func} nondim':{
+        #     'layer_size': [1] + [180] * 10 + [4],
+        #     'X_S': eq_params.Xm,
+        #     "P_s": eq_params.Pm,
+        #     "S_s":eq_params.So,
+        #     "V_s": process_params.max_reactor_volume
+        # },
+    }
+
+
+    for key in dictionary:
+        dictionary[key]["adam_epochs"] = 85000
+        dictionary[key]['activation'] = func
+        dictionary[key]['num_domain'] = 300
+        dictionary[key]['num_test'] = 300
+        dictionary[key]["lbfgs_pre"] = False
+        dictionary[key]["lbfgs_post"] = True
+
+    return dictionary
