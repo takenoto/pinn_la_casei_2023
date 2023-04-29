@@ -28,7 +28,8 @@ class SolverParams:
         initializer=None,
         loss_weights=[1,1,1,1],
         non_dim_scaler:NonDimScaler=None,
-        mini_batch=None
+        mini_batch=None,
+        hyperfolder=None
     ):
         self.name = name if name else None
         """
@@ -50,3 +51,6 @@ class SolverParams:
             non_dim_scaler if non_dim_scaler else NonDimScaler(X=1, P=1, S=1, V=1, t=1)
         )
         self.mini_batch=mini_batch
+        # Hyperfolder é a pasta padrão
+        # onde salvar os resultados daquele trambei
+        self.hyperfolder = hyperfolder

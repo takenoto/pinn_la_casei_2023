@@ -138,6 +138,12 @@ def run_reactor(
         loss = lossv2 #['MSE', X_cons] -> Acho que essa sintaxe é quando tá treinando várias coisas
     # TODO como faz???????
 
+    # Caminho pra pasta. Já vem com  a barra ou em branco caso não tenha hyperfolder
+    # Pra facilitar a vida e poder botar ele direto
+    hyperfolder_path = f'./results/exported/{solver_params.hyperfolder}-' if solver_params.hyperfolder else ''
+    loss_history = None
+    train_state = None
+
     start_time = timer()
     ### Step 1: Pre-solving by "L-BFGS"
     if(solver_params.l_bfgs.do_pre_optimization):
@@ -155,7 +161,8 @@ def run_reactor(
         loss_history, train_state = model.train(
             epochs=solver_params.adam_epochs, 
             display_every=solver_params.adam_display_every,
-            callbacks=[pde_resampler]  if pde_resampler else None
+            callbacks=[pde_resampler]  if pde_resampler else None,
+            model_save_path=f'{hyperfolder_path}{solver_params.name}/adam' if solver_params.name else None,
         )
 
 
@@ -165,16 +172,21 @@ def run_reactor(
             epochs=solver_params.sgd_epochs, 
             display_every=solver_params.adam_display_every,
             callbacks=[pde_resampler]  if pde_resampler else None,
-            model_save_path=solver_params.name
+            model_save_path=f'{hyperfolder_path}{solver_params.name}/sgd' if solver_params.name else None,
         )
     ### Step 3: Post optmization
     if(solver_params.l_bfgs.do_post_optimization):
         model.compile("L-BFGS", loss_weights=loss_weights, loss=loss)
-        loss_history, train_state = model.train(model_save_path=solver_params.name)
+        loss_history, train_state = model.train(
+            model_save_path=f'{hyperfolder_path}{solver_params.name}/lbfgs post' if solver_params.name else None,
+        )
     end_time = timer()
     total_training_time = end_time - start_time
-    # dde.saveplot(loss_history, train_state, issave=False, isplot=False)
+
     
+    dde.saveplot(loss_history, train_state, issave=True, isplot=False, output_dir=f'{hyperfolder_path}{solver_params.name}')
+    model.save(f'{hyperfolder_path}{solver_params.name}/model')
+
     # ---------------------------------------
     # ------------- FINISHING ---------------
     # ---------------------------------------

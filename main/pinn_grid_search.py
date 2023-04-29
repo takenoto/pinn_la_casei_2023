@@ -83,7 +83,8 @@ def run_pinn_grid_search(
                     V=get_thing_for_key(case_key, "V_s"),
                     t=get_thing_for_key(case_key, "t_s"),
                 ),
-                mini_batch=get_thing_for_key(case_key, "mini_batch", default=None)
+                mini_batch=get_thing_for_key(case_key, "mini_batch", default=None),
+                hyperfolder=get_thing_for_key(case_key, "hyperfolder", default=None),
             )
             # Basicamente um teste com adimensionalização e um sem
             for case_key in cases_to_try

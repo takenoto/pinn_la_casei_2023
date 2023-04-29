@@ -113,6 +113,7 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         dictionary[key]["lbfgs_pre"] = False
         dictionary[key]["lbfgs_post"] = False#True
         dictionary[key]['LR'] = 0.000005
+        dictionary[key]['hyperfolder'] = 'fb tanh sgd adam'
         dictionary
 
     return dictionary
