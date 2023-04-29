@@ -38,22 +38,17 @@ def change_layer_fix_neurons_number(eq_params, process_params):
     # https://arxiv.org/abs/1712.07628 
 
     func = 'tanh'
-    n_epochs = 20#35000 #2000
-    neurons = 400 #90 #100
+    # func = 'swish'
+    # TODO refaz com tanh pra comparar mais uma vez...
+    # TODO aí refaz swish com uma LR menor ainda... mds... pq quebrou zzz
+    # Pq eu já to vendo que uns erros tão quicando e não descem de fato
+    # E tb testa swish com essa LR baixinha, talvez funcione
+    n_epochs = 40000
+    neurons = 128 #400 #90 #100
     # Obs: 200x14 adam 70p parece razoável?
     # TODO LR atual é 0.000005 antes 0.00005 (um 0 a menos) por isso 1 modelo não rodava
     # tente varia LR pra ver o ponto de quebra
     dictionary = { 
-        # NAN
-        # f'200x8 {func} adam':{
-        #     "adam_epochs": n_epochs,
-        #     'layer_size': [1] + [200] * 8 + [4],
-        # },
-        # NAN
-        # f'200x10 {func} adam':{
-        #     "adam_epochs": n_epochs,
-        #     'layer_size': [1] + [200] * 10 + [4],
-        # },
         f'{neurons}x4 {func} sgd nondim':{
             "sgd_epochs": n_epochs,
             'layer_size': [1] + [neurons] * 4 + [4],
@@ -111,9 +106,9 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         dictionary[key]['num_domain'] = 300
         dictionary[key]['num_test'] = 300
         dictionary[key]["lbfgs_pre"] = False
-        dictionary[key]["lbfgs_post"] = False#True
-        dictionary[key]['LR'] = 0.000005
-        dictionary[key]['hyperfolder'] = 'fb tanh sgd adam'
+        dictionary[key]["lbfgs_post"] = True
+        dictionary[key]['LR'] = 0.00005 #0.0002 já quebra e 0.00008 dá certo
+        dictionary[key]['hyperfolder'] = f'fb{neurons}n{func}'
         dictionary
 
     return dictionary

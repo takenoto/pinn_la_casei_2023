@@ -1,0 +1,136 @@
+elapsed time for test = 5055.2390915 secs
+
+Pinn best index = 1
+Pinn best error = 0.5093503594398499
+
+ESQUECI O CHROME ABERTO
+ENTÃO OS RESULTADOS DOS PRIMEIROS N SÃO MUITO CONFIÁVEIS OK
+
+N SEI PQ ESTOROU, TINHA FEITO O TESTE COM 20 EPOCHS E TINHA PARECIDO QUE IA DAR CERTO ZZZZZZZZZ
+
+-----------------------------
+
+
+name = 128x4 swish sgd nondim
+train time = 591.3493851 s
+best loss test = 0.5535209774971008
+best loss train = 0.5535820126533508
+pred time = 2.186209499999677 s
+ERROR XPSV
+X = 3.778090328580874
+P = 12.58141166219512
+S = 8.37439894076035
+V = 10.739099444970503
+total = 35.473000376506846
+
+
+name = 128x6 swish sgd nondim
+train time = 1148.8041549999998 s
+best loss test = 0.5093503594398499
+best loss train = 0.5133551359176636
+pred time = 2.257992799999556 s
+ERROR XPSV
+X = 3.6662996199793993
+P = 5.700221088572041
+S = 15.484821570136406
+V = 7.9251334561490605
+total = 32.77647573483691
+
+
+
+name = 128x8 swish sgd nondim
+train time = 1684.3693739 s
+best loss test = 0.5105486512184143
+best loss train = 0.5082476735115051
+pred time = 2.300964600000043 s
+ERROR XPSV
+X = 3.5016083105802083
+P = 11.597767455047723
+S = 11.638415680549292
+V = 8.295315280259118
+total = 35.033106726436344
+
+
+
+name = 128x4 swish sgd
+train time = 55.27457770000001 s
+best loss test = 2481.44970703125
+best loss train = 2481.450439453125
+pred time = 2.0451138999997056 s
+ERROR XPSV
+X = nan
+P = nan
+S = nan
+V = nan
+total = nan
+
+
+name = 128x6 swish sgd
+train time = 89.61702689999993 s
+best loss test = 2481.406982421875
+best loss train = 2481.406982421875
+pred time = 2.035020300000724 s
+ERROR XPSV
+X = nan
+P = nan
+S = nan
+V = nan
+total = nan
+
+
+
+name = 128x8 swish sgd
+train time = 130.5469481 s
+best loss test = 2481.40673828125
+best loss train = 2481.40673828125
+pred time = 1.965951799999857 s
+ERROR XPSV
+X = nan
+P = nan
+S = nan
+V = nan
+total = nan
+
+
+
+name = 128x4 swish adam
+train time = 1084.4312405 s
+best loss test = 10.818498611450195
+best loss train = 10.751909255981445
+pred time = 1.935323800000333 s
+ERROR XPSV
+X = 16.925526506460436
+P = 57.806695171104174
+S = 22.532933004448942
+V = 15.576884772181518
+total = 112.84203945419507
+
+
+
+name = 128x6 swish adam
+train time = 106.9108213999998 s
+best loss test = 2481.427978515625
+best loss train = 2481.427978515625
+pred time = 1.9702866999996331 s
+ERROR XPSV
+X = nan
+P = nan
+S = nan
+V = nan
+total = nan
+
+
+name = 128x8 swish adam
+train time = 142.15340190000006 s
+best loss test = 2481.409423828125
+best loss train = 2481.40966796875
+pred time = 1.8552533999991283 s
+ERROR XPSV
+X = nan
+P = nan
+S = nan
+V = nan
+total = nan
+
+
+

@@ -184,7 +184,7 @@ def run_reactor(
     total_training_time = end_time - start_time
 
     
-    dde.saveplot(loss_history, train_state, issave=True, isplot=False, output_dir=f'{hyperfolder_path}{solver_params.name}')
+    dde.saveplot(loss_history, train_state, issave=True, isplot=False, output_dir=f'{hyperfolder_path}{solver_params.name}/plot')
     model.save(f'{hyperfolder_path}{solver_params.name}/model')
 
     # ---------------------------------------
