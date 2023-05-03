@@ -1,0 +1,95 @@
+elapsed time for test = 23389.891072899998 secs
+
+Pinn best index = 2
+Pinn best error = 0.34544289112091064
+
+
+Esses perfis que deram certo são super parecidos
+com outros que deram certo antes (outros neurônios e camadas)
+Tipo parece que é um limite, ele não melhora
+daí :((((((((((((((((
+
+---------------------------------
+
+
+
+name = 220x4 tanh sgd
+train time = 2968.221396 s
+best loss test = 305402.96875
+best loss train = 1.2664927244186401
+pred time = 0.8632952000007208 s
+ERROR XPSV
+X = 13.936810353106988
+P = 82.07400717790559
+S = 22.543458914193135
+V = 19.239076959490784
+total = 137.7933534046965
+
+name = 220x8 tanh sgd
+train time = 3963.7650804 s
+best loss test = 0.35217365622520447
+best loss train = 0.3554389178752899
+pred time = 0.8806901999996626 s
+ERROR XPSV
+X = 0.3027062206867022
+P = 5.194746697617046
+S = 24.98751145172175
+V = 1.0355908861756198
+total = 31.52055525620112
+
+
+name = 220x12 tanh sgd
+train time = 5661.4891106000005 s
+best loss test = 0.34544289112091064
+best loss train = 0.349837064743042
+pred time = 0.8203508000005968 s
+ERROR XPSV
+X = 0.30045565083759135
+P = 4.859746913339637
+S = 23.64045387743902
+V = 1.2669529646634927
+total = 30.06760940627974
+
+
+
+name = 220x4 tanh adam
+train time = 1536.9045580999991 s
+best loss test = 527.3047485351562
+best loss train = 529.7076416015625
+pred time = 0.8342499999998836 s
+ERROR XPSV
+X = 9.954784529055257
+P = 29.648013221578104
+S = 44.2751019424524
+V = 13.663884444218136
+total = 97.5417841373039
+
+
+
+name = 220x8 tanh adam
+train time = 3464.9271849000015 s
+best loss test = 530.9900512695312
+best loss train = 534.1974487304688
+pred time = 0.7906277000001865 s
+ERROR XPSV
+X = 7.0508147342569965
+P = 2.366238776998034
+S = 24.171725960555285
+V = 11.72102585434913
+total = 45.30980532615944
+
+
+
+name = 220x12 tanh adam
+train time = 5786.2745300999995 s
+best loss test = 37.41834259033203
+best loss train = 9.970901737688109e-05
+pred time = 0.8705152000002272 s
+ERROR XPSV
+X = 3.4740607800110723
+P = 22.656395101137708
+S = 11.315092913729082
+V = 3.9374955592966496
+total = 41.383044354174515
+
+

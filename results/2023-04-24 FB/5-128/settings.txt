@@ -1,0 +1,84 @@
+def change_layer_fix_neurons_number(eq_params, process_params):
+    # Mais uma vez testei antes de rodar
+    # Com 100p tá tudo OK... roda que é uma beleza, sem Nans
+    # TODO
+    # sgd
+    # Usar SGD no lugar de adam
+    # https://stats.stackexchange.com/questions/365778/what-should-i-do-when-my-neural-network-doesnt-generalize-well
+    # https://arxiv.org/abs/1712.07628 
+
+    func = 'tanh'
+    # func = 'swish'
+    # TODO refaz com tanh pra comparar mais uma vez...
+    # TODO aí refaz swish com uma LR menor ainda... mds... pq quebrou zzz
+    # Pq eu já to vendo que uns erros tão quicando e não descem de fato
+    # E tb testa swish com essa LR baixinha, talvez funcione
+    n_epochs = 40000
+    neurons = 128 #400 #90 #100
+    # Obs: 200x14 adam 70p parece razoável?
+    # TODO LR atual é 0.000005 antes 0.00005 (um 0 a menos) por isso 1 modelo não rodava
+    # tente varia LR pra ver o ponto de quebra
+    dictionary = { 
+        f'{neurons}x4 {func} sgd nondim':{
+            "sgd_epochs": n_epochs,
+            'layer_size': [1] + [neurons] * 4 + [4],
+            'X_S': eq_params.Xm,
+            "P_s": eq_params.Pm,
+            "S_s":eq_params.So,
+            "V_s": process_params.max_reactor_volume,
+        },
+        f'{neurons}x6 {func} sgd nondim':{
+            "sgd_epochs": n_epochs,
+            'layer_size': [1] + [neurons] * 6 + [4],
+            'X_S': eq_params.Xm,
+            "P_s": eq_params.Pm,
+            "S_s":eq_params.So,
+            "V_s": process_params.max_reactor_volume,
+        },
+        f'{neurons}x8 {func} sgd nondim':{
+            "sgd_epochs": n_epochs,
+            'layer_size': [1] + [neurons] * 8 + [4],
+            'X_S': eq_params.Xm,
+            "P_s": eq_params.Pm,
+            "S_s":eq_params.So,
+            "V_s": process_params.max_reactor_volume,
+        },
+        f'{neurons}x4 {func} sgd':{
+            "sgd_epochs": n_epochs,
+            'layer_size': [1] + [neurons] * 4 + [4],
+        },
+        f'{neurons}x6 {func} sgd':{
+            "sgd_epochs": n_epochs,
+            'layer_size': [1] + [neurons] * 6 + [4],
+        },
+        f'{neurons}x8 {func} sgd':{
+            "sgd_epochs": n_epochs,
+            'layer_size': [1] + [neurons] * 8 + [4],
+        },
+         f'{neurons}x4 {func} adam':{
+            "adam_epochs": n_epochs,
+            'layer_size': [1] + [neurons] * 4 + [4],
+        },
+        f'{neurons}x6 {func} adam':{
+            "adam_epochs": n_epochs,
+            'layer_size': [1] + [neurons] * 6 + [4],
+        },
+        f'{neurons}x8 {func} adam':{
+            "adam_epochs": n_epochs,
+            'layer_size': [1] + [neurons] * 8 + [4],
+        },
+    }
+
+
+    for key in dictionary:
+        # dictionary[key]["adam_epochs"] = 1000 #85000
+        dictionary[key]['activation'] = func
+        dictionary[key]['num_domain'] = 300
+        dictionary[key]['num_test'] = 300
+        dictionary[key]["lbfgs_pre"] = False
+        dictionary[key]["lbfgs_post"] = True
+        dictionary[key]['LR'] = 0.00005 #0.0002 já quebra e 0.00008 dá certo
+        dictionary[key]['hyperfolder'] = f'fb{neurons}n{func}'
+        dictionary
+
+    return dictionary
