@@ -45,13 +45,14 @@ class ODEPreparer:
             process_params = self.process_params
             solver_params = self.solver_params
             f_out_value_calc = self.f_out_value_calc
+            simulationType = self.solver_params.simulationType
 
             # Nondim Scale
             scaler = solver_params.non_dim_scaler
 
             # --------------------------
             # Volume & flows
-
+            if(simulationType)
             V_nondim = y[:, 3:4]
 
             dV_dt_nondim = dde.grad.jacobian(y, x, i=3)
