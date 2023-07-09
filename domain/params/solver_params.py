@@ -1,14 +1,19 @@
-from enum import Enum
-
 from domain.optimization.non_dim_scaler import NonDimScaler
 
 
-class SystemSimulationType(Enum):
-    XPSV = 1
-    "Representa a rede normal, que calcula todas as 4 variáveis"
-    XV = 2
-    "Representa a rede que calcula APENAS X e V"
+class SystemSimulationType:
+    """
+    Define as variáveis de saída.
     
+    Cada variável que for True deve ser calculada.
+    As demais não.
+    Fim.
+    """
+    def __init__(self, X=True, P=True, S=True, V=True):
+        self.X=X
+        self.P=P
+        self.S=S
+        self.V=V
 
 class SolverLBFGSParams:
     """
