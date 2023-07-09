@@ -87,6 +87,7 @@ def run_reactor(
     data = dde.data.PDE(
         geometry=geom,
         pde=ode_system_preparer.prepare(),
+        #TODO aqui muda bcs com o tipo
         bcs=[ic0, ic1, ic2, ic3],
         num_domain=solver_params.num_domain,
         num_boundary=solver_params.num_boundary,
@@ -98,6 +99,7 @@ def run_reactor(
     ## SOLVING
     model = dde.Model(data, net)
     w = solver_params.loss_weights
+    #TODO aqui muda ws com o tipo
     loss_weights = [
         # Os 1ºs são da pde, os 3 útilmos do ajuste físico (proibir menor que zero)
         # Equece, não deu certo
@@ -105,13 +107,7 @@ def run_reactor(
         # Esses são do teste eu acho, e os de cima do train? embora não faça o menor sentido...
         w[0], w[1], w[2], w[3],]# solver_params.loss_weights
     
-    #------- CUSTOM LOSS --------------
-    # REFS:
-    # https://github.com/lululxvi/deepxde/issues/174
-    # https://github.com/lululxvi/deepxde/issues/504
-    # https://github.com/lululxvi/deepxde/issues/467
-    loss = None
-    loss_version = None
+    
     mini_batch = solver_params.mini_batch #None # Tamanho da mini-batch
 
     # Caminho pra pasta. Já vem com  a barra ou em branco caso não tenha hyperfolder
