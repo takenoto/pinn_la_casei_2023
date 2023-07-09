@@ -1,5 +1,14 @@
+from enum import Enum
+
 from domain.optimization.non_dim_scaler import NonDimScaler
 
+
+class SystemSimulationType(Enum):
+    XPSV = 1
+    "Representa a rede normal, que calcula todas as 4 variáveis"
+    XV = 2
+    "Representa a rede que calcula APENAS X e V"
+    
 
 class SolverLBFGSParams:
     """
@@ -29,7 +38,8 @@ class SolverParams:
         loss_weights=[1,1,1,1],
         non_dim_scaler:NonDimScaler=None,
         mini_batch=None,
-        hyperfolder=None
+        hyperfolder=None,
+        simulationType:SystemSimulationType=SystemSimulationType.XPSV
     ):
         self.name = name if name else None
         """
@@ -54,3 +64,4 @@ class SolverParams:
         # Hyperfolder é a pasta padrão
         # onde salvar os resultados daquele trambei
         self.hyperfolder = hyperfolder
+        self.simulationType = simulationType
