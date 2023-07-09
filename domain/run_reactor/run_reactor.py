@@ -114,30 +114,6 @@ def run_reactor(
     loss_version = None
     mini_batch = solver_params.mini_batch #None # Tamanho da mini-batch
 
-    def X_cons(y_true, y_pred):
-        print('XIS!')
-        print(y_true)
-        print(y_pred)
-        if y_pred[0]<0:
-            return y_pred[0]
-        return 0
-
-    if loss_version is None:
-        loss = 'MSE'
-    elif loss_version == 2:
-        def lossv2(y_true, y_pred):
-            # Ref: https://towardsdatascience.com/custom-loss-function-in-tensorflow-eebcd7fed17a
-            mse = tf.reduce_mean(tf.square(y_pred - y_true))
-            # Se menor que 0, retorna o proprio valor
-            consservation = tf.reduce_mean(tf.minimum(y_pred, 0))
-            # acho que posso fazer o if, só tenho que somar  ou passar o mean de todos
-            # https://stackoverflow.com/questions/34875944/how-to-write-a-custom-loss-function-in-tensorflow
-            # 
-            # conservation = tf.cond(tf.less(y_pred, tf.multiply(y_pred, 0)), lambda: y_pred, lambda: tf.multiply(y_pred, 0))
-            return mse + consservation
-        loss = lossv2 #['MSE', X_cons] -> Acho que essa sintaxe é quando tá treinando várias coisas
-    # TODO como faz???????
-
     # Caminho pra pasta. Já vem com  a barra ou em branco caso não tenha hyperfolder
     # Pra facilitar a vida e poder botar ele direto
     hyperfolder_path = f'./results/exported/{solver_params.hyperfolder}-' if solver_params.hyperfolder else ''
