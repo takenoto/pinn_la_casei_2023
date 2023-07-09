@@ -1,0 +1,8 @@
+parece estar entre o 85x8 de swish com mb
+cstr-12
+
+e o cstr-13 o de 126x12 tanh
+
+Tanto menor loss quanto menor erro geral
+
+Em ambos os casos a rede ignorou o rebote e traçou uma linha

@@ -60,10 +60,10 @@ def run_pinn_grid_search(
                 adam_lr=get_thing_for_key(case_key, "LR", default=0.0001),
                 l_bfgs=SolverLBFGSParams(
                     do_pre_optimization=get_thing_for_key(
-                        case_key, "lbfgs_pre", default=True
+                        case_key, "lbfgs_pre", default=0
                     ),
                     do_post_optimization=get_thing_for_key(
-                        case_key, "lbfgs_post", default=False
+                        case_key, "lbfgs_post", default=1
                     ),
                 ),
                 layer_size=get_thing_for_key(

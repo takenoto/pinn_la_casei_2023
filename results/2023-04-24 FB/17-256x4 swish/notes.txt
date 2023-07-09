@@ -1,0 +1,53 @@
+elapsed time for test = 3870.9809454 secs
+
+
+
+Pinn best index = 2
+Pinn best error = 0.0018159409519284964
+--------------------
+
+name = 256x4 swish sgd nondim
+train time = 3108.5788628 s
+best loss test = 0.3452017903327942
+best loss train = 0.3430003523826599
+pred time = 1.4723378000016965 s
+ERROR XPSV
+X = 1760.3039270746758
+P = 175378.32044589688
+S = 73018.03850088303
+V = 135536.01221801757
+total = 385692.67509187217
+
+
+
+
+
+
+
+
+name = 256x4 swish adam nondim
+train time = 153.75551259999975 s
+best loss test = 2.895087242126465
+best loss train = 2.895230531692505
+pred time = 1.4353050999998231 s
+ERROR XPSV
+X = nan
+P = nan
+S = nan
+V = nan
+total = nan
+
+
+
+
+name = 256x4 swish adam nondim W
+train time = 179.89518849999968 s
+best loss test = 19.1479434967041
+best loss train = 19.148853302001953
+pred time = 1.222288100001606 s
+ERROR XPSV
+X = nan
+P = nan
+S = nan
+V = nan
+total = nan

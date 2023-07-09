@@ -32,46 +32,88 @@ def change_layer_fix_neurons_number(eq_params, process_params):
     # Usar SGD no lugar de adam
     # https://stats.stackexchange.com/questions/365778/what-should-i-do-when-my-neural-network-doesnt-generalize-well
     # https://arxiv.org/abs/1712.07628 
-    
-    # COM 10K DEU CERTO
-    func = 'tanh'
-    n_epochs = 35000 #1000
-    neurons = 400 #60 ruim #220 #já inicializa NAN não sei como resolver?? #400 #90 #100
-    dictionary = { 
-        f'{neurons}x4 {func} sgd':{
-            "sgd_epochs": n_epochs,
-            'layer_size': [1] + [neurons] * 4 + [4],
-            # 'X_S': eq_params.Xm,
-            # "P_s": eq_params.Pm,
-            # "S_s":eq_params.So,
-            # "V_s": process_params.max_reactor_volume,
-        },
-        f'{neurons}x8 {func} sgd':{
-            "sgd_epochs": n_epochs,
-            'layer_size': [1] + [neurons] * 8 + [4],
-        },
-        f'{neurons}x12 {func} sgd':{
-            "sgd_epochs": n_epochs,
-            'layer_size': [1] + [neurons] * 12 + [4],
-        },
-        f'{neurons}x16 {func} sgd':{
-            "sgd_epochs": n_epochs,
-            'layer_size': [1] + [neurons] * 16 + [4],
-        },
-    }
+    # TODO refaz esse mesmo nondim e adam. E fim. Cabou-se. Credo.
+    #1400 epochs 100n x3x8 800p domain 800p test horrivel erro >10
+    #1400 epochs 160 x4x8 300p mb50 e sem mb ruinzão tb
+    # Fazendo agora 90x8 que tinha dado certo antes
+    # TODO roda um quadrado neuronios vs layers
+    # Roda um adam, um sgd, um com nondim. E FIM!!!!
+    # AÍ FAÇO OS GRÁFICOS 3D
+    func = 'tanh' #'swish'#'tanh'
+    # TODO antes de rodar o novo pelo amor passe só 700 pra testar e sem lbfgs
+    # é pra demorar < 5 min que foi o quanto demorou pra maior qtde de neuronios
+    n_epochs = 1000 #45000
+    #neurons = 90
+    #layer=4
+    dictionary = {}
+    layers = [3, 6, 8, 12]
+    layers=[3, 6]
+    # Vou ter que fazer em 2 partes...
+    # neurons = [22, 45, 70,]
+    neurons = [70, 22,]
+    # neurons = [90, 130, 200,]
+    # layers = [3, 12]
+    # neurons = [22,70]
+    # TODO sgd parece mais suscetível à quebra que adam???
+
+    for n in neurons:
+        for l in layers:
+            dictionary[f'{n}x{l} {func} sgd'] = {
+                'layer_size': [1] + [n] * l + [4],
+                "sgd_epochs": n_epochs,
+            }
+
+    # dictionary = { 
+    #     f'{neurons}x{layer} {func} sgd nondim':{
+    #         "sgd_epochs": n_epochs,
+    #         'layer_size': [1] + [neurons] * layer + [4],
+    #         'X_S': eq_params.Xm,
+    #         "P_s": eq_params.Pm,
+    #         "S_s":eq_params.So,
+    #         "V_s": process_params.max_reactor_volume
+    #     },
+    #     f'{neurons}x{layer} {func} adam nondim':{
+    #         "adam_epochs": n_epochs,
+    #         'layer_size': [1] + [neurons] * layer + [4],
+    #         'X_S': eq_params.Xm,
+    #         "P_s": eq_params.Pm,
+    #         "S_s":eq_params.So,
+    #         "V_s": process_params.max_reactor_volume
+    #     },
+    #     f'{neurons}x{layer} {func} sgd adam nondim':{
+    #         "adam_epochs": int(n_epochs/2),
+    #         "sgd_epochs": int(n_epochs/2),
+    #         'layer_size': [1] + [neurons] * layer + [4],
+    #         'X_S': eq_params.Xm,
+    #         "P_s": eq_params.Pm,
+    #         "S_s":eq_params.So,
+    #         "V_s": process_params.max_reactor_volume,
+    #     },
+    #     f'{neurons}x{layer} {func} adam nondim W':{
+    #         "adam_epochs": n_epochs,
+    #         'layer_size': [1] + [neurons] * layer + [4],
+    #         'X_S': eq_params.Xm,
+    #         "P_s": eq_params.Pm,
+    #         "S_s":eq_params.So,
+    #         "V_s": process_params.max_reactor_volume,
+    #         'w_S':15,
+    #         'w_P': 3,
+    #     },
+    # }
 
 
     for key in dictionary:
-        # dictionary[key]["adam_epochs"] = 1000 #85000
         dictionary[key]['activation'] = func
-        dictionary[key]['num_domain'] = 300
-        dictionary[key]['num_test'] = 300
-        dictionary[key]["lbfgs_pre"] = False
-        dictionary[key]["lbfgs_post"] = True
-        dictionary[key]['LR'] = 0.000008 #0.00005 quebra
+        # TODO fez foi piorar em relação a 300............
+        # mas tb fiz poucas interações né a sei lá fim
+        dictionary[key]['num_domain'] = 600
+        dictionary[key]['num_test'] = 600
+        dictionary[key]["lbfgs_pre"] = 0
+        dictionary[key]["lbfgs_post"] = 2 #0 #3
+        dictionary[key]['LR'] = 0.00001 #0.001 quebra no 70x3
         dictionary[key]['hyperfolder'] = f'fb'#f'fb{neurons}n{func}'
-        dictionary[key]['initializer'] = 'Glorot normal' #GLOROT UNIFORM QUEBRA QUE NEM RODA!!!!
-        # JÁ INICIA EM NAN SE FOR GLOROT NORMAL!
+        dictionary[key]['initializer'] = 'Glorot normal' #GLOROT UNIFORM
+        
         dictionary
 
     return dictionary

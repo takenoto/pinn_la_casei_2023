@@ -1,0 +1,66 @@
+elapsed time for test = 809.4959091 secs
+
+
+
+Pinn best index = 0
+Pinn best error = nan
+
+
+EU BOTEI X8 MAS NA HORA
+SÓ BOTEI 4 LAYERS ZZZZZZZZZZZZZZZZZ
+
+-------------------------------------
+
+
+
+name = 90x8 tanh sgd nondim
+train time = 46.1589796 s
+best loss test = nan
+best loss train = 0.2060350775718689
+pred time = 1.0018731999999773 s
+ERROR XPSV
+X = 2.392015171844608
+P = 348.5234568509027
+S = 187.0885869672769
+V = 12.118269987776888
+total = 550.1223289778011
+
+
+
+name = 90x8 tanh adam nondim
+train time = 39.6512178 s
+best loss test = 0.04471469670534134
+best loss train = 0.05415136367082596
+pred time = 1.0018984000000728 s
+ERROR XPSV
+X = 5.529854557967914
+P = 320.8797635060117
+S = 289.7193226223862
+V = 0.7933494451269638
+total = 616.9222901314928
+
+
+name = 90x8 tanh sgd wP3 wS15
+train time = 44.6659576 s
+best loss test = 12121.0615234375
+best loss train = 12121.0625
+pred time = 0.9951915999999983 s
+ERROR XPSV
+X = 5.715233978039754
+P = 14.831300339693641
+S = 24.5278825968828
+V = 12.245101761817947
+total = 57.31951867643414
+
+
+name = 90x8 tanh sgd nondim W
+train time = 72.67951440000002 s
+best loss test = 0.6057226061820984
+best loss train = 0.635869562625885
+pred time = 0.8975728000000345 s
+ERROR XPSV
+X = 5.112714297731582
+P = 35.680940496368905
+S = 35.02143902093166
+V = 15.805271931495529
+total = 91.62036574652768

@@ -1,0 +1,63 @@
+elapsed time for test = 830.6539473 secs
+
+Pinn best index = 1
+Pinn best error = 0.04362211376428604
+
+----------------------------
+
+
+
+name = 400x5 tanh sgd nondim
+train time = 112.3185988 s
+best loss test = 0.2441665083169937
+best loss train = 0.24763379991054535
+pred time = 0.9699236000014935 s
+ERROR XPSV
+X = 2.206746714240488
+P = 481.6574771052165
+S = 257.97078598822895
+V = 12.0982021876448
+total = 753.9332119953308
+
+
+
+name = 400x5 tanh adam nondim
+train time = 504.68542919999993 s
+best loss test = 0.04362211376428604
+best loss train = 0.052678342908620834
+pred time = 0.939299800003937 s
+ERROR XPSV
+X = 5.655581442899241
+P = 94.64329619820559
+S = 274.7335061150467
+V = 0.8928761740215251
+total = 375.925259930173
+
+
+
+name = 400x5 tanh sgd adam nondim
+train time = 91.66985380000006 s
+best loss test = 0.08201339840888977
+best loss train = 0.09199535101652145
+pred time = 0.9121390000000247 s
+ERROR XPSV
+X = 4.901326456411912
+P = 38.3838336007342
+S = 178.738951883403
+V = 2.380222129002226
+total = 224.40433406955134
+
+
+
+
+name = 400x5 tanh adam nondim W
+train time = 113.42526469999996 s
+best loss test = 19.156526565551758
+best loss train = 19.15560531616211
+pred time = 0.8208092000058969 s
+ERROR XPSV
+X = nan
+P = nan
+S = nan
+V = nan
+total = nan

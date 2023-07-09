@@ -1,0 +1,72 @@
+def change_layer_fix_neurons_number(eq_params, process_params):
+    # Usar SGD no lugar de adam
+    # https://stats.stackexchange.com/questions/365778/what-should-i-do-when-my-neural-network-doesnt-generalize-well
+    # https://arxiv.org/abs/1712.07628 
+    
+    # TODO refaz esse mesmo nondim e adam. E fim. Cabou-se. Credo.
+    # TODO NUMERO FBGS !!!!
+    #1400 epochs 100n x3x8 800p domain 800p test horrivel erro >10
+    #1400 epochs 160 x4x8 300p mb50 e sem mb ruinzão tb
+    # Fazendo agora 90x8 que tinha dado certo antes
+    func = 'tanh'
+    n_epochs = 1400#60000 #1000
+    neurons = 90
+    dictionary = { 
+        # f'{neurons}x4 {func} sgd':{
+        #     "sgd_epochs": n_epochs,
+        #     'layer_size': [1] + [neurons] * 4 + [4],
+        #     # 'X_S': eq_params.Xm,
+        #     # "P_s": eq_params.Pm,
+        #     # "S_s":eq_params.So,
+        #     # "V_s": process_params.max_reactor_volume,
+        # },
+        # f'{neurons}x8 {func} sgd':{
+        #     "sgd_epochs": n_epochs,
+        #     'layer_size': [1] + [neurons] * 8 + [4],
+        # },
+        f'{neurons}x8 {func} sgd nondim':{
+            "sgd_epochs": n_epochs,
+            'layer_size': [1] + [neurons] * 4 + [4],
+            'X_S': eq_params.Xm,
+            "P_s": eq_params.Pm,
+            "S_s":eq_params.So,
+            "V_s": process_params.max_reactor_volume
+        },
+        f'{neurons}x8 {func} adam nondim':{
+            "adam_epochs": n_epochs,
+            'layer_size': [1] + [neurons] * 4 + [4],
+            'X_S': eq_params.Xm,
+            "P_s": eq_params.Pm,
+            "S_s":eq_params.So,
+            "V_s": process_params.max_reactor_volume
+        },
+        f'{neurons}x8 {func} sgd wP3 wS15':{
+            "sgd_epochs": n_epochs,
+            'layer_size': [1] + [neurons] * 8 + [4],
+            'w_S':15,
+            'w_P': 3,
+        },
+        f'{neurons}x8 {func} sgd nondim W':{
+            "sgd_epochs": n_epochs,
+            'layer_size': [1] + [neurons] * 8 + [4],
+            'X_S': eq_params.Xm,
+            "P_s": eq_params.Pm,
+            "S_s":eq_params.So,
+            "V_s": process_params.max_reactor_volume,
+            'w_S':15,
+            'w_P': 3,
+        },
+        f'{neurons}x8 {func} sgd':{
+            "sgd_epochs": n_epochs,
+            'layer_size': [1] + [neurons] * 8 + [4],
+            'mini_batch':50
+        },
+        # f'{neurons}x16 {func} sgd':{
+        #     "sgd_epochs": n_epochs,
+        #     'layer_size': [1] + [neurons] * 16 + [4],
+        # },
+        # f'{neurons}x24 {func} sgd':{
+        #     "sgd_epochs": n_epochs,
+        #     'layer_size': [1] + [neurons] * 24 + [4],
+        # },
+    }

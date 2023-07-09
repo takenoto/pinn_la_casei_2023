@@ -1,0 +1,61 @@
+elapsed time for test = 11746.076772100001 secs
+
+Pinn best index = 3
+Pinn best error = 3.5655226707458496
+
+--------------------------------------
+
+
+
+name = 240x4 tanh sgd
+train time = 1200.0316347 s
+best loss test = 1721.0751953125
+best loss train = 1721.0751953125
+pred time = 0.38083909999841126 s
+ERROR XPSV
+X = 2.2759241135195465
+P = 15.941046127633564
+S = 25.155104276570306
+V = 8.486207276003713
+total = 51.85828179372713
+
+
+name = 240x8 tanh sgd
+train time = 2778.350241 s
+best loss test = 1238.6732177734375
+best loss train = 1238.6732177734375
+pred time = 0.4382344000005105 s
+ERROR XPSV
+X = 8.856595989472407
+P = 15.994409176663869
+S = 7.64013888813798
+V = 14.955318641662604
+total = 47.44646269593686
+
+
+
+name = 240x12 tanh sgd
+train time = 1740.2684820000004 s
+best loss test = 1236.8123779296875
+best loss train = 1236.8310546875
+pred time = 0.38447660000019823 s
+ERROR XPSV
+X = nan
+P = nan
+S = nan
+V = nan
+total = nan
+
+
+
+name = 240x16 tanh sgd
+train time = 6023.1965386 s
+best loss test = 3.5655226707458496
+best loss train = 3.9327754974365234
+pred time = 0.3203974999996717 s
+ERROR XPSV
+X = 3.5479679228711767
+P = 5.511705221490368
+S = 19.58719693350273
+V = 3.724023280441748
+total = 32.37089335830603

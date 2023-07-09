@@ -147,8 +147,9 @@ def run_reactor(
     start_time = timer()
     ### Step 1: Pre-solving by "L-BFGS"
     if(solver_params.l_bfgs.do_pre_optimization):
-        model.compile("L-BFGS", loss_weights=loss_weights, loss=loss)
-        model.train()
+        for i in range(solver_params.l_bfgs.do_pre_optimization):
+            model.compile("L-BFGS", loss_weights=loss_weights, loss=loss)
+            model.train()
 
     ### Step 2: Solving by "adam"
     pde_resampler = None
@@ -176,10 +177,11 @@ def run_reactor(
         )
     ### Step 3: Post optmization
     if(solver_params.l_bfgs.do_post_optimization):
-        model.compile("L-BFGS", loss_weights=loss_weights, loss=loss)
-        loss_history, train_state = model.train(
-            model_save_path=f'{hyperfolder_path}{solver_params.name}/lbfgs post' if solver_params.name else None,
-        )
+        for i in range(solver_params.l_bfgs.do_post_optimization):
+            model.compile("L-BFGS", loss_weights=loss_weights, loss=loss)
+            loss_history, train_state = model.train(
+                model_save_path=f'{hyperfolder_path}{solver_params.name}/lbfgs post{i}' if solver_params.name else None,
+            )
     end_time = timer()
     total_training_time = end_time - start_time
 

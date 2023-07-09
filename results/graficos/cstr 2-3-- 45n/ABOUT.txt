@@ -1,0 +1,9 @@
+TRT = TRAIN TIME
+PRT = PREDICTION TIME
+
+# 1 - > train time vs test time pra 1
+
+# 2 -> trt e tst pros 2 juntos
+
+
+# 3 -> loss (test) e train time pros 2
