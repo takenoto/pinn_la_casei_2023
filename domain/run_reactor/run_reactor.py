@@ -107,9 +107,18 @@ def run_reactor(
         # Esses são do teste eu acho, e os de cima do train? embora não faça o menor sentido...
         w[0], w[1], w[2], w[3],]# solver_params.loss_weights
     
-    
+    #------- CUSTOM LOSS --------------
+    # REFS:
+    # https://github.com/lululxvi/deepxde/issues/174
+    # https://github.com/lululxvi/deepxde/issues/504
+    # https://github.com/lululxvi/deepxde/issues/467
+    loss = None
+    loss_version = None
     mini_batch = solver_params.mini_batch #None # Tamanho da mini-batch
 
+    if loss_version is None:
+        loss = 'MSE'
+        
     # Caminho pra pasta. Já vem com  a barra ou em branco caso não tenha hyperfolder
     # Pra facilitar a vida e poder botar ele direto
     hyperfolder_path = f'./results/exported/{solver_params.hyperfolder}-' if solver_params.hyperfolder else ''
