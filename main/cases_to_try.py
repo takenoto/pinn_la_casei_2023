@@ -42,7 +42,7 @@ def change_layer_fix_neurons_number(eq_params, process_params):
     func = 'tanh' #'swish'#'tanh'
     # TODO antes de rodar o novo pelo amor passe só 700 pra testar e sem lbfgs
     # é pra demorar < 5 min que foi o quanto demorou pra maior qtde de neuronios
-    n_epochs = 1000 #45000
+    n_epochs = 100 #1000 #45000
     #neurons = 90
     #layer=4
     dictionary = {}
@@ -55,11 +55,16 @@ def change_layer_fix_neurons_number(eq_params, process_params):
     # layers = [3, 12]
     # neurons = [22,70]
     # TODO sgd parece mais suscetível à quebra que adam???
+    
+    # Anota aqui as variáveis que vão ser suportadas nessa simulação
+    # supported_variables = ['X', 'P', 'S', 'V']
+    supported_variables = ['X', 'V']
 
     for n in neurons:
         for l in layers:
             dictionary[f'{n}x{l} {func} sgd'] = {
-                'layer_size': [1] + [n] * l + [4],
+                # 'layer_size': [1] + [n] * l + [4],
+                'layer_size': [1] + [n] * l + [len(supported_variables)],
                 "sgd_epochs": n_epochs,
             }
 
@@ -111,8 +116,9 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         dictionary[key]["lbfgs_pre"] = 0
         dictionary[key]["lbfgs_post"] = 2 #0 #3
         dictionary[key]['LR'] = 0.00001 #0.001 quebra no 70x3
-        dictionary[key]['hyperfolder'] = f'fb'#f'fb{neurons}n{func}'
+        dictionary[key]['hyperfolder'] = f'new 23_7_9'#f'fb{neurons}n{func}'
         dictionary[key]['initializer'] = 'Glorot normal' #GLOROT UNIFORM
+        dictionary[key]['supported_variables'] = supported_variables
         
         dictionary
 
