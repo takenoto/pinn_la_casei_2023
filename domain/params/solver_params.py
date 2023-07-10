@@ -8,12 +8,40 @@ class SystemSimulationType:
     Cada variável que for True deve ser calculada.
     As demais não.
     Fim.
+
+    Os index são para ficar mais fácil de encontrar as posições
+    de cada variável no ODE_preparer
     """
-    def __init__(self, X=True, P=True, S=True, V=True):
-        self.X=X
-        self.P=P
-        self.S=S
-        self.V=V
+    def __init__(self, supported_variables=['X', 'P', 'S', 'V']):
+        self.X = 'X' in supported_variables
+        self.P = 'P' in supported_variables
+        self.S = 'S' in supported_variables
+        self.V = 'V' in supported_variables
+
+        # Só pra ficar mais fácil de digitar abaixo
+        X = self.X
+        P = self.P
+        S = self.S
+        V = self.V
+
+        # Estabelece o index de cada uma, sempre seguindo um padrão,
+        # que independe de "supported_variables"
+        self.X_index = 0 if X else None
+        self.P_index = 1 if P and X else None
+        self.S_index = 2 if P and S else None # o S não pode ser calculado sem o P
+        self.V_index = 3 if X and P and S else 2 if P else 1 if X else 0 if V else None;
+
+        self.order = []
+        if(X):
+            self.order.append('X')
+        if(P):
+            self.order.append('P')
+        if(S):
+            self.order.append('S')
+        if(V):
+            self.order.append('V')
+
+
 
 class SolverLBFGSParams:
     """
@@ -44,7 +72,7 @@ class SolverParams:
         non_dim_scaler:NonDimScaler=None,
         mini_batch=None,
         hyperfolder=None,
-        simulationType:SystemSimulationType=SystemSimulationType.XPSV
+        simulationType:SystemSimulationType=SystemSimulationType()
     ):
         self.name = name if name else None
         """
@@ -70,3 +98,40 @@ class SolverParams:
         # onde salvar os resultados daquele trambei
         self.hyperfolder = hyperfolder
         self.simulationType = simulationType
+
+
+# python -m domain.params.solver_params
+if __name__ == "__main__":
+    """
+    Testes
+    """
+    
+    normal = SystemSimulationType()
+    assert normal.X == True, "as expected from default"
+    assert normal.P == True, "as expected from default"
+    assert normal.S == True, "as expected from default"
+    assert normal.V == True, "as expected from default"
+    assert normal.X_index == 0, "as expected from default"
+    assert normal.P_index == 1, "as expected from default"
+    assert normal.S_index == 2, "as expected from default"
+    assert normal.V_index == 3, "as expected from default"
+    assert normal.order[0] == 'X'
+    assert normal.order[1] == 'P'
+    assert normal.order[2] == 'S'
+    assert normal.order[3] == 'V'
+    assert len(normal.order) == 4
+
+    xv = SystemSimulationType(['X', 'V'])
+    assert xv.X == True
+    assert xv.P == False
+    assert xv.S == False
+    assert xv.V == True
+    assert xv.X_index == 0
+    assert xv.P_index == None
+    assert xv.S_index == None
+    assert xv.V_index == 1
+    assert xv.order[0] == 'X'
+    assert xv.order[1] == 'V'
+    assert len(xv.order) == 2
+
+    print('success')

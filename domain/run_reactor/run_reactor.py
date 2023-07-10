@@ -37,6 +37,8 @@ def run_reactor(
     Returns the trained model with its loss_history and train_data AND the parameters
     used to achieve these results.
     """
+    
+    simulationType = solver_params.simulationType;
 
     # ---------------------------------------
     # ------------- Geometry ----------------
@@ -53,28 +55,28 @@ def run_reactor(
         return on_initial
 
     ## X
-    ic0 = dde.icbc.IC(
+    icX = dde.icbc.IC(
         geom,
         lambda x: initial_state.X[0] / solver_params.non_dim_scaler.X,
         boundary,
         component=0,
     )
     ## P
-    ic1 = dde.icbc.IC(
+    icP = dde.icbc.IC(
         geom,
         lambda x: initial_state.P[0] / solver_params.non_dim_scaler.P,
         boundary,
         component=1,
     )
     ## S
-    ic2 = dde.icbc.IC(
+    icS = dde.icbc.IC(
         geom,
         lambda x: initial_state.S[0] / solver_params.non_dim_scaler.S,
         boundary,
         component=2,
     )
     ## Volume
-    ic3 = dde.icbc.IC(
+    icV = dde.icbc.IC(
         geom,
         lambda x: initial_state.volume[0] / solver_params.non_dim_scaler.V,
         boundary,
@@ -84,11 +86,19 @@ def run_reactor(
     # ---------------------------------------
     # --------- Solving the System ----------
     # ---------------------------------------
+    # bcs=[ic0, ic1, ic2, ic3],
+    # agora 0 -> x, 1 -> P, 2 -> S, 3 -> V
+    bcs = []
+    
+    if simulationType.X: bcs.append(icX);
+    if simulationType.P: bcs.append(icP);
+    if simulationType.S: bcs.append(icS);
+    if simulationType.V: bcs.append(icV);
+
     data = dde.data.PDE(
         geometry=geom,
         pde=ode_system_preparer.prepare(),
-        #TODO aqui muda bcs com o tipo
-        bcs=[ic0, ic1, ic2, ic3],
+        bcs=bcs,
         num_domain=solver_params.num_domain,
         num_boundary=solver_params.num_boundary,
         num_test=solver_params.num_test,
@@ -99,13 +109,24 @@ def run_reactor(
     ## SOLVING
     model = dde.Model(data, net)
     w = solver_params.loss_weights
-    #TODO aqui muda ws com o tipo
-    loss_weights = [
-        # Os 1ºs são da pde, os 3 útilmos do ajuste físico (proibir menor que zero)
-        # Equece, não deu certo
-        w[0], w[1], w[2], w[3], #w[0],# w[1], w[2], w[3],
-        # Esses são do teste eu acho, e os de cima do train? embora não faça o menor sentido...
-        w[0], w[1], w[2], w[3],]# solver_params.loss_weights
+    loss_weights = []
+    # Os pesos vem primeiro todos na ordem depois repetem
+    for i in [1, 2]:
+        if simulationType.X:
+            loss_weights.append(w[0])
+        if simulationType.P:
+            loss_weights.append(w[1])
+        if simulationType.S:
+            loss_weights.append(w[2])
+        if simulationType.V:
+            loss_weights.append(w[3])
+
+    # loss_weights = [
+    #     # Os 1ºs são da pde, os 3 útilmos do ajuste físico (proibir menor que zero)
+    #     # Equece, não deu certo
+    #     w[0], w[1], w[2], w[3], #w[0],# w[1], w[2], w[3],
+    #     # Esses são do teste eu acho, e os de cima do train? embora não faça o menor sentido...
+    #     w[0], w[1], w[2], w[3],]# solver_params.loss_weights
     
     #------- CUSTOM LOSS --------------
     # REFS:
@@ -185,10 +206,10 @@ def run_reactor(
         initial_state=initial_state,
         f_out_value_calc=f_out_value_calc,
         t = solver_params.non_dim_scaler.t_not_tensor*train_state.X_test,
-        X = solver_params.non_dim_scaler.X_not_tensor*train_state.best_y[:,0],
-        P = solver_params.non_dim_scaler.P_not_tensor*train_state.best_y[:,1],
-        S = solver_params.non_dim_scaler.S_not_tensor*train_state.best_y[:,2],
-        V = solver_params.non_dim_scaler.V_not_tensor*train_state.best_y[:,3],
+        X = solver_params.non_dim_scaler.X_not_tensor*train_state.best_y[:,simulationType.X_index] if simulationType.X else None,
+        P = solver_params.non_dim_scaler.P_not_tensor*train_state.best_y[:,simulationType.P_index] if simulationType.P else None,
+        S = solver_params.non_dim_scaler.S_not_tensor*train_state.best_y[:,simulationType.S_index] if simulationType.S else None,
+        V = solver_params.non_dim_scaler.V_not_tensor*train_state.best_y[:,simulationType.V_index] if simulationType.V else None,
         best_step=train_state.best_step,
         best_loss_test=train_state.best_loss_test,
         best_loss_train=train_state.best_loss_train,

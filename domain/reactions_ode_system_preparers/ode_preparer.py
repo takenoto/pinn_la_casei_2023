@@ -52,10 +52,10 @@ class ODEPreparer:
 
             # --------------------------
             # Volume & flows
-            if(simulationType)
-            V_nondim = y[:, 3:4]
+            if(simulationType.V):
+                V_nondim = y[:, simulationType.V_index:simulationType.V_index+1]    
 
-            dV_dt_nondim = dde.grad.jacobian(y, x, i=3)
+            dV_dt_nondim = dde.grad.jacobian(y, x, i=simulationType.V_index)
             f_in = inlet.volume
 
             f_out = f_out_value_calc(
@@ -66,13 +66,27 @@ class ODEPreparer:
 
             # --------------------------
             # X P S
-            X_nondim, P_nondim, S_nondim = y[:, 0:1], y[:, 1:2], y[:, 2:3]
+            if(simulationType.X):
+                X_nondim = y[:, simulationType.X_index:simulationType.X_index+1]
+                dX_dt_nondim = dde.grad.jacobian(y, x, i=simulationType.X_index)
+            if(simulationType.P):
+                P_nondim = y[:, simulationType.P_index:simulationType.P_index+1]
+                dP_dt_nondim = dde.grad.jacobian(y, x, i=simulationType.P_index)
+            if(simulationType.S):
+                S_nondim = y[:, simulationType.S_index:simulationType.S_index+1]
+                dS_dt_nondim = dde.grad.jacobian(y, x, i=simulationType.S_index)
+            
+            #X_nondim, P_nondim, S_nondim = y[:, 0:1], y[:, 1:2], y[:, 2:3]
 
-            dX_dt_nondim = dde.grad.jacobian(y, x, i=0)
-            dP_dt_nondim = dde.grad.jacobian(y, x, i=1)
-            dS_dt_nondim = dde.grad.jacobian(y, x, i=2)
+            # dX_dt_nondim = dde.grad.jacobian(y, x, i=0)
+            # dP_dt_nondim = dde.grad.jacobian(y, x, i=1)
+            # dS_dt_nondim = dde.grad.jacobian(y, x, i=2)
 
             if solver_params.non_dim_scaler is not None:
+                # Declara a loss pra já deixar guardado e ir adicionando
+                # conforme for sendo validado
+                loss_pde = []
+
                 # Equações auxiliares. Usadas para operações matemática e contornar um erro
                 # específico de versões entre numpy e tensorflow
                 def div(x, y):
@@ -115,26 +129,75 @@ class ODEPreparer:
                         h,
                     )
 
-
-                non_dim_rX = (
-                  mult(
-                        mult(mult(div(scaler.t, scaler.X), mu_max), X_nondim),# mult(X_nondim, scaler.X)),
-                        div(mult(S_nondim, scaler.S), add(K_S, mult(S_nondim, scaler.S))),
+                if(simulationType.X):
+                    non_dim_rX = (
+                    mult(
+                            mult(mult(div(scaler.t, scaler.X), mu_max), X_nondim),# mult(X_nondim, scaler.X)),
+                            div(mult(S_nondim, scaler.S), add(K_S, mult(S_nondim, scaler.S))),
+                        )
+                        * f_x_calc_func()
+                        * h_p_calc_func()
                     )
-                    * f_x_calc_func()
-                    * h_p_calc_func()
-                )
-
-                non_dim_rP = (scaler.t / scaler.P) * (
-                    alpha * (scaler.X / scaler.t) * non_dim_rX + beta * X_nondim * scaler.X/scaler.t
-                )
-                non_dim_rS = (scaler.t / scaler.S) * (
-                    -(1 / Y_PS) * non_dim_rP * (scaler.P / scaler.t) - ms * X_nondim * scaler.X/scaler.t
-                )
                 
+                if(simulationType.P):
+                    non_dim_rP = (scaler.t / scaler.P) * (
+                        alpha * (scaler.X / scaler.t) * non_dim_rX + beta * X_nondim * scaler.X/scaler.t
+                    )
+
+                if(simulationType.S):
+                    non_dim_rS = (scaler.t / scaler.S) * (
+                        -(1 / Y_PS) * non_dim_rP * (scaler.P / scaler.t) - ms * X_nondim * scaler.X/scaler.t
+                    )
+                    
+                #-----------------------
+                # Calculating loss
                 # Última mudança: adicionei o scaler t aos inlets
                 # e o scaler V/t no volume, talvez por isso desse problema
+                for o in simulationType.supported_variables:
+                    if o == 'X':
+                        loss_pde.append(1
+                    * 
+                    (
+                        dX_dt_nondim * V_nondim
+                        - (
+                            non_dim_rX * V_nondim
+                            + f_in/scaler.V * inlet.X *scaler.t/scaler.X
+                            - f_out/scaler.V * X_nondim * scaler.t
+                        )
+                    ))
+                        
+                    elif o == 'P':
+                        loss_pde.append(1
+                        * (
+                            dP_dt_nondim * V_nondim
+                            - (
+                                non_dim_rP * V_nondim
+                                + f_in/scaler.V * inlet.P *scaler.t/scaler.P
+                                - f_out/scaler.V * P_nondim * scaler.t
+                            )
+                        ))
+
+                    elif o == 'S':
+                        loss_pde.append(
+                            1
+                        * (
+                            dS_dt_nondim * V_nondim
+                            - (
+                                non_dim_rS * V_nondim
+                                + f_in/scaler.V * inlet.S *scaler.t/scaler.S
+                                - f_out/scaler.V * S_nondim * scaler.t
+                            )
+                        )
+                        )
+                    elif o == 'V':
+                        loss_pde.append(1
+                   * (dV_dt_nondim - ((f_in - f_out)*(scaler.t/scaler.V))))
+
                 
+                
+                return loss_pde
+                #---------------
+
                 # NOVO NONDIM
                 loss_pde = [
                     1

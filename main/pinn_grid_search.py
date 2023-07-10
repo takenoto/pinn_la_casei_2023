@@ -3,7 +3,7 @@ import numpy as np
 
 from domain.params.altiok_2006_params import Altiok2006Params
 from domain.params.process_params import ProcessParams
-from domain.params.solver_params import SolverParams, SolverLBFGSParams
+from domain.params.solver_params import SolverParams, SolverLBFGSParams, SystemSimulationType
 from domain.run_reactor.plot_params import PlotParams
 from domain.optimization.ode_system_caller import RunReactorSystemCaller
 from domain.optimization.grid_search import grid_search
@@ -41,7 +41,7 @@ def run_pinn_grid_search(
         # ---------------------------------------
 
         def get_thing_for_key(case_key, thing_key, default=np.array([1])):
-            if thing_key not in ["layer_size", "lbfgs_pre", "lbfgs_post"]:
+            if thing_key not in ["layer_size", "lbfgs_pre", "lbfgs_post", "supported_variables"]:
                 return np.array(cases_to_try[case_key].get(thing_key, default)).item()
             else:
                 return cases_to_try[case_key].get(thing_key, default)
@@ -85,6 +85,7 @@ def run_pinn_grid_search(
                 ),
                 mini_batch=get_thing_for_key(case_key, "mini_batch", default=None),
                 hyperfolder=get_thing_for_key(case_key, "hyperfolder", default=None),
+                simulationType=SystemSimulationType(get_thing_for_key(case_key,'supported_variables', default=['X', 'P', 'S', 'V'] ))
             )
             # Basicamente um teste com adimensionalização e um sem
             for case_key in cases_to_try
