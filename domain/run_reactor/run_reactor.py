@@ -38,11 +38,16 @@ def run_reactor(
     used to achieve these results.
     """
     
-    simulationType = solver_params.simulationType;
+    outputSimulationType = solver_params.outputSimulationType;
 
     # ---------------------------------------
     # ------------- Geometry ----------------
     # ---------------------------------------
+    # TODO acho que é aqui que vou ter que declarar
+    # X, P, S e/ou V como parâmetros de entrada...
+    # como todos são obrigatórios, basta fazer o contrário dos params
+    # o que não tiver lá vai aqui
+    # TODO o "t" sempre é o zero, então os outros são o número+1!!!!!
     geom = dde.geometry.TimeDomain(
         0, process_params.t_final / solver_params.non_dim_scaler.t_not_tensor
     )

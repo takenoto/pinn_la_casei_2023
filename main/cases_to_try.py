@@ -58,13 +58,14 @@ def change_layer_fix_neurons_number(eq_params, process_params):
     
     # Anota aqui as variáveis que vão ser suportadas nessa simulação
     # supported_variables = ['X', 'P', 'S', 'V']
-    supported_variables = ['X', 'V']
+    output_variables = ['X', 'P' 'V']
+    input_variables = ['S']
 
     for n in neurons:
         for l in layers:
             dictionary[f'{n}x{l} {func} sgd'] = {
                 # 'layer_size': [1] + [n] * l + [4],
-                'layer_size': [1] + [n] * l + [len(supported_variables)],
+                'layer_size': [1] + [n] * l + [len(output_variables)],
                 "sgd_epochs": n_epochs,
             }
 
@@ -118,7 +119,8 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         dictionary[key]['LR'] = 0.00001 #0.001 quebra no 70x3
         dictionary[key]['hyperfolder'] = f'new 23_7_9'#f'fb{neurons}n{func}'
         dictionary[key]['initializer'] = 'Glorot normal' #GLOROT UNIFORM
-        dictionary[key]['supported_variables'] = supported_variables
+        dictionary[key]['output_variables'] = output_variables
+        dictionary[key]['input_variables'] = input_variables
         
         dictionary
 

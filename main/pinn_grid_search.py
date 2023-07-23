@@ -41,7 +41,7 @@ def run_pinn_grid_search(
         # ---------------------------------------
 
         def get_thing_for_key(case_key, thing_key, default=np.array([1])):
-            if thing_key not in ["layer_size", "lbfgs_pre", "lbfgs_post", "supported_variables"]:
+            if thing_key not in ["layer_size", "lbfgs_pre", "lbfgs_post", "output_variables", "input_variables"]:
                 return np.array(cases_to_try[case_key].get(thing_key, default)).item()
             else:
                 return cases_to_try[case_key].get(thing_key, default)
@@ -85,7 +85,8 @@ def run_pinn_grid_search(
                 ),
                 mini_batch=get_thing_for_key(case_key, "mini_batch", default=None),
                 hyperfolder=get_thing_for_key(case_key, "hyperfolder", default=None),
-                simulationType=SystemSimulationType(get_thing_for_key(case_key,'supported_variables', default=['X', 'P', 'S', 'V'] ))
+                outputSimulationType=SystemSimulationType(get_thing_for_key(case_key,'output_variables', default=['X', 'P', 'S', 'V'] )),
+                inputSimulationType=SystemSimulationType(get_thing_for_key(case_key,'input_variables', default=[] )),
             )
             # Basicamente um teste com adimensionalização e um sem
             for case_key in cases_to_try
