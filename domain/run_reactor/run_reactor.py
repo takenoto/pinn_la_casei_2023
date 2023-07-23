@@ -38,6 +38,7 @@ def run_reactor(
     used to achieve these results.
     """
     
+    inputSimulationType = solver_params.inputSimulationType;
     outputSimulationType = solver_params.outputSimulationType;
 
     # ---------------------------------------
@@ -48,10 +49,17 @@ def run_reactor(
     # como todos são obrigatórios, basta fazer o contrário dos params
     # o que não tiver lá vai aqui
     # TODO o "t" sempre é o zero, então os outros são o número+1!!!!!
-    geom = dde.geometry.TimeDomain(
+    time_domain = dde.geometry.TimeDomain(
         0, process_params.t_final / solver_params.non_dim_scaler.t_not_tensor
     )
+    
+    # TODO agora faz isso do X pras outras
+    # ref:
+    # https://deepxde.readthedocs.io/en/latest/demos/pinn_forward/burgers.html?highlight=geometry 
+    # aí roda um MUITO simples só pra ver se não vai crashar
+    x_geom = dde.geometry.Interval(0, eq_params.Xm/solver_params.non_dim_scaler.X) if inputSimulationType.X else None
 
+    geom = time_domain # Isso deixa da forma como estava antes
     # ---------------------------------------
     # --- Initial and Boundary Conditions ---
     # ---------------------------------------
