@@ -58,14 +58,14 @@ def change_layer_fix_neurons_number(eq_params, process_params):
     
     # Anota aqui as variáveis que vão ser suportadas nessa simulação
     # supported_variables = ['X', 'P', 'S', 'V']
-    output_variables = ['X', 'P' 'V']
-    input_variables = ['S']
+    output_variables = ['X', 'P', 'S', 'V']
+    input_variables = ['t']
 
     for n in neurons:
         for l in layers:
             dictionary[f'{n}x{l} {func} sgd'] = {
                 # 'layer_size': [1] + [n] * l + [4],
-                'layer_size': [1] + [n] * l + [len(output_variables)],
+                'layer_size': [len(input_variables)] + [n] * l + [len(output_variables)],
                 "sgd_epochs": n_epochs,
             }
 
