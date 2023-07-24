@@ -30,23 +30,33 @@ class SystemSimulationType:
 
         # Estabelece o index de cada uma, sempre seguindo um padrão,
         # que independe de "supported_variables"
-        self.t_index = 0 if t else None
-        self.X_index = None if not X else (self.t_index+1 if t else 0)
-        self.P_index = None if not P else (self.X_index+1 if X else self.t_index+1 if t else 0) #1 if P and X else 1 if P else None
-        self.S_index = None if not S else (self.P_index+1 if P else self.X_index+1 if X else self.t_index+1 if t else 0) #2 if P and S else None # o S não pode ser calculado sem o P
-        self.V_index = None if not V else (self.S_index+1 if S else self.P_index+1 if P else self.X_index+1 if X else self.t_index+1 if t else 0)#3 if X and P and S else 2 if P else 1 if X else 0 if V else None;
+        # self.t_index = 0 if t else None
+        # self.X_index = None if not X else (self.t_index+1 if t else 0)
+        # self.P_index = None if not P else (self.X_index+1 if X else self.t_index+1 if t else 0) #1 if P and X else 1 if P else None
+        # self.S_index = None if not S else (self.P_index+1 if P else self.X_index+1 if X else self.t_index+1 if t else 0) #2 if P and S else None # o S não pode ser calculado sem o P
+        # self.V_index = None if not V else (self.S_index+1 if S else self.P_index+1 if P else self.X_index+1 if X else self.t_index+1 if t else 0)#3 if X and P and S else 2 if P else 1 if X else 0 if V else None;
+        self.X_index = None
+        self.P_index = None
+        self.S_index = None
+        self.V_index = None
+        self.t_index = None
 
         self.order = []
-        if(t):
-            self.order.append('t')
         if(X):
+            self.X_index = len(self.order)
             self.order.append('X')
         if(P):
+            self.P_index = len(self.order)
             self.order.append('P')
         if(S):
+            self.S_index = len(self.order)
             self.order.append('S')
         if(V):
+            self.V_index = len(self.order)
             self.order.append('V')
+        if(t):
+            self.t_index = len(self.order)
+            self.order.append('t')
 
 
 
@@ -152,13 +162,13 @@ if __name__ == "__main__":
     assert xv.P == False
     assert xv.S == False
     assert xv.V == True
-    assert xv.t_index == 0
+    assert xv.V_index == 0
+    assert xv.t_index == 1, "t_index must always be the last"
     assert xv.X_index == None
     assert xv.P_index == None
     assert xv.S_index == None
-    assert xv.V_index == 1
-    assert xv.order[0] == 't'
-    assert xv.order[1] == 'V'
+    assert xv.order[0] == 'V'
+    assert xv.order[1] == 't'
     assert len(xv.order) == 2
 
     print('success')
