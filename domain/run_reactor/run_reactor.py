@@ -56,10 +56,26 @@ def run_reactor(
     # TODO agora faz isso do X pras outras
     # ref:
     # https://deepxde.readthedocs.io/en/latest/demos/pinn_forward/burgers.html?highlight=geometry 
+    # ref2:
+    # FAQ => SOLVE PARAMETRIC PDES
+    # https://deepxde.readthedocs.io/en/latest/user/faq.html
     # aí roda um MUITO simples só pra ver se não vai crashar
-    x_geom = dde.geometry.Interval(0, eq_params.Xm/solver_params.non_dim_scaler.X) if inputSimulationType.X else None
+    if len(inputSimulationType.order) == 1:
+        geom = time_domain # Isso deixa da forma como estava antes
+    elif len(inputSimulationType.order) == 2:
+        if inputSimulationType.X:
+            dimension_geom = dde.geometry.Interval(0, eq_params.Xm/solver_params.non_dim_scaler.X)
+        elif inputSimulationType.P:
+            dimension_geom = dde.geometry.Interval(0, eq_params.Pm/solver_params.non_dim_scaler.P) 
+        elif inputSimulationType.S:
+            dimension_geom = dde.geometry.Interval(0, eq_params.So/solver_params.non_dim_scaler.S) 
+        elif inputSimulationType.V:
+            dimension_geom = dde.geometry.Interval(0, process_params.max_reactor_volume/solver_params.non_dim_scaler.V) 
 
-    geom = time_domain # Isso deixa da forma como estava antes
+        # Bota a outra dimensão aqui:
+        geom = dde.geometry.GeometryXTime(dimension_geom, time_domain)
+   
+    # geom = time_domain # Isso deixa da forma como estava antes
     # ---------------------------------------
     # --- Initial and Boundary Conditions ---
     # ---------------------------------------

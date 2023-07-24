@@ -45,17 +45,18 @@ class ODEPreparer:
             process_params = self.process_params
             solver_params = self.solver_params
             f_out_value_calc = self.f_out_value_calc
-            simulationType = self.solver_params.simulationType
+            inputSimulationType = self.solver_params.inputSimulationType
+            outputSimulationType = self.solver_params.outputSimulationType
 
             # Nondim Scale
             scaler = solver_params.non_dim_scaler
 
             # --------------------------
             # Volume & flows
-            if(simulationType.V):
-                V_nondim = y[:, simulationType.V_index:simulationType.V_index+1]    
+            if(outputSimulationType.V):
+                V_nondim = y[:, outputSimulationType.V_index:outputSimulationType.V_index+1]    
 
-            dV_dt_nondim = dde.grad.jacobian(y, x, i=simulationType.V_index)
+            dV_dt_nondim = dde.grad.jacobian(y, x, i=outputSimulationType.V_index)
             f_in = inlet.volume
 
             f_out = f_out_value_calc(
@@ -65,17 +66,32 @@ class ODEPreparer:
             )
 
             # --------------------------
+            # TODO veja  ref.
+            # Agora que tenho 2 entradas, j tb tem que ser passado como argumento
             # X P S
-            if(simulationType.X):
-                X_nondim = y[:, simulationType.X_index:simulationType.X_index+1]
-                dX_dt_nondim = dde.grad.jacobian(y, x, i=simulationType.X_index)
-            if(simulationType.P):
-                P_nondim = y[:, simulationType.P_index:simulationType.P_index+1]
-                dP_dt_nondim = dde.grad.jacobian(y, x, i=simulationType.P_index)
-            if(simulationType.S):
-                S_nondim = y[:, simulationType.S_index:simulationType.S_index+1]
-                dS_dt_nondim = dde.grad.jacobian(y, x, i=simulationType.S_index)
+            if(outputSimulationType.X):
+                X_nondim = y[:, outputSimulationType.X_index:outputSimulationType.X_index+1]
+                dX_dt_nondim = dde.grad.jacobian(y, x, i=outputSimulationType.X_index, j=inputSimulationType.t_index)
+            if(outputSimulationType.P):
+                P_nondim = y[:, outputSimulationType.P_index:outputSimulationType.P_index+1]
+                dP_dt_nondim = dde.grad.jacobian(y, x, i=outputSimulationType.P_index, j=inputSimulationType.t_index)
+            if(outputSimulationType.S):
+                S_nondim = y[:, outputSimulationType.S_index:outputSimulationType.S_index+1]
+                dS_dt_nondim = dde.grad.jacobian(y, x, i=outputSimulationType.S_index, j=inputSimulationType.t_index)
             
+            # Parte nova 23/07/2023:
+            if(inputSimulationType.X):
+                X_nondim = y[:, inputSimulationType.X_index:inputSimulationType.X_index+1]
+                dX_dt_nondim = dde.grad.jacobian(x, x, i=inputSimulationType.X_index, j=inputSimulationType.t_index)
+            if(inputSimulationType.P):
+                P_nondim = y[:, inputSimulationType.P_index:inputSimulationType.P_index+1]
+                dP_dt_nondim = dde.grad.jacobian(x, x, i=inputSimulationType.P_index, j=inputSimulationType.t_index)
+            if(inputSimulationType.S):
+                S_nondim = y[:, inputSimulationType.S_index:inputSimulationType.S_index+1]
+                dS_dt_nondim = dde.grad.jacobian(x, x, i=inputSimulationType.S_index, j=inputSimulationType.t_index)
+            if(inputSimulationType.V):
+                V_nondim = y[:, inputSimulationType.V_index:inputSimulationType.V_index+1]
+                dV_dt_nondim = dde.grad.jacobian(x, x, i=inputSimulationType.V_index, j=inputSimulationType.t_index)
             #X_nondim, P_nondim, S_nondim = y[:, 0:1], y[:, 1:2], y[:, 2:3]
 
             # dX_dt_nondim = dde.grad.jacobian(y, x, i=0)
@@ -129,7 +145,7 @@ class ODEPreparer:
                         h,
                     )
 
-                if(simulationType.X):
+                if(outputSimulationType.X):
                     non_dim_rX = (
                     mult(
                             mult(mult(div(scaler.t, scaler.X), mu_max), X_nondim),# mult(X_nondim, scaler.X)),
@@ -139,12 +155,12 @@ class ODEPreparer:
                         * h_p_calc_func()
                     )
                 
-                if(simulationType.P):
+                if(outputSimulationType.P):
                     non_dim_rP = (scaler.t / scaler.P) * (
                         alpha * (scaler.X / scaler.t) * non_dim_rX + beta * X_nondim * scaler.X/scaler.t
                     )
 
-                if(simulationType.S):
+                if(outputSimulationType.S):
                     non_dim_rS = (scaler.t / scaler.S) * (
                         -(1 / Y_PS) * non_dim_rP * (scaler.P / scaler.t) - ms * X_nondim * scaler.X/scaler.t
                     )
@@ -153,7 +169,7 @@ class ODEPreparer:
                 # Calculating loss
                 # Última mudança: adicionei o scaler t aos inlets
                 # e o scaler V/t no volume, talvez por isso desse problema
-                for o in simulationType.supported_variables:
+                for o in outputSimulationType.supported_variables:
                     if o == 'X':
                         loss_pde.append(1
                     * 
