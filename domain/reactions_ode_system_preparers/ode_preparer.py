@@ -169,7 +169,7 @@ class ODEPreparer:
                 # Calculating loss
                 # Última mudança: adicionei o scaler t aos inlets
                 # e o scaler V/t no volume, talvez por isso desse problema
-                for o in outputSimulationType.supported_variables:
+                for o in outputSimulationType.order:
                     if o == 'X':
                         loss_pde.append(1
                     * 
