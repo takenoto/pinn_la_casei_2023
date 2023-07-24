@@ -177,7 +177,7 @@ def run_reactor(
 
     start_time = timer()
     ### Step 1: Pre-solving by "L-BFGS"
-    if(solver_params.l_bfgs.do_pre_optimization):
+    if(solver_params.l_bfgs.do_pre_optimization>=1):
         for i in range(solver_params.l_bfgs.do_pre_optimization):
             model.compile("L-BFGS", loss_weights=loss_weights, loss=loss)
             model.train()
@@ -206,8 +206,10 @@ def run_reactor(
             callbacks=[pde_resampler]  if pde_resampler else None,
             model_save_path=f'{hyperfolder_path}{solver_params.name}/sgd' if solver_params.name else None,
         )
+    print('DO LBFGS do_lbfgs')
+    print(solver_params.l_bfgs.do_post_optimization)
     ### Step 3: Post optmization
-    if(solver_params.l_bfgs.do_post_optimization):
+    if(solver_params.l_bfgs.do_post_optimization>=1):
         for i in range(solver_params.l_bfgs.do_post_optimization):
             model.compile("L-BFGS", loss_weights=loss_weights, loss=loss)
             loss_history, train_state = model.train(
@@ -215,8 +217,14 @@ def run_reactor(
             )
     end_time = timer()
     total_training_time = end_time - start_time
-
     
+    # Por algum motivo o plot não funciona nem aqui nem no saveplot de baixo aff
+    if(solver_params.isplot and False):
+        print(loss_history)
+        print(loss_history.loss_test)
+        print(train_state.X_test)
+        print(train_state.X_train)
+        dde.saveplot(loss_history, train_state, issave=False, isplot=True)
     dde.saveplot(loss_history, train_state, issave=True, isplot=False, output_dir=f'{hyperfolder_path}{solver_params.name}/plot')
     model.save(f'{hyperfolder_path}{solver_params.name}/model')
 

@@ -89,6 +89,7 @@ class SolverParams:
         non_dim_scaler:NonDimScaler=None,
         mini_batch=None,
         hyperfolder=None,
+        isplot=False,
         outputSimulationType:SystemSimulationType=SystemSimulationType(),
         inputSimulationType:SystemSimulationType=SystemSimulationType()
     ):
@@ -115,6 +116,8 @@ class SolverParams:
         # Hyperfolder é a pasta padrão
         # onde salvar os resultados daquele trambei
         self.hyperfolder = hyperfolder
+        self.isplot=isplot
+        "Se vai plotar usando o arg isplot em run_reactor (dde.save)"
         self.outputSimulationType = outputSimulationType
         "Variáveis de saída (XPSV)"
         self.inputSimulationType = inputSimulationType

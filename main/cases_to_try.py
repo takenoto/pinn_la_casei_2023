@@ -42,7 +42,7 @@ def change_layer_fix_neurons_number(eq_params, process_params):
     func = 'tanh' #'swish'#'tanh'
     # TODO antes de rodar o novo pelo amor passe só 700 pra testar e sem lbfgs
     # é pra demorar < 5 min que foi o quanto demorou pra maior qtde de neuronios
-    n_epochs = 100 #1000 #45000
+    n_epochs = 10 #100 #1000 #45000
     #neurons = 90
     #layer=4
     dictionary = {}
@@ -112,12 +112,13 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         dictionary[key]['activation'] = func
         # TODO fez foi piorar em relação a 300............
         # mas tb fiz poucas interações né a sei lá fim
-        dictionary[key]['num_domain'] = 600
-        dictionary[key]['num_test'] = 600
+        dictionary[key]['num_domain'] = 300 #600
+        dictionary[key]['num_test'] = 300 #600
         dictionary[key]["lbfgs_pre"] = 0
-        dictionary[key]["lbfgs_post"] = 2 #0 #3
-        dictionary[key]['LR'] = 0.00001 #0.001 quebra no 70x3
-        dictionary[key]['hyperfolder'] = f'new 23_7_9'#f'fb{neurons}n{func}'
+        dictionary[key]["lbfgs_post"] = 0 #2 #0 #3
+        dictionary[key]['LR'] = 0.001 #0.001 quebra no 70x3
+        dictionary[key]['hyperfolder'] = f'batch 2023_07_24'#f'fb{neurons}n{func}'
+        dictionary[key]['isplot'] = True
         dictionary[key]['initializer'] = 'Glorot normal' #GLOROT UNIFORM
         dictionary[key]['output_variables'] = output_variables
         dictionary[key]['input_variables'] = input_variables

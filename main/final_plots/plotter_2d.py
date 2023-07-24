@@ -1,4 +1,5 @@
 import numpy as np
+import tkinter
 import matplotlib.pyplot as plt
 from scipy.interpolate import interp1d, pchip_interpolate
 

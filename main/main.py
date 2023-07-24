@@ -79,13 +79,13 @@ def main():
 
     plt.style.use("./main/plotting/plot_styles.mplstyle")
 
-    run_fedbatch_nondim_test = True
+    run_fedbatch_nondim_test = False
 
-    run_cstr_nondim_test = True
+    run_cstr_nondim_test = False
 
     run_batch_nondim_test_v2 = True
 
-    run_cstr_convergence_test = True
+    run_cstr_convergence_test = False
 
     run_fedbatch_cstr_nondim_test = False
     
@@ -433,9 +433,11 @@ def main():
     if run_batch_nondim_test_v2:
         print('RUN BATCH NEW NONDIM TEST')
         start_time = timer()
-        cases = batch_nondim_v2(eq_params, process_params_feed_cstr)
-        cases = batch_tests_fixed_neurons_number(eq_params, process_params_feed_cstr)
+        # cases = batch_nondim_v2(eq_params, process_params_feed_cstr)
+        # cases = batch_tests_fixed_neurons_number(eq_params, process_params_feed_cstr)
         cases = change_layer_fix_neurons_number(eq_params, process_params_feed_cstr)
+        print(f'NUMBER OF CASES ={len(cases)}')
+
         pinns, p_best_index, p_best_error = run_pinn_grid_search(
             solver_params_list=None,
             eq_params=eq_params,
@@ -464,7 +466,7 @@ def main():
             sharey=True,
             sharex=True,
             nrows=2,
-            ncols=5,
+            ncols=2,
             items=items,
             suptitle=None,
             title_for_each=True,

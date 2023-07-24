@@ -41,10 +41,11 @@ def run_pinn_grid_search(
         # ---------------------------------------
 
         def get_thing_for_key(case_key, thing_key, default=np.array([1])):
-            if thing_key not in ["layer_size", "lbfgs_pre", "lbfgs_post", "output_variables", "input_variables"]:
+            if thing_key not in ["layer_size", "lbfgs_pre", "lbfgs_post", "output_variables", "input_variables", "isplot"]:
                 return np.array(cases_to_try[case_key].get(thing_key, default)).item()
             else:
                 return cases_to_try[case_key].get(thing_key, default)
+
 
         solver_params_list = [
             SolverParams(
@@ -85,6 +86,7 @@ def run_pinn_grid_search(
                 ),
                 mini_batch=get_thing_for_key(case_key, "mini_batch", default=None),
                 hyperfolder=get_thing_for_key(case_key, "hyperfolder", default=None),
+                isplot=get_thing_for_key(case_key, "isplot", default=False),
                 outputSimulationType=SystemSimulationType(get_thing_for_key(case_key,'output_variables', default=['X', 'P', 'S', 'V'] )),
                 inputSimulationType=SystemSimulationType(get_thing_for_key(case_key,'input_variables', default=['t'] )),
             )
