@@ -23,109 +23,84 @@ default_layer_size = [1] + [22] * 4 + [4]
 default_num_domain = 800
 default_num_test = 1000
 
-# TODO faz 3 configs boas repetindo
-# Uma com tanh, uma com selu, uma com swish
 
-#TODO usa isso dde.optimizers.set_LBFGS_options()
-#pra ver as configs padrão do lbfgs que to usando e anotar na metodologia
+# TODO testar sem a adimensionalização
+# TODO tem como aumentar os pontos? Adianta?
+# TODO mini-batch tinha servido pra algo nos anteriores?
+# TODO testar tanh com ortogonal?????
 def change_layer_fix_neurons_number(eq_params, process_params):
-    # Usar SGD no lugar de adam
-    # https://stats.stackexchange.com/questions/365778/what-should-i-do-when-my-neural-network-doesnt-generalize-well
-    # https://arxiv.org/abs/1712.07628 
-    # TODO refaz esse mesmo nondim e adam. E fim. Cabou-se. Credo.
-    #1400 epochs 100n x3x8 800p domain 800p test horrivel erro >10
-    #1400 epochs 160 x4x8 300p mb50 e sem mb ruinzão tb
-    # Fazendo agora 90x8 que tinha dado certo antes
-    # TODO roda um quadrado neuronios vs layers
-    # Roda um adam, um sgd, um com nondim. E FIM!!!!
-    # AÍ FAÇO OS GRÁFICOS 3D
-    func = 'tanh' #'swish'#'tanh'
-    # TODO antes de rodar o novo pelo amor passe só 700 pra testar e sem lbfgs
-    # é pra demorar < 5 min que foi o quanto demorou pra maior qtde de neuronios
-    n_epochs = 10 #100 #1000 #45000
-    #neurons = 90
-    #layer=4
+    # Parece ter algo MUITO bom na região próxima de 30x10. Vamos investigar ela agora.
+    func = 'tanh' #'swish'
+    mini_batch = None #50 #200
+    initializer = 'Glorot normal' #'Orthogonal' #'Glorot normal' #GLOROT UNIFORM # Era Glorot Normal nos testes sem swish
+    #FIXME talvez tenha deixado a LR baixa demais...
+    #LR = 0.00003 estagnou no 120x12. 14k iterações e não aconteceu praticamente nada.
+    #POrque tinha um erro 1 e o resto 10-3 então ele ficou reduzindo esse 1 pra 0.9 , 0.88 etc
+    # O 0.00008  parece ter dado uma equilibrada boa
+    # Pro 120x12 parece ter estagnado já em 8k.
+    # TODO talvez na maioria desses não vá fazer diferença 5k ou 100k, os resultados vão ser parecidos.
+    # pelo menos pelo que vi até aqui...
+    LR = 0.00004 #0.0001 nesse 120x12 o erro desceu e do nada subiu, e foi muito, acho que pq LR tava alto.
+    LR = 0.001 # deu NaN mas nem foi na rede maior af. FOi na 60*10
+    LR = 0.00001
+    LR = 0.0001 #0.001 horrível pra 120x8
+    ADAM_EPOCHS = 2000 #200 #22000 #8k deu certo então vou aumentar 8000 #1500 #800 #30000 #100000
+    SGD_EPOCHS = None #1000 #1500 #800 #30000 #100000
+    lbfgs_post = 1 #2 #5
     dictionary = {}
-    layers = [3, 6, 8, 12]
-    layers=[3, 6]
-    # Vou ter que fazer em 2 partes...
-    # neurons = [22, 45, 70,]
-    neurons = [70, 22,]
-    # neurons = [90, 130, 200,]
-    # layers = [3, 12]
-    # neurons = [22,70]
-    # TODO sgd parece mais suscetível à quebra que adam???
+    # Quero testar todos esses:
+    layers = [12, 11, 10, 9, 8]
+    neurons = [120, 80, 60, 30]
+    # Mas como tá lerdando, vou por partes
+    layers = [12, 11, 10, 9, 8]
+    # neurons = [30, 60]
+    # neurons = [20, 30]
+    neurons = [60, 40]
+    layers = [5, 3]
+    cols = len(layers)
+    rows = len(neurons)
+    
+    POINTS_DOMAIN = 300 #1000
+    POINTS_TEST = 300 #1000
     
     # Anota aqui as variáveis que vão ser suportadas nessa simulação
     # supported_variables = ['X', 'P', 'S', 'V']
     output_variables = ['X', 'P', 'S', 'V']
     input_variables = ['t']
+    # output_variables = ['P', 'S', 'V']
+    # input_variables = ['t', 'X']
 
     for n in neurons:
         for l in layers:
-            dictionary[f'{n}x{l} {func} sgd'] = {
-                # 'layer_size': [1] + [n] * l + [4],
+            dictionary[f'{n}x{l} {func} adam'] = {
                 'layer_size': [len(input_variables)] + [n] * l + [len(output_variables)],
-                "sgd_epochs": n_epochs,
+                "adam_epochs": ADAM_EPOCHS,
+                "sgd_epochs": SGD_EPOCHS,
+                # "X_s": eq_params.Xo,
+                # "P_s": eq_params.Po,
+                # "S_s": eq_params.So,
+                # "V_s": process_params.max_reactor_volume,
             }
-
-    # dictionary = { 
-    #     f'{neurons}x{layer} {func} sgd nondim':{
-    #         "sgd_epochs": n_epochs,
-    #         'layer_size': [1] + [neurons] * layer + [4],
-    #         'X_S': eq_params.Xm,
-    #         "P_s": eq_params.Pm,
-    #         "S_s":eq_params.So,
-    #         "V_s": process_params.max_reactor_volume
-    #     },
-    #     f'{neurons}x{layer} {func} adam nondim':{
-    #         "adam_epochs": n_epochs,
-    #         'layer_size': [1] + [neurons] * layer + [4],
-    #         'X_S': eq_params.Xm,
-    #         "P_s": eq_params.Pm,
-    #         "S_s":eq_params.So,
-    #         "V_s": process_params.max_reactor_volume
-    #     },
-    #     f'{neurons}x{layer} {func} sgd adam nondim':{
-    #         "adam_epochs": int(n_epochs/2),
-    #         "sgd_epochs": int(n_epochs/2),
-    #         'layer_size': [1] + [neurons] * layer + [4],
-    #         'X_S': eq_params.Xm,
-    #         "P_s": eq_params.Pm,
-    #         "S_s":eq_params.So,
-    #         "V_s": process_params.max_reactor_volume,
-    #     },
-    #     f'{neurons}x{layer} {func} adam nondim W':{
-    #         "adam_epochs": n_epochs,
-    #         'layer_size': [1] + [neurons] * layer + [4],
-    #         'X_S': eq_params.Xm,
-    #         "P_s": eq_params.Pm,
-    #         "S_s":eq_params.So,
-    #         "V_s": process_params.max_reactor_volume,
-    #         'w_S':15,
-    #         'w_P': 3,
-    #     },
-    # }
 
 
     for key in dictionary:
         dictionary[key]['activation'] = func
-        # TODO fez foi piorar em relação a 300............
-        # mas tb fiz poucas interações né a sei lá fim
-        dictionary[key]['num_domain'] = 300 #600
-        dictionary[key]['num_test'] = 300 #600
+        if mini_batch:
+            dictionary[key]['mini_batch'] = mini_batch
+        dictionary[key]['num_domain'] = POINTS_DOMAIN
+        dictionary[key]['num_test'] = POINTS_TEST
         dictionary[key]["lbfgs_pre"] = 0
-        dictionary[key]["lbfgs_post"] = 0 #2 #0 #3
-        dictionary[key]['LR'] = 0.001 #0.001 quebra no 70x3
-        dictionary[key]['hyperfolder'] = f'batch 2023_07_24'#f'fb{neurons}n{func}'
+        dictionary[key]["lbfgs_post"] = lbfgs_post
+        dictionary[key]['LR'] = LR
+        dictionary[key]['hyperfolder'] = f'batch 2023_08_05'#-{func}'
         dictionary[key]['isplot'] = True
-        dictionary[key]['initializer'] = 'Glorot normal' #GLOROT UNIFORM
+        dictionary[key]['initializer'] = initializer
         dictionary[key]['output_variables'] = output_variables
         dictionary[key]['input_variables'] = input_variables
         
         dictionary
 
-    return dictionary
+    return (dictionary, cols, rows)
 
 
 def batch_tests_fixed_neurons_number(eq_params, process_params):

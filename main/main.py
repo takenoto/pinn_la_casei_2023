@@ -95,7 +95,7 @@ def main():
     
     run_case_6_ts_comparison_pinn_and_numeric = False
     
-    run_compare_fedbatch_batch_and_cstr = True
+    run_compare_fedbatch_batch_and_cstr = False
 
     run_weights = False
 
@@ -163,7 +163,7 @@ def main():
     if run_fedbatch_nondim_test:
         print('RUN FED-BATCH NEW NONDIM TEST')
         start_time = timer()
-        cases = change_layer_fix_neurons_number(eq_params, process_params_feed_on)
+        cases, cols, rows = change_layer_fix_neurons_number(eq_params, process_params_feed_on)
 
         pinns, p_best_index, p_best_error = run_pinn_grid_search(
             solver_params_list=None,
@@ -192,8 +192,8 @@ def main():
             yscale='log',
             sharey=True,
             sharex=True,
-            nrows=2,
-            ncols=2,
+            nrows=rows,
+            ncols=cols,
             items=items,
             suptitle=None,
             title_for_each=True,
@@ -281,8 +281,8 @@ def main():
                 gridspec_kw={"hspace": 0.6, "wspace": 0.25},
                 yscale='linear',
                 sharey=False,
-                nrows=2,
-                ncols=2,
+                nrows=rows,
+                ncols=cols,
                 items=items,
                 title_for_each=True,
                 supxlabel="tempo (h)",
@@ -297,7 +297,7 @@ def main():
 
         print('RUN CSTR NEW NONDIM TEST')
         start_time = timer()
-        cases = change_layer_fix_neurons_number(eq_params, process_params_feed_cstr)
+        cases, cols, rows = change_layer_fix_neurons_number(eq_params, process_params_feed_cstr)
         # cases = batch_tests_fixed_neurons_number(eq_params, process_params_feed_cstr)
         def cstr_f_out_calc_tensorflow(max_reactor_volume, f_in_v, volume):
             # estou assumindo que já começa no estado estacionário:
@@ -329,8 +329,8 @@ def main():
             yscale='log',
             sharey=True,
             sharex=True,
-            nrows=2,
-            ncols=4,
+            nrows=rows,
+            ncols=cols,
             items=items,
             suptitle=None,
             title_for_each=True,
@@ -435,7 +435,7 @@ def main():
         start_time = timer()
         # cases = batch_nondim_v2(eq_params, process_params_feed_cstr)
         # cases = batch_tests_fixed_neurons_number(eq_params, process_params_feed_cstr)
-        cases = change_layer_fix_neurons_number(eq_params, process_params_feed_cstr)
+        cases, cols, rows = change_layer_fix_neurons_number(eq_params, process_params_feed_cstr)
         print(f'NUMBER OF CASES ={len(cases)}')
 
         pinns, p_best_index, p_best_error = run_pinn_grid_search(
@@ -465,14 +465,15 @@ def main():
             yscale='log',
             sharey=True,
             sharex=True,
-            nrows=2,
-            ncols=2,
+            nrows=rows,
+            ncols=cols,
             items=items,
             suptitle=None,
             title_for_each=True,
             supxlabel="epochs",
             supylabel="loss",
         )
+        
             
         num_results = run_numerical_methods(
             eq_params=eq_params,

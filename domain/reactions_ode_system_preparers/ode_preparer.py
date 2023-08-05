@@ -23,6 +23,9 @@ class ODEPreparer:
 
     def prepare(self):
         def ode_system(x, y):
+            # FIXME se isso daqui não mexe em nada, o problema é necessariamente antes, na parte de preparação...
+            # return [o*x[:, 0:1] for o in range(len(self.solver_params.outputSimulationType.order))]
+            
             """
             Order of outputs:
 
@@ -56,7 +59,11 @@ class ODEPreparer:
             if(outputSimulationType.V):
                 V_nondim = y[:, outputSimulationType.V_index:outputSimulationType.V_index+1]    
 
-            dV_dt_nondim = dde.grad.jacobian(y, x, i=outputSimulationType.V_index)
+            # dV_dt_nondim = dde.grad.jacobian(y, x, i=outputSimulationType.V_index)
+            # TODO o tempo todo o erro tava aqui ^
+            # Nem era zzzz. Agora já tá treinando mas ainda dá o erro
+            # all the input arrays must have same number of dimensions
+            dV_dt_nondim = dde.grad.jacobian(y, x, i=outputSimulationType.V_index, j=inputSimulationType.t_index)
             f_in = inlet.volume
 
             f_out = f_out_value_calc(
@@ -82,15 +89,19 @@ class ODEPreparer:
             # Parte nova 23/07/2023:
             if(inputSimulationType.X):
                 X_nondim = y[:, inputSimulationType.X_index:inputSimulationType.X_index+1]
-                dX_dt_nondim = dde.grad.jacobian(x, x, i=inputSimulationType.X_index, j=inputSimulationType.t_index)
+                # dX_dt_nondim = dde.grad.jacobian(x, x, i=inputSimulationType.X_index, j=inputSimulationType.t_index)
+                # TODO aqui tava errado. Tava y no lugar de x.
+                # X_nondim = y[:, inputSimulationType.X_index:inputSimulationType.X_index+1]
+                X_nondim = x[:, inputSimulationType.X_index:inputSimulationType.X_index+1]
+                dX_dt_nondim = dde.grad.jacobian(x, x, i=inputSimulationType.X_index, j=outputSimulationType.t_index)
             if(inputSimulationType.P):
-                P_nondim = y[:, inputSimulationType.P_index:inputSimulationType.P_index+1]
+                P_nondim = x[:, inputSimulationType.P_index:inputSimulationType.P_index+1]
                 dP_dt_nondim = dde.grad.jacobian(x, x, i=inputSimulationType.P_index, j=inputSimulationType.t_index)
             if(inputSimulationType.S):
-                S_nondim = y[:, inputSimulationType.S_index:inputSimulationType.S_index+1]
+                S_nondim = x[:, inputSimulationType.S_index:inputSimulationType.S_index+1]
                 dS_dt_nondim = dde.grad.jacobian(x, x, i=inputSimulationType.S_index, j=inputSimulationType.t_index)
             if(inputSimulationType.V):
-                V_nondim = y[:, inputSimulationType.V_index:inputSimulationType.V_index+1]
+                V_nondim = x[:, inputSimulationType.V_index:inputSimulationType.V_index+1]
                 dV_dt_nondim = dde.grad.jacobian(x, x, i=inputSimulationType.V_index, j=inputSimulationType.t_index)
             #X_nondim, P_nondim, S_nondim = y[:, 0:1], y[:, 1:2], y[:, 2:3]
 
@@ -102,7 +113,7 @@ class ODEPreparer:
                 # Declara a loss pra já deixar guardado e ir adicionando
                 # conforme for sendo validado
                 loss_pde = []
-
+                                
                 # Equações auxiliares. Usadas para operações matemática e contornar um erro
                 # específico de versões entre numpy e tensorflow
                 def div(x, y):
@@ -145,25 +156,25 @@ class ODEPreparer:
                         h,
                     )
 
-                if(outputSimulationType.X):
-                    non_dim_rX = (
-                    mult(
-                            mult(mult(div(scaler.t, scaler.X), mu_max), X_nondim),# mult(X_nondim, scaler.X)),
-                            div(mult(S_nondim, scaler.S), add(K_S, mult(S_nondim, scaler.S))),
-                        )
-                        * f_x_calc_func()
-                        * h_p_calc_func()
+                #if(outputSimulationType.X):
+                non_dim_rX = (
+                mult(
+                        mult(mult(div(scaler.t, scaler.X), mu_max), X_nondim),# mult(X_nondim, scaler.X)),
+                        div(mult(S_nondim, scaler.S), add(K_S, mult(S_nondim, scaler.S))),
                     )
+                    * f_x_calc_func()
+                    * h_p_calc_func()
+                )
                 
-                if(outputSimulationType.P):
-                    non_dim_rP = (scaler.t / scaler.P) * (
-                        alpha * (scaler.X / scaler.t) * non_dim_rX + beta * X_nondim * scaler.X/scaler.t
-                    )
+                #if(outputSimulationType.P):
+                non_dim_rP = (scaler.t / scaler.P) * (
+                    alpha * (scaler.X / scaler.t) * non_dim_rX + beta * X_nondim * scaler.X/scaler.t
+                )
 
-                if(outputSimulationType.S):
-                    non_dim_rS = (scaler.t / scaler.S) * (
-                        -(1 / Y_PS) * non_dim_rP * (scaler.P / scaler.t) - ms * X_nondim * scaler.X/scaler.t
-                    )
+                #if(outputSimulationType.S):
+                non_dim_rS = (scaler.t / scaler.S) * (
+                    -(1 / Y_PS) * non_dim_rP * (scaler.P / scaler.t) - ms * X_nondim * scaler.X/scaler.t
+                )
                     
                 #-----------------------
                 # Calculating loss
