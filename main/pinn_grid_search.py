@@ -51,7 +51,8 @@ def run_pinn_grid_search(
             SolverParams(
                 name=f"{case_key}",
                 num_domain=get_thing_for_key(case_key, "num_domain", default=600),
-                num_boundary=10,
+                num_boundary=get_thing_for_key(case_key, "num_boundary", default=10),
+                num_init=get_thing_for_key(case_key, "num_init", default=10),
                 num_test=get_thing_for_key(case_key, "num_test", default=1000),
                 adam_epochs=get_thing_for_key(
                     case_key, "adam_epochs", default=None

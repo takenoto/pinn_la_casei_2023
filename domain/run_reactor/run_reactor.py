@@ -69,25 +69,24 @@ def run_reactor(
             print(solver_params.non_dim_scaler.X)
             print("\n\n\n")
             dimension_geom = dde.geometry.Interval(
-                0, eq_params.Xm / solver_params.non_dim_scaler.X_not_tensor
+                0, eq_params.Xm[0] / solver_params.non_dim_scaler.X_not_tensor
             )
-            # FIXME tira esse de baixo. Botei um número fixo só pra testar na marra pq tava dando erro com os vetores
-            dimension_geom = dde.geometry.Interval(0, 0.9)
+            # ^ Não tinha dado certo pq eu tava usando Xm e não Xm[0]
+            
 
         elif inputSimulationType.P:
             dimension_geom = dde.geometry.Interval(
-                0, eq_params.Pm / solver_params.non_dim_scaler.P
+                0, eq_params.Pm[0] / solver_params.non_dim_scaler.P_not_tensor
             )
         elif inputSimulationType.S:
             dimension_geom = dde.geometry.Interval(
-                0, eq_params.So / solver_params.non_dim_scaler.S
+                0, eq_params.So[0] / solver_params.non_dim_scaler.S_not_tensor
             )
         elif inputSimulationType.V:
             dimension_geom = dde.geometry.Interval(
-                0, process_params.max_reactor_volume / solver_params.non_dim_scaler.V
+                0, process_params.max_reactor_volume[0] / solver_params.non_dim_scaler.V_not_tensor
             )
-
-        # Bota a outra dimensão aqui:
+            
         geom = dde.geometry.GeometryXTime(dimension_geom, time_domain)
 
     # geom = time_domain # Isso deixa da forma como estava antes
@@ -175,17 +174,14 @@ def run_reactor(
             for c in [0, 1, 2]
         ]
         # FIXME taquei zero aí pra ver se anda
-        ics = [
-            dde.icbc.IC(geom, fun_init, lambda _, on_initial: on_initial, component=c)
-            for c in [0, 1, 2]
-        ]
+        # ics = [
+        #     dde.icbc.IC(geom, fun_init, lambda _, on_initial: on_initial, component=c)
+        #     for c in [0, 1, 2]
+        # ]
         # bc =  dde.icbc.DirichletBC(geom, lambda x:0*x[:, 0:1], lambda _, on_boundary: on_boundary, component=1);
         icsbcs = []
         icsbcs.extend(bcs)
         icsbcs.extend(ics)
-        print("!!!!!!!!ICSBCS!!!!!!!!!!")
-        print(icsbcs)
-        print("------------------------")
 
         data = dde.data.TimePDE(
             geometryxtime=geom,
@@ -196,6 +192,7 @@ def run_reactor(
             num_domain=solver_params.num_domain,
             num_boundary=solver_params.num_boundary,
             num_test=solver_params.num_test,
+            num_initial=20,
         )
     else:
         data = dde.data.PDE(
@@ -311,7 +308,7 @@ def run_reactor(
             )
     end_time = timer()
     total_training_time = end_time - start_time
-
+    
     # Por algum motivo o plot não funciona nem aqui nem no saveplot de baixo aff
     if solver_params.isplot and False:
         print(loss_history)
@@ -319,8 +316,8 @@ def run_reactor(
         print(train_state.X_test)
         print(train_state.X_train)
         dde.saveplot(loss_history, train_state, issave=False, isplot=True)
-    # dde.saveplot(loss_history, train_state, issave=True, isplot=False, output_dir=f'{hyperfolder_path}{solver_params.name}/plot')
-    dde.saveplot(loss_history, train_state, issave=False, isplot=True)
+    dde.saveplot(loss_history, train_state, issave=True, isplot=False, output_dir=f'{hyperfolder_path}{solver_params.name}/plot')
+    # dde.saveplot(loss_history, train_state, issave=False, isplot=True)
     model.save(f"{hyperfolder_path}{solver_params.name}/model")
 
     # ---------------------------------------

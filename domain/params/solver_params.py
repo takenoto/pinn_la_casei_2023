@@ -76,6 +76,7 @@ class SolverParams:
         name=None,
         num_domain=None,
         num_boundary=None,
+        num_init=None,
         num_test=None,
         adam_epochs=None,
         adam_display_every=None,
@@ -99,6 +100,7 @@ class SolverParams:
         """
         self.num_domain = num_domain
         self.num_boundary = num_boundary
+        self.num_init = num_init
         self.num_test = num_test
         self.adam_epochs = adam_epochs
         self.adam_display_every = adam_display_every

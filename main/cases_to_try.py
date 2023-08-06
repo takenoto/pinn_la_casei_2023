@@ -32,7 +32,9 @@ def change_layer_fix_neurons_number(eq_params, process_params):
     # Parece ter algo MUITO bom na região próxima de 30x10. Vamos investigar ela agora.
     func = 'tanh' #'swish'
     mini_batch = None #50 #200
-    initializer = 'Glorot normal' #'Orthogonal' #'Glorot normal' #GLOROT UNIFORM # Era Glorot Normal nos testes sem swish
+    # ERA SÓ A FUNÇÃO DE ATIVAÇÃO!!!!
+    # Troquei pra Glorot uniform e funcionou mds mds mds
+    initializer = 'Glorot normal' #'Glorot normal' #'Orthogonal' #GLOROT UNIFORM # Era Glorot Normal nos testes sem swish
     #FIXME talvez tenha deixado a LR baixa demais...
     #LR = 0.00003 estagnou no 120x12. 14k iterações e não aconteceu praticamente nada.
     #POrque tinha um erro 1 e o resto 10-3 então ele ficou reduzindo esse 1 pra 0.9 , 0.88 etc
@@ -44,7 +46,7 @@ def change_layer_fix_neurons_number(eq_params, process_params):
     LR = 0.001 # deu NaN mas nem foi na rede maior af. FOi na 60*10
     LR = 0.00001
     LR = 0.0001 #0.001 horrível pra 120x8
-    ADAM_EPOCHS = 2000 #200 #22000 #8k deu certo então vou aumentar 8000 #1500 #800 #30000 #100000
+    ADAM_EPOCHS = 45000 #200 #22000 #8k deu certo então vou aumentar 8000 #1500 #800 #30000 #100000
     SGD_EPOCHS = None #1000 #1500 #800 #30000 #100000
     lbfgs_post = 1 #2 #5
     dictionary = {}
@@ -55,20 +57,21 @@ def change_layer_fix_neurons_number(eq_params, process_params):
     layers = [12, 11, 10, 9, 8]
     # neurons = [30, 60]
     # neurons = [20, 30]
-    neurons = [60, 40]
-    layers = [5, 3]
+    neurons = [120, 80]
+    layers = [6, 4]
     cols = len(layers)
     rows = len(neurons)
     
-    POINTS_DOMAIN = 300 #1000
-    POINTS_TEST = 300 #1000
-    
+    NUM_DOMAIN = 300 #1000
+    NUM_TEST = 300 #1000
+    NUM_INIT = 40
+    NUM_BOUNDARY = 100
     # Anota aqui as variáveis que vão ser suportadas nessa simulação
     # supported_variables = ['X', 'P', 'S', 'V']
     output_variables = ['X', 'P', 'S', 'V']
     input_variables = ['t']
-    # output_variables = ['P', 'S', 'V']
-    # input_variables = ['t', 'X']
+    output_variables = ['P', 'S', 'V']
+    input_variables = ['t', 'X']
 
     for n in neurons:
         for l in layers:
@@ -87,12 +90,14 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         dictionary[key]['activation'] = func
         if mini_batch:
             dictionary[key]['mini_batch'] = mini_batch
-        dictionary[key]['num_domain'] = POINTS_DOMAIN
-        dictionary[key]['num_test'] = POINTS_TEST
+        dictionary[key]['num_domain'] = NUM_DOMAIN
+        dictionary[key]['num_test'] = NUM_TEST
+        dictionary[key]['num_init'] = NUM_INIT
+        dictionary[key]['num_bound'] = NUM_BOUNDARY
         dictionary[key]["lbfgs_pre"] = 0
         dictionary[key]["lbfgs_post"] = lbfgs_post
         dictionary[key]['LR'] = LR
-        dictionary[key]['hyperfolder'] = f'batch 2023_08_05'#-{func}'
+        dictionary[key]['hyperfolder'] = f'batch tX 2023_08_06'#-{func}'
         dictionary[key]['isplot'] = True
         dictionary[key]['initializer'] = initializer
         dictionary[key]['output_variables'] = output_variables

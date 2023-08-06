@@ -54,3 +54,4 @@ class PINNReactorModelResults:
         """
         Function used to calculate the reactor's outlet flow (volume/time) 
         """
+        

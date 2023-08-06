@@ -4,7 +4,7 @@ from timeit import default_timer as timer
 
 import numpy as np
 import deepxde
-import deepxde as dde 
+import deepxde as dde
 import tensorflow as tf
 
 import matplotlib.pyplot as plt
@@ -72,7 +72,7 @@ num_colors = [
     "#F39B6D",
     "#F0C987",
 ]
-    
+
 
 def main():
     deepxde.config.set_random_seed(0)
@@ -88,18 +88,17 @@ def main():
     run_cstr_convergence_test = False
 
     run_fedbatch_cstr_nondim_test = False
-    
+
     run_batch_ts_test = False
 
     run_case_6_check_layer_size = False
-    
+
     run_case_6_ts_comparison_pinn_and_numeric = False
-    
+
     run_compare_fedbatch_batch_and_cstr = False
 
     run_weights = False
 
-   
     altiok_models_to_run = [get_altiok2006_params().get(2)]  # roda só a fig2
 
     # Parâmetros de processo (será usado em todos)
@@ -128,42 +127,44 @@ def main():
     )
 
     process_params_feed_off = ProcessParams(
-            max_reactor_volume=5,
-            inlet=ConcentrationFlow(
-                volume=0.0,
-                X=eq_params.Xo,
-                P=eq_params.Po,
-                S=eq_params.So,
-            ),
-            t_final=10.2,
-        )
+        max_reactor_volume=5,
+        inlet=ConcentrationFlow(
+            volume=0.0,
+            X=eq_params.Xo,
+            P=eq_params.Po,
+            S=eq_params.So,
+        ),
+        t_final=10.2,
+    )
 
     process_params_feed_on = ProcessParams(
-            max_reactor_volume=5,
-            inlet=ConcentrationFlow(
-                volume=2, #L/h
-                X=eq_params.Xo,
-                P=eq_params.Po,
-                S=eq_params.So,
-            ),
-            t_final=10.2,
-        )
+        max_reactor_volume=5,
+        inlet=ConcentrationFlow(
+            volume=2,  # L/h
+            X=eq_params.Xo,
+            P=eq_params.Po,
+            S=eq_params.So,
+        ),
+        t_final=10.2,
+    )
 
     process_params_feed_cstr = ProcessParams(
-            max_reactor_volume=5,
-            inlet=ConcentrationFlow(
-                volume=1, #L/h
-                X=eq_params.Xo,
-                P=eq_params.Po,
-                S=eq_params.So,
-            ),
-            t_final=24*4,
-        )
+        max_reactor_volume=5,
+        inlet=ConcentrationFlow(
+            volume=1,  # L/h
+            X=eq_params.Xo,
+            P=eq_params.Po,
+            S=eq_params.So,
+        ),
+        t_final=24 * 4,
+    )
 
     if run_fedbatch_nondim_test:
-        print('RUN FED-BATCH NEW NONDIM TEST')
+        print("RUN FED-BATCH NEW NONDIM TEST")
         start_time = timer()
-        cases, cols, rows = change_layer_fix_neurons_number(eq_params, process_params_feed_on)
+        cases, cols, rows = change_layer_fix_neurons_number(
+            eq_params, process_params_feed_on
+        )
 
         pinns, p_best_index, p_best_error = run_pinn_grid_search(
             solver_params_list=None,
@@ -171,7 +172,7 @@ def main():
             process_params=process_params_feed_on,
             initial_state=initial_state_fed_batch,
             f_out_value_calc=lambda max_reactor_volume, f_in_v, volume: 0,
-            cases_to_try=cases
+            cases_to_try=cases,
         )
         end_time = timer()
         print(f"elapsed time for test = {end_time - start_time} secs")
@@ -180,16 +181,26 @@ def main():
             items[i + 1] = {
                 "title": pinns[i].model_name,
                 "cases": [
-                    {"x": pinns[i].loss_history.steps, "y": np.sum(pinns[i].loss_history.loss_test, axis=1), "color": pinn_colors[0], "l": "-"},
-                    {"x": pinns[i].loss_history.steps, "y": np.sum(pinns[i].loss_history.loss_train, axis=1), "color": pinn_colors[1], "l": "--"},
+                    {
+                        "x": pinns[i].loss_history.steps,
+                        "y": np.sum(pinns[i].loss_history.loss_test, axis=1),
+                        "color": pinn_colors[0],
+                        "l": "-",
+                    },
+                    {
+                        "x": pinns[i].loss_history.steps,
+                        "y": np.sum(pinns[i].loss_history.loss_train, axis=1),
+                        "color": pinn_colors[1],
+                        "l": "--",
+                    },
                 ],
             }
 
         plot_comparer_multiple_grid(
-            labels=['Loss (teste)', 'Loss (treino)'],
-            figsize=(7.2*2, 8.2*2),
+            labels=["Loss (teste)", "Loss (treino)"],
+            figsize=(7.2 * 2, 8.2 * 2),
             gridspec_kw={"hspace": 0.35, "wspace": 0.14},
-            yscale='log',
+            yscale="log",
             sharey=True,
             sharex=True,
             nrows=rows,
@@ -201,20 +212,19 @@ def main():
             supylabel="loss",
         )
 
-  
         num_results = run_numerical_methods(
             eq_params=eq_params,
             process_params=process_params_feed_on,
             initial_state=initial_state_fed_batch,
-            f_out_value_calc= lambda max_reactor_volume, f_in_v, volume: 0,
+            f_out_value_calc=lambda max_reactor_volume, f_in_v, volume: 0,
             t_discretization_points=[400],
         )
 
         # PLOTAR O MELHOR DOS PINNS
         items = {}
-        print(f'Pinn best index = {p_best_index}')
-        print(f'Pinn best error = {p_best_error}')
-       
+        print(f"Pinn best index = {p_best_index}")
+        print(f"Pinn best error = {p_best_error}")
+
         # Plotar todos os resultados, um a um
         num = num_results[0]
         for pinn in pinns:
@@ -222,27 +232,34 @@ def main():
             # prediction = pinn.model.predict(np.array([[0, 0.5, 1, 2, 4]]))
             # prediction = pinn.model.predict(np.vstack(np.ravel([0, 0.5, 1, 2, 4],)))
             pred_start_time = timer()
-            prediction = pinn.model.predict(np.vstack(np.ravel(num.t*pinn.solver_params.non_dim_scaler.t_not_tensor,)))
+            prediction = pinn.model.predict(
+                np.vstack(
+                    np.ravel(
+                        num.t * pinn.solver_params.non_dim_scaler.t_not_tensor,
+                    )
+                )
+            )
             pred_end_time = timer()
             pred_time = pred_end_time - pred_start_time
-            print(f'name = {pinn.model_name}')
-            print(f'train time = {pinn.total_training_time} s')
-            print(f'best loss test = {pinn.best_loss_test}')
-            print(f'best loss train = {pinn.best_loss_train}')
-            print(f'pred time = {pred_time} s')
+            print(f"name = {pinn.model_name}")
+            print(f"train time = {pinn.total_training_time} s")
+            print(f"best loss test = {pinn.best_loss_test}")
+            print(f"best loss train = {pinn.best_loss_train}")
+            print(f"pred time = {pred_time} s")
             items = {}
             titles = ["X", "P", "S", "V"]
             # pinn_vals = [pinn.X, pinn.P, pinn.S, pinn.V]
             pinn_vals = [
-                prediction[:, 0]*pinn.solver_params.non_dim_scaler.X_not_tensor,#pinn.X,
-                prediction[:, 1]*pinn.solver_params.non_dim_scaler.P_not_tensor,#pinn.P,
-                prediction[:, 2]*pinn.solver_params.non_dim_scaler.S_not_tensor,#pinn.S,
-                prediction[:, 3]*pinn.solver_params.non_dim_scaler.V_not_tensor,#pinn.V]
+                prediction[:, 0]
+                * pinn.solver_params.non_dim_scaler.X_not_tensor,  # pinn.X,
+                prediction[:, 1]
+                * pinn.solver_params.non_dim_scaler.P_not_tensor,  # pinn.P,
+                prediction[:, 2]
+                * pinn.solver_params.non_dim_scaler.S_not_tensor,  # pinn.S,
+                prediction[:, 3]
+                * pinn.solver_params.non_dim_scaler.V_not_tensor,  # pinn.V]
             ]
-            num_vals = [num.X,
-            num.P,
-            num.S,
-            num.V]
+            num_vals = [num.X, num.P, num.S, num.V]
             # Armazena os 4 erros
             error_L = []
             # Calcula os erros de X P S V
@@ -252,34 +269,42 @@ def main():
                 # Pega ponto a ponto e soma o absoluto
                 for value in diff:
                     total_error += abs(value)
-                
-                error_L.append(
-                    total_error/len(pinn_vals[u])
-                )
-            print('ERROR XPSV')
-            print(f'X = {error_L[0]}')
-            print(f'P = {error_L[1]}')
-            print(f'S = {error_L[2]}')
-            print(f'V = {error_L[3]}')
-            print(f'total = {np.sum(error_L)}')
+
+                error_L.append(total_error / len(pinn_vals[u]))
+            print("ERROR XPSV")
+            print(f"X = {error_L[0]}")
+            print(f"P = {error_L[1]}")
+            print(f"S = {error_L[2]}")
+            print(f"V = {error_L[3]}")
+            print(f"total = {np.sum(error_L)}")
 
             for i in range(4):
                 items[i + 1] = {
                     "title": titles[i],
                     "cases": [
                         # Numeric
-                        {"x": num.t, "y": num_vals[i], "color": pinn_colors[0], "l": "-"},
+                        {
+                            "x": num.t,
+                            "y": num_vals[i],
+                            "color": pinn_colors[0],
+                            "l": "-",
+                        },
                         # PINN
-                        {"x": num.t, "y": pinn_vals[i], "color": pinn_colors[1], "l": "--"},
+                        {
+                            "x": num.t,
+                            "y": pinn_vals[i],
+                            "color": pinn_colors[1],
+                            "l": "--",
+                        },
                     ],
                 }
 
             plot_comparer_multiple_grid(
                 suptitle=pinn.model_name,
-                labels=['Euler', 'PINN'],
-                figsize=(6*1.5, 8*1.5),
+                labels=["Euler", "PINN"],
+                figsize=(6 * 1.5, 8 * 1.5),
                 gridspec_kw={"hspace": 0.6, "wspace": 0.25},
-                yscale='linear',
+                yscale="linear",
                 sharey=False,
                 nrows=rows,
                 ncols=cols,
@@ -289,26 +314,27 @@ def main():
                 supylabel="g/L",
             )
 
-        
         pass
 
-
     if run_cstr_nondim_test:
-
-        print('RUN CSTR NEW NONDIM TEST')
+        print("RUN CSTR NEW NONDIM TEST")
         start_time = timer()
-        cases, cols, rows = change_layer_fix_neurons_number(eq_params, process_params_feed_cstr)
+        cases, cols, rows = change_layer_fix_neurons_number(
+            eq_params, process_params_feed_cstr
+        )
+
         # cases = batch_tests_fixed_neurons_number(eq_params, process_params_feed_cstr)
         def cstr_f_out_calc_tensorflow(max_reactor_volume, f_in_v, volume):
             # estou assumindo que já começa no estado estacionário:
-            return f_in_v*tf.math.pow(volume/max_reactor_volume, 7)
+            return f_in_v * tf.math.pow(volume / max_reactor_volume, 7)
+
         pinns, p_best_index, p_best_error = run_pinn_grid_search(
             solver_params_list=None,
             eq_params=eq_params,
             process_params=process_params_feed_cstr,
             initial_state=initial_state_cstr,
             f_out_value_calc=cstr_f_out_calc_tensorflow,
-            cases_to_try=cases
+            cases_to_try=cases,
         )
         end_time = timer()
         print(f"elapsed time for test = {end_time - start_time} secs")
@@ -317,16 +343,26 @@ def main():
             items[i + 1] = {
                 "title": pinns[i].model_name,
                 "cases": [
-                    {"x": pinns[i].loss_history.steps, "y": np.sum(pinns[i].loss_history.loss_test, axis=1), "color": pinn_colors[0], "l": "-"},
-                    {"x": pinns[i].loss_history.steps, "y": np.sum(pinns[i].loss_history.loss_train, axis=1), "color": pinn_colors[1], "l": "--"},
+                    {
+                        "x": pinns[i].loss_history.steps,
+                        "y": np.sum(pinns[i].loss_history.loss_test, axis=1),
+                        "color": pinn_colors[0],
+                        "l": "-",
+                    },
+                    {
+                        "x": pinns[i].loss_history.steps,
+                        "y": np.sum(pinns[i].loss_history.loss_train, axis=1),
+                        "color": pinn_colors[1],
+                        "l": "--",
+                    },
                 ],
             }
 
         plot_comparer_multiple_grid(
-            labels=['Loss (teste)', 'Loss (treino)'],
-            figsize=(7.2*2, 8.2*2),
+            labels=["Loss (teste)", "Loss (treino)"],
+            figsize=(7.2 * 2, 8.2 * 2),
             gridspec_kw={"hspace": 0.35, "wspace": 0.14},
-            yscale='log',
+            yscale="log",
             sharey=True,
             sharex=True,
             nrows=rows,
@@ -339,20 +375,21 @@ def main():
         )
 
         def cstr_f_out_calc_numeric(max_reactor_volume, f_in_v, volume):
-            return f_in_v*pow(volume/max_reactor_volume, 7)    
+            return f_in_v * pow(volume / max_reactor_volume, 7)
+
         num_results = run_numerical_methods(
             eq_params=eq_params,
             process_params=process_params_feed_cstr,
             initial_state=initial_state_cstr,
-            f_out_value_calc= cstr_f_out_calc_numeric,
+            f_out_value_calc=cstr_f_out_calc_numeric,
             t_discretization_points=[400],
         )
 
         # PLOTAR O MELHOR DOS PINNS
         items = {}
-        print(f'Pinn best index = {p_best_index}')
-        print(f'Pinn best error = {p_best_error}')
-       
+        print(f"Pinn best index = {p_best_index}")
+        print(f"Pinn best error = {p_best_error}")
+
         # Plotar todos os resultados, um a um
         num = num_results[0]
         for pinn in pinns:
@@ -360,27 +397,34 @@ def main():
             # prediction = pinn.model.predict(np.array([[0, 0.5, 1, 2, 4]]))
             # prediction = pinn.model.predict(np.vstack(np.ravel([0, 0.5, 1, 2, 4],)))
             pred_start_time = timer()
-            prediction = pinn.model.predict(np.vstack(np.ravel(num.t*pinn.solver_params.non_dim_scaler.t_not_tensor,)))
+            prediction = pinn.model.predict(
+                np.vstack(
+                    np.ravel(
+                        num.t * pinn.solver_params.non_dim_scaler.t_not_tensor,
+                    )
+                )
+            )
             pred_end_time = timer()
             pred_time = pred_end_time - pred_start_time
-            print(f'name = {pinn.model_name}')
-            print(f'train time = {pinn.total_training_time} s')
-            print(f'best loss test = {pinn.best_loss_test}')
-            print(f'best loss train = {pinn.best_loss_train}')
-            print(f'pred time = {pred_time} s')
+            print(f"name = {pinn.model_name}")
+            print(f"train time = {pinn.total_training_time} s")
+            print(f"best loss test = {pinn.best_loss_test}")
+            print(f"best loss train = {pinn.best_loss_train}")
+            print(f"pred time = {pred_time} s")
             items = {}
             titles = ["X", "P", "S", "V"]
             # pinn_vals = [pinn.X, pinn.P, pinn.S, pinn.V]
             pinn_vals = [
-                prediction[:, 0]*pinn.solver_params.non_dim_scaler.X_not_tensor,#pinn.X,
-                prediction[:, 1]*pinn.solver_params.non_dim_scaler.P_not_tensor,#pinn.P,
-                prediction[:, 2]*pinn.solver_params.non_dim_scaler.S_not_tensor,#pinn.S,
-                prediction[:, 3]*pinn.solver_params.non_dim_scaler.V_not_tensor,#pinn.V]
+                prediction[:, 0]
+                * pinn.solver_params.non_dim_scaler.X_not_tensor,  # pinn.X,
+                prediction[:, 1]
+                * pinn.solver_params.non_dim_scaler.P_not_tensor,  # pinn.P,
+                prediction[:, 2]
+                * pinn.solver_params.non_dim_scaler.S_not_tensor,  # pinn.S,
+                prediction[:, 3]
+                * pinn.solver_params.non_dim_scaler.V_not_tensor,  # pinn.V]
             ]
-            num_vals = [num.X,
-            num.P,
-            num.S,
-            num.V]
+            num_vals = [num.X, num.P, num.S, num.V]
             # Armazena os 4 erros
             error_L = []
             # Calcula os erros de X P S V
@@ -390,34 +434,42 @@ def main():
                 # Pega ponto a ponto e soma o absoluto
                 for value in diff:
                     total_error += abs(value)
-                
-                error_L.append(
-                    total_error/len(pinn_vals[u])
-                )
-            print('ERROR XPSV')
-            print(f'X = {error_L[0]}')
-            print(f'P = {error_L[1]}')
-            print(f'S = {error_L[2]}')
-            print(f'V = {error_L[3]}')
-            print(f'total = {np.sum(error_L)}')
+
+                error_L.append(total_error / len(pinn_vals[u]))
+            print("ERROR XPSV")
+            print(f"X = {error_L[0]}")
+            print(f"P = {error_L[1]}")
+            print(f"S = {error_L[2]}")
+            print(f"V = {error_L[3]}")
+            print(f"total = {np.sum(error_L)}")
 
             for i in range(4):
                 items[i + 1] = {
                     "title": titles[i],
                     "cases": [
                         # Numeric
-                        {"x": num.t, "y": num_vals[i], "color": pinn_colors[0], "l": "-"},
+                        {
+                            "x": num.t,
+                            "y": num_vals[i],
+                            "color": pinn_colors[0],
+                            "l": "-",
+                        },
                         # PINN
-                        {"x": num.t, "y": pinn_vals[i], "color": pinn_colors[1], "l": "--"},
+                        {
+                            "x": num.t,
+                            "y": pinn_vals[i],
+                            "color": pinn_colors[1],
+                            "l": "--",
+                        },
                     ],
                 }
 
             plot_comparer_multiple_grid(
                 suptitle=pinn.model_name,
-                labels=['Euler', 'PINN'],
-                figsize=(6*1.5, 8*1.5),
+                labels=["Euler", "PINN"],
+                figsize=(6 * 1.5, 8 * 1.5),
                 gridspec_kw={"hspace": 0.6, "wspace": 0.25},
-                yscale='linear',
+                yscale="linear",
                 sharey=False,
                 nrows=2,
                 ncols=2,
@@ -427,16 +479,17 @@ def main():
                 supylabel="g/L",
             )
 
-        
         pass
 
     if run_batch_nondim_test_v2:
-        print('RUN BATCH NEW NONDIM TEST')
+        print("RUN BATCH NEW NONDIM TEST")
         start_time = timer()
         # cases = batch_nondim_v2(eq_params, process_params_feed_cstr)
         # cases = batch_tests_fixed_neurons_number(eq_params, process_params_feed_cstr)
-        cases, cols, rows = change_layer_fix_neurons_number(eq_params, process_params_feed_cstr)
-        print(f'NUMBER OF CASES ={len(cases)}')
+        cases, cols, rows = change_layer_fix_neurons_number(
+            eq_params, process_params_feed_cstr
+        )
+        print(f"NUMBER OF CASES ={len(cases)}")
 
         pinns, p_best_index, p_best_error = run_pinn_grid_search(
             solver_params_list=None,
@@ -444,7 +497,7 @@ def main():
             process_params=process_params_feed_off,
             initial_state=initial_state,
             f_out_value_calc=lambda max_reactor_volume, f_in_v, volume: 0,
-            cases_to_try=cases
+            cases_to_try=cases,
         )
         end_time = timer()
         print(f"elapsed time for BATCH NONDIM test = {end_time - start_time} secs")
@@ -453,16 +506,26 @@ def main():
             items[i + 1] = {
                 "title": pinns[i].model_name,
                 "cases": [
-                    {"x": pinns[i].loss_history.steps, "y": np.sum(pinns[i].loss_history.loss_test, axis=1), "color": pinn_colors[0], "l": "-"},
-                    {"x": pinns[i].loss_history.steps, "y": np.sum(pinns[i].loss_history.loss_train, axis=1), "color": pinn_colors[1], "l": "--"},
+                    {
+                        "x": pinns[i].loss_history.steps,
+                        "y": np.sum(pinns[i].loss_history.loss_test, axis=1),
+                        "color": pinn_colors[0],
+                        "l": "-",
+                    },
+                    {
+                        "x": pinns[i].loss_history.steps,
+                        "y": np.sum(pinns[i].loss_history.loss_train, axis=1),
+                        "color": pinn_colors[1],
+                        "l": "--",
+                    },
                 ],
             }
 
         plot_comparer_multiple_grid(
-            labels=['Loss (teste)', 'Loss (treino)'],
-            figsize=(7.2*2, 8.2*2),
+            labels=["Loss (teste)", "Loss (treino)"],
+            figsize=(7.2 * 2, 8.2 * 2),
             gridspec_kw={"hspace": 0.35, "wspace": 0.14},
-            yscale='log',
+            yscale="log",
             sharey=True,
             sharex=True,
             nrows=rows,
@@ -473,21 +536,20 @@ def main():
             supxlabel="epochs",
             supylabel="loss",
         )
-        
-            
+
         num_results = run_numerical_methods(
             eq_params=eq_params,
             process_params=process_params_feed_off,
             initial_state=initial_state,
-            f_out_value_calc= lambda max_reactor_volume, f_in_v, volume: 0,
+            f_out_value_calc=lambda max_reactor_volume, f_in_v, volume: 0,
             t_discretization_points=[400],
         )
 
         # PLOTAR O MELHOR DOS PINNS
         items = {}
-        print(f'Pinn best index = {p_best_index}')
-        print(f'Pinn best error = {p_best_error}')
-       
+        print(f"Pinn best index = {p_best_index}")
+        print(f"Pinn best error = {p_best_error}")
+
         # Plotar todos os resultados, um a um
         num = num_results[0]
         for pinn in pinns:
@@ -495,44 +557,132 @@ def main():
             # prediction = pinn.model.predict(np.array([[0, 0.5, 1, 2, 4]]))
             # prediction = pinn.model.predict(np.vstack(np.ravel([0, 0.5, 1, 2, 4],)))
             pred_start_time = timer()
-            prediction = pinn.model.predict(np.vstack(np.ravel(num.t*pinn.solver_params.non_dim_scaler.t_not_tensor,)))
+            #### FIXME FIXME FIXME FIXME FIXME
+            ### Provavelmente errei em todos ao multiplicar o t ao invés de dividir
+            t = num.t / pinn.solver_params.non_dim_scaler.t_not_tensor
+
+            # TODO vou tentar fazer o predict pra 2 var entrada
+            _in = pinn.solver_params.inputSimulationType
+            _out = pinn.solver_params.outputSimulationType
+            if len(_in.order) == 1:
+                vals = np.vstack(
+                        np.ravel(
+                            t,
+                        )
+                    )
+                # prediction = pinn.model.predict(
+                #     np.vstack(
+                #         np.ravel(
+                #             t,
+                #         )
+                #     )
+                # )
+            elif len(_in.order) == 2:
+                # Determina as entradas
+                # TODO faz pras demais
+                
+                if _in.X:
+                    X = num.X / pinn.solver_params.non_dim_scaler.X_not_tensor
+                    vals = (
+                        np.vstack(
+                            np.ravel(X),
+                        ),
+                    )
+                    np.vstack(
+                        np.ravel(t),
+                    )
+                    vals = np.array([[X[i], t[i]] for i in range(len(t))])
+                elif _in.P:
+                    P = num.P / pinn.solver_params.non_dim_scaler.P_not_tensor
+                    vals = (
+                        np.vstack(
+                            np.ravel(P),
+                        ),
+                    )
+                    np.vstack(
+                        np.ravel(t),
+                    )
+                    vals = np.array([[P[i], t[i]] for i in range(len(t))])
+                elif _in.S:
+                    S = num.S / pinn.solver_params.non_dim_scaler.S_not_tensor
+                    vals = (
+                        np.vstack(
+                            np.ravel(S),
+                        ),
+                    )
+                    np.vstack(
+                        np.ravel(t),
+                    )
+                    vals = np.array([[S[i], t[i]] for i in range(len(t))])
+
+            prediction = pinn.model.predict(vals)
+
+            for o in _out.order:
+                if o == "X":
+                    X = (
+                        prediction[:, _out.X_index]
+                        * pinn.solver_params.non_dim_scaler.X_not_tensor
+                    )
+                if o == "P":
+                    P = (
+                        prediction[:, _out.P_index]
+                        * pinn.solver_params.non_dim_scaler.P_not_tensor
+                    )
+                if o == "S":
+                    S = (
+                        prediction[:, _out.S_index]
+                        * pinn.solver_params.non_dim_scaler.S_not_tensor
+                    )
+                if o == "V":
+                    V = (
+                        prediction[:, _out.V_index]
+                        * pinn.solver_params.non_dim_scaler.V_not_tensor
+                    )
+
             pred_end_time = timer()
             pred_time = pred_end_time - pred_start_time
-            print(f'name = {pinn.model_name}')
-            print(f'train time = {pinn.total_training_time} s')
-            print(f'best loss test = {pinn.best_loss_test}')
-            print(f'best loss train = {pinn.best_loss_train}')
-            print(f'pred time = {pred_time} s')
+            print(f"name = {pinn.model_name}")
+            print(f"train time = {pinn.total_training_time} s")
+            print(f"best loss test = {pinn.best_loss_test}")
+            print(f"best loss train = {pinn.best_loss_train}")
+            print(f"pred time = {pred_time} s")
             items = {}
             titles = ["X", "P", "S", "V"]
             # pinn_vals = [pinn.X, pinn.P, pinn.S, pinn.V]
             pinn_vals = [
-                prediction[:, 0]*pinn.solver_params.non_dim_scaler.X_not_tensor,#pinn.X,
-                prediction[:, 1]*pinn.solver_params.non_dim_scaler.P_not_tensor,#pinn.P,
-                prediction[:, 2]*pinn.solver_params.non_dim_scaler.S_not_tensor,#pinn.S,
-                prediction[:, 3]*pinn.solver_params.non_dim_scaler.V_not_tensor,#pinn.V]
+                X,  # pinn.X,
+                P,  # pinn.P,
+                S,  # pinn.S,
+                V,  # pinn.V]
             ]
-            num_vals = [num.X,
-            num.P,
-            num.S,
-            num.V]
+            num_vals = [num.X, num.P, num.S, num.V]
             for i in range(4):
                 items[i + 1] = {
                     "title": titles[i],
                     "cases": [
                         # Numeric
-                        {"x": num.t, "y": num_vals[i], "color": pinn_colors[0], "l": "-"},
+                        {
+                            "x": num.t,
+                            "y": num_vals[i],
+                            "color": pinn_colors[0],
+                            "l": "-",
+                        },
                         # PINN
-                        {"x": num.t, "y": pinn_vals[i], "color": pinn_colors[1], "l": "--"},
+                        {
+                            "x": num.t,
+                            "y": pinn_vals[i],
+                            "color": pinn_colors[1],
+                            "l": "--",
+                        },
                     ],
                 }
 
             plot_comparer_multiple_grid(
                 suptitle=pinn.model_name,
-                labels=['Euler', 'PINN'],
-                figsize=(6*1.5, 8*1.5),
+                labels=["Euler", "PINN"],
+                figsize=(6 * 1.5, 8 * 1.5),
                 gridspec_kw={"hspace": 0.6, "wspace": 0.25},
-                yscale='linear',
+                yscale="linear",
                 sharey=False,
                 nrows=2,
                 ncols=2,
@@ -542,23 +692,24 @@ def main():
                 supylabel="g/L",
             )
 
-        
         pass
 
     if run_cstr_convergence_test:
-        print('RUN CSTR NEW CONVERGENCE TEST')
+        print("RUN CSTR NEW CONVERGENCE TEST")
         start_time = timer()
         cases = iterate_cstr_convergence(eq_params, process_params_feed_cstr)
+
         def cstr_f_out_calc_tensorflow(max_reactor_volume, f_in_v, volume):
             # estou assumindo que já começa no estado estacionário:
-            return f_in_v*tf.math.pow(volume/max_reactor_volume, 7)
+            return f_in_v * tf.math.pow(volume / max_reactor_volume, 7)
+
         pinns, p_best_index, p_best_error = run_pinn_grid_search(
             solver_params_list=None,
             eq_params=eq_params,
             process_params=process_params_feed_cstr,
             initial_state=initial_state_cstr,
             f_out_value_calc=cstr_f_out_calc_tensorflow,
-            cases_to_try=cases
+            cases_to_try=cases,
         )
         end_time = timer()
         print(f"elapsed time for CSTR CONVERGENCE test = {end_time - start_time} secs")
@@ -568,16 +719,26 @@ def main():
             items[i + 1] = {
                 "title": pinns[i].model_name,
                 "cases": [
-                    {"x": pinns[i].loss_history.steps, "y": np.sum(pinns[i].loss_history.loss_test, axis=1), "color": pinn_colors[0], "l": "-"},
-                    {"x": pinns[i].loss_history.steps, "y": np.sum(pinns[i].loss_history.loss_train, axis=1), "color": pinn_colors[1], "l": "--"},
+                    {
+                        "x": pinns[i].loss_history.steps,
+                        "y": np.sum(pinns[i].loss_history.loss_test, axis=1),
+                        "color": pinn_colors[0],
+                        "l": "-",
+                    },
+                    {
+                        "x": pinns[i].loss_history.steps,
+                        "y": np.sum(pinns[i].loss_history.loss_train, axis=1),
+                        "color": pinn_colors[1],
+                        "l": "--",
+                    },
                 ],
             }
 
         plot_comparer_multiple_grid(
-            labels=['Loss (teste)', 'Loss (treino)'],
+            labels=["Loss (teste)", "Loss (treino)"],
             figsize=(7.2, 8.2),
             gridspec_kw={"hspace": 0.35, "wspace": 0.14},
-            yscale='log',
+            yscale="log",
             sharey=True,
             sharex=True,
             nrows=3,
@@ -591,21 +752,21 @@ def main():
 
         # Cálculo numérico
         def cstr_f_out_calc_numeric(max_reactor_volume, f_in_v, volume):
-            return f_in_v*pow(volume/max_reactor_volume, 7)
-            
+            return f_in_v * pow(volume / max_reactor_volume, 7)
+
         num_results = run_numerical_methods(
             eq_params=eq_params,
             process_params=process_params_feed_cstr,
             initial_state=initial_state_cstr,
-            f_out_value_calc= cstr_f_out_calc_numeric,
+            f_out_value_calc=cstr_f_out_calc_numeric,
             t_discretization_points=[240],
         )
 
         # PLOTAR O MELHOR DOS PINNS
         items = {}
-        print(f'Pinn best index = {p_best_index}')
-        print(f'Pinn best error = {p_best_error}')
-       
+        print(f"Pinn best index = {p_best_index}")
+        print(f"Pinn best error = {p_best_error}")
+
         #  Plotar todos os resultados, um a um
         num = num_results[0]
         for pinn in pinns:
@@ -618,18 +779,28 @@ def main():
                     "title": titles[i],
                     "cases": [
                         # Numeric
-                        {"x": num.t, "y": num_vals[i], "color": pinn_colors[0], "l": "-"},
+                        {
+                            "x": num.t,
+                            "y": num_vals[i],
+                            "color": pinn_colors[0],
+                            "l": "-",
+                        },
                         # PINN
-                        {"x": pinn.t, "y": pinn_vals[i], "color": pinn_colors[1], "l": "--"},
+                        {
+                            "x": pinn.t,
+                            "y": pinn_vals[i],
+                            "color": pinn_colors[1],
+                            "l": "--",
+                        },
                     ],
                 }
 
             plot_comparer_multiple_grid(
                 suptitle=pinn.model_name,
-                labels=['Euler', 'PINN'],
+                labels=["Euler", "PINN"],
                 figsize=(6, 8),
                 gridspec_kw={"hspace": 0.6, "wspace": 0.25},
-                yscale='linear',
+                yscale="linear",
                 sharey=False,
                 nrows=4,
                 ncols=1,
@@ -639,15 +810,13 @@ def main():
                 supylabel="g/L",
             )
 
-        
         pass
-    #---------------------------------------------------------------
-    #---------------------------------------------------------------
-    #---------------------------------------------------------------
-
+    # ---------------------------------------------------------------
+    # ---------------------------------------------------------------
+    # ---------------------------------------------------------------
 
     if run_fedbatch_cstr_nondim_test:
-        print('RUN FED-BATCH + CSTR NON DIM TEST')
+        print("RUN FED-BATCH + CSTR NON DIM TEST")
         # Testa valores de adimensinalização para cstr e fed batch e determina
         # em quais eles performam melhor
         cases_fed_batch = cases_non_dim(eq_params, process_params_feed_cstr)
@@ -655,8 +824,8 @@ def main():
 
         start_time = timer()
 
-        print('\n---------------\n')
-        print('STARTING FED BATCH')
+        print("\n---------------\n")
+        print("STARTING FED BATCH")
         # Fed batch
         p_fb, p_fb_i, p_fb_e = run_pinn_grid_search(
             solver_params_list=None,
@@ -664,42 +833,55 @@ def main():
             process_params=process_params_feed_on,
             initial_state=initial_state_fed_batch,
             f_out_value_calc=lambda max_reactor_volume, f_in_v, volume: 0,
-            cases_to_try=cases_fed_batch
+            cases_to_try=cases_fed_batch,
         )
-        print('\n---------------\n')
-        print('STARTING CSTR')
+        print("\n---------------\n")
+        print("STARTING CSTR")
+
         # CSTR
         def cstr_f_out_calc_tensorflow(max_reactor_volume, f_in_v, volume):
             # estou assumindo que já começa no estado estacionário:
-            return f_in_v*tf.math.pow(volume/max_reactor_volume, 7)
+            return f_in_v * tf.math.pow(volume / max_reactor_volume, 7)
+
         p_cstr, p_cstr_i, p_cstr_e = run_pinn_grid_search(
             solver_params_list=None,
             eq_params=eq_params,
             process_params=process_params_feed_cstr,
             initial_state=initial_state_cstr,
             f_out_value_calc=cstr_f_out_calc_tensorflow,
-            cases_to_try=cases_cstr)
-        
+            cases_to_try=cases_cstr,
+        )
+
         end_time = timer()
-        
+
         # PLOTTING
         items = {}
         for i in range(len(p_fb)):
             items[i + 1] = {
                 "title": p_fb[i].model_name,
                 "cases": [
-                    {"x": p_fb[i].loss_history.steps, "y": np.sum(p_fb[i].loss_history.loss_test, axis=1), "color": pinn_colors[2], "l": "--"},
-                    {"x": p_cstr[i].loss_history.steps, "y": np.sum(p_cstr[i].loss_history.loss_test, axis=1), "color": pinn_colors[3], "l": ":"},
+                    {
+                        "x": p_fb[i].loss_history.steps,
+                        "y": np.sum(p_fb[i].loss_history.loss_test, axis=1),
+                        "color": pinn_colors[2],
+                        "l": "--",
+                    },
+                    {
+                        "x": p_cstr[i].loss_history.steps,
+                        "y": np.sum(p_cstr[i].loss_history.loss_test, axis=1),
+                        "color": pinn_colors[3],
+                        "l": ":",
+                    },
                 ],
             }
-    
+
         print(f"elapsed time for NONDIM test = {end_time - start_time} secs")
 
         plot_comparer_multiple_grid(
-            labels=['Fed-Batch', 'CSTR'],
+            labels=["Fed-Batch", "CSTR"],
             figsize=(8.6, 6),
             gridspec_kw={"hspace": 0.25, "wspace": 0.11},
-            yscale='log',
+            yscale="log",
             sharey=True,
             sharex=True,
             nrows=2,
@@ -711,16 +893,14 @@ def main():
             supylabel="loss (test)",
         )
 
-
-        print('best index for fedbatch:')
+        print("best index for fedbatch:")
         print(p_fb_i)
-        print('best error for fedbatch:')
+        print("best error for fedbatch:")
         print(p_fb_e)
-        print('best index for cstr:')
+        print("best index for cstr:")
         print(p_cstr_i)
-        print('best error for cstr:')
+        print("best error for cstr:")
         print(p_cstr_e)
-
 
     if run_weights:
         # DEMORA APROXIMADAMENTE 30 MINUTOS
@@ -745,39 +925,57 @@ def main():
             process_params=process_params_feed_on,
             initial_state=initial_state_fed_batch,
             f_out_value_calc=lambda max_reactor_volume, f_in_v, volume: 0,
-            cases_to_try=cases_weights
+            cases_to_try=cases_weights,
         )
+
         # CSTR
         def cstr_f_out_calc_tensorflow(max_reactor_volume, f_in_v, volume):
             # estou assumindo que já começa no estado estacionário:
-            return f_in_v*tf.math.pow(volume/max_reactor_volume, 7)
+            return f_in_v * tf.math.pow(volume / max_reactor_volume, 7)
+
         p_cstr, p_cstr_i, p_cstr_e = run_pinn_grid_search(
             solver_params_list=None,
             eq_params=eq_params,
             process_params=process_params_feed_cstr,
             initial_state=initial_state_cstr,
             f_out_value_calc=cstr_f_out_calc_tensorflow,
-            cases_to_try=cases_weights)
-        
+            cases_to_try=cases_weights,
+        )
+
         end_time = timer()
-        
+
         # PLOTTING
         items = {}
         for i in range(len(p_b)):
             items[i + 1] = {
                 "title": p_b[i].model_name,
                 "cases": [
-                    {"x": p_b[i].loss_history.steps, "y": np.sum(p_b[i].loss_history.loss_test, axis=1), "color": pinn_colors[1], "l": "-."},
-                    {"x": p_fb[i].loss_history.steps, "y": np.sum(p_fb[i].loss_history.loss_test, axis=1), "color": pinn_colors[2], "l": "--"},
-                    {"x": p_cstr[i].loss_history.steps, "y": np.sum(p_cstr[i].loss_history.loss_test, axis=1), "color": pinn_colors[3], "l": ":"},
+                    {
+                        "x": p_b[i].loss_history.steps,
+                        "y": np.sum(p_b[i].loss_history.loss_test, axis=1),
+                        "color": pinn_colors[1],
+                        "l": "-.",
+                    },
+                    {
+                        "x": p_fb[i].loss_history.steps,
+                        "y": np.sum(p_fb[i].loss_history.loss_test, axis=1),
+                        "color": pinn_colors[2],
+                        "l": "--",
+                    },
+                    {
+                        "x": p_cstr[i].loss_history.steps,
+                        "y": np.sum(p_cstr[i].loss_history.loss_test, axis=1),
+                        "color": pinn_colors[3],
+                        "l": ":",
+                    },
                 ],
             }
 
         plot_comparer_multiple_grid(
-            labels=['Batch', 'Fed-Batch', 'CSTR'],
+            labels=["Batch", "Fed-Batch", "CSTR"],
             figsize=(8.6, 6),
             gridspec_kw={"hspace": 0.25, "wspace": 0.11},
-            yscale='log',
+            yscale="log",
             sharey=True,
             sharex=True,
             nrows=3,
@@ -790,22 +988,21 @@ def main():
         )
 
         print(f"elapsed time for WEIGHT test = {end_time - start_time} secs")
-        print('best index for batch:')
+        print("best index for batch:")
         print(p_b_i)
-        print('best error for batch:')
+        print("best error for batch:")
         print(p_b_e)
-        print('best index for fedbatch:')
+        print("best index for fedbatch:")
         print(p_fb_i)
-        print('best error for fedbatch:')
+        print("best error for fedbatch:")
         print(p_fb_e)
-        print('best index for cstr:')
+        print("best index for cstr:")
         print(p_cstr_i)
-        print('best error for cstr:')
+        print("best error for cstr:")
         print(p_cstr_e)
 
-
     if run_compare_fedbatch_batch_and_cstr:
-        print('RUN COMPARE FEDBATCH BATCH CSTR')
+        print("RUN COMPARE FEDBATCH BATCH CSTR")
         # A diferença desse pros outros
         # É que ele usa o melhor weight, o melhor ts e o melhor layer_size, que foram determinados
         # separadamente
@@ -823,36 +1020,35 @@ def main():
         # case_to_use['t_6']['adam_epochs'] = 10
 
         # NOVO Nº EPOCHS
-        case_to_use_b['t_5']['adam_epochs'] = 800#00
-        case_to_use_fb['t_5']['adam_epochs'] = 800#00
-        case_to_use_cstr['t_5']['adam_epochs'] = 800#00
-        case_to_use_b['t_5']['layer_size'] = [1] + [32] * 5 + [4]
-        case_to_use_fb['t_5']['layer_size'] = [1] + [22] * 3 + [4]
-        case_to_use_cstr['t_5']['layer_size'] = [1] + [22] * 2 + [4]
+        case_to_use_b["t_5"]["adam_epochs"] = 800  # 00
+        case_to_use_fb["t_5"]["adam_epochs"] = 800  # 00
+        case_to_use_cstr["t_5"]["adam_epochs"] = 800  # 00
+        case_to_use_b["t_5"]["layer_size"] = [1] + [32] * 5 + [4]
+        case_to_use_fb["t_5"]["layer_size"] = [1] + [22] * 3 + [4]
+        case_to_use_cstr["t_5"]["layer_size"] = [1] + [22] * 2 + [4]
 
-        case_to_use_b['t_5']['lbfgs_pre'] = True
-        case_to_use_fb['t_5']['lbfgs_pre'] = True
-        case_to_use_cstr['t_5']['lbfgs_pre'] = True
-        case_to_use_b['t_5']['lbfgs_post'] = True
-        case_to_use_fb['t_5']['lbfgs_post'] = True
-        case_to_use_cstr['t_5']['lbfgs_post'] = True
-        
+        case_to_use_b["t_5"]["lbfgs_pre"] = True
+        case_to_use_fb["t_5"]["lbfgs_pre"] = True
+        case_to_use_cstr["t_5"]["lbfgs_pre"] = True
+        case_to_use_b["t_5"]["lbfgs_post"] = True
+        case_to_use_fb["t_5"]["lbfgs_post"] = True
+        case_to_use_cstr["t_5"]["lbfgs_post"] = True
+
         # BATCH
         # case_to_use_b['t_5']['w_X'] = 5
         # case_to_use_b['t_5']['w_V'] = 10
-        
-        # FED BATCH - melhor weight em 
+
+        # FED BATCH - melhor weight em
         # # case_to_use_fb['t_5']['w_P'] = 3
-        case_to_use_fb['t_5']['V_s'] = 5
-        case_to_use_fb['t_5']['X_s'] = eq_params.Xm
-        case_to_use_fb['t_5']['P_s'] = eq_params.Pm
-        case_to_use_fb['t_5']['S_s'] = eq_params.So
+        case_to_use_fb["t_5"]["V_s"] = 5
+        case_to_use_fb["t_5"]["X_s"] = eq_params.Xm
+        case_to_use_fb["t_5"]["P_s"] = eq_params.Pm
+        case_to_use_fb["t_5"]["S_s"] = eq_params.So
 
         # CSTR - melhor weight em case 3
-        case_to_use_cstr['t_5']['w_X'] = 3
-        case_to_use_cstr['t_5']['V_s'] = 5
-        case_to_use_cstr['t_5']['X_s'] = eq_params.Xm
-
+        case_to_use_cstr["t_5"]["w_X"] = 3
+        case_to_use_cstr["t_5"]["V_s"] = 5
+        case_to_use_cstr["t_5"]["X_s"] = eq_params.Xm
 
         start_time = timer()
         pinns_batch, _, __ = run_pinn_grid_search(
@@ -888,13 +1084,14 @@ def main():
             f_out_value_calc=lambda max_reactor_volume, f_in_v, volume: 0,
             t_discretization_points=[240],
         )
+
         def cstr_f_out_calc_numeric(max_reactor_volume, f_in_v, volume):
             # estou assumindo que já começa no estado estacionário:
-            return f_in_v*pow(volume/max_reactor_volume, 7)
+            return f_in_v * pow(volume / max_reactor_volume, 7)
 
         def cstr_f_out_calc_tensorflow(max_reactor_volume, f_in_v, volume):
             # estou assumindo que já começa no estado estacionário:
-            return f_in_v*tf.math.pow(volume/max_reactor_volume, 7)
+            return f_in_v * tf.math.pow(volume / max_reactor_volume, 7)
 
         pinns_cstr, _, __ = run_pinn_grid_search(
             solver_params_list=None,
@@ -902,8 +1099,9 @@ def main():
             process_params=process_params_feed_cstr,
             initial_state=initial_state_cstr,
             f_out_value_calc=cstr_f_out_calc_tensorflow,
-            cases_to_try=case_to_use_cstr,)
-           
+            cases_to_try=case_to_use_cstr,
+        )
+
         nums_cstr = run_numerical_methods(
             eq_params=eq_params,
             process_params=process_params_feed_cstr,
@@ -912,7 +1110,9 @@ def main():
             t_discretization_points=[480],
         )
         end_time = timer()
-        print(f"elapsed time for CSTR, BATCH & FEDBATCH XPSV = {end_time - start_time} secs")
+        print(
+            f"elapsed time for CSTR, BATCH & FEDBATCH XPSV = {end_time - start_time} secs"
+        )
 
         p_b = pinns_batch[0]
         n_b = nums_batch[0]
@@ -927,11 +1127,11 @@ def main():
         # em cada mini gráfico, 2 valores de y: euler e pinn
         # col # Representa X P S V
         # row  # Representa BATCH FEDBATCH CSTR
-        cols = 5 # Total
-        cols = 4 # Isso remove a coluna de 'loss'
-        rows = 3 # Total
-        row_identifiers = ['Batch', 'Fed-batch', 'CSTR']
-        column_identifiers = ['X', 'P', 'S', 'V', 'loss']
+        cols = 5  # Total
+        cols = 4  # Isso remove a coluna de 'loss'
+        rows = 3  # Total
+        row_identifiers = ["Batch", "Fed-batch", "CSTR"]
+        column_identifiers = ["X", "P", "S", "V", "loss"]
         p = [p_b, p_fb, p_cstr]
         n = [n_b, n_fb, n_cstr]
         # Vou usar a col "0" pra armazenar o tempo e 1 pra epochs, daí sempre use col+2
@@ -942,37 +1142,80 @@ def main():
         ]
         # Baseado em https://stackoverflow.com/questions/42142144/displaying-first-decimal-digit-in-scientific-notation-in-matplotlib
         # Ajustando casas decimais
-        pinn  = [
-            [p_b.t, p_b.loss_history.steps, p_b.X, p_b.P, p_b.S, p_b.V, np.sum(p_b.loss_history.loss_test, axis=1)],
-            [p_fb.t, p_fb.loss_history.steps, p_fb.X, p_fb.P, p_fb.S, p_fb.V, np.sum(p_fb.loss_history.loss_test, axis=1)],
-            [p_cstr.t, p_cstr.loss_history.steps, p_cstr.X, p_cstr.P, p_cstr.S, p_cstr.V, np.sum(p_cstr.loss_history.loss_test, axis=1)],
+        pinn = [
+            [
+                p_b.t,
+                p_b.loss_history.steps,
+                p_b.X,
+                p_b.P,
+                p_b.S,
+                p_b.V,
+                np.sum(p_b.loss_history.loss_test, axis=1),
+            ],
+            [
+                p_fb.t,
+                p_fb.loss_history.steps,
+                p_fb.X,
+                p_fb.P,
+                p_fb.S,
+                p_fb.V,
+                np.sum(p_fb.loss_history.loss_test, axis=1),
+            ],
+            [
+                p_cstr.t,
+                p_cstr.loss_history.steps,
+                p_cstr.X,
+                p_cstr.P,
+                p_cstr.S,
+                p_cstr.V,
+                np.sum(p_cstr.loss_history.loss_test, axis=1),
+            ],
         ]
         for col in range(cols):
             for row in range(rows):
-                i = (col%cols) + row*cols #o nº da row multiplica pelo nº de cols por rows
-                items[i+1] = {
-                    'ax_yscale': None if col <4 else 'log',
-                    'y_label': 'g/L' if col < 3 else 'L' if col <4 else None,# 'loss (test)',
-                    'y_majlocator': plt.MaxNLocator(3), #plt.LogLocator(numticks=20000) if col >=3 else None,
+                i = (
+                    col % cols
+                ) + row * cols  # o nº da row multiplica pelo nº de cols por rows
+                items[i + 1] = {
+                    "ax_yscale": None if col < 4 else "log",
+                    "y_label": "g/L"
+                    if col < 3
+                    else "L"
+                    if col < 4
+                    else None,  # 'loss (test)',
+                    "y_majlocator": plt.MaxNLocator(
+                        3
+                    ),  # plt.LogLocator(numticks=20000) if col >=3 else None,
                     # 'y_minlocator': plt.LogLocator(subs='all', numticks=20000) if col >=3 else None,
                     # 'x_label': 'h' if col < 4 else 'epochs',
-                    "title": f'{row_identifiers[row]} : {column_identifiers[col]}',
+                    "title": f"{row_identifiers[row]} : {column_identifiers[col]}",
                     "cases": [],
                 }
-                if col <4: items[i+1]['cases'].append(
+                if col < 4:
+                    items[i + 1]["cases"].append(
                         # Numeric
-                        {"x": num[row][0], "y": num[row][col+1], "color": pinn_colors[0], "l": "-"}
+                        {
+                            "x": num[row][0],
+                            "y": num[row][col + 1],
+                            "color": pinn_colors[0],
+                            "l": "-",
+                        }
                     )
-                items[i+1]['cases'].append(
-                        # PINN
-                        {"x": pinn[row][0] if col < 4 else pinn[row][1], "y": pinn[row][col+2], "color": pinn_colors[1], "l": "--"},                        
-                    )
+                items[i + 1]["cases"].append(
+                    # PINN
+                    {
+                        "x": pinn[row][0] if col < 4 else pinn[row][1],
+                        "y": pinn[row][col + 2],
+                        "color": pinn_colors[1],
+                        "l": "--",
+                    },
+                )
 
         plot_comparer_multiple_grid(
-            labels=['Euler','PINN'],
+            labels=["Euler", "PINN"],
             figsize=(10, 6),
             gridspec_kw={"hspace": 0.5, "wspace": 0.55},
-            yscale=None, #'linear',
+            yscale=None,  #'linear',
             sharey=False,
             sharex=False,
             nrows=rows,
@@ -981,26 +1224,42 @@ def main():
             suptitle=None,
             title_for_each=True,
             supxlabel="h",
-            #supylabel="g/L",
+            # supylabel="g/L",
         )
 
-        plt.plot(p_b.loss_history.steps, np.sum(p_b.loss_history.loss_test, axis=1), linestyle='-', color=pinn_colors[3], label='Batch')
-        plt.plot(p_fb.loss_history.steps, np.sum(p_fb.loss_history.loss_test, axis=1), linestyle='--', color=pinn_colors[4], label='Fed-Batch')
-        plt.plot(p_cstr.loss_history.steps, np.sum(p_cstr.loss_history.loss_test, axis=1), linestyle=':', color=pinn_colors[2], label='CSTR')
-        plt.xlabel('epochs')
-        plt.ylabel('loss (test)')
-        plt.legend(loc='upper right')
-        plt.yscale('log')
+        plt.plot(
+            p_b.loss_history.steps,
+            np.sum(p_b.loss_history.loss_test, axis=1),
+            linestyle="-",
+            color=pinn_colors[3],
+            label="Batch",
+        )
+        plt.plot(
+            p_fb.loss_history.steps,
+            np.sum(p_fb.loss_history.loss_test, axis=1),
+            linestyle="--",
+            color=pinn_colors[4],
+            label="Fed-Batch",
+        )
+        plt.plot(
+            p_cstr.loss_history.steps,
+            np.sum(p_cstr.loss_history.loss_test, axis=1),
+            linestyle=":",
+            color=pinn_colors[2],
+            label="CSTR",
+        )
+        plt.xlabel("epochs")
+        plt.ylabel("loss (test)")
+        plt.legend(loc="upper right")
+        plt.yscale("log")
         plt.show()
         pass
-
-
 
         pass
 
     if run_case_6_check_layer_size:
         # NÃO É O CASE 6, É O MELHOR (NO CASO, 5!!!)
-        print('LAYER SIZE TEST')
+        print("LAYER SIZE TEST")
         # Checa a influência da layer_size para o t_s do case 6 -  EM BATCH
         # Case t6: comparando valores de erro para 9 redes, com e sem pré-otimização por lbfg-s
         process_params = ProcessParams(
@@ -1014,11 +1273,9 @@ def main():
             t_final=10.2,
         )
 
-
-        pinns_cases_5 = iterate_layer_size_with_caset6(eq_params,
-            process_params,
-            use_lbfgs_pre=False,
-            ts_case_num=5)
+        pinns_cases_5 = iterate_layer_size_with_caset6(
+            eq_params, process_params, use_lbfgs_pre=False, ts_case_num=5
+        )
 
         start_time = timer()
         pinns_5, best_pinn_test_index_5, best_pin_test_error_5 = run_pinn_grid_search(
@@ -1030,22 +1287,28 @@ def main():
             cases_to_try=pinns_cases_5,
         )
         end_time = timer()
-        print(f"elapsed batch t_best layers pinn grid time = {end_time - start_time} secs")
-
+        print(
+            f"elapsed batch t_best layers pinn grid time = {end_time - start_time} secs"
+        )
 
         # Agora itera e preenche o dict pra plotar
         # Prepara dict para plotar
         items = {}
         p5 = pinns_5
         for i in range(len(p5)):
-            print(f'model = {p5[i].model_name}')
-            print(f'best error for model = {np.sum(p5[i].best_loss_test)}')
-            print('------------')
+            print(f"model = {p5[i].model_name}")
+            print(f"best error for model = {np.sum(p5[i].best_loss_test)}")
+            print("------------")
             items[i + 1] = {
                 "title": p5[i].model_name,
                 "cases": [
                     # PINN - case ts6
-                    {"x": p5[i].loss_history.steps, "y": np.sum(p5[i].loss_history.loss_test, axis=1), "color": pinn_colors[1], "l": "-"},
+                    {
+                        "x": p5[i].loss_history.steps,
+                        "y": np.sum(p5[i].loss_history.loss_test, axis=1),
+                        "color": pinn_colors[1],
+                        "l": "-",
+                    },
                 ],
             }
 
@@ -1053,7 +1316,7 @@ def main():
             # labels=['loss, case ts6', 'loss, case ts3'],
             figsize=(7.2, 8.2),
             gridspec_kw={"hspace": 0.35, "wspace": 0.14},
-            yscale='log',
+            yscale="log",
             sharey=True,
             sharex=True,
             nrows=4,
@@ -1067,7 +1330,7 @@ def main():
         pass
 
     if run_case_6_ts_comparison_pinn_and_numeric:
-        print('RUN COMPARE PINN NUMERIC XP')
+        print("RUN COMPARE PINN NUMERIC XP")
         # Case t6: XPS comparando com euler e experimental
         # Só o caso 6, pedido pelo amaro - em BATCH
         process_params = ProcessParams(
@@ -1118,14 +1381,19 @@ def main():
                     # Numeric
                     {"x": num.t, "y": num_vals[i], "color": pinn_colors[0], "l": "-"},
                     # PINN
-                    {"x": pinn.t, "y": pinn_vals[i], "color": pinn_colors[1], "l": "--"},
+                    {
+                        "x": pinn.t,
+                        "y": pinn_vals[i],
+                        "color": pinn_colors[1],
+                        "l": "--",
+                    },
                     # Experimental data
                     {
                         "x": xp_data.t,
                         "y": xp_vals[i],
                         "color": pinn_colors[2],
                         "l": "None",
-                        'marker':'D'
+                        "marker": "D",
                     },
                 ],
                 # Isso aqui n serve pra nada:
@@ -1134,10 +1402,10 @@ def main():
             }
 
         plot_comparer_multiple_grid(
-            labels=['Euler', 'PINN', 'Experimental Data'],
+            labels=["Euler", "PINN", "Experimental Data"],
             figsize=(6, 6),
             gridspec_kw={"hspace": 0.6, "wspace": 0.25},
-            yscale='linear',
+            yscale="linear",
             sharey=False,
             nrows=3,
             ncols=1,
@@ -1150,7 +1418,7 @@ def main():
         pass
 
     if run_batch_ts_test:
-        print('TS TEST')
+        print("TS TEST")
         # Teste dos cases de t_s mantendo fixos layer_size, epochs e lbfgs
         # Plota loss por step
         """
@@ -1185,16 +1453,15 @@ def main():
             pinn = pinn_results[p]
             items[p + 1] = {
                 "title": pinn.model_name,
-                'cases':[
+                "cases": [
                     {
                         # To tentando fazer: de 1 a nº de steps
                         "x": pinn.loss_history.steps,
                         "y": np.sum(pinn.loss_history.loss_test, axis=1),
-                        'l':'-',
+                        "l": "-",
                         "color": "tab:orange",
                     }
-                ]
-                
+                ],
             }
 
         # Serão 6. Faremos 2 rows, 3 columns
@@ -1206,14 +1473,13 @@ def main():
             items=items,
             sharex=True,
             sharey=True,
-            yscale='log',
+            yscale="log",
             suptitle=None,
             title_for_each=True,
             supxlabel="epochs",
             supylabel="loss (test)",
         )
         pass
-
 
     print("--------------------")
     print("!!!!!!FINISED!!!!!!")
