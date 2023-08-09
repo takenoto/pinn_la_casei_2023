@@ -4,40 +4,23 @@ from timeit import default_timer as timer
 
 import numpy as np
 import deepxde
-import deepxde as dde
 import tensorflow as tf
 
 import matplotlib.pyplot as plt
-import matplotlib as mpl
 
 
 from domain.params.altiok_2006_params import (
     get_altiok2006_params,
-    get_altiok2006_xp_data,
 )
 from domain.reactor.cstr_state import CSTRState
-from domain.reactions_ode_system_preparers.ode_preparer import ODEPreparer
 from domain.params.process_params import ProcessParams
 from domain.flow.concentration_flow import ConcentrationFlow
+from main.cases_to_try import change_layer_fix_neurons_number
 from main.pinn_grid_search import run_pinn_grid_search
 from main.numerical_methods import run_numerical_methods
-from main.plotting import *
-from main.plotting.plot_pinn_3d_arg import PlotPINN3DArg
-from main.plotting.pinn_conversor import get_ts_step_loss_as_xyz
-from domain.run_reactor.pinn_reactor_model_results import PINNReactorModelResults
-from domain.params.solver_params import SolverParams
-from domain.optimization.non_dim_scaler import NonDimScaler
 
-from main.cases_to_try import *
 
-from main.plotting.simple_color_bar import plot_simple_color_bar
-from main.plotting.surface_3d import (
-    plot_3d_surface,
-    plot_3d_surface_ts_step_error,
-    plot_3d_lines,
-    PlotPINN3DArg,
-)
-from main.plotting.plot_lines_error_compare import plot_lines_error_compare
+from main.plotting import plot_comparer_multiple_grid
 
 
 # For obtaining fully reproducible results
@@ -265,8 +248,6 @@ def compare_num_and_pinn(num_results, pinns, p_best_index, p_best_error, cols, r
 
         plot_comparer_multiple_grid(
             suptitle=pinn.model_name,
-            # FIXME essa label tá invertida
-            # labels=["Euler", "PINN"],
             labels=["PINN", "Euler"],
             figsize=(6 * 1.5, 8 * 1.5),
             gridspec_kw={"hspace": 0.6, "wspace": 0.25},
