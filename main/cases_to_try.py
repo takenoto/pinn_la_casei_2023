@@ -17,6 +17,9 @@ LAYER SIZE
 
 """
 
+from multiprocessing import process
+
+
 default_adam_epochs = 16000
 # default_layer_size = [1] + [36] * 4 + [4]
 default_layer_size = [1] + [22] * 4 + [4]
@@ -24,66 +27,76 @@ default_num_domain = 800
 default_num_test = 1000
 
 
-# TODO testar sem a adimensionalização
-# TODO tem como aumentar os pontos? Adianta?
-# TODO mini-batch tinha servido pra algo nos anteriores?
-# TODO testar tanh com ortogonal?????
+
+# TODO testar adimensionalização DO TEMPO APENAS novamente mds... Repete settings
+# => Na verdade acho que faz duplicata. Um sem adim e um com. Mas comece com o com
+# pq se quebrar já mudo as settings. Isso no batch mesmo...
+# TODO CSTR? O que eu tava fazendo que esse 30x10 pareceu bom?????
+# TODO comece fazendo um teste geral, com mais neurônios e camadas, pra investigar a bacia de atração do amaro
+# Só depois caço essas outras marmotas, vejo o que se saiu melhor  pego pontos próximos...
+
+# Tenho que aumentar bounds, ainda tá bem ruim e parece ser por isso... Não aprendeu o X direito
+
+  # previous:
+    # Best model at step 10906:
+    # train loss: 4.16e-04
+    # test loss: 9.37e+00
+    # test metric: []
+    
+# após aumentar domain:
+# Best model at step 6000:
+#   train loss: 1.60e+00
+#   test loss: 1.19e+00
+#   test metric: []
+
+# Que é o certo, pq tá igual ao test.
+
 def change_layer_fix_neurons_number(eq_params, process_params):
     # Parece ter algo MUITO bom na região próxima de 30x10. Vamos investigar ela agora.
     func = 'tanh' #'swish'
     mini_batch = None #50 #200
-    # ERA SÓ A FUNÇÃO DE ATIVAÇÃO!!!!
-    # Troquei pra Glorot uniform e funcionou mds mds mds
     initializer = 'Glorot normal' #'Glorot normal' #'Orthogonal' #GLOROT UNIFORM # Era Glorot Normal nos testes sem swish
-    #FIXME talvez tenha deixado a LR baixa demais...
-    #LR = 0.00003 estagnou no 120x12. 14k iterações e não aconteceu praticamente nada.
-    #POrque tinha um erro 1 e o resto 10-3 então ele ficou reduzindo esse 1 pra 0.9 , 0.88 etc
-    # O 0.00008  parece ter dado uma equilibrada boa
-    # Pro 120x12 parece ter estagnado já em 8k.
-    # TODO talvez na maioria desses não vá fazer diferença 5k ou 100k, os resultados vão ser parecidos.
-    # pelo menos pelo que vi até aqui...
-    LR = 0.00004 #0.0001 nesse 120x12 o erro desceu e do nada subiu, e foi muito, acho que pq LR tava alto.
-    LR = 0.001 # deu NaN mas nem foi na rede maior af. FOi na 60*10
-    LR = 0.00001
-    LR = 0.0001 #0.001 horrível pra 120x8
-    ADAM_EPOCHS = 45000 #200 #22000 #8k deu certo então vou aumentar 8000 #1500 #800 #30000 #100000
+    LR = 0.001 
+    lbfgs_post = 0 #1 #1 #2 #5
+    ADAM_EPOCHS = 100 #35000 #25000 #2000 #45000 #10000 #200 #22000 #8k deu certo então vou aumentar 8000 #1500 #800 #30000 #100000
     SGD_EPOCHS = None #1000 #1500 #800 #30000 #100000
-    lbfgs_post = 1 #2 #5
     dictionary = {}
-    # Quero testar todos esses:
-    layers = [12, 11, 10, 9, 8]
-    neurons = [120, 80, 60, 30]
-    # Mas como tá lerdando, vou por partes
-    layers = [12, 11, 10, 9, 8]
-    # neurons = [30, 60]
-    # neurons = [20, 30]
-    neurons = [120, 80]
-    layers = [6, 4]
+    neurons =[80, 40]
+    layers = [4, 3]
     cols = len(layers)
     rows = len(neurons)
+   
+    IS_NONDIM = False
     
-    NUM_DOMAIN = 300 #1000
-    NUM_TEST = 300 #1000
-    NUM_INIT = 40
-    NUM_BOUNDARY = 100
+    # Me parece que quando usa 2 var de entrada precisa de um NUM_DOMAIN e teste bem maior pra ficar razoável
+    NUM_DOMAIN = 300 #800 #100 #900 #1000
+    NUM_TEST = 300 #800 #100 #400 #1000
+    NUM_INIT = 60
+    NUM_BOUNDARY = 0 #2 #200 #100
+ 
     # Anota aqui as variáveis que vão ser suportadas nessa simulação
     # supported_variables = ['X', 'P', 'S', 'V']
+    # Por padrão, t de entrada e XPSV de saída:
     output_variables = ['X', 'P', 'S', 'V']
     input_variables = ['t']
+    # Alternativamente, PSV de saída e tX de entrada
     output_variables = ['P', 'S', 'V']
     input_variables = ['t', 'X']
 
     for n in neurons:
         for l in layers:
-            dictionary[f'{n}x{l} {func} adam'] = {
+            key = f'{n}x{l} {func}'
+            dictionary[key] = {
                 'layer_size': [len(input_variables)] + [n] * l + [len(output_variables)],
                 "adam_epochs": ADAM_EPOCHS,
                 "sgd_epochs": SGD_EPOCHS,
-                # "X_s": eq_params.Xo,
-                # "P_s": eq_params.Po,
-                # "S_s": eq_params.So,
-                # "V_s": process_params.max_reactor_volume,
             }
+            if (IS_NONDIM):
+                # dictionary[key]['t_s'] = process_params.t_final
+                dictionary[key]["X_s"] = eq_params.Xm,
+                dictionary[key]["P_s"] = eq_params.Pm,
+                dictionary[key]["S_s"] = eq_params.So
+                dictionary[key]["V_s"] = process_params.max_reactor_volume
 
 
     for key in dictionary:
@@ -97,7 +110,7 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         dictionary[key]["lbfgs_pre"] = 0
         dictionary[key]["lbfgs_post"] = lbfgs_post
         dictionary[key]['LR'] = LR
-        dictionary[key]['hyperfolder'] = f'batch tX 2023_08_06'#-{func}'
+        dictionary[key]['hyperfolder'] = f'cstr  {"ND" if IS_NONDIM else ""} 2023_08_07'
         dictionary[key]['isplot'] = True
         dictionary[key]['initializer'] = initializer
         dictionary[key]['output_variables'] = output_variables
