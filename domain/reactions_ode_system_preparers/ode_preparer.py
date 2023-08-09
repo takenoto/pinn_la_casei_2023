@@ -1,6 +1,5 @@
 import tensorflow as tf
 import deepxde as dde
-import numpy as np
 
 from domain.params.solver_params import SolverParams
 from domain.params.process_params import ProcessParams
@@ -23,8 +22,6 @@ class ODEPreparer:
 
     def prepare(self):
         def ode_system(x, y):
-            # FIXME se isso daqui não mexe em nada, o problema é necessariamente antes, na parte de preparação...
-            # return [o*x[:, 0:1] for o in range(len(self.solver_params.outputSimulationType.order))]
             
             """
             Order of outputs:
@@ -51,7 +48,7 @@ class ODEPreparer:
             inputSimulationType = self.solver_params.inputSimulationType
             outputSimulationType = self.solver_params.outputSimulationType
 
-            # Nondim Scale
+            # Nondim Scaler
             scaler = solver_params.non_dim_scaler
 
             # --------------------------
@@ -59,10 +56,7 @@ class ODEPreparer:
             if(outputSimulationType.V):
                 V_nondim = y[:, outputSimulationType.V_index:outputSimulationType.V_index+1]    
 
-            # dV_dt_nondim = dde.grad.jacobian(y, x, i=outputSimulationType.V_index)
-            # TODO o tempo todo o erro tava aqui ^
-            # Nem era zzzz. Agora já tá treinando mas ainda dá o erro
-            # all the input arrays must have same number of dimensions
+
             dV_dt_nondim = dde.grad.jacobian(y, x, i=outputSimulationType.V_index, j=inputSimulationType.t_index)
             f_in = inlet.volume
 
@@ -73,9 +67,7 @@ class ODEPreparer:
             )
 
             # --------------------------
-            # TODO veja  ref.
-            # Agora que tenho 2 entradas, j tb tem que ser passado como argumento
-            # X P S
+            # OUTPUTS
             if(outputSimulationType.X):
                 X_nondim = y[:, outputSimulationType.X_index:outputSimulationType.X_index+1]
                 dX_dt_nondim = dde.grad.jacobian(y, x, i=outputSimulationType.X_index, j=inputSimulationType.t_index)
@@ -88,10 +80,6 @@ class ODEPreparer:
             
             # Parte nova 23/07/2023:
             if(inputSimulationType.X):
-                X_nondim = y[:, inputSimulationType.X_index:inputSimulationType.X_index+1]
-                # dX_dt_nondim = dde.grad.jacobian(x, x, i=inputSimulationType.X_index, j=inputSimulationType.t_index)
-                # TODO aqui tava errado. Tava y no lugar de x.
-                # X_nondim = y[:, inputSimulationType.X_index:inputSimulationType.X_index+1]
                 X_nondim = x[:, inputSimulationType.X_index:inputSimulationType.X_index+1]
                 dX_dt_nondim = dde.grad.jacobian(x, x, i=inputSimulationType.X_index, j=outputSimulationType.t_index)
             if(inputSimulationType.P):
@@ -103,14 +91,10 @@ class ODEPreparer:
             if(inputSimulationType.V):
                 V_nondim = x[:, inputSimulationType.V_index:inputSimulationType.V_index+1]
                 dV_dt_nondim = dde.grad.jacobian(x, x, i=inputSimulationType.V_index, j=inputSimulationType.t_index)
-            #X_nondim, P_nondim, S_nondim = y[:, 0:1], y[:, 1:2], y[:, 2:3]
 
-            # dX_dt_nondim = dde.grad.jacobian(y, x, i=0)
-            # dP_dt_nondim = dde.grad.jacobian(y, x, i=1)
-            # dS_dt_nondim = dde.grad.jacobian(y, x, i=2)
 
             if solver_params.non_dim_scaler is not None:
-                # Declara a loss pra já deixar guardado e ir adicionando
+                # Declara a List da loss pra já deixar guardado e ir adicionando
                 # conforme for sendo validado
                 loss_pde = []
                                 
@@ -178,8 +162,9 @@ class ODEPreparer:
                     
                 #-----------------------
                 # Calculating loss
-                # Última mudança: adicionei o scaler t aos inlets
-                # e o scaler V/t no volume, talvez por isso desse problema
+                # Procura cada variável registrada como de saída e
+                # adiciona o cálculo da sua função como componente da loss
+                
                 for o in outputSimulationType.order:
                     if o == 'X':
                         loss_pde.append(1
@@ -222,43 +207,6 @@ class ODEPreparer:
 
                 
                 
-                return loss_pde
-                #---------------
-
-                # NOVO NONDIM
-                loss_pde = [
-                    1
-                    * 
-                    (
-                        dX_dt_nondim * V_nondim
-                        - (
-                            non_dim_rX * V_nondim
-                            + f_in/scaler.V * inlet.X *scaler.t/scaler.X
-                            - f_out/scaler.V * X_nondim * scaler.t
-                        )
-                    ),
-                    1
-                    * (
-                        dP_dt_nondim * V_nondim
-                        - (
-                            non_dim_rP * V_nondim
-                            + f_in/scaler.V * inlet.P *scaler.t/scaler.P
-                            - f_out/scaler.V * P_nondim * scaler.t
-                        )
-                    ),
-                    1
-                    * (
-                        dS_dt_nondim * V_nondim
-                        - (
-                            non_dim_rS * V_nondim
-                            + f_in/scaler.V * inlet.S *scaler.t/scaler.S
-                            - f_out/scaler.V * S_nondim * scaler.t
-                        )
-                    ),
-                   1
-                   * (dV_dt_nondim - ((f_in - f_out)*(scaler.t/scaler.V))),
-                ]
-
                 return loss_pde
 
 
