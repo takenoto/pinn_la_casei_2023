@@ -1,8 +1,5 @@
 # Foreign imports
 import deepxde as dde
-import numpy as np
-import tensorflow as tf
-import matplotlib.pyplot as plt
 from timeit import default_timer as timer
 
 # Local imports
@@ -10,7 +7,6 @@ from domain.params.solver_params import SolverParams
 from domain.params.altiok_2006_params import Altiok2006Params
 from domain.params.process_params import ProcessParams
 from domain.reactor.cstr_state import CSTRState
-from domain.run_reactor.plot_params import PlotParams
 from domain.reactions_ode_system_preparers.ode_preparer import ODEPreparer
 
 from domain.run_reactor.pinn_reactor_model_results import PINNReactorModelResults
@@ -44,16 +40,14 @@ def run_reactor(
     # ---------------------------------------
     # ------------- Geometry ----------------
     # ---------------------------------------
-    # TODO acho que é aqui que vou ter que declarar
     # X, P, S e/ou V como parâmetros de entrada...
     # como todos são obrigatórios, basta fazer o contrário dos params
     # o que não tiver lá vai aqui
-    # TODO o "t" sempre é o zero, então os outros são o número+1!!!!!
     time_domain = dde.geometry.TimeDomain(
         0, process_params.t_final / solver_params.non_dim_scaler.t_not_tensor
     )
 
-    # TODO agora faz isso do X pras outras
+
     # ref:
     # https://deepxde.readthedocs.io/en/latest/demos/pinn_forward/burgers.html?highlight=geometry
     # ref2:
@@ -139,12 +133,6 @@ def run_reactor(
         ics.append(icV)
 
     if len(inputSimulationType.order) >= 2:
-        # ics = dde.icbc.IC(
-        #     geom, lambda x:  0*x[:, 0:1], lambda _, on_initial: on_initial, component=0
-        #     )
-        # TODO agora sim achei algo. Só printava 4 erros pra 3 saídas, agora printa 6, sempre o dobro como era antes.
-        # A partir do momento que usei os ics de antes no lugar desse
-        # bcs =  dde.icbc.DirichletBC(geom, lambda x:0*x[:, 0:1], lambda _, on_boundary: on_boundary);
         bcs = []
         o_index = 0
         for o in outputSimulationType.order:
@@ -168,14 +156,9 @@ def run_reactor(
             )
             for c in [0, 1, 2]
         ]
-        # FIXME taquei zero aí pra ver se anda
-        # ics = [
-        #     dde.icbc.IC(geom, fun_init, lambda _, on_initial: on_initial, component=c)
-        #     for c in [0, 1, 2]
-        # ]
         # bc =  dde.icbc.DirichletBC(geom, lambda x:0*x[:, 0:1], lambda _, on_boundary: on_boundary, component=1);
         icsbcs = []
-        # TODO FIXME removi bcs. Não temos bcs de fato...
+        # Removi bcs. Não temos bcs de fato...
         # Porque o eixo é o próprio X, não faz sentido.
         # icsbcs.extend(bcs)
         icsbcs.extend(ics)
@@ -219,12 +202,6 @@ def run_reactor(
         if outputSimulationType.V:
             loss_weights.append(w[3])
 
-    # loss_weights = [
-    #     # Os 1ºs são da pde, os 3 útilmos do ajuste físico (proibir menor que zero)
-    #     # Equece, não deu certo
-    #     w[0], w[1], w[2], w[3], #w[0],# w[1], w[2], w[3],
-    #     # Esses são do teste eu acho, e os de cima do train? embora não faça o menor sentido...
-    #     w[0], w[1], w[2], w[3],]# solver_params.loss_weights
 
     # ------- CUSTOM LOSS --------------
     # REFS:
@@ -258,14 +235,8 @@ def run_reactor(
     ### Step 2: Solving by "adam"
     pde_resampler = None
     if mini_batch:
-        # FIXME a minha mini-batch esse tempo todo tava com period=10 mds mds mds mds mds mds
-        # FIXME então nada tava certo AAAAAAAAAAA
-        # pde_resampler = dde.callbacks.PDEPointResampler(period=10)
         pde_resampler = dde.callbacks.PDEPointResampler(period=mini_batch)
 
-    # FIXME tirei loss_weights
-    # ValueError: Dimensions must be equal, but are 5 and 6 for '{{node mul_36}} = Mul[T=DT_FLOAT](packed, mul_36/y)' with input shapes: [5], [6]
-    loss_weights = None
 
     if solver_params.adam_epochs:
         model.compile(
