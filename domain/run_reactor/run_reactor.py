@@ -64,10 +64,6 @@ def run_reactor(
         geom = time_domain  # Isso deixa da forma como estava antes
     elif len(inputSimulationType.order) == 2:
         if inputSimulationType.X:
-            print("!!!!!!!!!!!!!!!!!!!!")
-            print(eq_params.Xm)
-            print(solver_params.non_dim_scaler.X)
-            print("\n\n\n")
             dimension_geom = dde.geometry.Interval(
                 0, eq_params.Xm[0] / solver_params.non_dim_scaler.X_not_tensor
             )
@@ -158,7 +154,6 @@ def run_reactor(
             bcs.append(bc)
             o_index += 1
 
-        # FIXME isso aqui copiei e colei do modelo pra ver no que dava
         def fun_bc(x):
             # return 1 - x[:, 0:1]
             return 0 * x[:, 0:1]
@@ -180,7 +175,9 @@ def run_reactor(
         # ]
         # bc =  dde.icbc.DirichletBC(geom, lambda x:0*x[:, 0:1], lambda _, on_boundary: on_boundary, component=1);
         icsbcs = []
-        icsbcs.extend(bcs)
+        # TODO FIXME removi bcs. Não temos bcs de fato...
+        # Porque o eixo é o próprio X, não faz sentido.
+        # icsbcs.extend(bcs)
         icsbcs.extend(ics)
 
         data = dde.data.TimePDE(
