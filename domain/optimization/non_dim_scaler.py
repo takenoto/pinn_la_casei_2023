@@ -161,6 +161,7 @@ def test():
 
     _test_desvio()
 
+    # TODO
     # Testando adimensionalização por raiz quadrada do valor após padronização
     # N = sqrt[(N_ND*N_M)²]
 
@@ -168,6 +169,7 @@ def test():
 
 
 def _test_linear():
+    print('LINEAR TEST')
     # N padrão para testes:
     N = {
         "X": 10,
@@ -216,16 +218,46 @@ def _test_linear():
 
 
 def _test_desvio():
+    print('TESTE DESVIO')
     # ------------------------------------------------------------------------
     # ------------------------DESVIO------------------------------------------
     # ------------------------------------------------------------------------
     # Testando a adimensionalização proposta pelo fernando, baseada num desvio
     # Valores referência pra comparar:
 
-    # TODO se tudo for =1, os valores Nondim e Dim devem ser numericamente iguais
+    # ----------------------
+    # UNIT
+    # Se os scalers forem 1, nondim e dim deverão ser numericamente iguais
+    scaler = NonDimScaler(
+        X=1,
+        P=1,
+        S=1,
+        V=1,
+        t=1,
+        toNondim=NonDimScaler.toNondimDesvio,
+        fromNondim=NonDimScaler.fromNondimDesvio,
+    )
+    
+    N = {
+        "X": 15.5,
+        "P": 9.99,
+        "S": 1.111,
+        "V": -19.5,
+        "t": 5.3,
+        "dXdt": -7,
+        "dPdt": 8.55,
+        "dSdt": 3.0,
+        "dVdt": -119.123,
+        "dt": 3/5,
+    }
+    
+    for type in N:
+        nondim = scaler.toNondim(N, type)
+        normal = scaler.fromNondim({type:nondim}, type)
+        assert np.isclose(normal, N[type]), "Converting to nondim and back"
+    
     
     # ----------------------
-
     # FIXED VALUES
     All_s = 5  # Scalers de todos
     All_normal = 10
