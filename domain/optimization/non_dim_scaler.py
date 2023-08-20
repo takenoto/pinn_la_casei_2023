@@ -1,5 +1,3 @@
-from typing import Self
-from matplotlib.transforms import ScaledTranslation
 import numpy as np
 import tensorflow as tf
 
@@ -10,11 +8,19 @@ class NonDimScaler:
     Cada letra representa o fator de conversão.
     Por exemplo, "t" é o fator de conversão/scale do tempo (t)
 
+    t --> time
     X --> cell
     P --> product (lactic acid)
     S --> substrate (lactose)
-    t --> time
     V --> Volume
+
+
+    N --> Must be a dictionary with all necessary values packed as:
+    {
+        't': value_of_t,
+        'X': value_of_X
+        #etc
+    }
 
     Auto cast the values to tensor flow 32. If you need the values as numbers,
     use the _not_tensor subscript
@@ -35,12 +41,12 @@ class NonDimScaler:
 
         self._toNondim = toNondim
         """
-        _toNondim = _fromNondim(N, type, scaler)
+        _toNondim = _fromNondim(scaler ou self, N, type)
         deve receber o próprio scaler pra poder usá-lo
         """
         self._fromNondim = fromNondim
         """
-        _fromNondim = _fromNondim(N, type, scaler)
+        _fromNondim = _fromNondim(scaler ou self, N, type)
         deve receber o próprio scaler pra poder usá-lo
         """
 
@@ -51,48 +57,73 @@ class NonDimScaler:
             "dPdt": "P",
             "dSdt": "S",
             "dVdt": "V",
+            "dt": "t",
         }
         """
         Existe com o único intuito de permitir menos código ao fazer as conversões das derivadas
         """
 
-    def fromNondim(self, N, type):
-        if self._fromNondim:
-            return self._fromNondim(N, type, self)
-        else:
-            return self.fromNondimLinearScaler(N, type)
-
     def toNondim(self, N, type):
         if self._toNondim:
-            return self._toNondim(N, type, self)
+            return self._toNondim(self=self, N=N, type=type)
         else:
             return self.toNondimLinearScaler(N, type)
 
-    def fromNondimLinearScaler(self, N, type):
-        assert self.scalers[type] is not None
-        return N * self.scalers[type]
+    def fromNondim(self, N, type):
+        if self._fromNondim:
+            return self._fromNondim(self=self, N=N, type=type)
+        else:
+            return self.fromNondimLinearScaler(N, type)
 
     def toNondimLinearScaler(self, N, type):
-        assert self.scalers[type] is not None
-        return N / self.scalers[type]
+        scaler = self
+        if type in scaler.scalers:
+            return N[type] / scaler.scalers[type]
+        else:
+            assert (
+                scaler.derivativesTypeMatcher[type] is not None
+            ), "type must be declared"
+            variableType = scaler.derivativesTypeMatcher[type]
+            if type == "dt":
+                return -N[type] / scaler.scalers[variableType]
+            else:
+                return -N[type] * scaler.scalers["t"] / scaler.scalers[variableType]
+
+    def fromNondimLinearScaler(self, N, type):
+        scaler = self
+        if type in scaler.scalers:
+            return N[type] * scaler.scalers[type]
+        else:
+            assert (
+                scaler.derivativesTypeMatcher[type] is not None
+            ), "type must be declared"
+            variableType = scaler.derivativesTypeMatcher[type]
+            if type == "dt":
+                return -N[type] * scaler.scalers[variableType]
+            else:
+                return -N[type] * scaler.scalers[variableType] / scaler.scalers["t"]
 
     # def fromNondimDerivative(self, N, type):
     #     return self.fromNondim(N, type, self)
 
     # def toNondimDerivative(self, N, type):
     #     return self.toNondim(N, type, self)
-    
-    #------------------------------------------------------------------------
+
+    # ------------------------------------------------------------------------
     # Adimensionalização proposta pelo fernando, baseada num desvio
     # N = Ns (1 - N_nd)
     # N_nd = 1 - N/Ns
     # dN/dt = - Ns * dN_nd/dt
     # dN_nd/dt = - (dN/dt) / Ns
+    # O "t" pode ser convertido por fora
+    # dt = d(ts[1-t_nd]) => dt = -ts*dt_nd
+    # Daí dX/dt  = -Xs * dX_nd/dt = (-Xs/-ts )* dX_nd/dt_nd
 
     # Onde nd => nondim // s => scaler // N => variável de interesse
-    def toNondimDesvio(self, N, type, scaler):
+    def toNondimDesvio(self, N, type):
+        scaler = self
         if type in scaler.scalers:
-            return 1 - N / scaler.scalers[type]
+            return 1 - N[type] / scaler.scalers[type]
         # Se não for XPSV, já assume que é uma das derivadas
         else:
             assert (
@@ -100,11 +131,14 @@ class NonDimScaler:
             ), "type must be declared"
             # Pega o tipo da derivada. Ex: "X" de "dXdt"
             variableType = scaler.derivativesTypeMatcher[type]
-            return -N / scaler.scalers[variableType]
+            if type == "dt":
+                return -N[type] / scaler.scalers[variableType]
+            return (scaler.scalers["t"] / scaler.scalers[variableType]) * N[type]
 
-    def fromNondimDesvio(self, N, type, scaler):
+    def fromNondimDesvio(self, N, type):
+        scaler = self
         if type in scaler.scalers:
-            return scaler.scalers[type] * (1 - N)
+            return scaler.scalers[type] * (1 - N[type])
         # Se não for XPSV, já assume que é uma das derivadas
         else:
             assert (
@@ -112,59 +146,193 @@ class NonDimScaler:
             ), "type must be declared"
             # Pega o tipo da derivada. Ex: "X" de "dXdt"
             variableType = scaler.derivativesTypeMatcher[type]
-            return -scaler.scalers[variableType] * N
+            if type == "dt":
+                return -N[type] * scaler.scalers[variableType]
+            return (scaler.scalers[variableType] / scaler.scalers["t"]) * (N[type])
+
+
+# -------------------------------------------------------------
+# --------------------------TESTES-----------------------------
+# -------------------------------------------------------------
 
 
 def test():
+    _test_linear()
+
+    _test_desvio()
+
+    # Testando adimensionalização por raiz quadrada do valor após padronização
+    # N = sqrt[(N_ND*N_M)²]
+
+    print("SUCCESS")
+
+
+def _test_linear():
+    # N padrão para testes:
+    N = {
+        "X": 10,
+        "P": 15,
+        "S": 7,
+        "V": 5,
+        "t": 1,
+        "dXdt": 12,
+        "dPdt": 13,
+        "dSdt": 14,
+        "dVdt": 15,
+        "dt": 2,
+    }
+
     scaler = NonDimScaler()
     assert scaler.X == 1
     assert scaler.P == 1
     assert scaler.S == 1
     assert scaler.V == 1
 
-    original_value = 5
-    
-    #------------------------------------------------------------------------
-    #------------------------LINEAR------------------------------------------
-    #------------------------------------------------------------------------
+    # ------------------------------------------------------------------------
+    # ------------------------LINEAR------------------------------------------
+    # ------------------------------------------------------------------------
 
-    # Testando a linear
-    nondim = scaler.toNondimLinearScaler(original_value, "V")
-    normal = scaler.fromNondimLinearScaler(nondim, "V")
-    assert np.isclose(normal, original_value)
+    for N_type in scaler.scalers:
+        # Testando a linear
+        nondim = scaler.toNondimLinearScaler(N, N_type)
+        normal = scaler.fromNondimLinearScaler({N_type: nondim}, N_type)
+        assert np.isclose(normal, N[N_type])
 
-    # Testando o padrão (que é a linear)
-    nondim = scaler.toNondim(original_value, "V")
-    normal = scaler.fromNondim(nondim, "V")
-    assert np.isclose(normal, original_value)
+        # Testando o padrão (que é a própria linear, então tecnicamente estamos nos repetindo)
+        nondim = scaler.toNondimLinearScaler(N, N_type)
+        normal = scaler.fromNondimLinearScaler({N_type: nondim}, N_type)
+        assert np.isclose(normal, N[N_type])
+
+    # Teste simples: converter e voltar
+    N_nondim_answer = {}
+    for dN_type in scaler.derivativesTypeMatcher:
+        N_nondim_answer[dN_type] = nondim = scaler.toNondim(N, dN_type)
+
+    for dN_type in scaler.derivativesTypeMatcher:
+        normal = scaler.fromNondim(N, dN_type)
+        assert np.isclose(
+            normal, N_nondim_answer[dN_type]
+        ), "Conversion to nondim and back"
 
 
-    
-    
-    #------------------------------------------------------------------------
-    #------------------------DESVIO------------------------------------------
-    #------------------------------------------------------------------------
-    # Testando a adimensionalização proposta pelo fernando, baseada num desvio     
+def _test_desvio():
+    # ------------------------------------------------------------------------
+    # ------------------------DESVIO------------------------------------------
+    # ------------------------------------------------------------------------
+    # Testando a adimensionalização proposta pelo fernando, baseada num desvio
     # Valores referência pra comparar:
-    All_s = 5 # Scalers de todos
+
+    # TODO se tudo for =1, os valores Nondim e Dim devem ser numericamente iguais
+    
+    # ----------------------
+
+    # FIXED VALUES
+    All_s = 5  # Scalers de todos
     All_normal = 10
     All_nondim = -1
     scaler = NonDimScaler(
-        X=All_s, P=All_s, S=All_s, V=All_s, t=All_s, toNondim=scaler.toNondimDesvio, fromNondim=scaler.fromNondimDesvio
+        X=All_s,
+        P=All_s,
+        S=All_s,
+        V=All_s,
+        t=All_s,
+        toNondim=NonDimScaler.toNondimDesvio,
+        fromNondim=NonDimScaler.fromNondimDesvio,
     )
+    N = {}
+    N_nondim_answer = {}
+
     for N_type in scaler.scalers:
-        type = N_type 
-        N_nondim_calc = scaler.toNondim(All_normal, type)
-        assert np.isclose(N_nondim_calc, All_nondim), "Conversão de normal pra nondim"
-        N_normal_calc = scaler.fromNondim(All_nondim, type)
-        assert np.isclose(N_normal_calc, All_normal), "Conversão de nondim pra normal"
-    
-    # TODO agora testar a derivada
+        N[N_type] = All_normal
+        N_nondim_answer[N_type] = All_nondim
 
-    # Testando adimensionalização por raiz quadrada do valor após padronização
-    # N = sqrt[(N_ND*N_M)²]
+    N_nondim_calc = {}
 
-    print("SUCCESS")
+    for N_type in scaler.scalers:
+        type = N_type
+        N_nondim_calc[N_type] = scaler.toNondim(N, type)
+        assert np.isclose(
+            N_nondim_calc[N_type], N_nondim_answer[N_type]
+        ), "Desvio: Conversão de normal pra nondim"
+        N_normal_calc = scaler.fromNondim(N_nondim_calc, type)
+        assert np.isclose(
+            N_normal_calc, N[N_type]
+        ), "Desvio: Conversão de nondim pra normal"
+
+    # Teste de apenas uma derivada fixa, só pra garantir
+    scaler = NonDimScaler(
+        X=2,
+        t=12,
+        toNondim=NonDimScaler.toNondimDesvio,
+        fromNondim=NonDimScaler.fromNondimDesvio,
+    )
+    N = {
+        "X": 5,
+        "dXdt": 7,
+    }
+    N_nondim_answer = {"X": 1 - 5 / 2, "dXdt": 7 * 12 / 2}
+
+    for key in ["X", "dXdt"]:
+        assert np.isclose(
+            N_nondim_answer[key], scaler.toNondim(N, type=key)
+        ), f"Testing {key} => nondim values previously calculated"
+        assert np.isclose(
+            N[key], scaler.fromNondim(N_nondim_answer, type=key)
+        ), f"Testing nondim => {key} values previously calculated"
+
+    # -----------------------
+    # --- DYNAMIC VALUES ---
+    # Tests if converting to nondim and then converting to normal gives the same value
+    # since the operations should cancel each other
+    scaler = NonDimScaler(
+        X=2,
+        P=4,
+        S=6,
+        V=8,
+        t=12,
+        toNondim=NonDimScaler.toNondimDesvio,
+        fromNondim=NonDimScaler.fromNondimDesvio,
+    )
+
+    N = {
+        "X": 4,
+        "P": 2,
+        "S": 3,
+        "V": 5,
+        "t": 1.5,
+        "dXdt": 3,
+        "dPdt": 5,
+        "dSdt": 7,
+        "dVdt": 9,
+        "dt": 3,
+    }
+
+    N_nondim_answer = {}
+    # First the answers of simple nondim variables:
+    for N_type in scaler.scalers:
+        N_nondim_answer[N_type] = 1 - N[N_type] / scaler.scalers[N_type]
+        normal_value = scaler.fromNondim(N_nondim_answer, type=N_type)
+        assert np.isclose(normal_value, N[N_type]), "Converting to nondim and back"
+
+    ## DERIVATIVES
+    for dN_type in scaler.derivativesTypeMatcher:
+        # Excepcionalmente pro dt é diferente, porque é só "dt"
+        if dN_type == "dt":
+            N_nondim_answer[dN_type] = -N[dN_type] / scaler.scalers["t"]
+        else:
+            variable_type = scaler.derivativesTypeMatcher[dN_type]
+            N_nondim_answer[dN_type] = (
+                N[dN_type] * (scaler.scalers["t"]) / scaler.scalers[variable_type]
+            )
+
+        assert np.isclose(
+            N_nondim_answer[dN_type], scaler.toNondim(N, dN_type)
+        ), "Derivative to nondim"
+        normal_from_nondim = scaler.fromNondim(N_nondim_answer, type=dN_type)
+
+        assert np.isclose(
+            normal_from_nondim, N[dN_type]
+        ), "Derivative: Converting to nondim and back"
 
 
 if __name__ == "__main__":
