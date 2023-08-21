@@ -315,9 +315,9 @@ def main():
             P=eq_params.Po,
             S=eq_params.So,
         ),
-        t_final=10.2,
-        # FIXME novo tempo
-        # t_final=24 * 4,
+        # TODO e esse tempo????
+        # t_final=10.2,
+        t_final=24 * 4,
     )
 
     process_params_feed_cstr = ProcessParams(
