@@ -216,12 +216,10 @@ class ODEPreparer:
                                 tf.less(X, 0), X, tf.where(tf.greater(X, Xm), X, loss_X)
                             )
                         elif solver_params.loss_version == 3:
-                            loss_X = (
-                                K.switch(
-                                    K.less(X_nondim, K.zeros_like(X_nondim)),
-                                    then_expression=X_nondim,
-                                    else_expression=loss_X,
-                                )
+                            loss_X = K.switch(
+                                K.less(X_nondim, K.zeros_like(X_nondim)),
+                                then_expression=X_nondim,
+                                else_expression=loss_X,
                             )
                         loss_pde.append(loss_X)
 
@@ -232,12 +230,10 @@ class ODEPreparer:
                                 tf.less(P, 0), P, tf.where(tf.greater(P, Pm), X, loss_P)
                             )
                         elif solver_params.loss_version == 3:
-                            loss_P = (
-                                K.switch(
-                                    K.less(P_nondim, K.zeros_like(P_nondim)),
-                                    then_expression=P_nondim,
-                                    else_expression=loss_P,
-                                )
+                            loss_P = K.switch(
+                                K.less(P_nondim, K.zeros_like(P_nondim)),
+                                then_expression=P_nondim,
+                                else_expression=loss_P,
                             )
                         loss_pde.append(loss_P)
 
@@ -250,12 +246,10 @@ class ODEPreparer:
                                 tf.where(tf.greater(S, initial_state.S[0]), X, loss_S),
                             )
                         elif solver_params.loss_version == 3:
-                            loss_S = (
-                                K.switch(
-                                    K.less(S_nondim, K.zeros_like(S_nondim)),
-                                    then_expression=S_nondim,
-                                    else_expression=loss_S,
-                                )
+                            loss_S = K.switch(
+                                K.less(S_nondim, K.zeros_like(S_nondim)),
+                                then_expression=S_nondim,
+                                else_expression=loss_S,
                             )
                         loss_pde.append(loss_S)
 
