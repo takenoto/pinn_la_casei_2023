@@ -15,7 +15,7 @@ def change_layer_fix_neurons_number(eq_params, process_params):
     initializer = "Glorot normal"  #'Glorot normal' #'Glorot normal' #'Orthogonal' #GLOROT UNIFORM # Era Glorot Normal nos testes sem swish
     LR = 1e-4 #1e-3
     lbfgs_post = 1
-    ADAM_EPOCHS = 10000#18000  # 45000
+    ADAM_EPOCHS = 1#18000  # 45000
     SGD_EPOCHS = None  # 1000
     dictionary = {}
     neurons = [40, 30]
@@ -55,8 +55,8 @@ def change_layer_fix_neurons_number(eq_params, process_params):
             }
             dictionary[key]["scaler"] = (
                 NonDimScaler(
-                    X=1,#eq_params.Xm,
-                    P=1,#eq_params.Pm,
+                    X=eq_params.Xm,
+                    P=eq_params.Pm,
                     S=eq_params.So,
                     V=process_params.max_reactor_volume,
                     t=1,

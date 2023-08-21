@@ -185,129 +185,34 @@ class ODEPreparer:
                 return tf.math.subtract(x, y)
 
             # --------------------------
-            # Nondim Equations. Daqui pra baixo X,P,S, V (variáveis) etc já tá tudo adimensionalizado.
+            # Nondim Equations. Daqui pra baixo X,P,S, V (variáveis) etc já tá tudo
+            # adimensionalizado.
+
             # Ok, são 2 problemas
             # 1) Quando X>Xm
             # 2) Quando X=Xm, porque 0^algo também dá NaN (https://github.com/tensorflow/tensorflow/issues/16271)
-            def returnZero():
-                return tf.zeros_like(X)
-
-            def X_over_XM():
-                return tf.pow(1 - X / Xm, f)
+            # Por algum motivo todas as tentativas anteriores, com keras.switch,
+            # tf.wherenão funcionaram
+            # Só funciona se fizer a atribuição do valor de X ou P por fora
+            # e usar esses novos valores nos cáculos.
+            # Se fizer um tf.where tendo como condicional o próprio X ou o valor da expressão não ser NaN, não presta, não adianta.
 
             def f_x_calc_func():
-                # ref: https://stackoverflow.com/questions/55764130/keras-custom-loss-with-one-of-the-features-used-and-a-condition
-                value = K.switch(
-                    K.less(X, Xm),
-                    then_expression=lambda: tf.pow(
-                        1 - (X*1/Xm),
-                        f,
-                    ),
-                    else_expression=lambda: K.zeros_like(X),
-                )
-                # return value
-                
-                
-                # return value
-                # value = tf.where(
-                #     X>Xm,
-                #     returnZero,
-                #     X_over_XM,
-                # )
-                # value = tf.where(
-                #     tf.greater_equal(X, Xm),
-                #     tf.zeros_like(X),
-                #     # tf.zeros_like(X),
-                #     X_over_XM(),
-                # )
-
-                # Esse multiply no nan deveria retornar 0 como tá sempre,
-                # Mesmo que o 1º termo fosse NaN ou inf. E continua sem prestar.
-
-                # Esse pelo menos roda:
-                # value = tf.where(
-                #     # tf.greater_equal(X, tf.ones_like(X)*Xm),
-                #     tf.greater_equal(6.0, 4.0),
-                #     0.0,
-                #     # tf.zeros_like(X),
-                #     0.0#tf.math.multiply_no_nan(X_over_XM(), 0),
-                # )
-
-                # Também dá erro de shapes
-                # value = tf.where(
-                #     tf.greater_equal(X, tf.math.multiply(tf.ones_like(X), Xm)),
-                #     0.0,
-                #     # tf.zeros_like(X),
-                #     0.0,  # tf.math.multiply_no_nan(X_over_XM(), 0),
-                # )
-
-                # ValueError: Shape must be rank 0 but is rank 2 for '{{node cond/Switch}} = Switch[T=DT_BOOL](Less, Less)' with input shapes: [?,1], [?,1].
-                # return tf.cond(
-                #     tf.less(X, Xm),
-                #     lambda: tf.pow(1 - X/Xm, f),
-                #     lambda: 0
-                # )
-
-                # ref: https://stackoverflow.com/questions/38527722/tensorflow-how-to-convert-nans-to-a-number
-                val = tf.pow(1 - X / Xm, f)
-
-                # Pra facilitar, zerei todas as reações e rX = esse val ^ aí de cima
-                # Não dá nan: tudo zero mas mds né...
-                # return tf.where(tf.math.is_nan(val), tf.zeros_like(X), tf.zeros_like(X))
-
-                # Os 2 aí dão nan o que quer dizer que não funciona: esse diaxo de condição
-                # return tf.where(tf.math.is_nan(val), val, tf.zeros_like(X))
-                # return tf.where(tf.math.is_nan(val), tf.zeros_like(X), val)
-
-                # Esses 2 dão resultados distintos, então tão rodando. Continuo sem entender o mistério...
-                # return tf.where(tf.math.is_nan(val), tf.zeros_like(X),  tf.ones_like(X))
-                # return tf.where(tf.math.is_nan(val), tf.ones_like(X), tf.zeros_like(X))
-
-                # Isso confirma que não é o valor do X em si que tá vindo com NaN:
-                # return tf.where(tf.math.is_nan(val), X, X)
-                
-                value = tf.where(tf.is_nan(val), tf.zeros_like(X), val)
-                
-                
-                # TODO tenta fazer o contrário, e bota o where ANTES do pow
-                # if X < Xm : X : Xm*0.9999999999
-                # X_for_calc = tf.where(tf.less(X, Xm), X, tf.zeros_lik)
-                # value = tf.where(tf.less(X, Xm),tf.pow(1 - X / Xm, f), tf.zeros_lik)
-                
-                # O erro era aqui
-                # 1 - (Xm * 0.999999999 / Xm),
-                # Era pra ser 0.9999, e não X/Xm pq se for maior obviamente vai continuar dando quebrado
-                
-                
-                # Talvez se 1º eu fizer a atribuição e depois
-                # a equação funcionaria??
-                # Ok então primeiro fazendo a atribuição por algum motivo funciona ??????????
-                X_for_calc = tf.where(tf.less(X, Xm), X, tf.ones_like(X)*0.9999*Xm)
-                value = tf.pow(1 - X_for_calc/Xm,f)
-                return value
-                
-                # TODO FIXME lembra de arrumar reações ficaram tortas
-            
+                X_for_calc = tf.where(tf.less(X, Xm), X, tf.ones_like(X) * 0.9999 * Xm)
+                value = tf.pow(1 - X_for_calc / Xm, f)
                 return value
 
             def h_p_calc_func():
-                value = K.switch(
-                    K.greater_equal(P, Pm),
-                    then_expression=K.zeros_like(P),
-                    else_expression=tf.pow(
-                        1 - (P * 0.999999999 / Pm),
-                        h,
-                    ),
+                P_for_calc = tf.where(tf.less(P, Pm), P, tf.ones_like(P) * 0.9999 * Pm)
+                value = tf.pow(
+                    1 - (P_for_calc / Pm),
+                    h,
                 )
                 return value
 
             rX = (X * mu_max * S / (K_S + S)) * f_x_calc_func() * h_p_calc_func()
-            # FIXME tirar isso
-            rX = f_x_calc_func()
-            rP = 0
-            rS = 0
-            # rP = alpha * rX + beta * X
-            # rS = -(1 / Y_PS) * rP - ms * X
+            rP = alpha * rX + beta * X
+            rS = -(1 / Y_PS) * rP - ms * X
 
             # -----------------------
             # Calculating the loss
