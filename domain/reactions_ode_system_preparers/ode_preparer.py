@@ -202,78 +202,86 @@ class ODEPreparer:
             # rP = 0
             # rS = 0
 
-            if solver_params.loss_version >= 3:
-                for o in outputSimulationType.order:
-                    # Pode dar NaN quando predizer valores abaixo de 0
-                    # Então evite divisões!!!! Por isso o V vem multiplicando no fim...
-                    if o == "X":
-                        loss_X = dXdt * V - (V * rX + (f_in * inlet.X - f_out * X))
-                        if solver_params.loss_version == 4:
-                            # if X<0, return X
-                            # else if X>Xm, return X
-                            # else return loss_X
-                            loss_X = tf.where(
-                                tf.less(X, 0), X, tf.where(tf.greater(X, Xm), X, loss_X)
-                            )
-                        elif solver_params.loss_version == 3:
-                            loss_X = K.switch(
-                                K.less(X_nondim, K.zeros_like(X_nondim)),
-                                then_expression=X_nondim,
-                                else_expression=loss_X,
-                            )
-                        loss_pde.append(loss_X)
+            for o in outputSimulationType.order:
+                # Pode dar NaN quando predizer valores abaixo de 0
+                # Então evite divisões!!!! Por isso o V vem multiplicando no fim...
+                loss_version = solver_params.get_loss_version_for_type(o)
 
-                    elif o == "P":
-                        loss_P = dPdt * V - (V * rP + (f_in * inlet.P - f_out * P))
-                        if solver_params.loss_version == 4:
-                            loss_P = tf.where(
-                                tf.less(P, 0), P, tf.where(tf.greater(P, Pm), X, loss_P)
-                            )
-                        elif solver_params.loss_version == 3:
-                            loss_P = K.switch(
-                                K.less(P_nondim, K.zeros_like(P_nondim)),
-                                then_expression=P_nondim,
-                                else_expression=loss_P,
-                            )
-                        loss_pde.append(loss_P)
+                if o == "X":
+                    loss_derivative = dXdt * V - (V * rX + (f_in * inlet.X - f_out * X))
+                    loss_X = 0
+                    if loss_version == 4:
+                        # if X<0, return X
+                        # else if X>Xm, return X
+                        # else return loss_X
+                        loss_maxmin = tf.where(
+                            tf.less(X, 0),
+                            X,
+                            tf.where(tf.greater(X, Xm), X-Xm, tf.zeros_like(X)),
+                        )
+                        loss_derivative_abs = tf.abs(loss_derivative)
+                        loss_maxmin_abs = tf.abs(loss_maxmin)
+                        loss_X = loss_derivative_abs + loss_maxmin_abs
+                    elif loss_version <= 3:
+                        loss_X = loss_derivative
+                    loss_pde.append(loss_X)
 
-                    elif o == "S":
-                        loss_S = dSdt * V - (V * rS + (f_in * inlet.S - f_out * S))
-                        if solver_params.loss_version == 4:
-                            loss_S = tf.where(
-                                tf.less(S, 0),
-                                S,
-                                tf.where(tf.greater(S, initial_state.S[0]), X, loss_S),
-                            )
-                        elif solver_params.loss_version == 3:
-                            loss_S = K.switch(
-                                K.less(S_nondim, K.zeros_like(S_nondim)),
-                                then_expression=S_nondim,
-                                else_expression=loss_S,
-                            )
-                        loss_pde.append(loss_S)
+                elif o == "P":
+                    loss_derivative = dPdt * V - (V * rP + (f_in * inlet.P - f_out * P))
+                    loss_P = 0
+                    if loss_version == 4:
+                        loss_maxmin = tf.where(
+                            tf.less(P, 0),
+                            P,
+                            tf.where(tf.greater(P, Pm), P-Pm, tf.zeros_like(P)),
+                        )
+                        loss_derivative_abs = tf.abs(loss_derivative)
+                        loss_maxmin_abs = tf.abs(loss_maxmin)
+                        loss_P = loss_derivative_abs + loss_maxmin_abs
 
-                    elif o == "V":
-                        dVdt_calc = f_in - f_out
-                        loss_V = dVdt - dVdt_calc
-                        if solver_params.loss_version == 4:
-                            loss_V = tf.where(
-                                tf.less(V, 0),
-                                V,
-                                loss_V,
-                            )
-                        elif solver_params.loss_version == 3:
-                            loss_V = K.switch(
-                                K.less(V_nondim, K.zeros_like(V_nondim)),
-                                then_expression=V_nondim,
-                                else_expression=loss_V,
-                            )
+                    elif loss_version <= 3:
+                        loss_P = loss_derivative
+                    loss_pde.append(loss_P)
 
-                        loss_pde.append(loss_V)
+                elif o == "S":
+                    loss_derivative = dSdt * V - (V * rS + (f_in * inlet.S - f_out * S))
+                    loss_S = 0
+                    if loss_version == 4:
+                        loss_maxmin = tf.where(
+                            tf.less(S, 0),
+                            S,
+                            tf.where(
+                                tf.greater(S, initial_state.S[0]),
+                                S-initial_state.S[0],
+                                tf.zeros_like(S),
+                            ),
+                        )
+                        loss_derivative_abs = tf.abs(loss_derivative)
+                        loss_maxmin_abs = tf.abs(loss_maxmin)
+                        loss_S = loss_derivative_abs + loss_maxmin_abs
+                    elif loss_version <= 3:
+                        loss_S = loss_derivative
+                    loss_pde.append(loss_S)
 
-                return loss_pde
-            else:
-                return None
+                elif o == "V":
+                    dVdt_calc = f_in - f_out
+                    loss_derivative = dVdt - dVdt_calc
+                    loss_V = 0
+                    if loss_version == 4:
+                        loss_maxmin = tf.where(
+                            tf.less(V, 0),
+                            V,
+                            tf.zeros_like(V),
+                        )
+                        loss_derivative_abs = tf.abs(loss_derivative)
+                        loss_maxmin_abs = tf.abs(loss_maxmin)
+                        loss_V = loss_derivative_abs + loss_maxmin_abs
+                    elif loss_version <= 3:
+                        loss_V = loss_derivative
+
+                    loss_pde.append(loss_V)
+
+            return loss_pde
 
         return ode_system
 

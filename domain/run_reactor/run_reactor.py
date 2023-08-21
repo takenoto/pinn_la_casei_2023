@@ -258,11 +258,7 @@ def run_reactor(
     total_training_time = end_time - start_time
 
     # Por algum motivo o plot não funciona nem aqui nem no saveplot de baixo aff
-    if solver_params.isplot and False:
-        print(loss_history)
-        print(loss_history.loss_test)
-        print(train_state.X_test)
-        print(train_state.X_train)
+    if solver_params.isplot:
         dde.saveplot(loss_history, train_state, issave=False, isplot=True)
     model.save(f"{hyperfolder_path}{solver_params.name}/model")
     dde.saveplot(

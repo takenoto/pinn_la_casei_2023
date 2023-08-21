@@ -4,14 +4,14 @@ from domain.optimization.non_dim_scaler import NonDimScaler
 # Key é o identificador
 # abrv é a abreviação
 NondimAvailableOptions = {
-    "None": {"abrv": "N"},
+    "None": {"abrv": "None"},
     "Linear": {
-        "abrv": "L",
+        "abrv": "Lin",
         "to": NonDimScaler.toNondimLinearScaler,
         "from": NonDimScaler.fromNondimLinearScaler,
     },
     "Desvio": {
-        "abrv": "D",
+        "abrv": "Desv",
         "to": NonDimScaler.toNondimDesvio,
         "from": NonDimScaler.fromNondimDesvio,
     },
@@ -30,7 +30,7 @@ def change_layer_fix_neurons_number(eq_params, process_params):
 
     # ---------------- NN ------------------
     func = "tanh"  #'tanh' #'swish'
-    mini_batch = [None, 100]  # 100 #None  # 50 #200
+    mini_batch = [None] #[None, 100]  # 100 #None  # 50 #200
     initializer = "Glorot normal"  #'Glorot normal' #'Glorot normal' #'Orthogonal'
     # GLOROT UNIFORM # Era Glorot Normal nos testes sem swish
     LR = 1e-3  # 1e-3
@@ -103,6 +103,7 @@ def change_layer_fix_neurons_number(eq_params, process_params):
                                 }
                                 dictionary[key]["scaler"] = (
                                     NonDimScaler(
+                                        name=nd["abrv"],
                                         X=eq_params.Xm,
                                         P=eq_params.Pm,
                                         S=eq_params.So,
@@ -111,8 +112,8 @@ def change_layer_fix_neurons_number(eq_params, process_params):
                                         toNondim=nd["to"],
                                         fromNondim=nd["from"],
                                     )
-                                    if nd["abrv"] != "N"
-                                    else NonDimScaler()
+                                    if nd["abrv"] != "None"
+                                    else NonDimScaler(name=nd["abrv"])
                                 )
 
                                 if IS_LOSS_WEIGHT:

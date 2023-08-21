@@ -26,7 +26,9 @@ class NonDimScaler:
     use the _not_tensor subscript
     """
 
-    def __init__(self, X=1, P=1, S=1, V=1, t=1, toNondim=None, fromNondim=None):
+    def __init__(
+        self, X=1, P=1, S=1, V=1, t=1, toNondim=None, fromNondim=None, name="NULL!!!!"
+    ):
         self.X = tf.cast(X, tf.float32)
         self.P = tf.cast(P, tf.float32)
         self.S = tf.cast(S, tf.float32)
@@ -63,6 +65,29 @@ class NonDimScaler:
         Existe com o único intuito de permitir menos código 
         ao fazer as conversões das derivadas
         """
+
+        self.name = name
+
+    def toJson(self):
+        stuff = [
+            # Add name
+            '"name": ' + f'"{self.name}"',
+            # Add scalers
+            f'"X": {self.X_not_tensor}',
+            f'"P": {self.P_not_tensor}',
+            f'"S": {self.S_not_tensor}',
+            f'"V": {self.V_not_tensor}',
+        ]
+
+        json = "{"
+        for s_index in range(len(stuff)):
+            s = stuff[s_index]
+            if s_index < len(stuff) - 1:
+                json += s + ", "
+            else:
+                json += s + " }"
+
+        return json
 
     def toNondim(self, N, type):
         if self._toNondim:
@@ -206,7 +231,7 @@ def _test_linear():
         normal = scaler.fromNondimLinearScaler({N_type: nondim}, N_type)
         assert np.isclose(normal, N[N_type])
 
-        # Testando o padrão (que é a própria linear, 
+        # Testando o padrão (que é a própria linear,
         # então tecnicamente estamos nos repetindo)
         nondim = scaler.toNondimLinearScaler(N, N_type)
         normal = scaler.fromNondimLinearScaler({N_type: nondim}, N_type)

@@ -131,11 +131,31 @@ def compare_num_and_pinn(
 
         pred_end_time = timer()
         pred_time = pred_end_time - pred_start_time
-        print(f"name = {pinn.model_name}")
-        print(f"train time = {pinn.total_training_time} s")
-        print(f"best loss test = {pinn.best_loss_test}")
-        print(f"best loss train = {pinn.best_loss_train}")
-        print(f"pred time = {pred_time} s")
+        path_to_file = os.path.join(folder_to_save, f"{pinn.model_name}.json")
+        file = open(path_to_file, "a")
+        file.writelines(
+            [
+                "{",
+                '"name": ' + f'"{pinn.model_name}"' + ",",
+                '"solver_params":',
+                pinn.solver_params.toJson() + ",",
+            ]
+        )
+
+        # tain data
+        file.writelines(
+            [
+                '"train time":' + f"{pinn.total_training_time}" + ",",
+                '"best loss test":' + f"{pinn.best_loss_test}" + ",",
+                '"best loss train":' + f"{pinn.best_loss_train}" + ",",
+                '"pred time":' + f"{pred_time}" + ",",
+            ]
+        )
+        # print(f"name = {pinn.model_name}")
+        # print(f"train time = {pinn.total_training_time} s")
+        # print(f"best loss test = {pinn.best_loss_test}")
+        # print(f"best loss train = {pinn.best_loss_train}")
+        # print(f"pred time = {pred_time} s")
         items = {}
         titles = ["X", "P", "S", "V"]
         pinn_vals = [N_pinn[type] if type in _out.order else None for type in titles]
@@ -164,23 +184,38 @@ def compare_num_and_pinn(
             else:
                 error_L.append(np.nan)
         print("ERROR XPSV")
+        error_lines = []
         if _out.X:
+            error_lines.append(f'"X": {error_L[0]}')
             print(f"X = {error_L[0]}")
         if _out.P:
+            error_lines.append(f'"P": {error_L[1]}')
             print(f"P = {error_L[1]}")
         if _out.S:
+            error_lines.append(f'"S": {error_L[2]}')
             print(f"S = {error_L[2]}")
         if _out.V:
+            error_lines.append(f'"V": {error_L[3]}')
             print(f"V = {error_L[3]}")
 
         print(f"total = {np.nansum(error_L)}")
-        
-        units = ['g/L','g/L','g/L','L']
+        # Fecha o arquivo
+        # Fecha o body e fecha o error
+        file.write('\n "error": {')
+        for l in range(len(error_lines)):
+            line = error_lines[l]
+            if l < len(error_lines) - 1:
+                file.writelines([line, ","])
+            else:
+                file.writelines([line, "\n }", "\n }"])
+        file.close()
+
+        units = ["g/L", "g/L", "g/L", "L"]
 
         for i in range(4):
             items[i + 1] = {
                 "title": titles[i],
-                "y_label":units[i],
+                "y_label": units[i],
                 "cases": [
                     # Numeric
                     {
@@ -257,7 +292,7 @@ def compare_num_and_pinn(
 
     plot_comparer_multiple_grid(
         labels=["Loss (teste)", "Loss (treino)"],
-        figsize=(6 * rows, 6 * cols),
+        figsize=(10, 10),
         gridspec_kw={"hspace": 0.10, "wspace": 0.05},
         yscale="log",
         sharey=True,
