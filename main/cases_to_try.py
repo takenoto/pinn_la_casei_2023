@@ -1,24 +1,27 @@
-from operator import eq
 from domain.optimization.non_dim_scaler import NonDimScaler
 
 
 def change_layer_fix_neurons_number(eq_params, process_params):
     # --------- LOSS FUNCTION ------------
     # 1 é a loss tradicional, #2 retorna o própria X/P/S/V caso seja menor que zero.
-    # 3 é a que faz dMols/dt e não dConc/dt, pro volume ir multiplicando...
-    loss_version = 3
+    # 3 é a que faz dMols/dt e não dConc/dt, pro volume ir multiplicando... E também
+    # faz com que EFETIVAMENTE X NaN seja bloqueado
+    # A loss v4 é a que faz com que EFETIVAMENTE retorne o próprio valor 
+    # da coisa (XPSV) se for < 0 ou maior que o limite (Xm, Pm, So. Volume fica solto.)
+    loss_version = 4
     # O objetivo da v2 é desincentivar valores negativos.
 
     # ---------------- NN ------------------
     func = "tanh"  #'tanh' #'swish'
     mini_batch = 100  # 100 #None  # 50 #200
-    initializer = "Glorot normal"  #'Glorot normal' #'Glorot normal' #'Orthogonal' #GLOROT UNIFORM # Era Glorot Normal nos testes sem swish
-    LR = 1e-4 #1e-3
+    initializer = "Glorot normal"  #'Glorot normal' #'Glorot normal' #'Orthogonal'
+    # GLOROT UNIFORM # Era Glorot Normal nos testes sem swish
+    LR = 1e-4  # 1e-3
     lbfgs_post = 1
-    ADAM_EPOCHS = 1#18000  # 45000
+    ADAM_EPOCHS = 18000  # 45000
     SGD_EPOCHS = None  # 1000
     dictionary = {}
-    neurons = [40, 30]
+    neurons = [60, 30]
     layers = [4, 3]  # [4,3,2]
     cols = len(layers)
     rows = len(neurons)
@@ -29,8 +32,8 @@ def change_layer_fix_neurons_number(eq_params, process_params):
 
     # Me parece que quando usa 2 var de entrada precisa de um NUM_DOMAIN
     # e teste bem maior pra ficar razoável
-    NUM_DOMAIN = 500 #300
-    NUM_TEST = 500 #300
+    NUM_DOMAIN = 500  # 300
+    NUM_TEST = 500  # 300
     NUM_INIT = 80
     NUM_BOUNDARY = 0
 

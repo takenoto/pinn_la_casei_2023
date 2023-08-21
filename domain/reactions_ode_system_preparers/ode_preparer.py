@@ -162,28 +162,6 @@ class ODEPreparer:
             # conforme for sendo validado
             loss_pde = []
 
-            # Equações auxiliares. Usadas para operações matemática e contornar um erro
-            # específico de versões entre numpy e tensorflow
-            def div(x, y):
-                x = tf.cast(x, tf.float32)
-                y = tf.cast(y, tf.float32)
-                return tf.math.divide(x, y)
-
-            def mult(x, y):
-                x = tf.cast(x, tf.float32)
-                y = tf.cast(y, tf.float32)
-                return tf.math.multiply(x, y)
-
-            def add(x, y):
-                x = tf.cast(x, tf.float32)
-                y = tf.cast(y, tf.float32)
-                return tf.math.add(x, y)
-
-            def sub(x, y):
-                x = tf.cast(x, tf.float32)
-                y = tf.cast(y, tf.float32)
-                return tf.math.subtract(x, y)
-
             # --------------------------
             # Nondim Equations. Daqui pra baixo X,P,S, V (variáveis) etc já tá tudo
             # adimensionalizado.
@@ -224,49 +202,80 @@ class ODEPreparer:
             # rP = 0
             # rS = 0
 
-            if solver_params.loss_version == 3:
+            if solver_params.loss_version >= 3:
                 for o in outputSimulationType.order:
                     # Pode dar NaN quando predizer valores abaixo de 0
                     # Então evite divisões!!!! Por isso o V vem multiplicando no fim...
                     if o == "X":
                         loss_X = dXdt * V - (V * rX + (f_in * inlet.X - f_out * X))
-                        loss_pde.append(
-                            K.switch(
-                                K.less(X_nondim, K.zeros_like(X_nondim)),
-                                then_expression=X_nondim,
-                                else_expression=loss_X,
+                        if solver_params.loss_version == 4:
+                            # if X<0, return X
+                            # else if X>Xm, return X
+                            # else return loss_X
+                            loss_X = tf.where(
+                                tf.less(X, 0), X, tf.where(tf.greater(X, Xm), X, loss_X)
                             )
-                        )
+                        elif solver_params.loss_version == 3:
+                            loss_X = (
+                                K.switch(
+                                    K.less(X_nondim, K.zeros_like(X_nondim)),
+                                    then_expression=X_nondim,
+                                    else_expression=loss_X,
+                                )
+                            )
+                        loss_pde.append(loss_X)
 
                     elif o == "P":
                         loss_P = dPdt * V - (V * rP + (f_in * inlet.P - f_out * P))
-                        loss_pde.append(
-                            K.switch(
-                                K.less(P_nondim, K.zeros_like(P_nondim)),
-                                then_expression=P_nondim,
-                                else_expression=loss_P,
+                        if solver_params.loss_version == 4:
+                            loss_P = tf.where(
+                                tf.less(P, 0), P, tf.where(tf.greater(P, Pm), X, loss_P)
                             )
-                        )
+                        elif solver_params.loss_version == 3:
+                            loss_P = (
+                                K.switch(
+                                    K.less(P_nondim, K.zeros_like(P_nondim)),
+                                    then_expression=P_nondim,
+                                    else_expression=loss_P,
+                                )
+                            )
+                        loss_pde.append(loss_P)
 
                     elif o == "S":
                         loss_S = dSdt * V - (V * rS + (f_in * inlet.S - f_out * S))
-                        loss_pde.append(
-                            K.switch(
-                                K.less(S_nondim, K.zeros_like(S_nondim)),
-                                then_expression=S_nondim,
-                                else_expression=loss_S,
+                        if solver_params.loss_version == 4:
+                            loss_S = tf.where(
+                                tf.less(S, 0),
+                                S,
+                                tf.where(tf.greater(S, initial_state.S[0]), X, loss_S),
                             )
-                        )
+                        elif solver_params.loss_version == 3:
+                            loss_S = (
+                                K.switch(
+                                    K.less(S_nondim, K.zeros_like(S_nondim)),
+                                    then_expression=S_nondim,
+                                    else_expression=loss_S,
+                                )
+                            )
+                        loss_pde.append(loss_S)
+
                     elif o == "V":
                         dVdt_calc = f_in - f_out
                         loss_V = dVdt - dVdt_calc
-                        loss_pde.append(
-                            K.switch(
+                        if solver_params.loss_version == 4:
+                            loss_V = tf.where(
+                                tf.less(V, 0),
+                                V,
+                                loss_V,
+                            )
+                        elif solver_params.loss_version == 3:
+                            loss_V = K.switch(
                                 K.less(V_nondim, K.zeros_like(V_nondim)),
                                 then_expression=V_nondim,
                                 else_expression=loss_V,
                             )
-                        )
+
+                        loss_pde.append(loss_V)
 
                 return loss_pde
             else:
