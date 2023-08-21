@@ -59,7 +59,6 @@ class SystemSimulationType:
             self.order.append('t')
 
 
-
 class SolverLBFGSParams:
     """
     Parâmetros especificamente relacionados à aplicação do solver L-BFGS
@@ -95,6 +94,8 @@ class SolverParams:
         outputSimulationType:SystemSimulationType=SystemSimulationType(),
         inputSimulationType:SystemSimulationType=SystemSimulationType(),
         loss_version=1,
+        custom_loss_version = {}
+        
     ):
         self.name = name if name else None
         """
@@ -132,8 +133,34 @@ class SolverParams:
         1=> Versão tradicional, que retorna as derivadas.
         
         2 => Versão que, caso a variável predita (X, P, S, V) seja menor que zero,
-        retorna a própria variável no lugar de calcular a derivada.
+        retorna a própria variável no lugar de calcular a derivada. Parece que não funcionou. Ignore que existiu.
+        
+        3 => Mesma linha que 2. Termina sendo = à loss 1.
+        
+        4 => Efetivamente retorna os valores de XPS caso sejam <min ou >max, a loss é a absoluta
+        # E é a soma do erro da derivada + o valor de XPS se teve desvio
+        # V no caso só entra se V<0, não forcei limite superior
         """
+        
+        self.custom_loss_version = custom_loss_version
+        """
+        Deve ser um dictionary, como:
+            {
+                X: 1, # versão 1
+                V: 3 #versão 3
+            }
+        """
+        
+    def get_loss_version_for_type(self,type):
+        """
+        type é "X", "P", etc
+        """
+        
+        loss_version=self.loss_version
+        custom_loss_version = self.custom_loss_version.get(type, None)
+        if(custom_loss_version):
+            loss_version = custom_loss_version
+        return loss_version
 
 
 # python -m domain.params.solver_params
@@ -185,5 +212,11 @@ if __name__ == "__main__":
     assert xv.order[0] == 'V'
     assert xv.order[1] == 't'
     assert len(xv.order) == 2
+    
+    
+    # Testing custom loss for each item
+    sp = SolverParams(loss_version=2, custom_loss_version={'X':5})
+    assert sp.get_loss_version_for_type('V') == 2
+    assert sp.get_loss_version_for_type('X') == 5
 
     print('success')
