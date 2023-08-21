@@ -3,7 +3,11 @@ import numpy as np
 
 from domain.params.altiok_2006_params import Altiok2006Params
 from domain.params.process_params import ProcessParams
-from domain.params.solver_params import SolverParams, SolverLBFGSParams, SystemSimulationType
+from domain.params.solver_params import (
+    SolverParams,
+    SolverLBFGSParams,
+    SystemSimulationType,
+)
 from domain.run_reactor.plot_params import PlotParams
 from domain.optimization.ode_system_caller import RunReactorSystemCaller
 from domain.optimization.grid_search import grid_search
@@ -36,16 +40,21 @@ def run_pinn_grid_search(
     assert cases_to_try is not None, "cases_to_try is necessary"
 
     if solver_params_list is None:
-
         # ---------------------------------------
         # ---------------------------------------
 
         def get_thing_for_key(case_key, thing_key, default=np.array([1])):
-            if thing_key not in ["layer_size", "lbfgs_pre", "lbfgs_post", "output_variables", "input_variables", "isplot"]:
+            if thing_key not in [
+                "layer_size",
+                "lbfgs_pre",
+                "lbfgs_post",
+                "output_variables",
+                "input_variables",
+                "isplot",
+            ]:
                 return np.array(cases_to_try[case_key].get(thing_key, default)).item()
             else:
                 return cases_to_try[case_key].get(thing_key, default)
-
 
         solver_params_list = [
             SolverParams(
@@ -54,10 +63,8 @@ def run_pinn_grid_search(
                 num_boundary=get_thing_for_key(case_key, "num_boundary", default=10),
                 num_init=get_thing_for_key(case_key, "num_init", default=10),
                 num_test=get_thing_for_key(case_key, "num_test", default=1000),
-                adam_epochs=get_thing_for_key(
-                    case_key, "adam_epochs", default=None
-                ),
-                adam_display_every=2000, #5000,#30000,
+                adam_epochs=get_thing_for_key(case_key, "adam_epochs", default=None),
+                adam_display_every=500,  # 2000, #5000,#30000,
                 sgd_epochs=get_thing_for_key(case_key, "sgd_epochs", default=None),
                 adam_lr=get_thing_for_key(case_key, "LR", default=0.0001),
                 l_bfgs=SolverLBFGSParams(
@@ -72,24 +79,28 @@ def run_pinn_grid_search(
                     case_key, "layer_size", default=_layer_size_default
                 ),
                 activation=get_thing_for_key(case_key, "activation", default="tanh"),
-                initializer=get_thing_for_key(case_key, "initializer", default="Glorot uniform"),
-                loss_weights=[
-                    get_thing_for_key(case_key, "w_X", 1), 
-                    get_thing_for_key(case_key, "w_P", 1), 
-                    get_thing_for_key(case_key, "w_S", 1), 
-                    get_thing_for_key(case_key, "w_V", 1)],
-                non_dim_scaler=NonDimScaler(
-                    X=get_thing_for_key(case_key, "X_s"),
-                    P=get_thing_for_key(case_key, "P_s"),
-                    S=get_thing_for_key(case_key, "S_s"),
-                    V=get_thing_for_key(case_key, "V_s"),
-                    t=get_thing_for_key(case_key, "t_s"),
+                initializer=get_thing_for_key(
+                    case_key, "initializer", default="Glorot uniform"
                 ),
+                loss_weights=[
+                    get_thing_for_key(case_key, "w_X", 1),
+                    get_thing_for_key(case_key, "w_P", 1),
+                    get_thing_for_key(case_key, "w_S", 1),
+                    get_thing_for_key(case_key, "w_V", 1),
+                ],
+                non_dim_scaler=get_thing_for_key(case_key, "scaler", default=None),
                 mini_batch=get_thing_for_key(case_key, "mini_batch", default=None),
                 hyperfolder=get_thing_for_key(case_key, "hyperfolder", default=None),
                 isplot=get_thing_for_key(case_key, "isplot", default=False),
-                outputSimulationType=SystemSimulationType(get_thing_for_key(case_key,'output_variables', default=['X', 'P', 'S', 'V'] )),
-                inputSimulationType=SystemSimulationType(get_thing_for_key(case_key,'input_variables', default=['t'] )),
+                outputSimulationType=SystemSimulationType(
+                    get_thing_for_key(
+                        case_key, "output_variables", default=["X", "P", "S", "V"]
+                    )
+                ),
+                inputSimulationType=SystemSimulationType(
+                    get_thing_for_key(case_key, "input_variables", default=["t"])
+                ),
+                loss_version=get_thing_for_key(case_key, "loss_version", default=2),
             )
             # Basicamente um teste com adimensionalização e um sem
             for case_key in cases_to_try

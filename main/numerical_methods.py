@@ -1,7 +1,9 @@
+from domain.reactor.cstr_state import CSTRState
 from main.plot_xpsv import plot_xpsv
 from domain.optimization.non_dim_scaler import NonDimScaler
 from domain.numeric_solver.euler import EulerMethod
 from domain.numeric_solver.numeric_solver_model_results import NumericSolverModelResults
+import numpy as np
 
 
 def run_numerical_methods(initial_state, eq_params, process_params, f_out_value_calc, t_discretization_points=[240]):

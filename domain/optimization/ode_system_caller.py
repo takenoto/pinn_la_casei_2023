@@ -39,10 +39,11 @@ class RunReactorSystemCaller:
 
         """
         self.ode_system_preparer = ODEPreparer(
-            solver_params,
-            self.eq_params,
-            self.process_params,
-            self.f_out_value_calc,
+            solver_params=solver_params,
+            eq_params=self.eq_params,
+            process_params=self.process_params,
+            initial_state=self.initial_state,
+            f_out_value_calc=self.f_out_value_calc,
         )
 
         return run_reactor(

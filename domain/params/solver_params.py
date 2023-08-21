@@ -66,9 +66,10 @@ class SolverLBFGSParams:
     do_pre_optimization = irá passar lbfgs antes de adam
     do_post_optimization = irá passar lbfgs após adam
     """
-    def __init__(self, do_pre_optimization=True, do_post_optimization=False):
+    def __init__(self, do_pre_optimization=True, do_post_optimization=False, LR=None):
         self.do_pre_optimization = do_pre_optimization
         self.do_post_optimization  = do_post_optimization
+        self.LR = LR
 
 class SolverParams:
     def __init__(
@@ -92,7 +93,8 @@ class SolverParams:
         hyperfolder=None,
         isplot=False,
         outputSimulationType:SystemSimulationType=SystemSimulationType(),
-        inputSimulationType:SystemSimulationType=SystemSimulationType()
+        inputSimulationType:SystemSimulationType=SystemSimulationType(),
+        loss_version=1,
     ):
         self.name = name if name else None
         """
@@ -124,6 +126,14 @@ class SolverParams:
         "Variáveis de saída (XPSV)"
         self.inputSimulationType = inputSimulationType
         "Variáveis de entrada (XPSV)"
+        self.loss_version=loss_version
+        """Versão do solver.
+
+        1=> Versão tradicional, que retorna as derivadas.
+        
+        2 => Versão que, caso a variável predita (X, P, S, V) seja menor que zero,
+        retorna a própria variável no lugar de calcular a derivada.
+        """
 
 
 # python -m domain.params.solver_params

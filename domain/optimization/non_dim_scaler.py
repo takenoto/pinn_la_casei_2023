@@ -60,7 +60,8 @@ class NonDimScaler:
             "dt": "t",
         }
         """
-        Existe com o único intuito de permitir menos código ao fazer as conversões das derivadas
+        Existe com o único intuito de permitir menos código 
+        ao fazer as conversões das derivadas
         """
 
     def toNondim(self, N, type):
@@ -85,9 +86,9 @@ class NonDimScaler:
             ), "type must be declared"
             variableType = scaler.derivativesTypeMatcher[type]
             if type == "dt":
-                return -N[type] / scaler.scalers[variableType]
+                return N[type] / scaler.scalers[variableType]
             else:
-                return -N[type] * scaler.scalers["t"] / scaler.scalers[variableType]
+                return N[type] * scaler.scalers["t"] / scaler.scalers[variableType]
 
     def fromNondimLinearScaler(self, N, type):
         scaler = self
@@ -99,9 +100,9 @@ class NonDimScaler:
             ), "type must be declared"
             variableType = scaler.derivativesTypeMatcher[type]
             if type == "dt":
-                return -N[type] * scaler.scalers[variableType]
+                return N[type] * scaler.scalers[variableType]
             else:
-                return -N[type] * scaler.scalers[variableType] / scaler.scalers["t"]
+                return N[type] * scaler.scalers[variableType] / scaler.scalers["t"]
 
     # def fromNondimDerivative(self, N, type):
     #     return self.fromNondim(N, type, self)
@@ -169,7 +170,7 @@ def test():
 
 
 def _test_linear():
-    print('LINEAR TEST')
+    print("LINEAR TEST")
     # N padrão para testes:
     N = {
         "X": 10,
@@ -189,10 +190,15 @@ def _test_linear():
     assert scaler.P == 1
     assert scaler.S == 1
     assert scaler.V == 1
+    assert scaler.t == 1
 
     # ------------------------------------------------------------------------
     # ------------------------LINEAR------------------------------------------
     # ------------------------------------------------------------------------
+
+    # Convertendo dt e pegando de volta
+    dt_nondim = scaler.toNondim({"dt": 5}, "dt")
+    assert np.isclose(dt_nondim, 5 / scaler.t), "dt test"
 
     for N_type in scaler.scalers:
         # Testando a linear
@@ -200,12 +206,13 @@ def _test_linear():
         normal = scaler.fromNondimLinearScaler({N_type: nondim}, N_type)
         assert np.isclose(normal, N[N_type])
 
-        # Testando o padrão (que é a própria linear, então tecnicamente estamos nos repetindo)
+        # Testando o padrão (que é a própria linear, 
+        # então tecnicamente estamos nos repetindo)
         nondim = scaler.toNondimLinearScaler(N, N_type)
         normal = scaler.fromNondimLinearScaler({N_type: nondim}, N_type)
         assert np.isclose(normal, N[N_type])
 
-    # Teste simples: converter e voltar
+    # Teste simples: converter e voltar PARA AS DERIVADAS
     N_nondim_answer = {}
     for dN_type in scaler.derivativesTypeMatcher:
         N_nondim_answer[dN_type] = nondim = scaler.toNondim(N, dN_type)
@@ -218,7 +225,7 @@ def _test_linear():
 
 
 def _test_desvio():
-    print('TESTE DESVIO')
+    print("TESTE DESVIO")
     # ------------------------------------------------------------------------
     # ------------------------DESVIO------------------------------------------
     # ------------------------------------------------------------------------
@@ -237,7 +244,7 @@ def _test_desvio():
         toNondim=NonDimScaler.toNondimDesvio,
         fromNondim=NonDimScaler.fromNondimDesvio,
     )
-    
+
     N = {
         "X": 15.5,
         "P": 9.99,
@@ -248,15 +255,14 @@ def _test_desvio():
         "dPdt": 8.55,
         "dSdt": 3.0,
         "dVdt": -119.123,
-        "dt": 3/5,
+        "dt": 3 / 5,
     }
-    
+
     for type in N:
         nondim = scaler.toNondim(N, type)
-        normal = scaler.fromNondim({type:nondim}, type)
+        normal = scaler.fromNondim({type: nondim}, type)
         assert np.isclose(normal, N[type]), "Converting to nondim and back"
-    
-    
+
     # ----------------------
     # FIXED VALUES
     All_s = 5  # Scalers de todos
