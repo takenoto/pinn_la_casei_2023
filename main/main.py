@@ -68,8 +68,8 @@ def compare_num_and_pinn(
     num = num_results[0]
     for pinn in pinns:
         pred_start_time = timer()
-        t_nondim = pinn.solver_params.non_dim_scaler.toNondim({"t": num.t}, "t")
-        # t = num.t / pinn.solver_params.non_dim_scaler.t_not_tensor
+        # O t já é nondim!!!!!!!!!!!!!!!
+        t_nondim = num.t
 
         _in = pinn.solver_params.inputSimulationType
         _out = pinn.solver_params.outputSimulationType
@@ -265,9 +265,9 @@ def main():
 
     run_fedbatch = False
 
-    run_cstr = False
+    run_cstr = True
 
-    run_batch = True
+    run_batch = False
 
     altiok_models_to_run = [get_altiok2006_params().get(2)]  # roda só a fig2
 

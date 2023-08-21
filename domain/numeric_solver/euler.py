@@ -39,17 +39,17 @@ class EulerMethod:
         }
 
         scaler = non_dim_scaler
-        t_space = np.linspace(
+        t_space_nondim = np.linspace(
             start=0,
             stop=non_dim_scaler.toNondim({"t": process_params.t_final}, "t"),
             num=t_discretization_points,
         )
-        dt = non_dim_scaler.fromNondim({"dt": t_space[1]}, "dt")
+        dt = non_dim_scaler.fromNondim({"dt": t_space_nondim[1]}, "dt")
 
-        X_nondim_array = np.ones(len(t_space)) * non_dim_scaler.toNondim(N0, "X")
-        P_nondim_array = np.ones(len(t_space)) * non_dim_scaler.toNondim(N0, "P")
-        S_nondim_array = np.ones(len(t_space)) * non_dim_scaler.toNondim(N0, "S")
-        V_nondim_array = np.ones(len(t_space)) * non_dim_scaler.toNondim(N0, "V")
+        X_nondim_array = np.ones(len(t_space_nondim)) * non_dim_scaler.toNondim(N0, "X")
+        P_nondim_array = np.ones(len(t_space_nondim)) * non_dim_scaler.toNondim(N0, "P")
+        S_nondim_array = np.ones(len(t_space_nondim)) * non_dim_scaler.toNondim(N0, "S")
+        V_nondim_array = np.ones(len(t_space_nondim)) * non_dim_scaler.toNondim(N0, "V")
 
         inlet = process_params.inlet
         f_in = inlet.volume
@@ -66,7 +66,7 @@ class EulerMethod:
         Pm = eq_params.Pm
         Xm = eq_params.Xm
 
-        for t in range(1, len(t_space)):
+        for t in range(1, len(t_space_nondim)):
             # Declara valores do ponto imediatamente anterior para usar
             N_previous = {
                 "X": X_nondim_array[t - 1],
@@ -137,7 +137,7 @@ class EulerMethod:
             P=P_nondim_array,
             S=S_nondim_array,
             V=V_nondim_array,
-            t=t_space,
+            t=t_space_nondim,
             dt=dt,
             non_dim_scaler=scaler,
         )
