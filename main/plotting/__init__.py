@@ -2,6 +2,7 @@
 # marker style ref : https://matplotlib.org/stable/api/markers_api.html
 import os
 import matplotlib.pyplot as plt
+from textwrap import wrap
 
 def plot_comparer_multiple_grid(
     nrows,
@@ -76,7 +77,9 @@ def plot_comparer_multiple_grid(
         ax = axes[s]
         has_title = i[s + 1].get(title_key, None)
         if has_title:
-            ax.set_title(i[s + 1][title_key])
+            # ref https://stackoverflow.com/questions/15740682/wrapping-long-y-labels-in-matplotlib-tight-layout-using-setp
+            tttitle = '\n'.join(wrap(i[s + 1][title_key],16))
+            ax.set_title(tttitle)
 
         # Se tiver a key 'cases', então os ys e xs estão vindo em pares (o x não é o mesmo pra todos)
         if "cases" in i[s + 1].keys():
@@ -142,7 +145,8 @@ def plot_comparer_multiple_grid(
         if(folder_to_save):
             file_path = os.path.join(folder_to_save, filename)
         # Save the figure
-        plt.savefig(file_path, bbox_inches="tight")
+        # plt.savefig(file_path, bbox_inches="tight")
+        plt.savefig(file_path)
         plt.close(fig)
         if showPlot:
             plt.show()

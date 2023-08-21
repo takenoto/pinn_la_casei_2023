@@ -33,31 +33,30 @@ def change_layer_fix_neurons_number(eq_params, process_params):
     mini_batch = [None] #[None, 100]  # 100 #None  # 50 #200
     initializer = "Glorot normal"  #'Glorot normal' #'Glorot normal' #'Orthogonal'
     # GLOROT UNIFORM # Era Glorot Normal nos testes sem swish
-    LR = 1e-3  # 1e-3
-    lbfgs_post = 0  # 1
-    ADAM_EPOCHS = 1  # 15000  # 45000
+    LR = 1e-4  # 1e-3
+    lbfgs_post = 0#1
+    ADAM_EPOCHS = 1#35000  # 45000
     SGD_EPOCHS = None  # 1000
     dictionary = {}
     neurons = [60, 30]
-    layers = [4, 3]  # [4,3,2]
+    layers = [5, 4, 3]  # [4,3,2]
 
     # Se irá aplicar a estratégia de adimensionalização padrão
     NondimSelectedOptions = [
         NondimAvailableOptions["None"],
-        # NondimAvailableOptions["Linear"],
-        # NondimAvailableOptions["Desvio"],
+        NondimAvailableOptions["Linear"],
+        NondimAvailableOptions["Desvio"],
     ]
     IS_LOSS_WEIGHT = False
 
-    cols = len(layers * len(NondimSelectedOptions))
-    rows = len(neurons)
-    # Me parece que quando usa 2 var de entrada precisa de um NUM_DOMAIN
-    # e teste bem maior pra ficar razoável
-
     NUM_DOMAIN = [300]
     NUM_TEST = [300]
-    NUM_INIT = [80]
+    NUM_INIT = [80, 150]
     NUM_BOUNDARY = 0
+    
+    cols = len(layers * len(NondimSelectedOptions))
+    rows = len(neurons*len(NUM_TEST)*len(NUM_INIT)*len(NUM_DOMAIN))
+
 
     # Anota aqui as variáveis que vão ser suportadas nessa simulação
     # supported_variables = ['X', 'P', 'S', 'V']

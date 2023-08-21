@@ -69,8 +69,14 @@ def compare_num_and_pinn(
 ):
     # PRINTAR O MELHOR DOS PINNS
     items = {}
-    print(f"Pinn best index = {p_best_index}")
-    print(f"Pinn best error = {p_best_error}")
+    
+    path_to_file = os.path.join(folder_to_save, "best_pinn.txt")
+    file = open(path_to_file, "a")
+    file.writelines([
+        f"Pinn best index = {p_best_index}",
+        f"Pinn best error = {p_best_error}"
+    ])
+    file.close()
 
     # Plotar todos os resultados, um a um
     num = num_results[0]
@@ -187,18 +193,20 @@ def compare_num_and_pinn(
         error_lines = []
         if _out.X:
             error_lines.append(f'"X": {error_L[0]}')
-            print(f"X = {error_L[0]}")
+            # print(f"X = {error_L[0]}")
         if _out.P:
             error_lines.append(f'"P": {error_L[1]}')
-            print(f"P = {error_L[1]}")
+            # print(f"P = {error_L[1]}")
         if _out.S:
             error_lines.append(f'"S": {error_L[2]}')
-            print(f"S = {error_L[2]}")
+            # print(f"S = {error_L[2]}")
         if _out.V:
             error_lines.append(f'"V": {error_L[3]}')
-            print(f"V = {error_L[3]}")
+            # print(f"V = {error_L[3]}")
 
         print(f"total = {np.nansum(error_L)}")
+        error_lines.append(f'"Total": {np.nansum(error_L)}')
+        
         # Fecha o arquivo
         # Fecha o body e fecha o error
         file.write('\n "error": {')
