@@ -3,11 +3,6 @@
 import os
 import matplotlib.pyplot as plt
 
-# TODO receber nbins e eixo, x e y,
-
-
-# TODO colocar modo de salvar imagem automaticamente recebendo nome/path
-# TODO importante pra que não dependa de ficar plotando toda hora e posas rodar de de uma vez
 def plot_comparer_multiple_grid(
     nrows,
     ncols,
