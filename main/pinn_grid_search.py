@@ -101,6 +101,9 @@ def run_pinn_grid_search(
                     get_thing_for_key(case_key, "input_variables", default=["t"])
                 ),
                 loss_version=get_thing_for_key(case_key, "loss_version", default=2),
+                custom_loss_version=get_thing_for_key(
+                    case_key, "custom_loss_version", default={}
+                ),
             )
             # Basicamente um teste com adimensionalização e um sem
             for case_key in cases_to_try

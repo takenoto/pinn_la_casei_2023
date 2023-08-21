@@ -1,5 +1,6 @@
 # python -m main.main
 
+import os
 from timeit import default_timer as timer
 
 import numpy as np
@@ -57,7 +58,14 @@ num_colors = [
 
 
 def compare_num_and_pinn(
-    num_results, pinns, p_best_index, p_best_error, cols, rows, showNondim=False
+    num_results,
+    pinns,
+    p_best_index,
+    p_best_error,
+    cols,
+    rows,
+    showNondim=False,
+    folder_to_save=None,
 ):
     # PRINTAR O MELHOR DOS PINNS
     items = {}
@@ -166,10 +174,13 @@ def compare_num_and_pinn(
             print(f"V = {error_L[3]}")
 
         print(f"total = {np.nansum(error_L)}")
+        
+        units = ['g/L','g/L','g/L','L']
 
         for i in range(4):
             items[i + 1] = {
                 "title": titles[i],
+                "y_label":units[i],
                 "cases": [
                     # Numeric
                     {
@@ -207,8 +218,8 @@ def compare_num_and_pinn(
         plot_comparer_multiple_grid(
             suptitle=pinn.model_name,
             labels=labels,
-            figsize=(6 * 1.5, 8 * 1.5),
-            gridspec_kw={"hspace": 0.6, "wspace": 0.25},
+            figsize=(8 * 1.5, 8 * 1.5),
+            gridspec_kw={"hspace": 0.042, "wspace": 0.11},
             yscale="linear",
             sharey=False,
             nrows=2,
@@ -216,7 +227,10 @@ def compare_num_and_pinn(
             items=items,
             title_for_each=True,
             supxlabel="tempo (h)",
-            supylabel="g/L",
+            # supylabel=pinn.model_name,
+            folder_to_save=folder_to_save,
+            filename=f"{pinn.model_name}.png" if folder_to_save else None,
+            showPlot=False if folder_to_save else True,
         )
 
     # ------------------------------
@@ -243,8 +257,8 @@ def compare_num_and_pinn(
 
     plot_comparer_multiple_grid(
         labels=["Loss (teste)", "Loss (treino)"],
-        figsize=(7.2 * 2, 8.2 * 2),
-        gridspec_kw={"hspace": 0.35, "wspace": 0.14},
+        figsize=(6 * rows, 6 * cols),
+        gridspec_kw={"hspace": 0.10, "wspace": 0.05},
         yscale="log",
         sharey=True,
         sharex=True,
@@ -255,6 +269,9 @@ def compare_num_and_pinn(
         title_for_each=True,
         supxlabel="epochs",
         supylabel="loss",
+        folder_to_save=folder_to_save,
+        filename="loss.png" if folder_to_save else None,
+        showPlot=False if folder_to_save else True,
     )
 
 
@@ -263,11 +280,39 @@ def main():
 
     plt.style.use("./main/plotting/plot_styles.mplstyle")
 
+    # ----------------------
+    # ------SETTINGS--------
+    # ----------------------
+
+    # If None, the plots will be shown()
+    # If a directory, the plots will be saved
+    subfolder = "2023-08-21-batch"
+    current_directory_path = os.getcwd()
+    folder_to_save = os.path.join(
+        current_directory_path, "results", "exported", subfolder
+    )
+    # ref: https://stackoverflow.com/questions/56012636/python-mathplotlib-savefig-filenotfounderror
+    # Create the folder if it does not exist
+    if not os.path.exists(folder_to_save):
+        os.makedirs(folder_to_save)
+
+    # folder_to_save = "results/exported/2023-08-21"  # None para evitar salvamento
+
+    # If true, also plots the nondim values from pinn
+    showNondim = True
+
+    # ----------------------
+    # -CHOSE OPERATION MODE-
+    # ----------------------
     run_fedbatch = False
 
-    run_cstr = True
+    run_cstr = False
 
-    run_batch = False
+    run_batch = True
+
+    # --------------------------------------------
+    # ----------------MAIN CODE-------------------
+    # --------------------------------------------
 
     altiok_models_to_run = [get_altiok2006_params().get(2)]  # roda só a fig2
 
@@ -361,7 +406,14 @@ def main():
         print(f"elapsed time for test = {end_time - start_time} secs")
 
         compare_num_and_pinn(
-            num_results, pinns, p_best_index, p_best_error, cols, rows, showNondim=True
+            num_results,
+            pinns,
+            p_best_index,
+            p_best_error,
+            cols,
+            rows,
+            showNondim=showNondim,
+            folder_to_save=folder_to_save,
         )
 
         pass
@@ -399,7 +451,16 @@ def main():
         end_time = timer()
         print(f"elapsed time for test = {end_time - start_time} secs")
 
-        compare_num_and_pinn(num_results, pinns, p_best_index, p_best_error, cols, rows)
+        compare_num_and_pinn(
+            num_results,
+            pinns,
+            p_best_index,
+            p_best_error,
+            cols,
+            rows,
+            showNondim=showNondim,
+            folder_to_save=folder_to_save,
+        )
 
         pass
 
@@ -432,7 +493,14 @@ def main():
 
         print(f"elapsed time for BATCH NONDIM test = {end_time - start_time} secs")
         compare_num_and_pinn(
-            num_results, pinns, p_best_index, p_best_error, cols, rows, showNondim=True
+            num_results,
+            pinns,
+            p_best_index,
+            p_best_error,
+            cols,
+            rows,
+            showNondim=showNondim,
+            folder_to_save=folder_to_save,
         )
 
         pass

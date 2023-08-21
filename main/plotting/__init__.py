@@ -1,5 +1,6 @@
 # ref: https://matplotlib.org/stable/gallery/subplots_axes_and_figures/subplots_demo.html
 # marker style ref : https://matplotlib.org/stable/api/markers_api.html
+import os
 import matplotlib.pyplot as plt
 
 # TODO receber nbins e eixo, x e y,
@@ -22,10 +23,13 @@ def plot_comparer_multiple_grid(
     supylabel=None,
     sharey=True,
     sharex=True,
-    yscale='log',
+    yscale="log",
     figsize=(5.5, 3.5),
-    labels=None, # lista estilo ['a', 'b', 'c']
-    ):
+    labels=None,  # lista estilo ['a', 'b', 'c']
+    folder_to_save=None,
+    filename=None,
+    showPlot=False,
+):
     """
     x and y are the keys to access the x and y values in the dictionary
 
@@ -42,15 +46,29 @@ def plot_comparer_multiple_grid(
     Não é possível especificar cor só pra 2 de 3 por exemplo.
 
     yscale pode ser 'log' ou 'linear' por exemplo. Mais em # https://matplotlib.org/3.1.3/gallery/pyplots/pyplot_scales.html
-    
+
+
+    filename
+    Se for != None já vai salvar no caminho especificado ao invés de exibir
+
+    showPlot
+    caso filename seja None, SEMPRE IRÁ PLOTAR independentemente da configuração
     """
     i = items
 
-    fig, axes_normal = plt.subplots(figsize=figsize, nrows=nrows, ncols=ncols, gridspec_kw=gridspec_kw, sharex=sharex, sharey=sharey)
+    fig, axes_normal = plt.subplots(
+        figsize=figsize,
+        nrows=nrows,
+        ncols=ncols,
+        gridspec_kw=gridspec_kw,
+        sharex=sharex,
+        sharey=sharey,
+        layout="constrained"
+    )
 
     if suptitle:
-        fig.suptitle(suptitle, y=0.94)
-        plt.subplots_adjust(top=0.8)
+        fig.suptitle(suptitle, y=-0.1)#, y=0.14)
+        # plt.subplots_adjust(top=0.8)
     if supxlabel:
         fig.supxlabel(supxlabel)
     if supylabel:
@@ -66,28 +84,35 @@ def plot_comparer_multiple_grid(
             ax.set_title(i[s + 1][title_key])
 
         # Se tiver a key 'cases', então os ys e xs estão vindo em pares (o x não é o mesmo pra todos)
-        if 'cases' in i[s+1].keys():
-            for d in i[s+1]['cases']:
+        if "cases" in i[s + 1].keys():
+            for d in i[s + 1]["cases"]:
                 # Itera lista de cases, plotando x, y e color
-                ___color = d.get('color', 'b')
-                ___x = d['x']
-                ___y = d['y']
-                ___line_args = d.get('l', 'None')
-                ___marker = d.get('marker', None)
+                ___color = d.get("color", "b")
+                ___x = d["x"]
+                ___y = d["y"]
+                ___line_args = d.get("l", "None")
+                ___marker = d.get("marker", None)
                 if ___x is None or ___y is None:
                     pass
                 else:
-                    ax.plot(___x, ___y, linestyle=___line_args, color=___color, marker=___marker, markersize=3)
+                    ax.plot(
+                        ___x,
+                        ___y,
+                        linestyle=___line_args,
+                        color=___color,
+                        marker=___marker,
+                        markersize=3,
+                    )
                 pass
             pass
 
-        ax_y_label = i[s+1].get('y_label', None)
-        ax_x_label = i[s+1].get('x_label', None)
-        ax_yscale = i[s+1].get('ax_yscale', None)
-        ax_nbinsx = i[s+1].get('nbinxs', None)
-        ax_nbinsy = i[s+1].get('nbinsy', None)
-        y_majlocator = i[s+1].get('y_majlocator', None)
-        y_minlocator = i[s+1].get('y_minlocator', None)
+        ax_y_label = i[s + 1].get("y_label", None)
+        ax_x_label = i[s + 1].get("x_label", None)
+        ax_yscale = i[s + 1].get("ax_yscale", None)
+        ax_nbinsx = i[s + 1].get("nbinxs", None)
+        ax_nbinsy = i[s + 1].get("nbinsy", None)
+        y_majlocator = i[s + 1].get("y_majlocator", None)
+        y_minlocator = i[s + 1].get("y_minlocator", None)
         if ax_y_label:
             ax.set_ylabel(ax_y_label)
         if ax_x_label:
@@ -95,23 +120,39 @@ def plot_comparer_multiple_grid(
         if ax_yscale:
             ax.set_yscale(ax_yscale)
         if ax_nbinsx:
-            ax.locator_params(nbins=ax_nbinsx, axis='x')
+            ax.locator_params(nbins=ax_nbinsx, axis="x")
         if ax_nbinsy:
-            ax.locator_params(nbins=ax_nbinsy, axis='y')
+            ax.locator_params(nbins=ax_nbinsy, axis="y")
         if y_majlocator:
             ax.yaxis.set_major_locator(y_majlocator)
         if y_minlocator:
             ax.yaxis.set_minor_locator(y_minlocator)
         pass
-    
+
     if yscale:
         plt.yscale(yscale)
     if labels:
-        fig.legend(labels, loc='upper center', #bbox_to_anchor=(1,-0.1), 
-            ncol=len(labels), bbox_transform=fig.transFigure)
+        fig.legend(
+            labels,
+            loc="lower center",
+            # loc="best",#"upper right",#"upper center",  
+            bbox_to_anchor=(0.5,-0.07),# bbox_to_anchor=(1,-0.1),
+            ncol=len(labels),
+            bbox_transform=fig.transFigure,
+        )
 
     # plt.tight_layout()
-    plt.show()
+    if filename:
+        file_path = filename
+        if(folder_to_save):
+            file_path = os.path.join(folder_to_save, filename)
+        # Save the figure
+        plt.savefig(file_path, bbox_inches="tight")
+        plt.close(fig)
+        if showPlot:
+            plt.show()
+    else:
+        plt.show()
     return
 
 
@@ -120,9 +161,9 @@ if __name__ == "__main__":
 
     # Exemplo funcionando:
     plot_comparer_multiple_grid(
-        figsize=(7,6.5),
-        labels=['a', 'b', 'c', 'd', 'e', 'f', 'g'],
-        yscale='linear',
+        figsize=(7, 6.5),
+        labels=["a", "b", "c", "d", "e", "f", "g"],
+        yscale="linear",
         sharey=False,
         sharex=False,
         nrows=2,
@@ -130,16 +171,21 @@ if __name__ == "__main__":
         items={
             # Caso tenha vários cases, pode fazer assim:
             1: {
-                'nbinsy':20,
-                'y_label': 'y turbo colorido',
-                'title':'multiple ys',
-                'cases':
-                [
+                "nbinsy": 20,
+                "y_label": "y turbo colorido",
+                "title": "multiple ys",
+                "cases": [
                     # "l" são os line_args, pra dizer se é tracejado -- linha - pontilhado : etc
-                    {'x': [-2, 2, 3], 'y':[4, 5, 1.5], 'color':'tab:orange', 'l':'None', 'marker':'D',},
-                    {'x': [1, 0, 5], 'y':[3.5, 4, 0.1], 'color':'green', 'l':'--'},
-                    {'x': [1, 2, 6], 'y':[3, 2, 3], 'color':'r', 'l':'-'},
-                ]
+                    {
+                        "x": [-2, 2, 3],
+                        "y": [4, 5, 1.5],
+                        "color": "tab:orange",
+                        "l": "None",
+                        "marker": "D",
+                    },
+                    {"x": [1, 0, 5], "y": [3.5, 4, 0.1], "color": "green", "l": "--"},
+                    {"x": [1, 2, 6], "y": [3, 2, 3], "color": "r", "l": "-"},
+                ],
             },
             # Caso a keyword 'case' não exista, segue normalmente:
             # 1: {
@@ -150,9 +196,9 @@ if __name__ == "__main__":
             #     "title": "blue bar",
             # },
             2: {
-                'y_majlocator': plt.LogLocator(base=10, numticks=4),
-                'ax_yscale': 'log',
-                'x_label': 'Liter',
+                "y_majlocator": plt.LogLocator(base=10, numticks=4),
+                "ax_yscale": "log",
+                "x_label": "Liter",
                 "x": [1, 9, 3],
                 "y": [3271, 5000, 6000],
                 "color": "tab:orange",
@@ -161,13 +207,13 @@ if __name__ == "__main__":
             3: {
                 "x": [1, -4, -10],
                 "y": [4, 5, 6],
-                "color": None,#"tab:red",
+                "color": None,  # "tab:red",
                 "title": "meu título",
             },
             4: {
                 "x": [1, 2, 1],
                 "y": [7, 10, 2],
-                "color": 'tab:green',
+                "color": "tab:green",
                 "title": "verde",
             },
         },
