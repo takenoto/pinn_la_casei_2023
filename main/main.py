@@ -8,6 +8,7 @@ import deepxde
 import tensorflow as tf
 
 import matplotlib.pyplot as plt
+from domain.optimization.non_dim_scaler import NonDimScaler
 
 
 from domain.params.altiok_2006_params import (
@@ -69,21 +70,24 @@ def compare_num_and_pinn(
 ):
     # PRINTAR O MELHOR DOS PINNS
     items = {}
-    
+
     path_to_file = os.path.join(folder_to_save, "best_pinn.txt")
     file = open(path_to_file, "a")
-    file.writelines([
-        f"Pinn best index = {p_best_index}",
-        f"Pinn best error = {p_best_error}"
-    ])
+    file.writelines(
+        [f"Pinn best index = {p_best_index}\n", f"Pinn best error = {p_best_error}"]
+    )
     file.close()
 
     # Plotar todos os resultados, um a um
     num = num_results[0]
+
     for pinn in pinns:
         pred_start_time = timer()
         # O t já é nondim!!!!!!!!!!!!!!!
-        t_nondim = num.t
+        # Mesmo que fosse é outra escala. Não é assim que funciona.
+
+        t_num_normal = num.non_dim_scaler.fromNondim({"t": num.t}, "t")
+        t_nondim = pinn.solver_params.non_dim_scaler.toNondim({"t": t_num_normal}, "t")
 
         _in = pinn.solver_params.inputSimulationType
         _out = pinn.solver_params.outputSimulationType
@@ -141,27 +145,23 @@ def compare_num_and_pinn(
         file = open(path_to_file, "a")
         file.writelines(
             [
-                "{",
-                '"name": ' + f'"{pinn.model_name}"' + ",",
+                "{\n",
+                '"name": ' + f'"{pinn.model_name}"' + ",\n",
                 '"solver_params":',
-                pinn.solver_params.toJson() + ",",
+                pinn.solver_params.toJson() + ",\n",
             ]
         )
 
         # tain data
         file.writelines(
             [
-                '"train time":' + f"{pinn.total_training_time}" + ",",
-                '"best loss test":' + f"{pinn.best_loss_test}" + ",",
-                '"best loss train":' + f"{pinn.best_loss_train}" + ",",
+                '"train time":' + f"{pinn.total_training_time}" + ",\n",
+                '"best loss test":' + f"{pinn.best_loss_test}" + ",\n",
+                '"best loss train":' + f"{pinn.best_loss_train}" + ",\n",
                 '"pred time":' + f"{pred_time}" + ",",
             ]
         )
-        # print(f"name = {pinn.model_name}")
-        # print(f"train time = {pinn.total_training_time} s")
-        # print(f"best loss test = {pinn.best_loss_test}")
-        # print(f"best loss train = {pinn.best_loss_train}")
-        # print(f"pred time = {pred_time} s")
+
         items = {}
         titles = ["X", "P", "S", "V"]
         pinn_vals = [N_pinn[type] if type in _out.order else None for type in titles]
@@ -174,6 +174,20 @@ def compare_num_and_pinn(
             num.S,  # if _out.S else None,
             num.V,  # if _out.V else None,
         ]
+
+        num_vals_json = """{
+                "t":[%s],
+                "X":[%s],
+                "P":[%s],
+                "S":[%s],
+                "V":[%s]
+                }""" % (
+            ",".join(np.char.mod("%f", np.array(t_num_normal))),
+            ",".join(np.char.mod("%f", np.array(num_vals[0]))),
+            ",".join(np.char.mod("%f", np.array(num_vals[1]))),
+            ",".join(np.char.mod("%f", np.array(num_vals[2]))),
+            ",".join(np.char.mod("%f", np.array(num_vals[3]))),
+        )
 
         # Armazena os 4 erros
         error_L = []
@@ -189,7 +203,8 @@ def compare_num_and_pinn(
                 error_L.append(total_error / len(pinn_vals[u]))
             else:
                 error_L.append(np.nan)
-        print("ERROR XPSV")
+
+        # print("ERROR XPSV")
         error_lines = []
         if _out.X:
             error_lines.append(f'"X": {error_L[0]}')
@@ -204,18 +219,88 @@ def compare_num_and_pinn(
             error_lines.append(f'"V": {error_L[3]}')
             # print(f"V = {error_L[3]}")
 
-        print(f"total = {np.nansum(error_L)}")
+        # print(f"total = {np.nansum(error_L)}")
         error_lines.append(f'"Total": {np.nansum(error_L)}')
+
+        pinn_vals_json = """{
+            "t_nondim":[%s],
+            "X":[%s],
+            "P":[%s],
+            "S":[%s],
+            "V":[%s]
+            }""" % (
+            ",".join(np.char.mod("%f", np.array(t_nondim))),
+            '"None"'
+            if pinn_vals[0] is None
+            else ",".join(np.char.mod("%f", np.array(pinn_vals[0]))),
+            '"None"'
+            if pinn_vals[1] is None
+            else ",".join(np.char.mod("%f", np.array(pinn_vals[1]))),
+            '"None"'
+            if pinn_vals[2] is None
+            else ",".join(np.char.mod("%f", np.array(pinn_vals[2]))),
+            '"None"'
+            if pinn_vals[3] is None
+            else ",".join(np.char.mod("%f", np.array(pinn_vals[3]))),
+        )
+            
+            
+        pinn_nondim_vals_json = """{
+            "t_nondim":[%s],
+            "X":[%s],
+            "P":[%s],
+            "S":[%s],
+            "V":[%s]
+            }""" % (
+            ",".join(np.char.mod("%f", np.array(t_nondim))),
+            '"None"'
+            if pinn_nondim_vals[0] is None
+            else ",".join(np.char.mod("%f", np.array(pinn_nondim_vals[0]))),
+            '"None"'
+            if pinn_nondim_vals[1] is None
+            else ",".join(np.char.mod("%f", np.array(pinn_nondim_vals[1]))),
+            '"None"'
+            if pinn_nondim_vals[2] is None
+            else ",".join(np.char.mod("%f", np.array(pinn_nondim_vals[2]))),
+            '"None"'
+            if pinn_nondim_vals[3] is None
+            else ",".join(np.char.mod("%f", np.array(pinn_nondim_vals[3]))),
+        )
         
         # Fecha o arquivo
         # Fecha o body e fecha o error
-        file.write('\n "error": {')
+        file.write('\n"error": {\n')
         for l in range(len(error_lines)):
             line = error_lines[l]
             if l < len(error_lines) - 1:
-                file.writelines([line, ","])
+                file.writelines([line, ",\n"])
             else:
-                file.writelines([line, "\n }", "\n }"])
+                file.writelines(
+                    [
+                        line,
+                        "},",
+                        "\n",
+                        '"num_vals": ',
+                        num_vals_json,
+                        ",\n",
+                        '"pinn_vals":',
+                        pinn_vals_json,
+                        ",\n",
+                        '"pinn_nondim_vals":',
+                        pinn_nondim_vals_json,
+                        "\n",
+                        # Essa parte é confusa e não sai direito
+                        # ",\n",
+                        # '"pinn_loss_story_test":'
+                        # + f"{np.array(pinn.loss_history.loss_test)}"
+                        # ",\n",
+                        # '"pinn_loss_story_train":'
+                        # + f"{np.array(pinn.loss_history.loss_train)}"
+                        # ",\n",
+                        # '"total_training_time":' + f"{pinn.total_training_time}" "\n",
+                        "}",
+                    ]
+                )
         file.close()
 
         units = ["g/L", "g/L", "g/L", "L"]
@@ -244,12 +329,12 @@ def compare_num_and_pinn(
             if showNondim:
                 pinn_nondim_vals
                 items[i + 1]["cases"].append(
-                    # PINN
+                    # PINN nondim
                     {
                         "x": num.t,
                         "y": pinn_nondim_vals[i],
                         "color": pinn_colors[2],
-                        "l": "--",
+                        "l": ":",
                     }
                 )
 
@@ -308,7 +393,7 @@ def compare_num_and_pinn(
         nrows=rows,
         ncols=cols,
         items=items,
-        suptitle=None,
+        suptitle="Loss",
         title_for_each=True,
         supxlabel="epochs",
         supylabel="loss",
@@ -329,7 +414,7 @@ def main():
 
     # If None, the plots will be shown()
     # If a directory, the plots will be saved
-    subfolder = "2023-08-21-batch"
+    subfolder = "2023-08-23-batch"
     current_directory_path = os.getcwd()
     folder_to_save = os.path.join(
         current_directory_path, "results", "exported", subfolder
@@ -342,7 +427,7 @@ def main():
     # folder_to_save = "results/exported/2023-08-21"  # None para evitar salvamento
 
     # If true, also plots the nondim values from pinn
-    showNondim = True
+    showNondim = False
 
     # ----------------------
     # -CHOSE OPERATION MODE-
@@ -433,6 +518,7 @@ def main():
             initial_state=initial_state_fed_batch,
             f_out_value_calc=lambda max_reactor_volume, f_in_v, volume: 0,
             t_discretization_points=[400],
+            non_dim_scaler=NonDimScaler(),
         )
 
         start_time = timer()
@@ -476,6 +562,7 @@ def main():
             initial_state=initial_state_cstr,
             f_out_value_calc=cstr_f_out_calc_numeric,
             t_discretization_points=[400],
+            non_dim_scaler=NonDimScaler(),
         )
 
         start_time = timer()
@@ -518,7 +605,10 @@ def main():
             initial_state=initial_state,
             f_out_value_calc=lambda max_reactor_volume, f_in_v, volume: 0,
             t_discretization_points=[400],
+            non_dim_scaler=NonDimScaler(),
         )
+        num = num_results[0]
+        print(f"num t final  = {num.t[-1]}")
 
         start_time = timer()
 
