@@ -1,0 +1,7 @@
+Redes testadas:
+neurons = [160, 100, 60]
+layers = [6, 5, 4, 3]
+
+-----------
+
+Talvez a l4 no geral seja pior que  a l3 porque parte dos valores negativos predita não era tão ruim assim, mas só próxima de 0 (tipo -0.01) e agora contam como erro. Ao forçar a serem negativos, a rede acaba perdendo em outros pontos? Não sei, sinceramente

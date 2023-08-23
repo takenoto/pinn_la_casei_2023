@@ -1,0 +1,3 @@
+elapsed time for BATCH NONDIM test = 12602.7871901 secs
+
+Horrível. Aumentar muito num_init não ajudou...

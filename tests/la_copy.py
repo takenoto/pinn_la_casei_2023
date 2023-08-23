@@ -64,6 +64,7 @@ def fun_bc(x):
 
 
 def fun_init(x):
+    # Esse 0:1 faz com que seja na variável in X e não no tempo que seria 1:2 eu acho
     return np.exp(-20 * x[:, 0:1])
 
 

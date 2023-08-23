@@ -1,0 +1,6 @@
+Depois desse teste do 2 já faça logo com escalonamento por 100. Um no l3 e um no l4.
+Porque tá muito claro que nondim reduz demais e esculhamba tudo.
+
+
+DEPOIS testar swish.
+

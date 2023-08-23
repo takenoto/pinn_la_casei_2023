@@ -1,0 +1,6 @@
+Zerou X, zerou tudo, fim...
+
+
+elapsed time for BATCH NONDIM test = 8611.1988408 secs
+
+Mais de 2h mds

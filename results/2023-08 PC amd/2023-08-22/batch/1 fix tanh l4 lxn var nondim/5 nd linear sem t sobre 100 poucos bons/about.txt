@@ -1,0 +1,4 @@
+Alguns prestaram. Loss parece não ter muita relação com precisão... Tem algo errado aí.
+
+
+elapsed time for BATCH NONDIM test = 8485.33792169999 secs

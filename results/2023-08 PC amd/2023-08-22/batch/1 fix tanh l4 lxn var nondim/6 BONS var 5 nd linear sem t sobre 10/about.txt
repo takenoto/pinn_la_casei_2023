@@ -1,0 +1,5 @@
+Reduzi as redes pra agilizar, tirei as mais simples que não dão em nada nunca
+
+To achando que vai dar no mesmo
+
+elapsed time for BATCH NONDIM test = 2843.968599999993 secs

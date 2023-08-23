@@ -1,0 +1,18 @@
+Redes testadas
+neurons = [60, 40, 30, 20]
+layers = [6, 5, 4, 3] 
+
+Sabe pq nondim não funciona? Porque não precisa.
+
+O batch sempre deu certo. O problema no fb e cstr é outro. E não acredito que nondim vá resolver.
+
+Talvez a loss v4 beneficie eles por estarem prevendo coisas muito fora do range. 
+
+
+------
+
+Pensando:
+Nondim faz sentido pra reduzir variações grandes dentro dos dados, tinha algo a  ver com estatísticas que eu não domino
+Mas resumindo não é o caso desse conjunto de dados em si
+
+Além de que por estarem num range por vir de uma equação não tem outliers de fato

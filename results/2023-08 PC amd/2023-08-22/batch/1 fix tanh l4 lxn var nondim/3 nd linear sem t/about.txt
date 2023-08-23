@@ -1,0 +1,1 @@
+Mesmo o linear sem t parece estar estagnadíssimo. O que fiz de errado? veja o modelo old1, que funcionou. Pode ser a LR muito baixa estimulando a estagnação numa zona? Não faço ideia.
