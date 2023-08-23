@@ -26,37 +26,49 @@ def change_layer_fix_neurons_number(eq_params, process_params):
     # A loss v4 é a que faz com que EFETIVAMENTE retorne o próprio valor
     # da coisa (XPSV) se for < 0 ou maior que o limite (Xm, Pm, So. Volume fica solto.)
     # E a loss v4 também é absoluta
-    loss_version = 4
+    loss_version = 4  # 4
 
     # ---------------- NN ------------------
     func = "tanh"  #'tanh' #'swish'
-    mini_batch = [None] #[None, 100]  # 100 #None  # 50 #200
+    mini_batch = [None]  # [None, 100]  # 100 #None  # 50 #200
     initializer = "Glorot normal"  #'Glorot normal' #'Glorot normal' #'Orthogonal'
     # GLOROT UNIFORM # Era Glorot Normal nos testes sem swish
-    LR = 1e-4  # 1e-3
-    lbfgs_post = 0#1
-    ADAM_EPOCHS = 1#35000  # 45000
+    LR = 1e-4  # 1e-4
+    lbfgs_post = 1
+    ADAM_EPOCHS = 55000  # 45000
     SGD_EPOCHS = None  # 1000
     dictionary = {}
-    neurons = [60, 30]
-    layers = [5, 4, 3]  # [4,3,2]
+    neurons = [60, 80]  # [20, 30, 40, 60]
+    layers = [4, 5, 6]  # [5, 4, 3]  # [4,3,2]
 
     # Se irá aplicar a estratégia de adimensionalização padrão
     NondimSelectedOptions = [
-        NondimAvailableOptions["None"],
+        # NondimAvailableOptions["None"],
         NondimAvailableOptions["Linear"],
-        NondimAvailableOptions["Desvio"],
+        # NondimAvailableOptions["Desvio"],
     ]
+
+    # Multiplica o scaler/adimensionalizador
+    scaler_modifier_default = 1 / 10
+    # Aqui coloca as customizações
+    scaler_modifiers = {
+        "t": scaler_modifier_default,
+        "X": scaler_modifier_default,
+        "P": scaler_modifier_default,
+        "S": scaler_modifier_default,
+        "V": 1#scaler_modifier_default,
+    }
+
+    # Loss Weight
     IS_LOSS_WEIGHT = False
 
     NUM_DOMAIN = [300]
     NUM_TEST = [300]
-    NUM_INIT = [80, 150]
+    NUM_INIT = [80]  # [80, 300]
     NUM_BOUNDARY = 0
-    
-    cols = len(layers * len(NondimSelectedOptions))
-    rows = len(neurons*len(NUM_TEST)*len(NUM_INIT)*len(NUM_DOMAIN))
 
+    cols = len(layers * len(NondimSelectedOptions))
+    rows = len(neurons * len(NUM_TEST) * len(NUM_INIT) * len(NUM_DOMAIN))
 
     # Anota aqui as variáveis que vão ser suportadas nessa simulação
     # supported_variables = ['X', 'P', 'S', 'V']
@@ -86,7 +98,7 @@ def change_layer_fix_neurons_number(eq_params, process_params):
                                 key = (
                                     # Primeiro o "core"
                                     f"{NL}x{HL} {input_str} {func}"
-                                    #Depois coisas l relacionadas ao treino
+                                    # Depois coisas l relacionadas ao treino
                                     + f" l{loss_version}"
                                     + f" {nondim_str} {minibatch_str}"
                                     + f" nd{n_domain} nt{n_test} ni{n_init}"
@@ -103,11 +115,13 @@ def change_layer_fix_neurons_number(eq_params, process_params):
                                 dictionary[key]["scaler"] = (
                                     NonDimScaler(
                                         name=nd["abrv"],
-                                        X=eq_params.Xm,
-                                        P=eq_params.Pm,
-                                        S=eq_params.So,
-                                        V=process_params.max_reactor_volume,
-                                        t=process_params.t_final,
+                                        X=eq_params.Xm * scaler_modifiers["X"],
+                                        P=eq_params.Pm * scaler_modifiers["P"],
+                                        S=eq_params.So * scaler_modifiers["S"],
+                                        V=process_params.max_reactor_volume
+                                        * scaler_modifiers["V"],
+                                        t=process_params.t_final
+                                        * scaler_modifiers["t"],
                                         toNondim=nd["to"],
                                         fromNondim=nd["from"],
                                     )

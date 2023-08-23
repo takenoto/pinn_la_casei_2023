@@ -1,4 +1,0 @@
-default_adam_epochs = 20000
-default_layer_size = [1] + [36] * 4 + [4]
-default_num_domain = 800
-default_num_test = 1000

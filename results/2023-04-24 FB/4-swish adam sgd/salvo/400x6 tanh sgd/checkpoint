@@ -1,2 +1,0 @@
-model_checkpoint_path: "sgd-35000.ckpt"
-all_model_checkpoint_paths: "sgd-35000.ckpt"

@@ -1,6 +1,0 @@
-Best model at step 120000:
-  train loss: 8.71e-03
-  test loss: 7.88e-03
-  test metric: []
-
-'train' took 130.086678 s
