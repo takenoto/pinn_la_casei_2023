@@ -402,6 +402,17 @@ def compare_num_and_pinn(
         showPlot=False if folder_to_save else True,
     )
 
+def create_folder_to_save(subfolder):
+    current_directory_path = os.getcwd()
+    folder_to_save = os.path.join(
+        current_directory_path, "results", "exported", subfolder
+    )
+    # ref: https://stackoverflow.com/questions/56012636/python-mathplotlib-savefig-filenotfounderror
+    # Create the folder if it does not exist
+    if not os.path.exists(folder_to_save):
+        os.makedirs(folder_to_save)
+    # folder_to_save = "results/exported/2023-08-21"  # None para evitar salvamento
+    return folder_to_save
 
 def main():
     deepxde.config.set_random_seed(0)
@@ -414,17 +425,8 @@ def main():
 
     # If None, the plots will be shown()
     # If a directory, the plots will be saved
-    subfolder = "2023-08-23-batch"
-    current_directory_path = os.getcwd()
-    folder_to_save = os.path.join(
-        current_directory_path, "results", "exported", subfolder
-    )
-    # ref: https://stackoverflow.com/questions/56012636/python-mathplotlib-savefig-filenotfounderror
-    # Create the folder if it does not exist
-    if not os.path.exists(folder_to_save):
-        os.makedirs(folder_to_save)
-
-    # folder_to_save = "results/exported/2023-08-21"  # None para evitar salvamento
+    subfolder = "2023-08-23"
+    folder_to_save = create_folder_to_save(subfolder=subfolder)
 
     # If true, also plots the nondim values from pinn
     showNondim = False
@@ -434,9 +436,9 @@ def main():
     # ----------------------
     run_fedbatch = False
 
-    run_cstr = False
+    run_cstr = True
 
-    run_batch = True
+    run_batch = False
 
     # --------------------------------------------
     # ----------------MAIN CODE-------------------
@@ -507,6 +509,7 @@ def main():
     )
 
     if run_fedbatch:
+        folder_to_save = create_folder_to_save(subfolder=subfolder+"-fb")
         print("RUN FED-BATCH")
         cases, cols, rows = change_layer_fix_neurons_number(
             eq_params, process_params_feed_fb
@@ -548,6 +551,7 @@ def main():
         pass
 
     if run_cstr:
+        folder_to_save = create_folder_to_save(subfolder=subfolder+"-cstr")
         print("RUN CSTR")
         cases, cols, rows = change_layer_fix_neurons_number(
             eq_params, process_params_feed_cstr
@@ -595,6 +599,7 @@ def main():
         pass
 
     if run_batch:
+        folder_to_save = create_folder_to_save(subfolder=subfolder+"-batch")
         print("RUN BATCH")
         cases, cols, rows = change_layer_fix_neurons_number(
             eq_params, process_params_feed_off
