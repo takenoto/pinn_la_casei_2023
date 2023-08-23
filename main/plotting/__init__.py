@@ -63,8 +63,8 @@ def plot_comparer_multiple_grid(
     )
 
     if suptitle:
-        fig.suptitle(suptitle, y=-0.1)#, y=0.14)
-        # plt.subplots_adjust(top=0.8)
+        sssuptitle = '\n'.join(wrap(suptitle,80))
+        fig.suptitle('\n\n'+sssuptitle, y=-0.07)#, y=-0.1, wrap=False, )#, y=0.14)
     if supxlabel:
         fig.supxlabel(supxlabel)
     if supylabel:
@@ -136,7 +136,7 @@ def plot_comparer_multiple_grid(
             # loc="best",#"upper right",#"upper center",  
             bbox_to_anchor=(0.5,-0.07),# bbox_to_anchor=(1,-0.1),
             ncol=len(labels),
-            bbox_transform=fig.transFigure,
+            # bbox_transform=fig.transFigure,
         )
 
     # plt.tight_layout()
@@ -145,8 +145,8 @@ def plot_comparer_multiple_grid(
         if(folder_to_save):
             file_path = os.path.join(folder_to_save, filename)
         # Save the figure
-        # plt.savefig(file_path, bbox_inches="tight")
-        plt.savefig(file_path)
+        # plt.savefig(file_path)
+        plt.savefig(file_path, bbox_inches='tight')
         plt.close(fig)
         if showPlot:
             plt.show()
