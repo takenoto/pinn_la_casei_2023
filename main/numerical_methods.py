@@ -1,28 +1,19 @@
-from domain.reactor.cstr_state import CSTRState
-from main.plot_xpsv import plot_xpsv
 from domain.optimization.non_dim_scaler import NonDimScaler
 from domain.numeric_solver.euler import EulerMethod
-from domain.numeric_solver.numeric_solver_model_results import NumericSolverModelResults
 import numpy as np
 
 
-def run_numerical_methods(initial_state, eq_params, process_params, f_out_value_calc, t_discretization_points=[240]):
-    initial_state = (
-        initial_state
-        if initial_state
-        else CSTRState(
-            volume=np.array([4]),
-            X=eq_params.Xo,
-            P=eq_params.Po,
-            S=eq_params.So,
-        )
-    )
+def run_numerical_methods(
+    initial_state,
+    eq_params,
+    process_params,
+    f_out_value_calc,
+    t_discretization_points=[240],
+    non_dim_scaler: NonDimScaler = NonDimScaler(),
+):
+    initial_state = initial_state
 
     print("Starting Numerical Methods")
-    # Quando não é 1 dá tudo errado, várias linhas
-    # Ou seja, tá errada as multiplicações lá
-    # scaler = NonDimScaler(t=16, V=26, S=15, X=15, P=20)
-    scaler = NonDimScaler()
 
     # ---------------------------------------------------------
     # Numerical Calculation
@@ -34,9 +25,9 @@ def run_numerical_methods(initial_state, eq_params, process_params, f_out_value_
             eq_params,
             process_params,
             f_out_value_calc,
-            non_dim_scaler=scaler,
+            non_dim_scaler=non_dim_scaler,
             t_discretization_points=t_disc,
-            name=f'euler {t_disc}p'
+            name=f"euler {t_disc}p",
         )
         num_results.append(num_result)
     # euler = EulerMethod()
