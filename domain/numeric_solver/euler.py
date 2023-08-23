@@ -44,6 +44,7 @@ class EulerMethod:
             stop=non_dim_scaler.toNondim({"t": process_params.t_final}, "t"),
             num=t_discretization_points,
         )
+
         dt = non_dim_scaler.fromNondim({"dt": t_space_nondim[1]}, "dt")
 
         X_nondim_array = np.ones(len(t_space_nondim)) * non_dim_scaler.toNondim(N0, "X")
