@@ -44,6 +44,7 @@ def grid_search(
         
         solver_params = solver_params_list[i]
         name=solver_params.name
+        print(f'process {i} of {len(solver_params_list)}')
         # print("\n--------------------------------------\n")
         # print(f"---------GRIDSEARCH: SIM {name} ----------")
         # print("\n--------------------------------------\n")
