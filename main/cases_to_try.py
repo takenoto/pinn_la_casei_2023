@@ -149,7 +149,7 @@ def change_layer_fix_neurons_number(eq_params, process_params):
                                 dictionary[key]["LR"] = LR
                                 dictionary[key][
                                     "hyperfolder"
-                                ] = f"{input_str} {nondim_str} 2023_08_21"
+                                ] = f"{input_str} {nondim_str}"
                                 dictionary[key]["isplot"] = False
                                 dictionary[key]["initializer"] = initializer
                                 dictionary[key]["output_variables"] = output_variables
