@@ -434,9 +434,9 @@ def main():
     # ----------------------
     # -CHOSE OPERATION MODE-
     # ----------------------
-    run_fedbatch = False
+    run_fedbatch = True
 
-    run_cstr = True
+    run_cstr = False
 
     run_batch = False
 

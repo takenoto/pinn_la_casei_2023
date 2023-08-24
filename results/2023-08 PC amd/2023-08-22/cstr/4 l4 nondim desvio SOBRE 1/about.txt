@@ -1,0 +1,4 @@
+elapsed time for test = 34193.846893800015 secs
+
+Todos horríveis. Não entendi mesmo.
+A penalidade quando os valores são < 0 não funcionou. A loss tá baxíssima mas o erro terrível ainda. Por que?
