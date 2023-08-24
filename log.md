@@ -7,7 +7,8 @@
   - As melhores redes do batch...
   - Loss v4 com os 3 nondims tanh 60k adam
   - Tentar scaler 1/10 pra todos mas 1 pro volume. 10 pro tempo vai cancelar então tb daria certo...
-  - Repetir mas com swish
+  - SGD x Adam e tanh x swish
+- Tente abrir as redes que deram flat. Tacou um bias? Imagino que se valores ficarem entre 0 e 1 ele possa tb estar ignorando muitos dos bias, zerando, ou o contrário, ignorando os inputs. Isso é uma info legal embora eu não saiba bem interpretar ela.
 
 
 ## Anotações

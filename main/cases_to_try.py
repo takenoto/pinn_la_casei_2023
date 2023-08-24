@@ -30,26 +30,26 @@ def change_layer_fix_neurons_number(eq_params, process_params):
 
     # ---------------- NN ------------------
     func = "tanh"  #'tanh' #'swish'
-    mini_batch = [None]  # [None, 100]  # 100 #None  # 50 #200
+    mini_batch = [None, 20]  # [None, 100]  # 100 #None  # 50 #200
     initializer = "Glorot normal"  #'Glorot normal' #'Glorot normal' #'Orthogonal'
     # GLOROT UNIFORM # Era Glorot Normal nos testes sem swish
     LR = 1e-4  # 1e-4
     lbfgs_post = 1
-    ADAM_EPOCHS = 55000  # 45000
+    ADAM_EPOCHS = 95000 #1000#55000  # 45000
     SGD_EPOCHS = None  # 1000
     dictionary = {}
-    neurons = [60, 80]  # [20, 30, 40, 60]
-    layers = [4, 5, 6]  # [5, 4, 3]  # [4,3,2]
+    neurons = [5, 20, 60]#[60, 80]  # [20, 30, 40, 60]
+    layers = [3, 4, 5]#[4, 5, 6]  # [5, 4, 3]  # [4,3,2]
 
     # Se irá aplicar a estratégia de adimensionalização padrão
     NondimSelectedOptions = [
-        NondimAvailableOptions["None"],
+        # NondimAvailableOptions["None"],
         # NondimAvailableOptions["Linear"],
         NondimAvailableOptions["Desvio"],
     ]
 
     # Multiplica o scaler/adimensionalizador
-    scaler_modifier_default = 1 / 10
+    scaler_modifier_default = 1#1 / 10
     # Aqui coloca as customizações
     scaler_modifiers = {
         "t": scaler_modifier_default,
@@ -62,12 +62,12 @@ def change_layer_fix_neurons_number(eq_params, process_params):
     # Loss Weight
     IS_LOSS_WEIGHT = False
 
-    NUM_DOMAIN = [300]
-    NUM_TEST = [300]
-    NUM_INIT = [80]  # [80, 300]
+    NUM_DOMAIN = [800]#[300]
+    NUM_TEST = [800]#800]#[300]
+    NUM_INIT = [60]#[80]  # [80, 300]
     NUM_BOUNDARY = 0
 
-    cols = len(layers * len(NondimSelectedOptions))
+    cols = len(layers * len(NondimSelectedOptions)*len(mini_batch))
     rows = len(neurons * len(NUM_TEST) * len(NUM_INIT) * len(NUM_DOMAIN))
 
     # Anota aqui as variáveis que vão ser suportadas nessa simulação

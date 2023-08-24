@@ -1,0 +1,1 @@
+Errei na função de exportar e acabou quebrando. Mas pelo que vi TODOS tiveram ou as 2 loss alta ou a treino baixa e a teste altíssima, então nenhum ia prestar de toda forma
