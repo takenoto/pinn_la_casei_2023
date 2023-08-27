@@ -176,12 +176,24 @@ class ODEPreparer:
             # Se fizer um tf.where tendo como condicional o próprio X ou o valor da expressão não ser NaN, não presta, não adianta.
 
             def f_x_calc_func():
-                X_for_calc = tf.where(tf.less(X, Xm), X, tf.ones_like(X) * 0.9999 * Xm)
+                loss_version = solver_params.get_loss_version_for_type("X")
+                X_for_calc = X
+                if loss_version > 2:
+                    X_for_calc = tf.where(
+                        tf.less(X, Xm), X, tf.ones_like(X) * 0.9999 * Xm
+                    )
+
                 value = tf.pow(1 - X_for_calc / Xm, f)
                 return value
 
             def h_p_calc_func():
-                P_for_calc = tf.where(tf.less(P, Pm), P, tf.ones_like(P) * 0.9999 * Pm)
+                loss_version = solver_params.get_loss_version_for_type("P")
+                P_for_calc = P
+                if loss_version > 2:
+                    P_for_calc = tf.where(
+                        tf.less(P, Pm), P, tf.ones_like(P) * 0.9999 * Pm
+                    )
+
                 value = tf.pow(
                     1 - (P_for_calc / Pm),
                     h,
@@ -217,7 +229,7 @@ class ODEPreparer:
                         loss_maxmin = tf.where(
                             tf.less(X, 0),
                             X,
-                            tf.where(tf.greater(X, Xm), X-Xm, tf.zeros_like(X)),
+                            tf.where(tf.greater(X, Xm), X - Xm, tf.zeros_like(X)),
                         )
                         loss_derivative_abs = tf.abs(loss_derivative)
                         loss_maxmin_abs = tf.abs(loss_maxmin)
@@ -233,7 +245,7 @@ class ODEPreparer:
                         loss_maxmin = tf.where(
                             tf.less(P, 0),
                             P,
-                            tf.where(tf.greater(P, Pm), P-Pm, tf.zeros_like(P)),
+                            tf.where(tf.greater(P, Pm), P - Pm, tf.zeros_like(P)),
                         )
                         loss_derivative_abs = tf.abs(loss_derivative)
                         loss_maxmin_abs = tf.abs(loss_maxmin)
@@ -252,7 +264,7 @@ class ODEPreparer:
                             S,
                             tf.where(
                                 tf.greater(S, initial_state.S[0]),
-                                S-initial_state.S[0],
+                                S - initial_state.S[0],
                                 tf.zeros_like(S),
                             ),
                         )
