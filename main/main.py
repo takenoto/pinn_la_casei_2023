@@ -65,6 +65,7 @@ def compare_num_and_pinn(
     p_best_error,
     cols,
     rows,
+    showPINN=True,
     showNondim=False,
     folder_to_save=None,
 ):
@@ -243,8 +244,7 @@ def compare_num_and_pinn(
             if pinn_vals[3] is None
             else ",".join(np.char.mod("%f", np.array(pinn_vals[3]))),
         )
-            
-            
+
         pinn_nondim_vals_json = """{
             "t_nondim":[%s],
             "X":[%s],
@@ -266,7 +266,7 @@ def compare_num_and_pinn(
             if pinn_nondim_vals[3] is None
             else ",".join(np.char.mod("%f", np.array(pinn_nondim_vals[3]))),
         )
-        
+
         # Fecha o arquivo
         # Fecha o body e fecha o error
         file.write('\n"error": {\n')
@@ -317,15 +317,21 @@ def compare_num_and_pinn(
                         "color": pinn_colors[0],
                         "l": "-",
                     },
+                ],
+            }
+
+            if showPINN:
+                pinn_nondim_vals
+                items[i + 1]["cases"].append(
                     # PINN
                     {
                         "x": num.t,
                         "y": pinn_vals[i],
                         "color": pinn_colors[1],
                         "l": "--",
-                    },
-                ],
-            }
+                    }
+                )
+
             if showNondim:
                 pinn_nondim_vals
                 items[i + 1]["cases"].append(
@@ -338,7 +344,9 @@ def compare_num_and_pinn(
                     }
                 )
 
-        labels = ["Euler", "PINN"]
+        labels = ["Euler"]
+        if showPINN:
+            labels.append("PINN")
 
         if showNondim:
             labels.append("ND PINN")
@@ -402,6 +410,167 @@ def compare_num_and_pinn(
         showPlot=False if folder_to_save else True,
     )
 
+
+def plot_compare_3_reactors(reactors, folder_to_save, showNondim=False):
+    """
+    Compares pinn results from the 3 reactors models for the same net.
+
+    reactors is a dict with "cstr", "batch" and "fedbatch" keys
+
+    cstr, batch and fedbatch are dicts of the like:
+    {
+        'pinn': PINNModelResults,
+        'num': NumericalResults
+    }
+    """
+
+    items = {}
+
+    for reactor in reactors:
+        for reactor_type in ["batch", "fedbatch", "cstr"]:
+            # Skips the loop if the key doesn't exist
+            if reactor_type not in reactor:
+                continue
+
+            num = reactor[reactor_type]["num"]
+            pinn = reactor[reactor_type]["pinn"]
+
+            t_num_normal = num.non_dim_scaler.fromNondim({"t": num.t}, "t")
+            t_nondim = pinn.solver_params.non_dim_scaler.toNondim(
+                {"t": t_num_normal}, "t"
+            )
+            _in = pinn.solver_params.inputSimulationType
+            _out = pinn.solver_params.outputSimulationType
+            if len(_in.order) == 1:
+                vals = np.vstack(
+                    np.ravel(
+                        t_nondim,
+                    )
+                )
+
+            elif len(_in.order) == 2:
+                # Determina as entradas
+                if _in.X:
+                    X_nondim = num.X
+                    vals = np.array(
+                        [[X_nondim[i], t_nondim[i]] for i in range(len(t_nondim))]
+                    )
+                elif _in.P:
+                    P_nondim = num.X
+                    vals = np.array(
+                        [[P_nondim[i], t_nondim[i]] for i in range(len(t_nondim))]
+                    )
+                elif _in.S:
+                    S_nondim = num.S
+                    vals = np.array(
+                        [[S_nondim[i], t_nondim[i]] for i in range(len(t_nondim))]
+                    )
+                elif _in.V:
+                    V_nondim = num.V
+                    vals = np.array(
+                        [[V_nondim[i], t_nondim[i]] for i in range(len(t_nondim))]
+                    )
+
+            prediction = pinn.model.predict(vals)
+
+            N_nondim_pinn = {}
+            for o in _out.order:
+                if o == "X":
+                    N_nondim_pinn["X"] = prediction[:, _out.X_index]
+                if o == "P":
+                    N_nondim_pinn["P"] = prediction[:, _out.P_index]
+                if o == "S":
+                    N_nondim_pinn["S"] = prediction[:, _out.S_index]
+                if o == "V":
+                    N_nondim_pinn["V"] = prediction[:, _out.V_index]
+
+            N_pinn = {
+                type: pinn.solver_params.non_dim_scaler.fromNondim(N_nondim_pinn, type)
+                for type in N_nondim_pinn
+            }
+
+            custom_name = reactor[reactor_type].get("custom_name", None)
+            if custom_name is None:
+                custom_name = reactor_type
+            titles = [
+                f"{custom_name}:X",
+                f"{custom_name}:P",
+                f"{custom_name}:S",
+                f"{custom_name}:V",
+            ]
+            pinn_vals = [
+                N_pinn[type] if type in _out.order else None
+                for type in ["X", "P", "S", "V"]
+            ]
+            pinn_nondim_vals = [
+                N_nondim_pinn[type] if type in _out.order else None
+                for type in ["X", "P", "S", "V"]
+            ]
+            num_vals = [
+                num.X,
+                num.P,
+                num.S,
+                num.V,
+            ]
+
+            units = ["g/L", "g/L", "g/L", "L"]
+
+            for i in range(4):
+                items[len(items) + 1] = {
+                    "title": titles[i],
+                    "y_label": units[i],
+                    "cases": [
+                        # Numeric
+                        {
+                            "x": num.t,
+                            "y": num_vals[i],
+                            "color": pinn_colors[0],
+                            "l": "-",
+                        },
+                        # PINN
+                        {
+                            "x": num.t,
+                            "y": pinn_vals[i],
+                            "color": pinn_colors[1],
+                            "l": "--",
+                        },
+                    ],
+                }
+                if showNondim:
+                    pinn_nondim_vals
+                    items[i + 1]["cases"].append(
+                        # PINN nondim
+                        {
+                            "x": num.t,
+                            "y": pinn_nondim_vals[i],
+                            "color": pinn_colors[2],
+                            "l": ":",
+                        }
+                    )
+
+            labels = ["Euler", "PINN"]
+
+        plot_comparer_multiple_grid(
+            suptitle=pinn.model_name,
+            labels=labels,
+            figsize=(8 * 1.5, 8 * 1.5),
+            gridspec_kw={"hspace": 0.042, "wspace": 0.11},
+            yscale="linear",
+            sharey=False,
+            sharex=False,
+            nrows=3,
+            ncols=4,
+            items=items,
+            title_for_each=True,
+            supxlabel="tempo (h)",
+            # supylabel=pinn.model_name,
+            folder_to_save=folder_to_save,
+            filename=f"{pinn.model_name}.png" if folder_to_save else None,
+            showPlot=False if folder_to_save else True,
+        )
+    pass
+
+
 def create_folder_to_save(subfolder):
     current_directory_path = os.getcwd()
     folder_to_save = os.path.join(
@@ -414,6 +583,7 @@ def create_folder_to_save(subfolder):
     # folder_to_save = "results/exported/2023-08-21"  # None para evitar salvamento
     return folder_to_save
 
+
 def main():
     deepxde.config.set_random_seed(0)
 
@@ -425,20 +595,31 @@ def main():
 
     # If None, the plots will be shown()
     # If a directory, the plots will be saved
-    subfolder = "2023-08-23"
+    subfolder = "2023-08-28"
     folder_to_save = create_folder_to_save(subfolder=subfolder)
 
     # If true, also plots the nondim values from pinn
     showNondim = False
+    showPINN = False
 
     # ----------------------
     # -CHOSE OPERATION MODE-
     # ----------------------
     run_fedbatch = True
 
-    run_cstr = False
+    run_cstr = True
 
-    run_batch = False
+    run_batch = True
+
+    plot_compare_all = True
+    if plot_compare_all:
+        # FIXME o plot compare está com algum problema
+        # acaba printando o mesmo plot para todos de cada tipo
+        # independente do modelo, todos os cstr saem iguais, todos os batch, todos os fb, etc...
+        # o que não faz o menor sentido porque o nome está mudando, e o nome vem do pinn
+        print("ERRROR!!!!!!!!!!!!!!!")
+    cstr_num, batch_num, fb_num = [], [], []
+    cstr_pinn, batch_pinn, fb_pinn = [], [], []
 
     # --------------------------------------------
     # ----------------MAIN CODE-------------------
@@ -509,7 +690,7 @@ def main():
     )
 
     if run_fedbatch:
-        folder_to_save = create_folder_to_save(subfolder=subfolder+"-fb")
+        folder_to_save = create_folder_to_save(subfolder=subfolder + "-fb")
         print("RUN FED-BATCH")
         cases, cols, rows = change_layer_fix_neurons_number(
             eq_params, process_params_feed_fb
@@ -545,13 +726,16 @@ def main():
             cols,
             rows,
             showNondim=showNondim,
+            showPINN=showPINN,
             folder_to_save=folder_to_save,
         )
 
+        fb_num = num_results
+        fb_pinn = pinns
         pass
 
     if run_cstr:
-        folder_to_save = create_folder_to_save(subfolder=subfolder+"-cstr")
+        folder_to_save = create_folder_to_save(subfolder=subfolder + "-cstr")
         print("RUN CSTR")
         cases, cols, rows = change_layer_fix_neurons_number(
             eq_params, process_params_feed_cstr
@@ -593,13 +777,16 @@ def main():
             cols,
             rows,
             showNondim=showNondim,
+            showPINN=showPINN,
             folder_to_save=folder_to_save,
         )
 
+        cstr_num = num_results
+        cstr_pinn = pinns
         pass
 
     if run_batch:
-        folder_to_save = create_folder_to_save(subfolder=subfolder+"-batch")
+        folder_to_save = create_folder_to_save(subfolder=subfolder + "-batch")
         print("RUN BATCH")
         cases, cols, rows = change_layer_fix_neurons_number(
             eq_params, process_params_feed_off
@@ -638,10 +825,42 @@ def main():
             cols,
             rows,
             showNondim=showNondim,
+            showPINN=showPINN,
             folder_to_save=folder_to_save,
         )
 
+        batch_num = num_results
+        batch_pinn = pinns
         pass
+
+    if plot_compare_all:
+        reactors = []
+
+        for i in range(len(batch_pinn)):
+            reactor = {
+                "batch": {
+                    "num": batch_num[0],
+                    "pinn": batch_pinn[i],
+                    "custom_name": "BATCH",
+                },
+                "cstr": {
+                    "num": cstr_num[0],
+                    "pinn": cstr_pinn[i],
+                    "custom_name": "CSTR",
+                },
+                "fedbatch": {
+                    "num": fb_num[0],
+                    "pinn": fb_pinn[i],
+                    "custom_name": "FED-BATCH",
+                },
+            }
+
+            reactors.append(reactor)
+
+        folder_to_save = create_folder_to_save(subfolder=subfolder + "-compare")
+        plot_compare_3_reactors(
+            reactors=reactors, folder_to_save=folder_to_save, showNondim=showNondim
+        )
 
 
 if __name__ == "__main__":
