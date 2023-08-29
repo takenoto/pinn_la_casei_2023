@@ -600,18 +600,18 @@ def main():
 
     # If true, also plots the nondim values from pinn
     showNondim = False
-    showPINN = False
+    showPINN = True
 
     # ----------------------
     # -CHOSE OPERATION MODE-
     # ----------------------
     run_fedbatch = True
 
-    run_cstr = True
+    run_cstr = False
 
-    run_batch = True
+    run_batch = False
 
-    plot_compare_all = True
+    plot_compare_all = False
     if plot_compare_all:
         # FIXME o plot compare está com algum problema
         # acaba printando o mesmo plot para todos de cada tipo
