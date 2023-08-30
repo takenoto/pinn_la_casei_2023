@@ -26,25 +26,25 @@ def change_layer_fix_neurons_number(eq_params, process_params):
     # A loss v4 é a que faz com que EFETIVAMENTE retorne o próprio valor
     # da coisa (XPSV) se for < 0 ou maior que o limite (Xm, Pm, So. Volume fica solto.)
     # E a loss v4 também é absoluta
-    loss_version = 4  # 4
+    loss_version = 4  # 4 #3 #2
 
     # ---------------- NN ------------------
     func = "tanh"  #'tanh' #'swish'
-    mini_batch = [None, 20]  # [None, 100]  # 100 #None  # 50 #200
+    mini_batch = [None]  # [None] [20] [80]
     initializer = "Glorot normal"  #'Glorot normal' #'Glorot normal' #'Orthogonal'
     # GLOROT UNIFORM # Era Glorot Normal nos testes sem swish
-    LR = 1e-4
-    lbfgs_post = 1
-    ADAM_EPOCHS = 95000 #1000#55000  # 45000
+    LR = 1e-3 # 1e-4 1e-3
+    lbfgs_post = 1  # 1
+    ADAM_EPOCHS = 35000  # 120000 #95000 #1000#55000  # 45000
     SGD_EPOCHS = None  # 1000
     dictionary = {}
-    neurons = [20, 60, 80]  # [60, 80]  # [20, 30, 40, 60]
-    layers = [3, 4, 5]  # [4, 5, 6]  # [5, 4, 3]  # [4,3,2]
+    neurons = [400, 250, 100, 70, 32, 24]  # [20, 60, 80]  # [60, 80]  # [20, 30, 40, 60]
+    layers = [7, 6, 5, 4, 3]  # [3, 4, 5]  # [4, 5, 6]  # [5, 4, 3]  # [4,3,2]
 
     # Se irá aplicar a estratégia de adimensionalização padrão
     NondimSelectedOptions = [
         NondimAvailableOptions["None"],
-        NondimAvailableOptions["Linear"],
+        # NondimAvailableOptions["Linear"],
         # NondimAvailableOptions["Desvio"],
     ]
 
@@ -62,9 +62,9 @@ def change_layer_fix_neurons_number(eq_params, process_params):
     # Loss Weight
     IS_LOSS_WEIGHT = False
 
-    NUM_DOMAIN = [800]  # [300]#[300]
-    NUM_TEST = [800]  # [300]#800]#[300]
-    NUM_INIT = [80]  # [80, 300]
+    NUM_DOMAIN = [240]  # [800]#
+    NUM_TEST = [240]  # [800]#[300]
+    NUM_INIT = [60]  # [20] [60] [80] 20 era o valor dos primeiros testes
     NUM_BOUNDARY = 0
 
     cols = len(layers * len(NondimSelectedOptions))
@@ -122,8 +122,8 @@ def change_layer_fix_neurons_number(eq_params, process_params):
                                         S=eq_params.So * scaler_modifiers["S"],
                                         V=process_params.max_reactor_volume
                                         * scaler_modifiers["V"],
-                                        t=process_params.t_final
-                                        * scaler_modifiers["t"],
+                                        t=1, 
+                                        #process_params.t_final* scaler_modifiers["t"],
                                         toNondim=nd["to"],
                                         fromNondim=nd["from"],
                                     )
