@@ -1,2 +1,0 @@
-Pinn best index = 0
-Pinn best error = 992.1954956054688
