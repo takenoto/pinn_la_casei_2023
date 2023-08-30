@@ -595,7 +595,7 @@ def main():
 
     # If None, the plots will be shown()
     # If a directory, the plots will be saved
-    subfolder = "2023-08-28"
+    subfolder = "2023-08-30"
     folder_to_save = create_folder_to_save(subfolder=subfolder)
 
     # If true, also plots the nondim values from pinn
