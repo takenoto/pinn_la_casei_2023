@@ -672,8 +672,8 @@ def main():
             S=eq_params.So,
         ),
         # TODO e esse tempo????
-        # t_final=10.2,
-        t_final=24 * 4,
+        t_final=10.2,
+        # t_final=24 * 4,
     )
 
     process_params_feed_cstr = ProcessParams(
