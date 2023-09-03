@@ -1,8 +1,8 @@
 # Log
 
 ## Testes a se fazer
-- Batch
-  - scaler 1/10 pra tudo, incluindo o tempo com t_nondim, mas pra V scaler 1. Ajuda a ficar melhor????
+- FED-BATCH
+  - Novo tempo de simulação, menor...
 - CSTR
   - As melhores redes do batch...
   - Loss v4 com os 3 nondims tanh 60k adam
@@ -16,6 +16,8 @@
   - Batch
     - Já fiz vários nd com t e sem t e linear e vi que muitos ficam ok.; A loss v4 parece estimular o volume a ficar caindo e não oscilando.
     - None e Desvio validados! Desvio não ficou tão bom mas pode ter a ver com a minha escolha de scaler pras variáveis.
+    - Batch
+      - scaler 1/10 pra tudo pareceu melhorar resultados nondim linear
   - Adimensionalização + scaling pra deixar todo mundo entre 0 e 10 parece a melhor opção até agora. Excluindo sempre o tempo da adimensionalização, claro... Será que fica bom entre 0 e 10 justamente por ser o mesmo range de variação de t_final? Que vai até 10.2...
   - É, mas também foi o único em que eu botei pra ir até 55k otimização. Isso deve contar mais que todo o resto zzzzzzzz.... Os outros eram só 35k eu acho.
 
@@ -24,6 +26,8 @@
 
 ### 2023-09-02
 - Erro no tempo do fed-batch. No texto está escrito 1036 (um erro porque deveria ser 10.6) porque digitei errado no teclado numérico.
+- Escrever novas *losses* no documento e nos slides.
+- TODO escrever novas nondim no documento e nos slides
 
 ### 2023-08-22
 - Encontrei um erro sério
