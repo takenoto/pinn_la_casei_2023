@@ -27,7 +27,7 @@
 ### 2023-09-02
 - Erro no tempo do fed-batch. No texto está escrito 1036 (um erro porque deveria ser 10.6) porque digitei errado no teclado numérico.
 - Escrever novas *losses* no documento e nos slides.
-- TODO escrever novas nondim no documento e nos slides
+- TODO escrever novas nondim no documento (OK) e nos slides (FALTA!)
 
 ### 2023-08-22
 - Encontrei um erro sério
