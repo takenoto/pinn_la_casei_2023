@@ -299,8 +299,10 @@ class ODEPreparer:
                 old_loss_pde = loss_pde
                 for loss_n in old_loss_pde:
                     loss_pde_total += loss_n
+                # Essa loss é pra fazer com que estejam no máximo
+                # a 1 casa decimal de distância
                 loss_pde = [
-                    (loss_n + loss_pde_total) / (2 * loss_pde_total) for loss_n in old_loss_pde
+                    (0.9 * loss_n + 0.1 * loss_pde_total) for loss_n in old_loss_pde
                 ]
 
             return loss_pde
