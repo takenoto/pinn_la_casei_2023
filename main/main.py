@@ -14,7 +14,7 @@ from domain.optimization.non_dim_scaler import NonDimScaler
 from domain.params.altiok_2006_params import (
     get_altiok2006_params,
 )
-from domain.reactor.cstr_state import CSTRState
+from domain.reactor.cr_state import CSTRState
 from domain.params.process_params import ProcessParams
 from domain.flow.concentration_flow import ConcentrationFlow
 from main.cases_to_try import change_layer_fix_neurons_number
@@ -290,14 +290,17 @@ def compare_num_and_pinn(
                         pinn_nondim_vals_json,
                         "\n",
                         # Essa parte é confusa e não sai direito
-                        # ",\n",
-                        # '"pinn_loss_story_test":'
-                        # + f"{np.array(pinn.loss_history.loss_test)}"
-                        # ",\n",
-                        # '"pinn_loss_story_train":'
-                        # + f"{np.array(pinn.loss_history.loss_train)}"
-                        # ",\n",
-                        # '"total_training_time":' + f"{pinn.total_training_time}" "\n",
+                        ",\n",
+                        '"pinn_epochs":'
+                        + f"{pinn.loss_history.steps}"
+                        ",\n",
+                        '"pinn_loss_story_test":'
+                        + f"{[loss for loss in np.array(np.sum(pinn.loss_history.loss_test, axis=1))]}"
+                        ",\n",
+                        '"pinn_loss_story_train":'
+                        + f"{[loss for loss in np.sum(pinn.loss_history.loss_train, axis=1)]}"
+                        ",\n",
+                        '"total_training_time":' + f"{pinn.total_training_time}" "\n",
                         "}",
                     ]
                 )
@@ -354,7 +357,7 @@ def compare_num_and_pinn(
         plot_comparer_multiple_grid(
             suptitle=pinn.model_name,
             labels=labels,
-            figsize=(8 * 1.5, 8 * 1.5),
+            figsize=(8 , 8),
             gridspec_kw={"hspace": 0.042, "wspace": 0.11},
             yscale="linear",
             sharey=False,
@@ -362,7 +365,7 @@ def compare_num_and_pinn(
             ncols=2,
             items=items,
             title_for_each=True,
-            supxlabel="tempo (h)",
+            supxlabel="t (h)",
             # supylabel=pinn.model_name,
             folder_to_save=folder_to_save,
             filename=f"{pinn.model_name}.png" if folder_to_save else None,
@@ -403,7 +406,7 @@ def compare_num_and_pinn(
         items=items,
         suptitle="Loss",
         title_for_each=True,
-        supxlabel="epochs",
+        supxlabel="i",
         supylabel="loss",
         folder_to_save=folder_to_save,
         filename="loss.png" if folder_to_save else None,
@@ -415,9 +418,9 @@ def plot_compare_3_reactors(reactors, folder_to_save, showNondim=False):
     """
     Compares pinn results from the 3 reactors models for the same net.
 
-    reactors is a dict with "cstr", "batch" and "fedbatch" keys
+    reactors is a dict with "cr", "batch" and "fedbatch" keys
 
-    cstr, batch and fedbatch are dicts of the like:
+    cr, batch and fedbatch are dicts of the like:
     {
         'pinn': PINNModelResults,
         'num': NumericalResults
@@ -427,7 +430,7 @@ def plot_compare_3_reactors(reactors, folder_to_save, showNondim=False):
     items = {}
 
     for reactor in reactors:
-        for reactor_type in ["batch", "fedbatch", "cstr"]:
+        for reactor_type in ["batch", "fedbatch", "cr"]:
             # Skips the loop if the key doesn't exist
             if reactor_type not in reactor:
                 continue
@@ -607,7 +610,7 @@ def main():
     # ----------------------
     run_fedbatch = True
 
-    run_cstr = False
+    run_cr = False
 
     run_batch = False
 
@@ -615,11 +618,11 @@ def main():
     if plot_compare_all:
         # FIXME o plot compare está com algum problema
         # acaba printando o mesmo plot para todos de cada tipo
-        # independente do modelo, todos os cstr saem iguais, todos os batch, todos os fb, etc...
+        # independente do modelo, todos os cr saem iguais, todos os batch, todos os fb, etc...
         # o que não faz o menor sentido porque o nome está mudando, e o nome vem do pinn
         print("ERRROR!!!!!!!!!!!!!!!")
-    cstr_num, batch_num, fb_num = [], [], []
-    cstr_pinn, batch_pinn, fb_pinn = [], [], []
+    cr_num, batch_num, fb_num = [], [], []
+    cr_pinn, batch_pinn, fb_pinn = [], [], []
 
     # --------------------------------------------
     # ----------------MAIN CODE-------------------
@@ -629,7 +632,7 @@ def main():
 
     # Parâmetros de processo (será usado em todos)
     eq_params = altiok_models_to_run[0]
-    # Serve pra batch e pra cstr
+    # Serve pra batch e pra cr
     initial_state = CSTRState(
         volume=np.array([5]),
         X=eq_params.Xo,
@@ -637,7 +640,7 @@ def main():
         S=eq_params.So,
     )
 
-    initial_state_cstr = CSTRState(
+    initial_state_cr = CSTRState(
         volume=np.array([1]),
         X=eq_params.Xo,
         P=eq_params.Po,
@@ -676,7 +679,7 @@ def main():
         # t_final=24 * 4,
     )
 
-    process_params_feed_cstr = ProcessParams(
+    process_params_feed_cr = ProcessParams(
         max_reactor_volume=5,
         inlet=ConcentrationFlow(
             volume=1,  # 1,  # L/h => 1 é o valor padrão
@@ -734,36 +737,36 @@ def main():
         fb_pinn = pinns
         pass
 
-    if run_cstr:
-        folder_to_save = create_folder_to_save(subfolder=subfolder + "-cstr")
+    if run_cr:
+        folder_to_save = create_folder_to_save(subfolder=subfolder + "-cr")
         print("RUN CSTR")
         cases, cols, rows = change_layer_fix_neurons_number(
-            eq_params, process_params_feed_cstr
+            eq_params, process_params_feed_cr
         )
 
-        def cstr_f_out_calc_numeric(max_reactor_volume, f_in_v, volume):
+        def cr_f_out_calc_numeric(max_reactor_volume, f_in_v, volume):
             return f_in_v * pow(volume / max_reactor_volume, 7)
 
         num_results = run_numerical_methods(
             eq_params=eq_params,
-            process_params=process_params_feed_cstr,
-            initial_state=initial_state_cstr,
-            f_out_value_calc=cstr_f_out_calc_numeric,
+            process_params=process_params_feed_cr,
+            initial_state=initial_state_cr,
+            f_out_value_calc=cr_f_out_calc_numeric,
             t_discretization_points=[400],
             non_dim_scaler=NonDimScaler(),
         )
 
         start_time = timer()
 
-        def cstr_f_out_calc_tensorflow(max_reactor_volume, f_in_v, volume):
+        def cr_f_out_calc_tensorflow(max_reactor_volume, f_in_v, volume):
             return f_in_v * tf.math.pow(volume / max_reactor_volume, 7)
 
         pinns, p_best_index, p_best_error = run_pinn_grid_search(
             solver_params_list=None,
             eq_params=eq_params,
-            process_params=process_params_feed_cstr,
-            initial_state=initial_state_cstr,
-            f_out_value_calc=cstr_f_out_calc_tensorflow,
+            process_params=process_params_feed_cr,
+            initial_state=initial_state_cr,
+            f_out_value_calc=cr_f_out_calc_tensorflow,
             cases_to_try=cases,
         )
         end_time = timer()
@@ -781,8 +784,8 @@ def main():
             folder_to_save=folder_to_save,
         )
 
-        cstr_num = num_results
-        cstr_pinn = pinns
+        cr_num = num_results
+        cr_pinn = pinns
         pass
 
     if run_batch:
@@ -843,9 +846,9 @@ def main():
                     "pinn": batch_pinn[i],
                     "custom_name": "BATCH",
                 },
-                "cstr": {
-                    "num": cstr_num[0],
-                    "pinn": cstr_pinn[i],
+                "cr": {
+                    "num": cr_num[0],
+                    "pinn": cr_pinn[i],
                     "custom_name": "CSTR",
                 },
                 "fedbatch": {
