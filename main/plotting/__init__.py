@@ -94,6 +94,8 @@ def plot_comparer_multiple_grid(
                 if ___x is None or ___y is None:
                     pass
                 else:
+                    # Remove auto offset
+                    # ref: https://stackoverflow.com/questions/28371674/prevent-scientific-notation
                     ax.ticklabel_format(useOffset=False)
                     ax.plot(
                         ___x,
