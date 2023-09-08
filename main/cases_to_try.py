@@ -19,6 +19,7 @@ NondimAvailableOptions = {
 
 
 def change_layer_fix_neurons_number(eq_params, process_params):
+    dictionary = {}
     # --------- LOSS FUNCTION ------------
     # 1 é a loss tradicional, #2 retorna o própria X/P/S/V caso seja menor que zero.
     # 3 é a que faz dMols/dt e não dConc/dt, pro volume ir multiplicando... E também
@@ -26,20 +27,20 @@ def change_layer_fix_neurons_number(eq_params, process_params):
     # A loss v4 é a que faz com que EFETIVAMENTE retorne o próprio valor
     # da coisa (XPSV) se for < 0 ou maior que o limite (Xm, Pm, So. Volume fica solto.)
     # E a loss v4 também é absoluta
-    loss_version = 4  # 4 #3 #2
+    # 5 é a que incluir uma semi normalização com base na loss de todos
+    loss_version = 5 # 6 5 4 3 2
 
     # ---------------- NN ------------------
-    func = "tanh"  #'tanh' #'swish'
-    mini_batch = [None]  # [None] [20] [80]
-    initializer = "Glorot normal"  #'Glorot normal' #'Glorot normal' #'Orthogonal'
+    func = "swish"  #'tanh' #'swish' 'selu' 'relu'
+    mini_batch = [None]  # [None] [20] [40] [80]
+    initializer = "Glorot normal"  #'Glorot normal' #'Glorot uniform' #'Orthogonal'
     # GLOROT UNIFORM # Era Glorot Normal nos testes sem swish
-    LR = 1e-3 # 1e-4 1e-3
-    lbfgs_post = 1  # 1
-    ADAM_EPOCHS = 35000  # 120000 #95000 #1000#55000  # 45000
+    LR = 1e-4 # 1e-4 1e-3
+    lbfgs_post = 1  # 0 1
+    ADAM_EPOCHS = 35000 #45000 # 1000 40000  # 120000 #95000 #1000#55000  # 45000
     SGD_EPOCHS = None  # 1000
-    dictionary = {}
-    neurons = [400, 250, 100, 70, 32, 24]  # [20, 60, 80]  # [60, 80]  # [20, 30, 40, 60]
-    layers = [7, 6, 5, 4, 3]  # [3, 4, 5]  # [4, 5, 6]  # [5, 4, 3]  # [4,3,2]
+    neurons = [60, 80]#[60, 20, 5]  # [20, 60, 80]  # [60, 80]  # [20, 30, 40, 60]
+    layers = [4, 5]#[5, 4, 3]  # [3, 4, 5]  # [4, 5, 6]  # [5, 4, 3]  # [4,3,2]
 
     # Se irá aplicar a estratégia de adimensionalização padrão
     NondimSelectedOptions = [
@@ -49,7 +50,7 @@ def change_layer_fix_neurons_number(eq_params, process_params):
     ]
 
     # Multiplica o scaler/adimensionalizador
-    scaler_modifier_default = 1 / 10  # 1 #1 / 10
+    scaler_modifier_default = 1  # 1 #1 / 10
     # Aqui coloca as customizações
     scaler_modifiers = {
         "t": scaler_modifier_default,
@@ -62,9 +63,9 @@ def change_layer_fix_neurons_number(eq_params, process_params):
     # Loss Weight
     IS_LOSS_WEIGHT = False
 
-    NUM_DOMAIN = [240]  # [800]#
-    NUM_TEST = [240]  # [800]#[300]
-    NUM_INIT = [60]  # [20] [60] [80] 20 era o valor dos primeiros testes
+    NUM_DOMAIN = [400]  # [1600] [800] [400] [300]
+    NUM_TEST = [400]  # [1600] [800] [400] [300]
+    NUM_INIT = [80]  # [20] [60] [80] 20 era o valor dos primeiros testes
     NUM_BOUNDARY = 0
 
     cols = len(layers * len(NondimSelectedOptions))
@@ -132,10 +133,10 @@ def change_layer_fix_neurons_number(eq_params, process_params):
                                 )
 
                                 if IS_LOSS_WEIGHT:
-                                    dictionary[key]["w_X"] = 1 / 10  # 100 # 1 / 3
+                                    dictionary[key]["w_X"] = 10  # 100 # 1 / 3
                                     dictionary[key]["w_P"] = 1  # 1000 #1 / 100
-                                    dictionary[key]["w_S"] = 1 / 100  # 1/10 #1 / 1000
-                                    dictionary[key]["w_V"] = 1
+                                    dictionary[key]["w_S"] = 1 # 1/10 #1 / 1000
+                                    dictionary[key]["w_V"] = 10
 
                                 dictionary[key]["activation"] = func
                                 if mini_batch:
