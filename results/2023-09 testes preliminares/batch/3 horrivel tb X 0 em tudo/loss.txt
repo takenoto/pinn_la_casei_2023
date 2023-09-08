@@ -1,0 +1,6 @@
+# A loss de cada termo é na verdade a loss dos OUTROS termos.
+
+
+loss_pde = [
+                    (loss_pde_total - loss_n) for loss_n in old_loss_pde
+                ]
