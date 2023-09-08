@@ -25,6 +25,7 @@ def plot_comparer_multiple_grid(
     folder_to_save=None,
     filename=None,
     showPlot=False,
+    legend_bbox_to_anchor=(0.5,-0.07)
 ):
     """
     x and y are the keys to access the x and y values in the dictionary
@@ -93,6 +94,7 @@ def plot_comparer_multiple_grid(
                 if ___x is None or ___y is None:
                     pass
                 else:
+                    ax.ticklabel_format(useOffset=False)
                     ax.plot(
                         ___x,
                         ___y,
@@ -134,7 +136,7 @@ def plot_comparer_multiple_grid(
             labels,
             loc="lower center",
             # loc="best",#"upper right",#"upper center",  
-            bbox_to_anchor=(0.5,-0.07),# bbox_to_anchor=(1,-0.1),
+            bbox_to_anchor=legend_bbox_to_anchor,# bbox_to_anchor=(1,-0.1),
             ncol=len(labels),
             # bbox_transform=fig.transFigure,
         )
