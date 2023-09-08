@@ -222,7 +222,7 @@ class ODEPreparer:
                 if o == "X":
                     loss_derivative = dXdt * V - (V * rX + (f_in * inlet.X - f_out * X))
                     loss_X = 0
-                    if loss_version == 4:
+                    if loss_version >= 4:
                         # if X<0, return X
                         # else if X>Xm, return X
                         # else return loss_X
@@ -241,7 +241,7 @@ class ODEPreparer:
                 elif o == "P":
                     loss_derivative = dPdt * V - (V * rP + (f_in * inlet.P - f_out * P))
                     loss_P = 0
-                    if loss_version == 4:
+                    if loss_version >= 4:
                         loss_maxmin = tf.where(
                             tf.less(P, 0),
                             P,
@@ -258,7 +258,7 @@ class ODEPreparer:
                 elif o == "S":
                     loss_derivative = dSdt * V - (V * rS + (f_in * inlet.S - f_out * S))
                     loss_S = 0
-                    if loss_version == 4:
+                    if loss_version >= 4:
                         loss_maxmin = tf.where(
                             tf.less(S, 0),
                             S,
@@ -279,7 +279,7 @@ class ODEPreparer:
                     dVdt_calc = f_in - f_out
                     loss_derivative = dVdt - dVdt_calc
                     loss_V = 0
-                    if loss_version == 4:
+                    if loss_version >= 4:
                         loss_maxmin = tf.where(
                             tf.less(V, 0),
                             V,
@@ -292,6 +292,16 @@ class ODEPreparer:
                         loss_V = loss_derivative
 
                     loss_pde.append(loss_V)
+
+            if solver_params.loss_version == 5:
+                # Normalize
+                loss_pde_total = 0
+                old_loss_pde = loss_pde
+                for loss_n in old_loss_pde:
+                    loss_pde_total += loss_n
+                loss_pde = [
+                    (loss_n + loss_pde_total) / (2 * loss_pde_total) for loss_n in old_loss_pde
+                ]
 
             return loss_pde
 
