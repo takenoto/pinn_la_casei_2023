@@ -357,8 +357,8 @@ def compare_num_and_pinn(
         plot_comparer_multiple_grid(
             suptitle=pinn.model_name,
             labels=labels,
-            figsize=(8 , 8),
-            gridspec_kw={"hspace": 0.042, "wspace": 0.11},
+            figsize=(8 , 6),
+            gridspec_kw={"hspace": 0.042, "wspace": 0.03},
             yscale="linear",
             sharey=False,
             nrows=2,
@@ -370,6 +370,7 @@ def compare_num_and_pinn(
             folder_to_save=folder_to_save,
             filename=f"{pinn.model_name}.png" if folder_to_save else None,
             showPlot=False if folder_to_save else True,
+            legend_bbox_to_anchor=(0.5,-0.1)
         )
 
     # ------------------------------
@@ -379,23 +380,25 @@ def compare_num_and_pinn(
         items[i + 1] = {
             "title": pinns[i].model_name,
             "cases": [
+                # Loss test = LoV
                 {
                     "x": pinns[i].loss_history.steps,
                     "y": np.sum(pinns[i].loss_history.loss_test, axis=1),
-                    "color": pinn_colors[0],
+                    "color": pinn_colors[-3],
                     "l": "-",
                 },
+                # Loss Train = LoT
                 {
                     "x": pinns[i].loss_history.steps,
                     "y": np.sum(pinns[i].loss_history.loss_train, axis=1),
-                    "color": pinn_colors[1],
-                    "l": "--",
+                    "color": pinn_colors[-1],
+                    "l": ":",
                 },
             ],
         }
 
     plot_comparer_multiple_grid(
-        labels=["Loss (teste)", "Loss (treino)"],
+        labels=["LoV", "LoT"],
         figsize=(10, 10),
         gridspec_kw={"hspace": 0.10, "wspace": 0.05},
         yscale="log",
@@ -598,7 +601,7 @@ def main():
 
     # If None, the plots will be shown()
     # If a directory, the plots will be saved
-    subfolder = "2023-08-30"
+    subfolder = "2023-09-08"
     folder_to_save = create_folder_to_save(subfolder=subfolder)
 
     # If true, also plots the nondim values from pinn
@@ -608,11 +611,11 @@ def main():
     # ----------------------
     # -CHOSE OPERATION MODE-
     # ----------------------
-    run_fedbatch = True
+    run_fedbatch = False
 
     run_cr = False
 
-    run_batch = False
+    run_batch = True
 
     plot_compare_all = False
     if plot_compare_all:
@@ -667,29 +670,25 @@ def main():
     )
 
     process_params_feed_fb = ProcessParams(
-        max_reactor_volume=5,
+        max_reactor_volume=10,
         inlet=ConcentrationFlow(
-            volume=2,  # L/h
+            volume=0.25,  # L/h
             X=eq_params.Xo,
             P=eq_params.Po,
             S=eq_params.So,
         ),
-        # TODO e esse tempo????
-        t_final=10.2,
-        # t_final=24 * 4,
+        t_final=2*10.2,
     )
 
     process_params_feed_cr = ProcessParams(
         max_reactor_volume=5,
         inlet=ConcentrationFlow(
-            volume=1,  # 1,  # L/h => 1 é o valor padrão
-            # baixei artificialmente. Pareceu evitar bem os nans...
-            X=eq_params.Xo,  # *0.1,
-            P=eq_params.Po,
+            volume=0.25,
+            X=eq_params.Xo*0,  # *0.1,
+            P=eq_params.Po*0,
             S=eq_params.So,
         ),
-        t_final=24 * 4,  # => ERA O PADRÃO!
-        # t_final=10.2,
+        t_final=24 * 3
     )
 
     if run_fedbatch:
