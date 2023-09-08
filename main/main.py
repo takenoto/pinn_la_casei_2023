@@ -739,7 +739,7 @@ def main():
 
     if run_cr:
         folder_to_save = create_folder_to_save(subfolder=subfolder + "-cr")
-        print("RUN CSTR")
+        print("RUN CR")
         cases, cols, rows = change_layer_fix_neurons_number(
             eq_params, process_params_feed_cr
         )
@@ -849,7 +849,7 @@ def main():
                 "cr": {
                     "num": cr_num[0],
                     "pinn": cr_pinn[i],
-                    "custom_name": "CSTR",
+                    "custom_name": "CR",
                 },
                 "fedbatch": {
                     "num": fb_num[0],
