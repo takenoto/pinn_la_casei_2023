@@ -105,6 +105,7 @@ def plot_comparer_multiple_grid(
                         marker=___marker,
                         markersize=3,
                     )
+                    ax.ticklabel_format(useOffset=False)
                 pass
             pass
 
@@ -199,13 +200,20 @@ if __name__ == "__main__":
             #     "title": "blue bar",
             # },
             2: {
-                "y_majlocator": plt.LogLocator(base=10, numticks=4),
-                "ax_yscale": "log",
-                "x_label": "Liter",
-                "x": [1, 9, 3],
-                "y": [3271, 5000, 6000],
-                "color": "tab:orange",
-                "title": "super_laranja",
+                "nbinsy": 20,
+                "y_label": "y turbo colorido",
+                "title": "multiple ys",
+                "cases": [
+                    # "l" são os line_args, pra dizer se é tracejado -- linha - pontilhado : etc
+                    {
+                        "x": [-2, 2, 3],
+                        "y": [4, 4, 4],
+                        "color": "tab:orange",
+                        "l": "None",
+                        "marker": "D",
+                    },
+                    {"x": [1, 0, 5], "y": [3.99999, 4, 4.000001], "color": "green", "l": "-"},
+                ],
             },
             3: {
                 "x": [1, -4, -10],
