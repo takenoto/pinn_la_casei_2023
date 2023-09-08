@@ -99,6 +99,7 @@ class SolverParams:
         inputSimulationType: SystemSimulationType = SystemSimulationType(),
         loss_version=1,
         custom_loss_version={},
+        train_distribution="Hammersley",
     ):
         self.name = name if name else None
         """
@@ -158,6 +159,8 @@ class SolverParams:
             }
         """
 
+        self.train_distribution = train_distribution
+
     def get_loss_version_for_type(self, type):
         """
         type é "X", "P", etc
@@ -186,8 +189,8 @@ class SolverParams:
             '"initializer":' + f'"{self.initializer}"',
             '"loss_version":' + f'"{self.loss_version}"',
             '"mini_batch": '
-            + f'{none_str if self.mini_batch is None else self.mini_batch}',
-            '"nondim_scaler":' + self.non_dim_scaler.toJson()
+            + f"{none_str if self.mini_batch is None else self.mini_batch}",
+            '"nondim_scaler":' + self.non_dim_scaler.toJson(),
         ]
 
         json = "{"

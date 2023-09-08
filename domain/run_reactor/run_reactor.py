@@ -156,6 +156,7 @@ def run_reactor(
         num_domain=solver_params.num_domain,
         num_boundary=solver_params.num_init,
         num_test=solver_params.num_test,
+        train_distribution=solver_params.train_distribution
     )
 
     # Creating the model and the net
@@ -183,8 +184,8 @@ def run_reactor(
     # https://github.com/lululxvi/deepxde/issues/174
     # https://github.com/lululxvi/deepxde/issues/504
     # https://github.com/lululxvi/deepxde/issues/467
-    loss = "MSE"
-    metrics = ["MSE"]
+    loss = "MSE" #"MSE"
+    metrics = None# ["l2 relative error"] # ["MSE"]
     mini_batch = solver_params.mini_batch  # None # Tamanho da mini-batch
 
     # Caminho pra pasta. Já vem com  a barra ou em branco caso não tenha hyperfolder

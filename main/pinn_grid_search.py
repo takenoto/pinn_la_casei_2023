@@ -104,6 +104,9 @@ def run_pinn_grid_search(
                 custom_loss_version=get_thing_for_key(
                     case_key, "custom_loss_version", default={}
                 ),
+                train_distribution=get_thing_for_key(
+                    case_key, "train_distribution", default="Hammersley"
+                ),
             )
             # Basicamente um teste com adimensionalização e um sem
             for case_key in cases_to_try
