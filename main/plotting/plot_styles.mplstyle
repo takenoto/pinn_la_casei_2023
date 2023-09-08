@@ -13,7 +13,7 @@ axes.labelpad: 8
 legend.title_fontsize: 14
 legend.borderpad: 1
 
-lines.linewidth: 5
+lines.linewidth: 3
 lines.markersize: 10
 xtick.labelsize: 10
 ytick.labelsize: 10
