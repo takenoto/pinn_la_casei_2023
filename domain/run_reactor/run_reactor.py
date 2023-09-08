@@ -38,7 +38,7 @@ def run_reactor(
     Returns the trained model with its loss_history and train_data AND the parameters
     used to achieve these results.
     """
-    
+
     inputSimulationType = solver_params.inputSimulationType
     outputSimulationType = solver_params.outputSimulationType
 
@@ -99,10 +99,9 @@ def run_reactor(
         "S": initial_state.S[0],
         "V": initial_state.volume[0],
     }
-    
+
     # Initial conditions (XPSV), without dimension
     N0_nondim = {type: scaler.toNondim(N0_dim, type) for type in N0_dim}
-
 
     ## X
     icX = dde.icbc.IC(
@@ -164,7 +163,7 @@ def run_reactor(
         solver_params.layer_size, solver_params.activation, solver_params.initializer
     )
     model = dde.Model(data, net)
-    
+
     # Loss Weights
     w = solver_params.loss_weights
     loss_weights = []
@@ -184,12 +183,9 @@ def run_reactor(
     # https://github.com/lululxvi/deepxde/issues/174
     # https://github.com/lululxvi/deepxde/issues/504
     # https://github.com/lululxvi/deepxde/issues/467
-    loss = None
-    loss_version = None
+    loss = "MSE"
+    metrics = ["MSE"]
     mini_batch = solver_params.mini_batch  # None # Tamanho da mini-batch
-
-    if loss_version is None:
-        loss = "MSE"
 
     # Caminho pra pasta. Já vem com  a barra ou em branco caso não tenha hyperfolder
     # Pra facilitar a vida e poder botar ele direto
@@ -201,15 +197,17 @@ def run_reactor(
     loss_history = None
     train_state = None
 
-    #---------------------------
+    # ---------------------------
     ## SOLVING
-    #---------------------------
-    
+    # ---------------------------
+
     start_time = timer()
     ### Step 1: Pre-solving by "L-BFGS"
     if solver_params.l_bfgs.do_pre_optimization >= 1:
         for i in range(solver_params.l_bfgs.do_pre_optimization):
-            model.compile("L-BFGS", loss_weights=loss_weights, loss=loss)
+            model.compile(
+                "L-BFGS", loss_weights=loss_weights, loss=loss, metrics=metrics
+            )
             model.train()
 
     ### Step 2: Solving by "adam"
@@ -219,7 +217,11 @@ def run_reactor(
 
     if solver_params.adam_epochs:
         model.compile(
-            "adam", lr=solver_params.adam_lr, loss_weights=loss_weights, loss=loss
+            "adam",
+            lr=solver_params.adam_lr,
+            loss_weights=loss_weights,
+            loss=loss,
+            metrics=metrics,
         )
         loss_history, train_state = model.train(
             epochs=solver_params.adam_epochs,
@@ -232,7 +234,11 @@ def run_reactor(
 
     if solver_params.sgd_epochs:
         model.compile(
-            "sgd", lr=solver_params.adam_lr, loss_weights=loss_weights, loss=loss
+            "sgd",
+            lr=solver_params.adam_lr,
+            loss_weights=loss_weights,
+            loss=loss,
+            metrics=metrics,
         )
         loss_history, train_state = model.train(
             epochs=solver_params.sgd_epochs,
@@ -246,11 +252,10 @@ def run_reactor(
     ### Step 3: Post optmization
     if solver_params.l_bfgs.do_post_optimization >= 1:
         for i in range(solver_params.l_bfgs.do_post_optimization):
-            model.compile("L-BFGS", loss_weights=loss_weights, loss=loss)
+            model.compile(
+                "L-BFGS", loss_weights=loss_weights, loss=loss, metrics=metrics
+            )
             loss_history, train_state = model.train(
-                # model_save_path=f"{hyperfolder_path}{solver_params.name}/lbfgs post{i}"
-                # if solver_params.name
-                # else None,
                 callbacks=[pde_resampler] if pde_resampler else None,
                 display_every=solver_params.adam_display_every,
             )
