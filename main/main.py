@@ -14,7 +14,7 @@ from domain.optimization.non_dim_scaler import NonDimScaler
 from domain.params.altiok_2006_params import (
     get_altiok2006_params,
 )
-from domain.reactor.cr_state import CSTRState
+from domain.reactor.reactor_state import ReactorState
 from domain.params.process_params import ProcessParams
 from domain.flow.concentration_flow import ConcentrationFlow
 from main.cases_to_try import change_layer_fix_neurons_number
@@ -633,14 +633,14 @@ def main():
     # Parâmetros de processo (será usado em todos)
     eq_params = altiok_models_to_run[0]
     # Serve pra batch e pra cr
-    initial_state = CSTRState(
+    initial_state = ReactorState(
         volume=np.array([5]),
         X=eq_params.Xo,
         P=eq_params.Po,
         S=eq_params.So,
     )
 
-    initial_state_cr = CSTRState(
+    initial_state_cr = ReactorState(
         volume=np.array([1]),
         X=eq_params.Xo,
         P=eq_params.Po,
@@ -648,7 +648,7 @@ def main():
     )
 
     # Serve pra fed-batch
-    initial_state_fed_batch = CSTRState(
+    initial_state_fed_batch = ReactorState(
         volume=np.array([1]),
         X=eq_params.Xo,
         P=eq_params.Po,

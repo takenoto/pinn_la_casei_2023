@@ -1,5 +1,5 @@
 import numpy as np
-class CSTRState:
+class ReactorState:
     def __init__(self, volume, X, P, S):
         """
         Define o volume da fase líquida e as concentrações

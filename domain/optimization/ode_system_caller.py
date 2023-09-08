@@ -3,7 +3,7 @@
 from domain.params.solver_params import SolverParams
 from domain.params.altiok_2006_params import Altiok2006Params
 from domain.params.process_params import ProcessParams
-from domain.reactor.cstr_state import CSTRState
+from domain.reactor.reactor_state import ReactorState
 from domain.run_reactor.plot_params import PlotParams
 from domain.reactions_ode_system_preparers.ode_preparer import ODEPreparer
 from domain.run_reactor.run_reactor import run_reactor
@@ -15,7 +15,7 @@ class RunReactorSystemCaller:
         self,
         eq_params: Altiok2006Params,
         process_params: ProcessParams,
-        initial_state: CSTRState,
+        initial_state: ReactorState,
         f_out_value_calc,
     ):
 

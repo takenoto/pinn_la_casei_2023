@@ -12,7 +12,7 @@ from domain.run_reactor.plot_params import PlotParams
 from domain.optimization.ode_system_caller import RunReactorSystemCaller
 from domain.optimization.grid_search import grid_search
 from domain.optimization.non_dim_scaler import NonDimScaler
-from domain.reactor.cstr_state import CSTRState
+from domain.reactor.reactor_state import ReactorState
 from domain.flow.concentration_flow import ConcentrationFlow
 
 from domain.reactions_ode_system_preparers.ode_preparer import ODEPreparer
@@ -27,7 +27,7 @@ def run_pinn_grid_search(
     solver_params_list=None,
     eq_params: Altiok2006Params = None,
     process_params: ProcessParams = None,
-    initial_state: CSTRState = None,
+    initial_state: ReactorState = None,
     plot_params: PlotParams = None,
     f_out_value_calc=None,
     cases_to_try=None,
@@ -115,7 +115,7 @@ def run_pinn_grid_search(
     initial_state = (
         initial_state
         if initial_state
-        else CSTRState(
+        else ReactorState(
             volume=np.array([4]),
             X=eq_params.Xo,
             P=eq_params.Po,

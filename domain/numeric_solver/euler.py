@@ -6,7 +6,7 @@ from domain.numeric_solver.numeric_solver_model_results import NumericSolverMode
 from domain.params.altiok_2006_params import Altiok2006Params
 from domain.params.process_params import ProcessParams
 from domain.params.solver_params import SolverParams
-from domain.reactor.cstr_state import CSTRState
+from domain.reactor.reactor_state import ReactorState
 
 new_version = True
 
@@ -17,7 +17,7 @@ class EulerMethod:
 
     def solve(
         self,
-        initial_state: CSTRState,
+        initial_state: ReactorState,
         eq_params: Altiok2006Params,
         process_params: ProcessParams,
         f_out_value_calc,
@@ -150,7 +150,7 @@ class EulerMethodOLD:
 
     def solve(
         self,
-        initial_state: CSTRState,
+        initial_state: ReactorState,
         eq_params: Altiok2006Params,
         process_params: ProcessParams,
         f_out_value_calc,

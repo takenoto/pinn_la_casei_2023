@@ -9,7 +9,7 @@ from domain.params.process_params import ProcessParams
 from domain.params.altiok_2006_params import Altiok2006Params
 import keras.backend as K
 
-from domain.reactor.cstr_state import CSTRState
+from domain.reactor.reactor_state import ReactorState
 
 
 class ODEPreparer:
@@ -18,7 +18,7 @@ class ODEPreparer:
         solver_params: SolverParams,
         eq_params: Altiok2006Params,
         process_params: ProcessParams,
-        initial_state: CSTRState,
+        initial_state: ReactorState,
         f_out_value_calc,
     ):
         self.solver_params = solver_params
@@ -314,7 +314,7 @@ class ODEPreparer3Backup:
         solver_params: SolverParams,
         eq_params: Altiok2006Params,
         process_params: ProcessParams,
-        initial_state: CSTRState,
+        initial_state: ReactorState,
         f_out_value_calc,
     ):
         self.solver_params = solver_params
