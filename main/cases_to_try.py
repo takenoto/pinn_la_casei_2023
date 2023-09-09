@@ -53,7 +53,7 @@ def change_layer_fix_neurons_number(eq_params, process_params):
     ]
 
     # Multiplica o scaler/adimensionalizador
-    scaler_modifier_default = 1  # 1 #1 / 10
+    scaler_modifier_default = 1 / 10  # 1 #1 / 10
     # Aqui coloca as customizações
     scaler_modifiers = {
         "t": scaler_modifier_default,
@@ -116,7 +116,7 @@ def change_layer_fix_neurons_number(eq_params, process_params):
                                         + f" l{loss_version}"
                                         + f" {nondim_str} {minibatch_str}"
                                         + f" nd{n_domain} nt{n_test} ni{n_init}"
-                                        + f"TD-{train_distribution}"
+                                        + f" TD-{train_distribution}"
                                     )
 
                                     # Executando ações:
@@ -135,8 +135,8 @@ def change_layer_fix_neurons_number(eq_params, process_params):
                                             S=eq_params.So * scaler_modifiers["S"],
                                             V=process_params.max_reactor_volume
                                             * scaler_modifiers["V"],
-                                            t=1,
-                                            # process_params.t_final* scaler_modifiers["t"],
+                                            t=process_params.t_final
+                                            * scaler_modifiers["t"],  # 1,
                                             toNondim=nd["to"],
                                             fromNondim=nd["from"],
                                         )
