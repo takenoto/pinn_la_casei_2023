@@ -586,7 +586,6 @@ def create_folder_to_save(subfolder):
     # Create the folder if it does not exist
     if not os.path.exists(folder_to_save):
         os.makedirs(folder_to_save)
-    # folder_to_save = "results/exported/2023-08-21"  # None para evitar salvamento
     return folder_to_save
 
 
@@ -601,7 +600,7 @@ def main():
 
     # If None, the plots will be shown()
     # If a directory, the plots will be saved
-    subfolder = "2023-09-08"
+    subfolder = "2023-09-09"
     folder_to_save = create_folder_to_save(subfolder=subfolder)
 
     # If true, also plots the nondim values from pinn
