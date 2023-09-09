@@ -42,8 +42,8 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         45000  # 35000  # 45000 # 1000 40000  # 120000 #95000 #1000#55000  # 45000
     )
     SGD_EPOCHS = None  # 1000
-    neurons = [16, 32, 60]  # [16, 32, 60] [80, 120]
-    layers = [1, 2, 3, 4, 5]  # [2, 3, 4]  # [2, 3, 4, 5] [6, 7, 8]
+    neurons = [16, 32] #[16, 32, 60]  # [16, 32, 60] [80, 120]
+    layers = [1, 2] # [1, 2, 3, 4, 5]  # [2, 3, 4]  # [2, 3, 4, 5] [6, 7, 8]
 
     # Se irá aplicar a estratégia de adimensionalização padrão
     NondimSelectedOptions = [
