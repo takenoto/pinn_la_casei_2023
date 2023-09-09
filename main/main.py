@@ -159,7 +159,17 @@ def compare_num_and_pinn(
                 '"train time":' + f"{pinn.total_training_time}" + ",\n",
                 '"best loss test":' + f"{pinn.best_loss_test}" + ",\n",
                 '"best loss train":' + f"{pinn.best_loss_train}" + ",\n",
-                '"pred time":' + f"{pred_time}" + ",",
+                '"pred time":' + f"{pred_time}" + ",\n",
+                '"initializer":' + f'"{pinn.solver_params.initializer}"' + ",\n"
+                '"train_distribution":'
+                + f'"{pinn.solver_params.train_distribution}"'
+                + ",\n",
+                '"pinn_x_test":'
+                + f"{np.array(pinn.train_state.X_test).tolist()}"
+                + ",\n",
+                '"pinn_x_train":'
+                + f"{np.array(pinn.train_state.X_train).tolist()}"
+                + ",\n",
             ]
         )
 
@@ -291,9 +301,7 @@ def compare_num_and_pinn(
                         "\n",
                         # Essa parte é confusa e não sai direito
                         ",\n",
-                        '"pinn_epochs":'
-                        + f"{pinn.loss_history.steps}"
-                        ",\n",
+                        '"pinn_epochs":' + f"{pinn.loss_history.steps}" ",\n",
                         '"pinn_loss_story_test":'
                         + f"{[loss for loss in np.array(np.sum(pinn.loss_history.loss_test, axis=1))]}"
                         ",\n",
@@ -357,7 +365,7 @@ def compare_num_and_pinn(
         plot_comparer_multiple_grid(
             suptitle=pinn.model_name,
             labels=labels,
-            figsize=(8 , 6),
+            figsize=(8, 6),
             gridspec_kw={"hspace": 0.042, "wspace": 0.03},
             yscale="linear",
             sharey=False,
@@ -370,7 +378,7 @@ def compare_num_and_pinn(
             folder_to_save=folder_to_save,
             filename=f"{pinn.model_name}.png" if folder_to_save else None,
             showPlot=False if folder_to_save else True,
-            legend_bbox_to_anchor=(0.5,-0.1)
+            legend_bbox_to_anchor=(0.5, -0.1),
         )
 
     # ------------------------------
@@ -612,9 +620,9 @@ def main():
     # ----------------------
     run_fedbatch = False
 
-    run_cr = False
+    run_cr = True
 
-    run_batch = True
+    run_batch = False
 
     plot_compare_all = False
     if plot_compare_all:
@@ -676,18 +684,18 @@ def main():
             P=eq_params.Po,
             S=eq_params.So,
         ),
-        t_final=2*10.2,
+        t_final=2 * 10.2,
     )
 
     process_params_feed_cr = ProcessParams(
         max_reactor_volume=5,
         inlet=ConcentrationFlow(
             volume=0.25,
-            X=eq_params.Xo*0,  # *0.1,
-            P=eq_params.Po*0,
+            X=eq_params.Xo * 0,  # *0.1,
+            P=eq_params.Po * 0,
             S=eq_params.So,
         ),
-        t_final=24 * 3
+        t_final=24 * 3,
     )
 
     if run_fedbatch:
