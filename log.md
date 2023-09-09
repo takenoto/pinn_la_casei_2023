@@ -33,7 +33,7 @@
 - Testei distribuições e salvei (Hammersley e LHS) mas não parece ser aí o problema
 - Mesmo a versão CSTR puro (já inicia no volume máximo) fica bem péssimo. O volume até prediz ok, o resto desanda. Continua me parecendo que esse pico da função é super responsável por isso... O batch já validou o equacionamento da reação... Então isso tá certo, já foi confirmado. Ficou super bom mesmo nessa lossv5.
 - Cheguei a testar 4000 pontos teste e domain + mini-batch de 20, continuou bem ruim.
-
+- Um dos testes do CSTR finalmente funcionou bem. NN 16x1 com NDLin escalado a 10.
 
 
 ### 2023-09-08
