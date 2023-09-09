@@ -169,7 +169,7 @@ def compare_num_and_pinn(
                 + ",\n",
                 '"pinn_x_train":'
                 + f"{np.array(pinn.train_state.X_train).tolist()}"
-                + ",\n",
+                + ",",
             ]
         )
 
@@ -621,6 +621,7 @@ def main():
     run_fedbatch = False
 
     run_cr = True
+    cr_version = "cstr"  # "cstr" "cr-1L" "cr-0.1L"
 
     run_batch = False
 
@@ -642,16 +643,10 @@ def main():
 
     # Parâmetros de processo (será usado em todos)
     eq_params = altiok_models_to_run[0]
-    # Serve pra batch e pra cr
+
+    # BATCH
     initial_state = ReactorState(
         volume=np.array([5]),
-        X=eq_params.Xo,
-        P=eq_params.Po,
-        S=eq_params.So,
-    )
-
-    initial_state_cr = ReactorState(
-        volume=np.array([1]),
         X=eq_params.Xo,
         P=eq_params.Po,
         S=eq_params.So,
@@ -686,6 +681,30 @@ def main():
         ),
         t_final=2 * 10.2,
     )
+
+    # CR
+    cr_states_dict = {
+        "cstr": ReactorState(
+            volume=np.array([5]),
+            X=eq_params.Xo,
+            P=eq_params.Po,
+            S=eq_params.So,
+        ),
+        "cr-1L": ReactorState(
+            volume=np.array([1]),
+            X=eq_params.Xo,
+            P=eq_params.Po,
+            S=eq_params.So,
+        ),
+        "cr-0.1L": ReactorState(
+            volume=np.array([0.1]),
+            X=eq_params.Xo,
+            P=eq_params.Po,
+            S=eq_params.So,
+        ),
+    }
+
+    initial_state_cr = cr_states_dict[cr_version]
 
     process_params_feed_cr = ProcessParams(
         max_reactor_volume=5,
