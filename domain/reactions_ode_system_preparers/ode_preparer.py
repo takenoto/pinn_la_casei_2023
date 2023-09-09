@@ -222,7 +222,20 @@ class ODEPreparer:
                 if o == "X":
                     loss_derivative = dXdt * V - (V * rX + (f_in * inlet.X - f_out * X))
                     loss_X = 0
-                    if loss_version >= 4:
+                    if loss_version >= 5:
+                        loss_maxmin = tf.where(
+                            tf.less(X, 0),
+                            tf.math.pow(X, 3),
+                            tf.where(
+                                tf.greater(X, tf.ones_like(X) * Xm),
+                                X - Xm,
+                                tf.zeros_like(X),
+                            ),
+                        )
+                        loss_derivative_abs = tf.abs(loss_derivative)
+                        loss_maxmin_abs = tf.abs(loss_maxmin)
+                        loss_X = loss_derivative_abs + loss_maxmin_abs
+                    elif loss_version == 4:
                         # if X<0, return X
                         # else if X>Xm, return X
                         # else return loss_X
@@ -241,7 +254,20 @@ class ODEPreparer:
                 elif o == "P":
                     loss_derivative = dPdt * V - (V * rP + (f_in * inlet.P - f_out * P))
                     loss_P = 0
-                    if loss_version >= 4:
+                    if loss_version >= 5:
+                        loss_maxmin = tf.where(
+                            tf.less(P, 0),
+                            tf.math.pow(P, 3),
+                            tf.where(
+                                tf.greater(P, Pm),
+                                P - tf.ones_like(P) * Pm,
+                                tf.zeros_like(P),
+                            ),
+                        )
+                        loss_derivative_abs = tf.abs(loss_derivative)
+                        loss_maxmin_abs = tf.abs(loss_maxmin)
+                        loss_P = loss_derivative_abs + loss_maxmin_abs
+                    elif loss_version == 4:
                         loss_maxmin = tf.where(
                             tf.less(P, 0),
                             P,
@@ -258,7 +284,20 @@ class ODEPreparer:
                 elif o == "S":
                     loss_derivative = dSdt * V - (V * rS + (f_in * inlet.S - f_out * S))
                     loss_S = 0
-                    if loss_version >= 4:
+                    if loss_version >= 5:
+                        loss_maxmin = tf.where(
+                            tf.less(S, 0),
+                            tf.math.pow(S, 3),
+                            tf.where(
+                                tf.greater(S, tf.ones_like(S) * initial_state.S[0]),
+                                S - initial_state.S[0],
+                                tf.zeros_like(S),
+                            ),
+                        )
+                        loss_derivative_abs = tf.abs(loss_derivative)
+                        loss_maxmin_abs = tf.abs(loss_maxmin)
+                        loss_S = loss_derivative_abs + loss_maxmin_abs
+                    elif loss_version == 4:
                         loss_maxmin = tf.where(
                             tf.less(S, 0),
                             S,
@@ -279,7 +318,16 @@ class ODEPreparer:
                     dVdt_calc = f_in - f_out
                     loss_derivative = dVdt - dVdt_calc
                     loss_V = 0
-                    if loss_version >= 4:
+                    if loss_version >= 5:
+                        loss_maxmin = tf.where(
+                            tf.less(V, 0),
+                            tf.math.pow(V, 3),
+                            tf.zeros_like(V),
+                        )
+                        loss_derivative_abs = tf.abs(loss_derivative)
+                        loss_maxmin_abs = tf.abs(loss_maxmin)
+                        loss_V = loss_derivative_abs + loss_maxmin_abs
+                    if loss_version == 4:
                         loss_maxmin = tf.where(
                             tf.less(V, 0),
                             V,
@@ -294,16 +342,17 @@ class ODEPreparer:
                     loss_pde.append(loss_V)
 
             if solver_params.loss_version == 5:
-                # Normalize
-                loss_pde_total = 0
-                old_loss_pde = loss_pde
-                for loss_n in old_loss_pde:
-                    loss_pde_total += loss_n
-                # Essa loss é pra fazer com que estejam no máximo
-                # a 1 casa decimal de distância
-                loss_pde = [
-                    (0.99 * loss_n + 0.01 * loss_pde_total) for loss_n in old_loss_pde
-                ]
+                pass
+                # # Normalize
+                # loss_pde_total = 0
+                # old_loss_pde = loss_pde
+                # for loss_n in old_loss_pde:
+                #     loss_pde_total += loss_n
+                # # Essa loss é pra fazer com que estejam no máximo
+                # # a 1 casa decimal de distância
+                # loss_pde = [
+                #     (loss_n + loss_pde_total) for loss_n in old_loss_pde
+                # ]
 
             return loss_pde
 
