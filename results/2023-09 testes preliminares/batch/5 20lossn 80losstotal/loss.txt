@@ -1,0 +1,3 @@
+loss_pde = [
+                    (0.2 * loss_n + 0.8 * loss_pde_total) for loss_n in old_loss_pde
+                ]
