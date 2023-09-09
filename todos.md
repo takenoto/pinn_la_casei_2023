@@ -1,5 +1,10 @@
 # Todo list - qualificação
 
+- EU JÁ ANOTEI UM PEDAÇO. ACHE O RESTO E ANOTE TB.
+
+- CSTR => Rodar um que inclua o antigo que prestou (09/09/2023) mas também faça um teste adicional pra nondim sem o dimensionamento pra 10.
+
+
 # Rode o cstr   
 
 - Novos experimentos
