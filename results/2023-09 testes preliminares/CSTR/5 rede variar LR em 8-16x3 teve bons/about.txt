@@ -1,0 +1,1 @@
+A conclusão é que são poucos neurônios e camada pra representar o CSTR. Precisaria ser bem mais.
