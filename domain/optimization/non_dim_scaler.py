@@ -73,10 +73,11 @@ class NonDimScaler:
             # Add name
             '"name": ' + f'"{self.name}"',
             # Add scalers
-            f'"X": {self.X_not_tensor}',
-            f'"P": {self.P_not_tensor}',
-            f'"S": {self.S_not_tensor}',
-            f'"V": {self.V_not_tensor}',
+            f'"t": {np.array(self.t_not_tensor).tolist()}',
+            f'"X": {np.array(self.X_not_tensor).tolist()}',
+            f'"P": {np.array(self.P_not_tensor).tolist()}',
+            f'"S": {np.array(self.S_not_tensor).tolist()}',
+            f'"V": {np.array(self.V_not_tensor).tolist()}',
         ]
 
         json = "{"
