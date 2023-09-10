@@ -4,6 +4,17 @@
 
 - CSTR => Rodar um que inclua o antigo que prestou (09/09/2023) mas também faça um teste adicional pra nondim sem o dimensionamento pra 10.
 
+* Quando for fazer testes pra medir performance treino/predição tem que marcar eles porque de forma geral sempre to fazendo outra coisa no computador enquanto roda então não é um teste justo.
+
+* Parece que essa minha loss nova é BEM mais lerda que as antigas. Talvez por causa dos termos extras? A rede 60x5 tá uma lerdeza sem fim.
+
+NL = [ 4, 8, 16, 32, 60, 80, 120]
+HL = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+LR = [1e-6, 1e-5, 1e-4, 1e-3, 1e-2, 1e-1]
+funcs = [ tanh // swish // selu]
+
+Não precisa variar tudo junto.
+Por exemplo, pode só fazer um gráfico da LR pra avaliar quais produzem loss menores e faz um gráfico como (esse)[https://datascience.stackexchange.com/questions/63223/learning-rate-scheduler]
 
 # Rode o cstr   
 

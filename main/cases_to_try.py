@@ -17,6 +17,20 @@ NondimAvailableOptions = {
     },
 }
 
+LRs_dict = {
+    "1e-1": 1e-1,
+    "5e-2": 5e-2,
+    "1e-2": 1e-2,
+    "5e-3": 5e-3,
+    "1e-3": 1e-3,
+    "5e-4": 5e-4,
+    "1e-4": 1e-4,
+    "5e-5": 5e-5,
+    "1e-5": 1e-5,
+    "5e-6": 5e-6,
+    "1e-6": 1e-6,
+}
+
 
 def change_layer_fix_neurons_number(eq_params, process_params):
     dictionary = {}
@@ -31,32 +45,31 @@ def change_layer_fix_neurons_number(eq_params, process_params):
     loss_version = 5  # 5 4 3 2
 
     # ---------------- NN ------------------
-    func = "tanh"  #'tanh' 'swish' 'selu' 'relu'
+    func = "swish"  #'tanh' 'swish' 'selu' 'relu'
     mini_batch = [None]  # [None] [20] [40] [80]
     initializer = "Glorot uniform"  #'Glorot normal' #'Glorot uniform' #'Orthogonal'
     train_distribution_list = ["Hammersley"]  # "LHS" "Hammersley"
     # GLOROT UNIFORM # Era Glorot Normal nos testes sem swish
-    LR = 1e-4  # 1e-5 1e-4 1e-3
+    LR_list = ["1e-2", "5e-3", "1e-3", "5e-4", "5e-5", "1e-5", "1e-6"]
     lbfgs_post = 1  # 0 1
-    ADAM_EPOCHS = (
-        45000  # 35000  # 45000 # 1000 40000  # 120000 #95000 #1000#55000  # 45000
-    )
+    ADAM_EPOCHS = 45000  # 35000  # 45000 # 1000  # 40000  # 120000 # 65000
     SGD_EPOCHS = None  # 1000
-    neurons = [8, 16, 32, 60] #[16, 32, 60]  # [16, 32, 60] [80, 120]
-    layers = [1, 2, 3, 4, 5] # [1, 2, 3, 4, 5]  # [2, 3, 4]  # [2, 3, 4, 5] [6, 7, 8]
+    neurons = [32, 64]  # [16, 32, 60]  # [16, 32, 60] [80, 120]
+    layers = [3, 4]  # [1, 2, 3, 4, 5]  # [2, 3, 4]  # [2, 3, 4, 5] [6, 7, 8]
 
     # Se irá aplicar a estratégia de adimensionalização padrão
     NondimSelectedOptions = [
-        NondimAvailableOptions["None"],
+        # NondimAvailableOptions["None"],
         NondimAvailableOptions["Linear"],
         # NondimAvailableOptions["Desvio"],
     ]
 
     # Multiplica o scaler/adimensionalizador
-    scaler_modifier_default = 1 / 10  # 1 #1 / 10
+    scaler_modifier_default = 1 / 10  # 1 #1/10
     # Aqui coloca as customizações
     scaler_modifiers = {
-        "t": scaler_modifier_default,
+        "t": 1
+        / process_params.t_final,  # Isso tira o t nondim porque tá desfazendo ele
         "X": scaler_modifier_default,
         "P": scaler_modifier_default,
         "S": scaler_modifier_default,
@@ -71,14 +84,15 @@ def change_layer_fix_neurons_number(eq_params, process_params):
     NUM_INIT = [80]  # [20] [60] [80] 20 era o valor dos primeiros testes
     NUM_BOUNDARY = 0
 
-    cols = len(layers) * len(train_distribution_list)
+    cols = len(neurons) * len(train_distribution_list)
     rows = (
-        len(neurons)
+        len(layers)
         * len(NondimSelectedOptions)
         * len(NUM_TEST)
         * len(NUM_INIT)
         * len(NUM_DOMAIN)
         * len(mini_batch)
+        * len(LR_list)
     )
 
     # Anota aqui as variáveis que vão ser suportadas nessa simulação
@@ -96,86 +110,91 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         input_str += i
 
     # Específicos
-    for train_distribution in train_distribution_list:
-        for n_domain in NUM_DOMAIN:
-            for n_test in NUM_TEST:
-                for n_init in NUM_INIT:
-                    for NL in neurons:
-                        for HL in layers:
-                            for nd in NondimSelectedOptions:
-                                for mb in mini_batch:
-                                    # Montando o nome:
-                                    minibatch_str = (
-                                        f"mb{mb}" if mb is not None else "mb-"
-                                    )
-                                    nondim_str = f'ND{ nd["abrv"] }'
-                                    key = (
-                                        # Primeiro o "core"
-                                        f"{NL}x{HL} {input_str} {func}"
-                                        # Depois coisas l relacionadas ao treino
-                                        + f" l{loss_version}"
-                                        + f" {nondim_str} {minibatch_str}"
-                                        + f" nd{n_domain} nt{n_test} ni{n_init}"
-                                        + f" TD-{train_distribution}"
-                                    )
-
-                                    # Executando ações:
-                                    dictionary[key] = {
-                                        "layer_size": [len(input_variables)]
-                                        + [NL] * HL
-                                        + [len(output_variables)],
-                                        "adam_epochs": ADAM_EPOCHS,
-                                        "sgd_epochs": SGD_EPOCHS,
-                                    }
-                                    dictionary[key]["scaler"] = (
-                                        NonDimScaler(
-                                            name=nd["abrv"],
-                                            X=eq_params.Xm * scaler_modifiers["X"],
-                                            P=eq_params.Pm * scaler_modifiers["P"],
-                                            S=eq_params.So * scaler_modifiers["S"],
-                                            V=process_params.max_reactor_volume
-                                            * scaler_modifiers["V"],
-                                            t=process_params.t_final
-                                            * scaler_modifiers["t"],  # 1,
-                                            toNondim=nd["to"],
-                                            fromNondim=nd["from"],
+    for LR_str in LR_list:
+        for train_distribution in train_distribution_list:
+            for n_domain in NUM_DOMAIN:
+                for n_test in NUM_TEST:
+                    for n_init in NUM_INIT:
+                        for NL in neurons:
+                            for HL in layers:
+                                for nd in NondimSelectedOptions:
+                                    for mb in mini_batch:
+                                        LR = LRs_dict[LR_str]
+                                        # Montando o nome:
+                                        minibatch_str = (
+                                            f"mb{mb}" if mb is not None else "mb-"
                                         )
-                                        if nd["abrv"] != "None"
-                                        else NonDimScaler(name=nd["abrv"])
-                                    )
+                                        nondim_str = f'ND{ nd["abrv"] }'
+                                        key = (
+                                            # Primeiro o "core"
+                                            f"{NL}x{HL} {input_str} {func}"
+                                            # Depois coisas l relacionadas ao treino
+                                            + f" l{loss_version}"
+                                            + f" LR-{LR_str}"
+                                            + f" {nondim_str} {minibatch_str}"
+                                            + f" nd{n_domain} nt{n_test} ni{n_init}"
+                                            + f" TD-{train_distribution}"
+                                        )
 
-                                    if IS_LOSS_WEIGHT:
-                                        dictionary[key]["w_X"] = 10  # 100 # 1 / 3
-                                        dictionary[key]["w_P"] = 1  # 1000 #1 / 100
-                                        dictionary[key]["w_S"] = 1  # 1/10 #1 / 1000
-                                        dictionary[key]["w_V"] = 10
+                                        # Executando ações:
+                                        dictionary[key] = {
+                                            "layer_size": [len(input_variables)]
+                                            + [NL] * HL
+                                            + [len(output_variables)],
+                                            "adam_epochs": ADAM_EPOCHS,
+                                            "sgd_epochs": SGD_EPOCHS,
+                                        }
+                                        dictionary[key]["scaler"] = (
+                                            NonDimScaler(
+                                                name=nd["abrv"],
+                                                X=eq_params.Xm * scaler_modifiers["X"],
+                                                P=eq_params.Pm * scaler_modifiers["P"],
+                                                S=eq_params.So * scaler_modifiers["S"],
+                                                V=process_params.max_reactor_volume
+                                                * scaler_modifiers["V"],
+                                                t=process_params.t_final
+                                                * scaler_modifiers["t"],
+                                                toNondim=nd["to"],
+                                                fromNondim=nd["from"],
+                                            )
+                                            if nd["abrv"] != "None"
+                                            else NonDimScaler(name=nd["abrv"])
+                                        )
 
-                                    dictionary[key]["activation"] = func
-                                    if mini_batch:
-                                        dictionary[key]["mini_batch"] = mb
-                                    dictionary[key]["num_domain"] = n_domain
-                                    dictionary[key]["num_test"] = n_test
-                                    dictionary[key]["num_init"] = n_init
-                                    dictionary[key]["num_bound"] = NUM_BOUNDARY
-                                    dictionary[key]["lbfgs_pre"] = 0
-                                    dictionary[key]["lbfgs_post"] = lbfgs_post
-                                    dictionary[key]["LR"] = LR
-                                    dictionary[key][
-                                        "hyperfolder"
-                                    ] = f"{input_str} {nondim_str}"
-                                    dictionary[key]["isplot"] = False
-                                    dictionary[key]["initializer"] = initializer
-                                    dictionary[key][
-                                        "output_variables"
-                                    ] = output_variables
-                                    dictionary[key]["input_variables"] = input_variables
-                                    dictionary[key]["loss_version"] = loss_version
-                                    dictionary[key]["custom_loss_version"] = {
-                                        # 'X':3,
-                                        # 'V':3,
-                                    }
-                                    dictionary[key][
-                                        "train_distribution"
-                                    ] = train_distribution
+                                        if IS_LOSS_WEIGHT:
+                                            dictionary[key]["w_X"] = 10  # 100 # 1 / 3
+                                            dictionary[key]["w_P"] = 1  # 1000 #1 / 100
+                                            dictionary[key]["w_S"] = 1  # 1/10 #1 / 1000
+                                            dictionary[key]["w_V"] = 10
+
+                                        dictionary[key]["activation"] = func
+                                        if mini_batch:
+                                            dictionary[key]["mini_batch"] = mb
+                                        dictionary[key]["num_domain"] = n_domain
+                                        dictionary[key]["num_test"] = n_test
+                                        dictionary[key]["num_init"] = n_init
+                                        dictionary[key]["num_bound"] = NUM_BOUNDARY
+                                        dictionary[key]["lbfgs_pre"] = 0
+                                        dictionary[key]["lbfgs_post"] = lbfgs_post
+                                        dictionary[key]["LR"] = LR
+                                        dictionary[key][
+                                            "hyperfolder"
+                                        ] = f"{input_str} {nondim_str}"
+                                        dictionary[key]["isplot"] = False
+                                        dictionary[key]["initializer"] = initializer
+                                        dictionary[key][
+                                            "output_variables"
+                                        ] = output_variables
+                                        dictionary[key][
+                                            "input_variables"
+                                        ] = input_variables
+                                        dictionary[key]["loss_version"] = loss_version
+                                        dictionary[key]["custom_loss_version"] = {
+                                            # 'X':3,
+                                            # 'V':3,
+                                        }
+                                        dictionary[key][
+                                            "train_distribution"
+                                        ] = train_distribution
 
     return (dictionary, cols, rows)
