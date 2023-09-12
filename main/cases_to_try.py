@@ -45,18 +45,19 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
     loss_version = 5  # 5 4 3 2
 
     # ---------------- NN ------------------
-    func = "swish"  #'tanh' 'swish' 'selu' 'relu'
+    func = "tanh"  #'tanh' 'swish' 'selu' 'relu'
     mini_batch = [None]  # [None] [20] [40] [80]
     initializer = "Glorot uniform"  #'Glorot normal' #'Glorot uniform' #'Orthogonal'
     train_distribution_list = ["Hammersley"]  # "LHS" "Hammersley"
     # GLOROT UNIFORM # Era Glorot Normal nos testes sem swish
     # LR_list = ["1e-2", "5e-3", "1e-3", "5e-4", "5e-5", "1e-5", "1e-6"]
-    LR_list = ["1e-4"]
-    lbfgs_post = 0  # 0 1
-    ADAM_EPOCHS = 100  # 35000  # 45000 # 1000  # 40000  # 120000 # 65000
+    LR_list = ["5e-3", "1e-3", "5e-4"]
+    lbfgs_pre = 1 # 0 1
+    lbfgs_post = 1  # 0 1
+    ADAM_EPOCHS = 35000  # 35000  # 45000 # 1000  # 40000  # 120000 # 65000
     SGD_EPOCHS = None  # 1000
     neurons = [32, 64]  # [16, 32, 60]  # [16, 32, 60] [80, 120]
-    layers = [3, 4]  # [1, 2, 3, 4, 5]  # [2, 3, 4]  # [2, 3, 4, 5] [6, 7, 8]
+    layers = [2, 3, 4]  # [1, 2, 3, 4, 5]  # [2, 3, 4]  # [2, 3, 4, 5] [6, 7, 8]
 
     # Se irá aplicar a estratégia de adimensionalização padrão
     NondimSelectedOptions = [
@@ -80,9 +81,9 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
     # Loss Weight
     IS_LOSS_WEIGHT = False
 
-    NUM_DOMAIN = [400]  # [1600] [800] [400] [300]
-    NUM_TEST = [400]  # [1600] [800] [400] [300]
-    NUM_INIT = [80]  # [20] [60] [80] 20 era o valor dos primeiros testes
+    NUM_DOMAIN = [80]  # [1600] [800] [400] [300] [80]
+    NUM_TEST = [80]  # [1600] [800] [400] [300] [80]
+    NUM_INIT = [10]  # [10] [20] [60] [80] 20 era o valor dos primeiros testes
     NUM_BOUNDARY = 0
 
     cols = len(neurons) * len(train_distribution_list) * len(NondimSelectedOptions)
@@ -174,7 +175,7 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
                                         dictionary[key]["num_test"] = n_test
                                         dictionary[key]["num_init"] = n_init
                                         dictionary[key]["num_bound"] = NUM_BOUNDARY
-                                        dictionary[key]["lbfgs_pre"] = 0
+                                        dictionary[key]["lbfgs_pre"] = lbfgs_pre
                                         dictionary[key]["lbfgs_post"] = lbfgs_post
                                         dictionary[key]["LR"] = LR
                                         dictionary[key]["hyperfolder"] = (

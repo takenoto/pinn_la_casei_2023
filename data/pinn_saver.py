@@ -362,9 +362,10 @@ def save_each_pinn(
         color=pinn_colors[-1],
         label="LoV",
     )
-    plt.title("Loss x i")
+    plt.yscale('log')
     plt.xlabel("i")
     plt.ylabel("Loss")
+    plt.title("Loss x i")
     plt.legend()
     if folder_to_save:
         file_path = os.path.join(folder_to_save, f"LOSS-{pinn.model_name}.png")

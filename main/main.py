@@ -23,7 +23,7 @@ from main.cases_to_try import change_layer_fix_neurons_number
 from main.pinn_grid_search import run_pinn_grid_search
 from main.numerical_methods import run_numerical_methods
 
-
+from data.plot.plot_comparer_multiple_grid import *
 from main.plotting import *
 
 
@@ -423,7 +423,7 @@ def main():
 
     # If None, the plots will be shown()
     # If a directory, the plots will be saved
-    subfolder = "2023-09-09"
+    subfolder = "reactor-"
     folder_to_save = create_folder_to_save(subfolder=subfolder)
 
     # If true, also plots the nondim values from pinn
@@ -435,10 +435,10 @@ def main():
     # ----------------------
     run_fedbatch = False
 
-    run_cr = False
+    run_cr = True
     cr_version = "cstr"  # "cstr" "cr-1L" "cr-0.1L"
 
-    run_batch = True
+    run_batch = False
 
     # --------------------------------------------
     # ----------------MAIN CODE-------------------

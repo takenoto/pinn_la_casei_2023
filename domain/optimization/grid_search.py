@@ -49,6 +49,7 @@ def grid_search(
         )
 
         pinn_results.append(np.sum(pinn_model_results.best_loss_test))
+        pinn_model_results = None #free memory???
     # ---------------------------------------------------------
 
     best_pinn_test_index, best_pinn_test_error = __get_best_pinn(
