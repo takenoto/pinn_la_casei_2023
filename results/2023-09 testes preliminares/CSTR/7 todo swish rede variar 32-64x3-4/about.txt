@@ -1,0 +1,1 @@
+A 1 vez rodei tudo junto como tá em settings, deu Oom (OUT OF MEMORY) e me lasquei pq perdi os resultados mds. Melhor fazer aos poucos mesmo.

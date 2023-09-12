@@ -1,5 +1,12 @@
 # Todo list - qualificação
 
+- Salva plot e loss individualmente. Tá horrível isso de salvar todos juntos pq se acontecer algo no meio perco tudo.
+- Modificar nome da apsta pra cada item
+- Mudar a hyperfolder de cada mdelo pra ficarem todos juntos
+- #TODO GridSearch não mais salva todos pra comparar e retornar, tira isso... Salva simplesmente a loss e o index. Não salva mais o modelo na memória ram.
+- Passar o numérico de alguma forma pra poder plotar juntos zzz
+- Aplicar pors outros modelos além do cr zzz
+
 - EU JÁ ANOTEI UM PEDAÇO. ACHE O RESTO E ANOTE TB.
 
 - CSTR => Rodar um que inclua o antigo que prestou (09/09/2023) mas também faça um teste adicional pra nondim sem o dimensionamento pra 10.

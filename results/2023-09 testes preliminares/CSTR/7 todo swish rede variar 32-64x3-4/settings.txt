@@ -32,7 +32,7 @@ LRs_dict = {
 }
 
 
-def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None):
+def change_layer_fix_neurons_number(eq_params, process_params):
     dictionary = {}
     # --------- LOSS FUNCTION ------------
     # 1 é a loss tradicional, #2 retorna o própria X/P/S/V caso seja menor que zero.
@@ -50,18 +50,17 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
     initializer = "Glorot uniform"  #'Glorot normal' #'Glorot uniform' #'Orthogonal'
     train_distribution_list = ["Hammersley"]  # "LHS" "Hammersley"
     # GLOROT UNIFORM # Era Glorot Normal nos testes sem swish
-    # LR_list = ["1e-2", "5e-3", "1e-3", "5e-4", "5e-5", "1e-5", "1e-6"]
-    LR_list = ["1e-4"]
-    lbfgs_post = 0  # 0 1
-    ADAM_EPOCHS = 100  # 35000  # 45000 # 1000  # 40000  # 120000 # 65000
+    LR_list = ["1e-2", "5e-3", "1e-3", "5e-4", "5e-5", "1e-5", "1e-6"]
+    lbfgs_post = 1  # 0 1
+    ADAM_EPOCHS = 45000  # 35000  # 45000 # 1000  # 40000  # 120000 # 65000
     SGD_EPOCHS = None  # 1000
     neurons = [32, 64]  # [16, 32, 60]  # [16, 32, 60] [80, 120]
     layers = [3, 4]  # [1, 2, 3, 4, 5]  # [2, 3, 4]  # [2, 3, 4, 5] [6, 7, 8]
 
     # Se irá aplicar a estratégia de adimensionalização padrão
     NondimSelectedOptions = [
-        NondimAvailableOptions["None"],
-        # NondimAvailableOptions["Linear"],
+        # NondimAvailableOptions["None"],
+        NondimAvailableOptions["Linear"],
         # NondimAvailableOptions["Desvio"],
     ]
 
@@ -85,9 +84,10 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
     NUM_INIT = [80]  # [20] [60] [80] 20 era o valor dos primeiros testes
     NUM_BOUNDARY = 0
 
-    cols = len(neurons) * len(train_distribution_list) * len(NondimSelectedOptions)
+    cols = len(neurons) * len(train_distribution_list)
     rows = (
         len(layers)
+        * len(NondimSelectedOptions)
         * len(NUM_TEST)
         * len(NUM_INIT)
         * len(NUM_DOMAIN)
@@ -177,11 +177,9 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
                                         dictionary[key]["lbfgs_pre"] = 0
                                         dictionary[key]["lbfgs_post"] = lbfgs_post
                                         dictionary[key]["LR"] = LR
-                                        dictionary[key]["hyperfolder"] = (
-                                            hyperfolder
-                                            if hyperfolder is not None
-                                            else f"{input_str} {nondim_str}"
-                                        )
+                                        dictionary[key][
+                                            "hyperfolder"
+                                        ] = f"{input_str} {nondim_str}"
                                         dictionary[key]["isplot"] = False
                                         dictionary[key]["initializer"] = initializer
                                         dictionary[key][

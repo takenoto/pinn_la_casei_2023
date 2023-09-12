@@ -25,6 +25,14 @@
 
 ## by date
 
+### 2023-09-12
+
+- Implement Autosave for each pinn using a callback
+  - A 56 pinns simulation failed (OOM - out of memory) so all models were lost. This is to prevent it to happen again.
+- Remove plot loss for multiple pinn. Implement individual loss ploting.
+
+
+
 ### 2023-09-09
 
 - Loss v5 foi modificada, e sem a normalização automática. Resultados absurdamente melhores, praticamente todas as redes ficaram boas e com baixa variação, até mesmo do volume. Essa versão já pode ser a loss final porque acabou de ser validade pro reator batelada.

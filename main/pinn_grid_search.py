@@ -31,6 +31,7 @@ def run_pinn_grid_search(
     plot_params: PlotParams = None,
     f_out_value_calc=None,
     cases_to_try=None,
+    save_caller=None,
 ):
     """
     f_out_value_calc --> f_out_value_calc(max_reactor_volume, f_in_v, volume)
@@ -107,6 +108,9 @@ def run_pinn_grid_search(
                 train_distribution=get_thing_for_key(
                     case_key, "train_distribution", default="Hammersley"
                 ),
+                save_caller=get_thing_for_key(
+                    case_key, "save_caller", default=None
+                ),
             )
             # Basicamente um teste com adimensionalização e um sem
             for case_key in cases_to_try
@@ -136,8 +140,7 @@ def run_pinn_grid_search(
         )
         process_params = ProcessParams(max_reactor_volume=5, inlet=inlet, t_final=16)
 
-    # Se plot params for nulo cria um padrão
-    plot_params = plot_params if plot_params else PlotParams(force_y_lim=True)
+
 
     # Define um caller para os parâmetros atuais (só necessita do solver depois)
     run_reactor_system_caller = RunReactorSystemCaller(

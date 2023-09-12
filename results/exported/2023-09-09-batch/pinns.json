@@ -1,0 +1,9 @@
+{
+"pinn_best_index": 3,
+"pinn_best_error": 510.29522705078125,
+"pinns":{"0":"32x3 in_t swish l5 LR-1e-4 NDNone mb- nd400 nt400 ni80 TD-Hammersley",
+"1":"32x4 in_t swish l5 LR-1e-4 NDNone mb- nd400 nt400 ni80 TD-Hammersley",
+"2":"64x3 in_t swish l5 LR-1e-4 NDNone mb- nd400 nt400 ni80 TD-Hammersley",
+"3":"64x4 in_t swish l5 LR-1e-4 NDNone mb- nd400 nt400 ni80 TD-Hammersley"
+}
+}

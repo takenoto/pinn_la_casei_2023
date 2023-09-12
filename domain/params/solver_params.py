@@ -1,6 +1,7 @@
 # python -m domain.params.solver_params
 
 from typing import Self
+from data.pinn_saver import PINNSaveCaller
 from domain.optimization.non_dim_scaler import NonDimScaler
 
 
@@ -100,6 +101,7 @@ class SolverParams:
         loss_version=1,
         custom_loss_version={},
         train_distribution="Hammersley",
+        save_caller:PINNSaveCaller=None
     ):
         self.name = name if name else None
         """
@@ -160,6 +162,7 @@ class SolverParams:
         """
 
         self.train_distribution = train_distribution
+        self.save_caller=save_caller
 
     def get_loss_version_for_type(self, type):
         """
