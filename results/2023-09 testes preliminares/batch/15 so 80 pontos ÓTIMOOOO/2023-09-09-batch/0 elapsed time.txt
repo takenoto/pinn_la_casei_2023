@@ -1,0 +1,1 @@
+elapsed time for BATCH NONDIM test = 16171.071729200004 secs

@@ -1,0 +1,6 @@
+Estava com o brave aberto durante esses treinos. Mas não fiz nada. Como já tava aberto mantive pra ser justo.. Era só uma página de texto do 
+matplot lib. 
+
+Estou anotando isso só pra não comparar esses resultados com o de outros testes.
+
+Outra coisa: redução BRUTAL do número d epontos (pra 80/80/10) não surtiu diferença na qualidade, t´pa tudo ótimo do mesmo jeito.

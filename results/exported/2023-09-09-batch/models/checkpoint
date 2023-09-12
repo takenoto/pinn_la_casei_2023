@@ -1,2 +1,0 @@
-model_checkpoint_path: "D:\\backup windows 2023\\Armazenamento\\Projetos\\Mestrado\\tcc\\programacao\\pinn_la_casei_2023\\results\\exported\\2023-09-09-batch/models/64x4 in_t swish l5 LR-1e-4 NDNone mb- nd400 nt400 ni80 TD-Hammersley-100.ckpt"
-all_model_checkpoint_paths: "D:\\backup windows 2023\\Armazenamento\\Projetos\\Mestrado\\tcc\\programacao\\pinn_la_casei_2023\\results\\exported\\2023-09-09-batch/models/64x4 in_t swish l5 LR-1e-4 NDNone mb- nd400 nt400 ni80 TD-Hammersley-100.ckpt"
