@@ -1,11 +1,11 @@
 # Todo list - qualificação
 
-- Salva plot e loss individualmente. Tá horrível isso de salvar todos juntos pq se acontecer algo no meio perco tudo.
-- Modificar nome da apsta pra cada item
-- Mudar a hyperfolder de cada mdelo pra ficarem todos juntos
-- #TODO GridSearch não mais salva todos pra comparar e retornar, tira isso... Salva simplesmente a loss e o index. Não salva mais o modelo na memória ram.
-- Passar o numérico de alguma forma pra poder plotar juntos zzz
-- Aplicar pors outros modelos além do cr zzz
+- A primeira coisa que tenho que descobrir não são nem as layers ótimas, mas como evitar a solução trivial. É isso que tá enganchando tudo.
+- #TODO: mais pontos, minibatch baixa (pra ir treinando por seções) e poucas it adam
+- Tá parecendo que o mínimo global da loss é a solução trivial. Como sair disso?
+- Talvez eu deva é fazer vários pontos de adam (10k, 30k, 50k) e ver a partir de qual ele converge pra solução trivial. E aí achar o que leva a isso. A swish + nondim parece de alguma forma ajudar a evitar a sol. trivial mas não sei se é só impressão.
+- #TODO é bom é eu pensar em como vou modificar a loss... Pra que a v6 evite esses cocozinhos...
+
 
 - EU JÁ ANOTEI UM PEDAÇO. ACHE O RESTO E ANOTE TB.
 
