@@ -1,3 +1,4 @@
+import math
 from domain.optimization.non_dim_scaler import NonDimScaler
 
 # Opções de adimensionalização disponíveis:
@@ -18,17 +19,7 @@ NondimAvailableOptions = {
 }
 
 LRs_dict = {
-    "1e-1": 1e-1,
-    "5e-2": 5e-2,
-    "1e-2": 1e-2,
-    "5e-3": 5e-3,
-    "1e-3": 1e-3,
-    "5e-4": 5e-4,
-    "1e-4": 1e-4,
-    "5e-5": 5e-5,
-    "1e-5": 1e-5,
-    "5e-6": 5e-6,
-    "1e-6": 1e-6,
+    f"{num}e-{exp}":num*(10**-exp) for num in range(1,10) for exp in range(1,10)
 }
 
 
@@ -47,31 +38,34 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
     # ---------------- NN ------------------
     func = "tanh"  #'tanh' 'swish' 'selu' 'relu'
     mini_batch = [None]  # [None] [20] [40] [80]
-    initializer = "Glorot uniform"  #'Glorot normal' #'Glorot uniform' #'Orthogonal'
+    initializer = "Glorot normal"  #'Glorot normal' #'Glorot uniform' #'Orthogonal'
     train_distribution_list = ["Hammersley"]  # "LHS" "Hammersley"
     # GLOROT UNIFORM # Era Glorot Normal nos testes sem swish
     # LR_list = ["1e-2", "5e-3", "1e-3", "5e-4", "5e-5", "1e-5", "1e-6"]
-    LR_list = ["5e-3", "1e-3", "5e-4"]
-    lbfgs_pre = 1 # 0 1
+    LR_list = ["1e-4", "1e-6", "1e-9"]
+    print(LRs_dict)
+    print(LRs_dict["1e-4"])
+
+    lbfgs_pre = 0 # 0 1
     lbfgs_post = 1  # 0 1
     ADAM_EPOCHS = 35000  # 35000  # 45000 # 1000  # 40000  # 120000 # 65000
     SGD_EPOCHS = None  # 1000
-    neurons = [32, 64]  # [16, 32, 60]  # [16, 32, 60] [80, 120]
-    layers = [2, 3, 4]  # [1, 2, 3, 4, 5]  # [2, 3, 4]  # [2, 3, 4, 5] [6, 7, 8]
+    neurons = [16]  # [16, 32, 60]  # [16, 32, 60] [80, 120]
+    layers = [2]  # [1, 2, 3, 4, 5]  # [2, 3, 4]  # [2, 3, 4, 5] [6, 7, 8]
 
     # Se irá aplicar a estratégia de adimensionalização padrão
     NondimSelectedOptions = [
-        NondimAvailableOptions["None"],
-        # NondimAvailableOptions["Linear"],
+        # NondimAvailableOptions["None"],
+        NondimAvailableOptions["Linear"],
         # NondimAvailableOptions["Desvio"],
     ]
 
     # Multiplica o scaler/adimensionalizador
-    scaler_modifier_default = 1 / 10  # 1 #1/10
+    scaler_modifier_default = 1/10  # 1 #1/10
     # Aqui coloca as customizações
     scaler_modifiers = {
-        "t": 1
-        / process_params.t_final,  # Isso tira o t nondim porque tá desfazendo ele
+        "t": 1 / process_params.t_final,
+        # Isso tira o t nondim porque tá desfazendo ele
         "X": scaler_modifier_default,
         "P": scaler_modifier_default,
         "S": scaler_modifier_default,
