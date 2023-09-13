@@ -1,4 +1,3 @@
-import math
 from domain.optimization.non_dim_scaler import NonDimScaler
 
 # Opções de adimensionalização disponíveis:
@@ -19,7 +18,21 @@ NondimAvailableOptions = {
 }
 
 LRs_dict = {
-    f"{num}e-{exp}":num*(10**-exp) for num in range(1,10) for exp in range(1,10)
+    "1e-1": 1e-1,
+    "5e-2": 5e-2,
+    "1e-2": 1e-2,
+    "5e-3": 5e-3,
+    "2e-3": 2e-3,
+    "1e-3": 1e-3,
+    "9e-4": 9e-4,
+    "8e-4": 8e-4,
+    "7e-4": 7e-4,
+    "5e-4": 5e-4,
+    "1e-4": 1e-4,
+    "5e-5": 5e-5,
+    "1e-5": 1e-5,
+    "5e-6": 5e-6,
+    "1e-6": 1e-6,
 }
 
 
@@ -32,25 +45,23 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
     # A loss v4 é a que faz com que EFETIVAMENTE retorne o próprio valor
     # da coisa (XPSV) se for < 0 ou maior que o limite (Xm, Pm, So. Volume fica solto.)
     # E a loss v4 também é absoluta
-    # 5 é a que inclui a soma de XPSV qwuando ultrapassem o limite
-    # mas ajusta fazer ^3 para valores abaixo de 0
+    # 5 é a que incluir uma semi normalização com base na loss de todos
     loss_version = 5  # 5 4 3 2
 
     # ---------------- NN ------------------
-    func = "swish"  #'tanh' 'swish' 'selu' 'relu'
-    mini_batch = [None]  # [None] [20] [40] [80] [2]
+    func = "tanh"  #'tanh' 'swish' 'selu' 'relu'
+    mini_batch = [None]  # [None] [20] [40] [80]
     initializer = "Glorot uniform"  #'Glorot normal' #'Glorot uniform' #'Orthogonal'
-    train_distribution_list = ["uniform"]  # "LHS" "Hammersley" "uniform"
+    train_distribution_list = ["Hammersley"]  # "LHS" "Hammersley"
     # GLOROT UNIFORM # Era Glorot Normal nos testes sem swish
     # LR_list = ["1e-2", "5e-3", "1e-3", "5e-4", "5e-5", "1e-5", "1e-6"]
-    LR_list = ["5e-2", "1e-3", "3e-3", "5e-3", "8e-3", "1e-4", "3e-4", "5e-4", "1e-5"]
-
+    LR_list = ["2e-3", "1e-3", "9e-4", "8e-4", "7e-4", "5e-4"]
     lbfgs_pre = 0 # 0 1
     lbfgs_post = 1  # 0 1
-    ADAM_EPOCHS = 65000  # 35000  # 45000 # 1000  # 40000  # 120000 # 65000
-    SGD_EPOCHS = 0  # 1000
-    neurons = [10]  # [16, 32, 60]  # [16, 32, 60] [80, 120] [10]
-    layers = [2, 3]  # [1, 2, 3, 4, 5]  # [2, 3, 4]  # [2, 3, 4, 5] [6, 7, 8]
+    ADAM_EPOCHS = 35000  # 35000  # 45000 # 1000  # 40000  # 120000 # 65000
+    SGD_EPOCHS = None  # 1000
+    neurons = [32]  # [16, 32, 60]  # [16, 32, 60] [80, 120]
+    layers = [3]  # [1, 2, 3, 4, 5]  # [2, 3, 4]  # [2, 3, 4, 5] [6, 7, 8]
 
     # Se irá aplicar a estratégia de adimensionalização padrão
     NondimSelectedOptions = [
@@ -60,11 +71,11 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
     ]
 
     # Multiplica o scaler/adimensionalizador
-    scaler_modifier_default = 1/10  # 1 #1/10
+    scaler_modifier_default = 1 / 10  # 1 #1/10
     # Aqui coloca as customizações
     scaler_modifiers = {
-        "t": 1 / process_params.t_final,
-        # Isso tira o t nondim porque tá desfazendo ele
+        "t": 1
+        / process_params.t_final,  # Isso tira o t nondim porque tá desfazendo ele
         "X": scaler_modifier_default,
         "P": scaler_modifier_default,
         "S": scaler_modifier_default,
@@ -74,9 +85,9 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
     # Loss Weight
     IS_LOSS_WEIGHT = False
 
-    NUM_DOMAIN = [80]  # [1600] [800] [400] [300] [80] [40] [20]
-    NUM_TEST = [80]  # [1600] [800] [400] [300] [80] [40] [20]
-    NUM_INIT = [20]  # [10] [20] [60] [80] 20 era o valor dos primeiros testes
+    NUM_DOMAIN = [80]  # [1600] [800] [400] [300] [80]
+    NUM_TEST = [80]  # [1600] [800] [400] [300] [80]
+    NUM_INIT = [10]  # [10] [20] [60] [80] 20 era o valor dos primeiros testes
     NUM_BOUNDARY = 0
 
     cols = len(neurons) * len(train_distribution_list) * len(NondimSelectedOptions)
