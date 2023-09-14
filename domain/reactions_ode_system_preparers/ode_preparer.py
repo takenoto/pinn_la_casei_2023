@@ -225,16 +225,16 @@ class ODEPreparer:
                     if loss_version >=6:
                         loss_maxmin = tf.where(
                             tf.less(X, 0),
-                            100*X,
+                            X,
                             tf.where(
                                 tf.greater(X, tf.ones_like(X) * Xm),
-                                100*(tf.ones_like(X)*Xm),
+                                tf.ones_like(X)*Xm,
                                 tf.zeros_like(X),
                             ),
                         )
                         loss_derivative_abs = tf.abs(loss_derivative)
                         loss_maxmin_abs = tf.abs(loss_maxmin)
-                        loss_X = loss_derivative_abs + loss_maxmin_abs
+                        loss_X = loss_derivative_abs + 10*loss_maxmin_abs
                     elif loss_version == 5:
                         loss_maxmin = tf.where(
                             tf.less(X, 0),
@@ -270,16 +270,16 @@ class ODEPreparer:
                     if loss_version >= 6:
                         loss_maxmin = tf.where(
                             tf.less(P, 0),
-                            100*P,
+                            P,
                             tf.where(
                                 tf.greater(P, Pm),
-                                100*(tf.ones_like(P) * Pm),
+                                tf.ones_like(P) * Pm,
                                 tf.zeros_like(P),
                             ),
                         )
                         loss_derivative_abs = tf.abs(loss_derivative)
                         loss_maxmin_abs = tf.abs(loss_maxmin)
-                        loss_P = loss_derivative_abs + loss_maxmin_abs
+                        loss_P = loss_derivative_abs + 10*loss_maxmin_abs
                     elif loss_version == 5:
                         loss_maxmin = tf.where(
                             tf.less(P, 0),
@@ -313,16 +313,16 @@ class ODEPreparer:
                     if loss_version >= 6:
                         loss_maxmin = tf.where(
                             tf.less(S, 0),
-                            100*S,
+                            S,
                             tf.where(
                                 tf.greater(S, tf.ones_like(S) * initial_state.S[0]),
-                                100*tf.ones_like(S)*initial_state.S[0],
+                                tf.ones_like(S)*initial_state.S[0],
                                 tf.zeros_like(S),
                             ),
                         )
                         loss_derivative_abs = tf.abs(loss_derivative)
                         loss_maxmin_abs = tf.abs(loss_maxmin)
-                        loss_S = loss_derivative_abs + loss_maxmin_abs
+                        loss_S = loss_derivative_abs + 10*loss_maxmin_abs
                     elif loss_version == 5:
                         loss_maxmin = tf.where(
                             tf.less(S, 0),
@@ -360,12 +360,12 @@ class ODEPreparer:
                     if loss_version >= 6:
                         loss_maxmin = tf.where(
                             tf.less(V, 0),
-                            100*V,
+                            V,
                             tf.zeros_like(V),
                         )
                         loss_derivative_abs = tf.abs(loss_derivative)
                         loss_maxmin_abs = tf.abs(loss_maxmin)
-                        loss_V = loss_derivative_abs + loss_maxmin_abs
+                        loss_V = 100*loss_derivative_abs + 10*loss_maxmin_abs
                     elif loss_version == 5:
                         loss_maxmin = tf.where(
                             tf.less(V, 0),
