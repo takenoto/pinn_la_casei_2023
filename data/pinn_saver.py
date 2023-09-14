@@ -489,3 +489,35 @@ def save_each_pinn(
     # plt.savefig(file_path)
     plt.savefig(file_path, bbox_inches="tight", dpi=600)
     plt.close(fig)
+    
+    
+    
+    #------------------------
+    # POINTS USED IN SIMULATION
+    fig = plt.figure()
+    plt.plot(
+        t_num_normal,
+        t_num_normal,
+        linestyle="solid",
+        linewidth=5,
+        color=pinn_colors[-3],
+        label="t",
+    )
+    plt.plot(
+        np.array(pinn.train_state.X_test),
+        np.array(pinn.train_state.X_test),
+        marker="o",
+        markersize=1,
+        linewidth=0,
+        color=pinn_colors[-1],
+        label="t(TR)",
+    )
+    plt.ylabel("t(h)")
+    plt.title("Time (train) vs time (discret)")
+    plt.legend()
+    if folder_to_save:
+        file_path = os.path.join(folder_to_save, f"TIME-{pinn.model_name}.png")
+    # Save the figure
+    # plt.savefig(file_path)
+    plt.savefig(file_path, bbox_inches="tight", dpi=600)
+    plt.close(fig)
