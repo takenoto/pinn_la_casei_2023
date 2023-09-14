@@ -175,6 +175,12 @@ class EulerMethodOLD:
         S_array = np.ones(len(t_space)) * initial_state.S[0] / scaler.S_not_tensor
         V_array = np.ones(len(t_space)) * initial_state.volume[0] / scaler.V_not_tensor
 
+        dX_dt_array = np.zeros(len(t_space)) 
+        dP_dt_array = np.zeros(len(t_space)) 
+        dS_dt_array = np.zeros(len(t_space)) 
+        dV_dt_array = np.zeros(len(t_space)) 
+                
+        
         inlet = process_params.inlet
         f_in = inlet.volume
 
@@ -203,8 +209,6 @@ class EulerMethodOLD:
                 volume=V * scaler.V_not_tensor,
             )
 
-            # FIXME código 10/08/2023
-            # Colocar o X e P na limiar caso estejam quebrando, só pra evitar o problema numérico mesmo.
             if X * scaler.X_not_tensor >= Xm:
                 X = (Xm / scaler.X_not_tensor) * 0.9999999999999999999999999999999
             if P * scaler.P_not_tensor >= Pm:
@@ -232,7 +236,7 @@ class EulerMethodOLD:
                 - ms * X * scaler.X_not_tensor
             )
 
-            # FIXME removi o divisor do V no 1º termo, estava duplicado, tornando as taxas erradas.
+            
             dX_dt = non_dim_rX + (scaler.t_not_tensor / scaler.X_not_tensor) * (
                 1 if new_version else 1 / (V * scaler.V_not_tensor)
             ) * (f_in * inlet.X - f_out * X * scaler.X_not_tensor) / (
@@ -278,6 +282,11 @@ class EulerMethodOLD:
             P_array[t] = P + dP_dt * dt
             S_array[t] = S + dS_dt * dt
             V_array[t] = V + dV_dt * dt
+            
+            dX_dt_array[t] = dX_dt
+            dP_dt_array[t] = dP_dt
+            dS_dt_array[t] = dS_dt
+            dV_dt_array[t] = dV_dt
 
         return NumericSolverModelResults(
             model=self,
@@ -289,4 +298,8 @@ class EulerMethodOLD:
             t=t_space,
             dt=dt,
             non_dim_scaler=scaler,
+            dX_dt=dX_dt_array,
+            dP_dt=dP_dt_array,
+            dS_dt=dS_dt_array,
+            dV_dt=dV_dt_array
         )
