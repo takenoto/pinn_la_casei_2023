@@ -34,23 +34,24 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
     # E a loss v4 também é absoluta
     # 5 é a que inclui a soma de XPSV qwuando ultrapassem o limite
     # mas ajusta fazer ^3 para valores abaixo de 0
-    loss_version = 5  # 5 4 3 2
+    loss_version = 6  # 6 5 4 3 2
 
     # ---------------- NN ------------------
-    func = "swish"  #'tanh' 'swish' 'selu' 'relu'
+    func = "tanh"  #'tanh' 'swish' 'selu' 'relu'
     mini_batch = [None]  # [None] [20] [40] [80] [2]
     initializer = "Glorot uniform"  #'Glorot normal' #'Glorot uniform' #'Orthogonal'
     train_distribution_list = ["uniform"]  # "LHS" "Hammersley" "uniform"
     # GLOROT UNIFORM # Era Glorot Normal nos testes sem swish
     # LR_list = ["1e-2", "5e-3", "1e-3", "5e-4", "5e-5", "1e-5", "1e-6"]
-    LR_list = ["5e-2", "1e-3", "3e-3", "5e-3", "8e-3", "1e-4", "3e-4", "5e-4", "1e-5"]
+    # LR_list = ["5e-2", "1e-3", "3e-3", "5e-3", "8e-3", "1e-4", "3e-4", "5e-4", "1e-5"]
+    LR_list = ["5e-3", "1e-3", "1e-4", "1e-5"]
 
     lbfgs_pre = 0 # 0 1
     lbfgs_post = 1  # 0 1
-    ADAM_EPOCHS = 65000  # 35000  # 45000 # 1000  # 40000  # 120000 # 65000
+    ADAM_EPOCHS = 1000  # 35000  # 45000 # 1000  # 40000  # 120000 # 65000
     SGD_EPOCHS = 0  # 1000
-    neurons = [10]  # [16, 32, 60]  # [16, 32, 60] [80, 120] [10]
-    layers = [2, 3]  # [1, 2, 3, 4, 5]  # [2, 3, 4]  # [2, 3, 4, 5] [6, 7, 8]
+    neurons = [16]  # [16, 32, 60]  # [16, 32, 60] [80, 120] [10]
+    layers = [3]  # [1, 2, 3, 4, 5]  # [2, 3, 4]  # [2, 3, 4, 5] [6, 7, 8]
 
     # Se irá aplicar a estratégia de adimensionalização padrão
     NondimSelectedOptions = [
