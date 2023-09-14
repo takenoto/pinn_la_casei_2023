@@ -213,7 +213,6 @@ def save_each_pinn(
     ]
     pinn_derivative_vals = [N_pinn_derivative[type] for type in dNdt_keys]
 
-    print(pinn_derivative_vals)
     num_vals = [
         num.X,  # if _out.X else None,
         num.P,  # if _out.P else None,
