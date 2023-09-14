@@ -2,6 +2,7 @@ import os
 from matplotlib import pyplot as plt
 import numpy as np
 from timeit import default_timer as timer
+import deepxde as dde
 
 from data.plot.plot_comparer_multiple_grid import plot_comparer_multiple_grid
 
@@ -31,19 +32,28 @@ num_colors = [
     "#F0C987",
 ]
 
+
 class PINNSaveCaller:
     def __init__(self, num_results, showPINN, showNondim):
         self.num_results = num_results
         self.showPINN = showPINN
         self.showNondim = showNondim
 
-    def save_pinn(self, pinn, folder_to_save, showPINN=None, showNondim=None):
+    def save_pinn(
+        self,
+        pinn,
+        folder_to_save,
+        showPINN=None,
+        showNondim=None,
+        plot_derivatives=True,
+    ):
         "Saves the plot and json of the pinn"
         save_each_pinn(
             num_results=self.num_results,
             pinn=pinn,
             showPINN=showPINN if showPINN else self.showPINN,
             showNondim=showNondim if showNondim else self.showNondim,
+            plot_derivatives=plot_derivatives,
             folder_to_save=folder_to_save,
         )
 
@@ -54,6 +64,7 @@ def save_each_pinn(
     showPINN=True,
     showNondim=False,
     folder_to_save=None,
+    plot_derivatives=True,
 ):
     # PRINTAR O MELHOR DOS PINNS
     items = {}
@@ -93,24 +104,77 @@ def save_each_pinn(
             vals = np.array([[V_nondim[i], t_nondim[i]] for i in range(len(t_nondim))])
 
     prediction = pinn.model.predict(vals)
+    pred_end_time = timer()
+    dNdt_keys = ["dXdt", "dPdt", "dSdt", "dVdt"]
+
+    # Obtenção da derivada:
+    # Ref: https://github.com/lululxvi/deepxde/issues/177
+    # def dydx(x, y):
+    #     return dde.grad.jacobian(y, x, i=0, j=0)
 
     N_nondim_pinn = {}
-    for o in _out.order:
-        if o == "X":
-            N_nondim_pinn["X"] = prediction[:, _out.X_index]
-        if o == "P":
-            N_nondim_pinn["P"] = prediction[:, _out.P_index]
-        if o == "S":
-            N_nondim_pinn["S"] = prediction[:, _out.S_index]
-        if o == "V":
-            N_nondim_pinn["V"] = prediction[:, _out.V_index]
+    N_nondim_pinn_derivatives = {}
+    pinn_dNdt_keys = []
+
+    # Predicting values
+    if "X" in _out.order:
+        pinn_dNdt_keys.append("dXdt")
+        N_nondim_pinn["X"] = prediction[:, _out.X_index]
+        N_nondim_pinn_derivatives["dXdt"] = pinn.model.predict(
+            vals,
+            operator=lambda x, y: dde.grad.jacobian(
+                y, x, i=_out.X_index, j=_in.t_index
+            ),
+        )
+    else:
+        N_nondim_pinn_derivatives["dXdt"] = None
+    if "P" in _out.order:
+        pinn_dNdt_keys.append("dPdt")
+        N_nondim_pinn["P"] = prediction[:, _out.P_index]
+        N_nondim_pinn_derivatives["dPdt"] = pinn.model.predict(
+            vals,
+            operator=lambda x, y: dde.grad.jacobian(
+                y, x, i=_out.P_index, j=_in.t_index
+            ),
+        )
+    else:
+        N_nondim_pinn_derivatives["dPdt"] = None
+    if "S" in _out.order:
+        pinn_dNdt_keys.append("dSdt")
+        N_nondim_pinn["S"] = prediction[:, _out.S_index]
+        N_nondim_pinn_derivatives["dSdt"] = pinn.model.predict(
+            vals,
+            operator=lambda x, y: dde.grad.jacobian(
+                y, x, i=_out.S_index, j=_in.t_index
+            ),
+        )
+    else:
+        N_nondim_pinn_derivatives["dSdt"] = None
+    if "V" in _out.order:
+        pinn_dNdt_keys.append("dVdt")
+        N_nondim_pinn["V"] = prediction[:, _out.V_index]
+        N_nondim_pinn_derivatives["dVdt"] = pinn.model.predict(
+            vals,
+            operator=lambda x, y: dde.grad.jacobian(
+                y, x, i=_out.V_index, j=_in.t_index
+            ),
+        )
+    else:
+        N_nondim_pinn_derivatives["dVdt"] = None
 
     N_pinn = {
         type: pinn.solver_params.non_dim_scaler.fromNondim(N_nondim_pinn, type)
         for type in N_nondim_pinn
     }
+    N_pinn_derivative = {}
+    for type in N_nondim_pinn_derivatives:
+        if(N_nondim_pinn_derivatives[type] is not None):
+            N_pinn_derivative[type] = pinn.solver_params.non_dim_scaler.fromNondim(
+                    N_nondim_pinn_derivatives, type
+                )
+        else:
+            N_pinn_derivative[type] = None
 
-    pred_end_time = timer()
     pred_time = pred_end_time - pred_start_time
     path_to_file = os.path.join(folder_to_save, f"{pinn.model_name}.json")
     file = open(path_to_file, "a")
@@ -141,16 +205,22 @@ def save_each_pinn(
 
     items = {}
     titles = ["X", "P", "S", "V"]
+    derivatives = {}
+    derivatives_titles = ["dX/dt", "dP/dt", "dS/dt", "dV/dt"]
     pinn_vals = [N_pinn[type] if type in _out.order else None for type in titles]
     pinn_nondim_vals = [
         N_nondim_pinn[type] if type in _out.order else None for type in titles
     ]
+    pinn_derivative_vals = [N_pinn_derivative[type] for type in dNdt_keys]
+
+    print(pinn_derivative_vals)
     num_vals = [
         num.X,  # if _out.X else None,
         num.P,  # if _out.P else None,
         num.S,  # if _out.S else None,
         num.V,  # if _out.V else None,
     ]
+    num_dNdt = [num.dX_dt, num.dP_dt, num.dS_dt, num.dV_dt]
 
     num_vals_json = """{
             "t":[%s],
@@ -181,22 +251,18 @@ def save_each_pinn(
         else:
             error_L.append(np.nan)
 
-    # print("ERROR XPSV")
+    # -------------
+    # ERROR XPSV
     error_lines = []
     if _out.X:
         error_lines.append(f'"X": {error_L[0]}')
-        # print(f"X = {error_L[0]}")
     if _out.P:
         error_lines.append(f'"P": {error_L[1]}')
-        # print(f"P = {error_L[1]}")
     if _out.S:
         error_lines.append(f'"S": {error_L[2]}')
-        # print(f"S = {error_L[2]}")
     if _out.V:
         error_lines.append(f'"V": {error_L[3]}')
-        # print(f"V = {error_L[3]}")
 
-    # print(f"total = {np.nansum(error_L)}")
     error_lines.append(f'"Total": {np.nansum(error_L)}')
 
     pinn_vals_json = """{
@@ -297,13 +363,38 @@ def save_each_pinn(
             ],
         }
 
+        derivatives[i + 1] = {
+            "title": derivatives_titles[i],
+            "y_label": None,
+            "cases": [
+                {
+                    "x": num.t,
+                    "y": pinn.solver_params.non_dim_scaler.toNondim(
+                        {dNdt_keys[i]: num_dNdt[i]}, dNdt_keys[i]
+                    ),
+                    "color": pinn_colors[0],
+                    "l": "-",
+                },
+            ],
+        }
+
         if showPINN:
-            pinn_nondim_vals
+            # pinn_nondim_vals
             items[i + 1]["cases"].append(
                 # PINN
                 {
                     "x": num.t,
                     "y": pinn_vals[i],
+                    "color": pinn_colors[1],
+                    "l": "--",
+                }
+            )
+
+            derivatives[i + 1]["cases"].append(
+                # PINN
+                {
+                    "x": num.t,
+                    "y": pinn_derivative_vals[i],
                     "color": pinn_colors[1],
                     "l": "--",
                 }
@@ -347,6 +438,32 @@ def save_each_pinn(
         legend_bbox_to_anchor=(0.5, -0.1),
     )
 
+    # --------------------
+    # Derivatives
+    # --------------------
+    if plot_derivatives:
+        plot_comparer_multiple_grid(
+            suptitle=pinn.model_name,
+            labels=labels,
+            figsize=(8, 6),
+            gridspec_kw={"hspace": 0.042, "wspace": 0.03},
+            yscale="linear",
+            sharey=False,
+            nrows=2,
+            ncols=2,
+            items=derivatives,
+            title_for_each=True,
+            supxlabel="t (h)",
+            folder_to_save=folder_to_save,
+            filename=f"DERIV-{pinn.model_name}.png" if folder_to_save else None,
+            showPlot=False if folder_to_save else True,
+            legend_bbox_to_anchor=(0.5, -0.1),
+        )
+        pass
+
+    # -----------------
+    # LOSS
+    # -----------------
     fig = plt.figure()
     plt.plot(
         pinn.loss_history.steps,
@@ -362,7 +479,7 @@ def save_each_pinn(
         color=pinn_colors[-1],
         label="LoV",
     )
-    plt.yscale('log')
+    plt.yscale("log")
     plt.xlabel("i")
     plt.ylabel("Loss")
     plt.title("Loss x i")
@@ -373,5 +490,3 @@ def save_each_pinn(
     # plt.savefig(file_path)
     plt.savefig(file_path, bbox_inches="tight", dpi=600)
     plt.close(fig)
-
-    
