@@ -499,7 +499,7 @@ def save_each_pinn(
         linestyle="solid",
         linewidth=2,
         color=pinn_colors[-5],
-        label="t",
+        label="$t_{SIM}$",
         zorder=1
     )
     plt.plot(
@@ -510,7 +510,7 @@ def save_each_pinn(
         ms=4,
         alpha=.7,
         color=pinn_colors[-1],
-        label="t(TR)",
+        label="$t_{TR}$",
         zorder=2
     )
     plt.ylabel("t(h)")
