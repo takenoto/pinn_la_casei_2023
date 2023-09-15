@@ -106,8 +106,7 @@ def save_each_pinn(
     prediction = pinn.model.predict(vals)
     pred_end_time = timer()
     pred_time = pred_end_time - pred_start_time
-    
-    
+
     dNdt_keys = ["dXdt", "dPdt", "dSdt", "dVdt"]
 
     # Obtenção da derivada:
@@ -214,6 +213,9 @@ def save_each_pinn(
         N_nondim_pinn[type] if type in _out.order else None for type in titles
     ]
     pinn_derivative_vals = [N_pinn_derivative[type] for type in dNdt_keys]
+    pinn_nondim_derivative_vals = [
+        N_nondim_pinn_derivatives[type] for type in dNdt_keys
+    ]
 
     num_vals = [
         num.X,  # if _out.X else None,
@@ -228,13 +230,21 @@ def save_each_pinn(
             "X":[%s],
             "P":[%s],
             "S":[%s],
-            "V":[%s]
+            "V":[%s],
+            "dXdt_nondim":[%s],
+            "dPdt_nondim":[%s],
+            "dSdt_nondim":[%s],
+            "dVdt_nondim":[%s]
             }""" % (
         ",".join(np.char.mod("%f", np.array(t_num_normal))),
         ",".join(np.char.mod("%f", np.array(num_vals[0]))),
         ",".join(np.char.mod("%f", np.array(num_vals[1]))),
         ",".join(np.char.mod("%f", np.array(num_vals[2]))),
         ",".join(np.char.mod("%f", np.array(num_vals[3]))),
+        ",".join(np.char.mod("%f", np.array(num.dX_dt))),
+        ",".join(np.char.mod("%f", np.array(num.dP_dt))),
+        ",".join(np.char.mod("%f", np.array(num.dS_dt))),
+        ",".join(np.char.mod("%f", np.array(num.dV_dt))),
     )
 
     # Armazena os 4 erros
@@ -273,6 +283,7 @@ def save_each_pinn(
         "S":[%s],
         "V":[%s]
         }""" % (
+        # Values
         ",".join(np.char.mod("%f", np.array(t_nondim))),
         '"None"'
         if pinn_vals[0] is None
@@ -293,7 +304,11 @@ def save_each_pinn(
         "X":[%s],
         "P":[%s],
         "S":[%s],
-        "V":[%s]
+        "V":[%s],
+        "dXdt":[%s],
+        "dPdt":[%s],
+        "dSdt":[%s],
+        "dVdt":[%s]
         }""" % (
         ",".join(np.char.mod("%f", np.array(t_nondim))),
         '"None"'
@@ -308,6 +323,35 @@ def save_each_pinn(
         '"None"'
         if pinn_nondim_vals[3] is None
         else ",".join(np.char.mod("%f", np.array(pinn_nondim_vals[3]))),
+        # Derivatives
+        '"None"'
+        if pinn_nondim_derivative_vals[0] is None
+        else ",".join(
+            np.char.mod(
+                "%f", np.array(N_nondim_pinn_derivatives["dXdt"][:, 0]).tolist()
+            )
+        ),
+        '"None"'
+        if pinn_nondim_derivative_vals[1] is None
+        else ",".join(
+            np.char.mod(
+                "%f", np.array(N_nondim_pinn_derivatives["dPdt"][:, 0]).tolist()
+            )
+        ),
+        '"None"'
+        if pinn_nondim_derivative_vals[2] is None
+        else ",".join(
+            np.char.mod(
+                "%f", np.array(N_nondim_pinn_derivatives["dSdt"][:, 0]).tolist()
+            )
+        ),
+        '"None"'
+        if pinn_nondim_derivative_vals[3] is None
+        else ",".join(
+            np.char.mod(
+                "%f", np.array(N_nondim_pinn_derivatives["dSdt"][:, 0]).tolist()
+            )
+        ),
     )
 
     # Fecha o arquivo
@@ -370,9 +414,7 @@ def save_each_pinn(
             "cases": [
                 {
                     "x": num.t,
-                    "y": pinn.solver_params.non_dim_scaler.fromNondim(
-                        {dNdt_keys[i]: num_dNdt_Nondim[i]}, dNdt_keys[i]
-                    ),
+                    "y": num_dNdt_Nondim[i],
                     "color": pinn_colors[0],
                     "l": "-",
                 },
@@ -385,7 +427,7 @@ def save_each_pinn(
                 # PINN
                 {
                     "x": num.t,
-                    "y": pinn_vals[i],
+                    "y": pinn_nondim_derivative_vals[i],
                     "color": pinn_colors[1],
                     "l": "--",
                 }
@@ -444,7 +486,7 @@ def save_each_pinn(
     # --------------------
     if plot_derivatives:
         plot_comparer_multiple_grid(
-            suptitle=pinn.model_name,
+            suptitle=f"Nondim derivatives ({pinn.model_name})",
             labels=labels,
             figsize=(8, 6),
             gridspec_kw={"hspace": 0.042, "wspace": 0.03},
@@ -456,7 +498,7 @@ def save_each_pinn(
             title_for_each=True,
             supxlabel="t (h)",
             folder_to_save=folder_to_save,
-            filename=f"DERIV-{pinn.model_name}.png" if folder_to_save else None,
+            filename=f"DERIVND-{pinn.model_name}.png" if folder_to_save else None,
             showPlot=False if folder_to_save else True,
             legend_bbox_to_anchor=(0.5, -0.1),
         )
@@ -502,7 +544,7 @@ def save_each_pinn(
         linewidth=2,
         color=pinn_colors[-5],
         label="$t_{SIM}$",
-        zorder=1
+        zorder=1,
     )
     plt.plot(
         np.array(pinn.train_state.X_test),
@@ -510,10 +552,10 @@ def save_each_pinn(
         "x",
         mew=2,
         ms=4,
-        alpha=.7,
+        alpha=0.7,
         color=pinn_colors[-1],
         label="$t_{TR}$",
-        zorder=2
+        zorder=2,
     )
     plt.ylabel("t(h)")
     plt.title("Time (train) vs time (discret)")

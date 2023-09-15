@@ -149,7 +149,11 @@ class EulerMethod:
             dS_dt_nondim_array[t] = non_dim_scaler.toNondim(N, "dSdt")
             dV_dt_nondim_array[t] = non_dim_scaler.toNondim(N, "dVdt")
             
-            
+        # Seta a derivada em 0 como igual à em 1 pra não bagunçar muito o gráfico
+        dX_dt_nondim_array[0] = dX_dt_nondim_array[1]
+        dP_dt_nondim_array[0] = dP_dt_nondim_array[1]
+        dS_dt_nondim_array[0] = dS_dt_nondim_array[1]
+        dV_dt_nondim_array[0] = dV_dt_nondim_array[1]
     
 
         return NumericSolverModelResults(
