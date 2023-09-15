@@ -34,6 +34,7 @@
 - Removi o termo que multiplica a loss minmax  por 10. Como o valor absoluto já é maior que a derivada, multiplicar ele faz com que a derivada fique menos relevante para a composição da loss e talvez isso implique naqueles erros. Além de que ficou mais difícil o processo de treino.
 - Corrigido: plot de derivadas agora é salvo com o valor adimensional para poder ver a sobreposição independentemente da escala e ficar mais fácil de comparar. Foi possível ver claramente a predição errando o volume e acertando o resto. Mas aí "acerta" o resto já descontando o erro do volume, então também erra!
 - No json de pinn => adicionado também as predições das derivadas
+- Rodar só a reação com loss v5 contra lossv6 já mostra que a 5 é muito melhor. A 6 hoje, enquanto escrevo isso, é a mesma coisa que a 4 antiga. Então isso já valida a complexidade de ter um termo ^3.
 
 ### 2023-09-14
 

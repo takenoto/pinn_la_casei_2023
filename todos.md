@@ -1,6 +1,15 @@
 # Todo list - qualificação
 
-- 1) Roda o batch e veja se tá salvando o json corretamente porque adicionei as derivadas nondim preditas pelo pinn também.
+- verifique de novo o gráfico de derivadas. Ainda acho que tem algo nondim errado. Tem que testar pelo menos no batelada 1x com nd=1 (sem nondim) e outra com nondim linear pra confirmar que tá OK.
+
+- Tá tudo ok. Queria treinar só de 30-60% do tempo mas propor condições em t=0. É possível? Pelas docs da deepxde parece que t=0 precisa necessariamente ser o tempo da IC...
+- Veja "solve parametric pdes" => https://deepxde.readthedocs.io/en/latest/user/faq.html
+  - Isso deixaria eu usar diferentes condições iniciais
+  - Talvez uma geometry do tipo hypoercube conseguisse resolver
+    - https://en.wikipedia.org/wiki/Hypercube
+    - Aí eu conseguiria fazer um modelo generalista
+    - Mas isso é só pra depois né. Primeiro vamos brincar de fazer o cstr funcionar...
+- Rodar só a reação com loss v5 contra lossv6 já mostra que a 5 para a REAÇÃO.
 
 
 
