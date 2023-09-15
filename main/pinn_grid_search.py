@@ -52,6 +52,7 @@ def run_pinn_grid_search(
                 "output_variables",
                 "input_variables",
                 "isplot",
+                "train_input_range"
             ]:
                 return np.array(cases_to_try[case_key].get(thing_key, default)).item()
             else:
@@ -110,6 +111,9 @@ def run_pinn_grid_search(
                 ),
                 save_caller=get_thing_for_key(
                     case_key, "save_caller", default=None
+                ),
+                train_input_range=get_thing_for_key(
+                    case_key, "train_input_range", default=None
                 ),
             )
             # Basicamente um teste com adimensionalização e um sem

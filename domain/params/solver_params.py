@@ -1,6 +1,8 @@
 # python -m domain.params.solver_params
 
 from typing import Self
+
+import numpy as np
 from data.pinn_saver import PINNSaveCaller
 from domain.optimization.non_dim_scaler import NonDimScaler
 
@@ -101,7 +103,8 @@ class SolverParams:
         loss_version=1,
         custom_loss_version={},
         train_distribution="Hammersley",
-        save_caller:PINNSaveCaller=None
+        save_caller:PINNSaveCaller=None,
+        train_input_range=None,
     ):
         self.name = name if name else None
         """
@@ -163,6 +166,7 @@ class SolverParams:
 
         self.train_distribution = train_distribution
         self.save_caller=save_caller
+        self.train_input_range=train_input_range
 
     def get_loss_version_for_type(self, type):
         """
@@ -194,6 +198,7 @@ class SolverParams:
             '"mini_batch": '
             + f"{none_str if self.mini_batch is None else self.mini_batch}",
             '"nondim_scaler":' + self.non_dim_scaler.toJson(),
+            '"train_input_range":' + f"{np.array(self.train_input_range).tolist()}"
         ]
 
         json = "{"

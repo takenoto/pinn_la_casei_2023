@@ -51,7 +51,8 @@ def run_reactor(
     # como todos são obrigatórios, basta fazer o contrário dos params
     # o que não tiver lá vai aqui
     time_domain = dde.geometry.TimeDomain(
-        0, scaler.toNondim({"t": process_params.t_final}, "t")
+        solver_params.train_input_range[0][0],
+        scaler.toNondim({"t": solver_params.train_input_range[0][-1]}, "t"),
     )
 
     # ref:
@@ -66,21 +67,29 @@ def run_reactor(
     elif len(inputSimulationType.order) == 2:
         # Valores adimensionalizados das variáveis em t0
         Nondim_boundaries = {
-            "X": scaler.toNondim({"X": eq_params.Xm[0]}, "X"),
-            "P": scaler.toNondim({"P": eq_params.Pm[0]}, "P"),
-            "S": scaler.toNondim({"S": eq_params.So[0]}, "S"),
-            "V": scaler.toNondim({"V": process_params.max_reactor_volume}, "V"),
+            "X": scaler.toNondim({"X": solver_params.train_input_range[-1][-1]}, "X"),
+            "P": scaler.toNondim({"P": solver_params.train_input_range[-1][-1]}, "P"),
+            "S": scaler.toNondim({"S": solver_params.train_input_range[-1][-1]}, "S"),
+            "V": scaler.toNondim({"V": solver_params.train_input_range[-1][-1]}, "V"),
         }
 
         if inputSimulationType.X:
-            dimension_geom = dde.geometry.Interval(0, Nondim_boundaries["X"])
+            dimension_geom = dde.geometry.Interval(
+                solver_params.train_input_range[-1][0], Nondim_boundaries["X"]
+            )
 
         elif inputSimulationType.P:
-            dimension_geom = dde.geometry.Interval(0, Nondim_boundaries["P"])
+            dimension_geom = dde.geometry.Interval(
+                solver_params.train_input_range[-1][0], Nondim_boundaries["P"]
+            )
         elif inputSimulationType.S:
-            dimension_geom = dde.geometry.Interval(0, Nondim_boundaries["S"])
+            dimension_geom = dde.geometry.Interval(
+                solver_params.train_input_range[-1][0], Nondim_boundaries["S"]
+            )
         elif inputSimulationType.V:
-            dimension_geom = dde.geometry.Interval(0, Nondim_boundaries["V"])
+            dimension_geom = dde.geometry.Interval(
+                solver_params.train_input_range[-1][0], Nondim_boundaries["V"]
+            )
 
         geom = dde.geometry.GeometryXTime(dimension_geom, time_domain)
 
@@ -156,7 +165,7 @@ def run_reactor(
         num_domain=solver_params.num_domain,
         num_boundary=solver_params.num_init,
         num_test=solver_params.num_test,
-        train_distribution=solver_params.train_distribution
+        train_distribution=solver_params.train_distribution,
     )
 
     # Creating the model and the net
@@ -184,8 +193,8 @@ def run_reactor(
     # https://github.com/lululxvi/deepxde/issues/174
     # https://github.com/lululxvi/deepxde/issues/504
     # https://github.com/lululxvi/deepxde/issues/467
-    loss = "MSE" #"MSE"
-    metrics = None# ["l2 relative error"] # ["MSE"]
+    loss = "MSE"  # "MSE"
+    metrics = None  # ["l2 relative error"] # ["MSE"]
     mini_batch = solver_params.mini_batch  # None # Tamanho da mini-batch
 
     # Caminho pra pasta. Já vem com  a barra ou em branco caso não tenha hyperfolder
@@ -311,7 +320,7 @@ def run_reactor(
         best_metrics=train_state.best_metrics,
         total_training_time=total_training_time,
     )
-    
+
     solver_params.save_caller.save_pinn(pinn=pinn, folder_to_save=hyperfolder_path)
-    
+
     return pinn
