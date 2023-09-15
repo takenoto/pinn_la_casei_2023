@@ -365,7 +365,7 @@ class ODEPreparer:
                         )
                         loss_derivative_abs = tf.abs(loss_derivative)
                         loss_maxmin_abs = tf.abs(loss_maxmin)
-                        loss_V = 100*loss_derivative_abs + 10*loss_maxmin_abs
+                        loss_V = 10*loss_derivative_abs + 100*loss_maxmin_abs
                     elif loss_version == 5:
                         loss_maxmin = tf.where(
                             tf.less(V, 0),
