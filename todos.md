@@ -1,10 +1,7 @@
 # Todo list - qualificação
 
-- A primeira coisa que tenho que descobrir não são nem as layers ótimas, mas como evitar a solução trivial. É isso que tá enganchando tudo.
-- #TODO: mais pontos, minibatch baixa (pra ir treinando por seções) e poucas it adam
-- Tá parecendo que o mínimo global da loss é a solução trivial. Como sair disso?
-- Talvez eu deva é fazer vários pontos de adam (10k, 30k, 50k) e ver a partir de qual ele converge pra solução trivial. E aí achar o que leva a isso. A swish + nondim parece de alguma forma ajudar a evitar a sol. trivial mas não sei se é só impressão.
-- #TODO é bom é eu pensar em como vou modificar a loss... Pra que a v6 evite esses cocozinhos...
+- 1) Roda o batch e veja se tá salvando o json corretamente porque adicionei as derivadas nondim preditas pelo pinn também.
+
 
 
 - EU JÁ ANOTEI UM PEDAÇO. ACHE O RESTO E ANOTE TB.

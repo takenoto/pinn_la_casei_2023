@@ -25,6 +25,29 @@
 
 ## by date
 
+### 2023-09-15
+
+- Permitir (cases_to_try, grid_search, run_reactor, solver_params json) o uso de tempos min. e máximo do experimento diferentes de 0 e t_max para avaliar isso.
+- Fazer o reator batelada num tempo maior como uma configuração extra e ver como ele se comporta, se também fica com erro alto, etc.
+- Daqui pra frente acho que mini batch pode ser totalmente ignorada, vamos trabalhar só na distribuição de pontos e ver o comportamento dali.
+- Parece não ser uma solução trivial (do ponto de vista matemático) mas do ponto de vista de ML: zerar X e botar tudo constante era algo que baixava muito o erro sem ter muitas consequências. 
+- Removi o termo que multiplica a loss minmax  por 10. Como o valor absoluto já é maior que a derivada, multiplicar ele faz com que a derivada fique menos relevante para a composição da loss e talvez isso implique naqueles erros. Além de que ficou mais difícil o processo de treino.
+- Corrigido: plot de derivadas agora é salvo com o valor adimensional para poder ver a sobreposição independentemente da escala e ficar mais fácil de comparar. Foi possível ver claramente a predição errando o volume e acertando o resto. Mas aí "acerta" o resto já descontando o erro do volume, então também erra!
+- No json de pinn => adicionado também as predições das derivadas
+
+### 2023-09-14
+
+- Rascunho loss v6 multiplicando o erro<0 por 10 e por 100
+- Adicionar valores calculados de d(X,P,S,V)_dt aos resultados numéricos
+- Plotar por padrão, além de XPSV, d(X,P,S,V)_dt numérico
+- Plotar dXPSV/dt do Pin... E comparar com o numérico. Já vi que estão indo em direções opostas no início do treino...
+- Agora plotar o gráfico com t de simulação (numérico) vs t que foi discretizado (pontos não linhas) Importante pra eu saber se uma região está sendo muito desprivilegiada. Na verdade é uma linha de t e os pontos por cima pra eu poder comparar
+
+
+### 2023-09-13
+
+- Testar mais vários valores de loss, todos ruins. Implementei variação de LR. Estou preparando pra testar variar a loss mesmo, de novo zzzz.
+
 ### 2023-09-12
 
 - Implement Autosave for each pinn using a callback
