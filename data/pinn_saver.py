@@ -427,7 +427,7 @@ def save_each_pinn(
                 # PINN
                 {
                     "x": num.t,
-                    "y": pinn_nondim_derivative_vals[i],
+                    "y": pinn_vals[i],
                     "color": pinn_colors[1],
                     "l": "--",
                 }
@@ -437,7 +437,7 @@ def save_each_pinn(
                 # PINN
                 {
                     "x": num.t,
-                    "y": pinn_derivative_vals[i],
+                    "y": pinn_nondim_derivative_vals[i],
                     "color": pinn_colors[1],
                     "l": "--",
                 }
