@@ -244,7 +244,7 @@ class ODEPreparer:
                         )
                         loss_derivative_abs = tf.abs(loss_derivative)
                         loss_maxmin_abs = tf.abs(loss_maxmin)
-                        loss_X = loss_derivative_abs + loss_maxmin_abs / 10
+                        loss_X = loss_derivative_abs + loss_maxmin_abs
                     elif loss_version == 5:
                         loss_maxmin = tf.where(
                             tf.less(X, 0),
@@ -289,7 +289,7 @@ class ODEPreparer:
                         )
                         loss_derivative_abs = tf.abs(loss_derivative)
                         loss_maxmin_abs = tf.abs(loss_maxmin)
-                        loss_P = loss_derivative_abs + loss_maxmin_abs / 10
+                        loss_P = loss_derivative_abs + loss_maxmin_abs
                     elif loss_version == 5:
                         loss_maxmin = tf.where(
                             tf.less(P, 0),
@@ -332,7 +332,7 @@ class ODEPreparer:
                         )
                         loss_derivative_abs = tf.abs(loss_derivative)
                         loss_maxmin_abs = tf.abs(loss_maxmin)
-                        loss_S = loss_derivative_abs + loss_maxmin_abs / 10
+                        loss_S = loss_derivative_abs + loss_maxmin_abs
                     elif loss_version == 5:
                         loss_maxmin = tf.where(
                             tf.less(S, 0),
@@ -375,7 +375,7 @@ class ODEPreparer:
                         )
                         loss_derivative_abs = tf.abs(loss_derivative)
                         loss_maxmin_abs = tf.abs(loss_maxmin)
-                        loss_V = loss_derivative_abs + loss_maxmin_abs / 10
+                        loss_V = loss_derivative_abs + loss_maxmin_abs
                     elif loss_version == 5:
                         loss_maxmin = tf.where(
                             tf.less(V, 0),
