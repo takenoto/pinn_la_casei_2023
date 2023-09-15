@@ -31,11 +31,7 @@ ADAM_EPOCHS_dict = {
 
 
 def get_train_input_range_dict(
-    process_params,
-    percent_min_range=[0, 50],
-    percent_max_range=[100],
-    integer_min_range=[0],
-    integer_max_range=[40],
+    process_params, percent_min_range=[0, 50], percent_max_range=[100]
 ):
     """
     percent_max_range is the maximum % that will be created to be used.
@@ -43,12 +39,19 @@ def get_train_input_range_dict(
 
     How are the keys written:
     Percent: {min_perc}-{max_perc}pa" - era パー mas deu erro ao salvar
-    Normal time, in integers: {min_int}-{max_int}t
+
+    input2Multiplier
+    Is the multiplier of the #2 part of the input. Can be X, P, S or V
 
     """
 
     # Full time discretization
-    dict = {"full": [[0, process_params.t_final]]}
+    dict = {
+        "full": [
+            [0, process_params.t_final],
+            # [0, input2Multiplier]
+        ]
+    }
 
     # Percentual discretization from 0 to "i"
     for max_perc in percent_max_range:
@@ -57,31 +60,18 @@ def get_train_input_range_dict(
                 [
                     process_params.t_final * min_perc / 100,
                     process_params.t_final * max_perc / 100,
-                ]
+                ],
             ]
-
-    # Integer discretization:
-    for max_int in integer_max_range:
-        for min_int in integer_min_range:
-            dict[f"{min_int}-{max_int}t"] = [[min_int, max_int]]
 
     return dict
 
 
 def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None):
     dictionary = {}
-    # --------- LOSS FUNCTION ------------
-    # 1 é a loss tradicional, #2 retorna o própria X/P/S/V caso seja menor que zero.
-    # 3 é a que faz dMols/dt e não dConc/dt, pro volume ir multiplicando... E também
-    # faz com que EFETIVAMENTE X NaN seja bloqueado
-    # A loss v4 é a que faz com que EFETIVAMENTE retorne o próprio valor
-    # da coisa (XPSV) se for < 0 ou maior que o limite (Xm, Pm, So. Volume fica solto.)
-    # E a loss v4 também é absoluta
-    # 5 é a que inclui a soma de XPSV qwuando ultrapassem o limite
-    # mas ajusta fazer ^3 para valores abaixo de 0
-    loss_version = 6  # 6 5 4 3 2
+    # --------- LOSS FUNCTION -----------
+    loss_version = 5  # 6 5 4 3 2
 
-    output_variables = ["X", "P", "S", "V"]
+    output_variables = ["X", "P", "S"]  # "V"
     input_variables = ["t"]
 
     # -------------------------------
@@ -92,17 +82,23 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
     # input...N = List(min, max)
     train_input_range_dict = get_train_input_range_dict(
         process_params,
-        percent_min_range=[0],  # [0,50] => iria fazer modelos iniciando em 0 e em 50
-        percent_max_range=[10, 100],
-        integer_min_range=[0],
-        integer_max_range=[40],
+        percent_min_range=[
+            0,
+        ],  # [0,50] => iria fazer modelos iniciando em 0 e em 50
+        percent_max_range=[10, 25, 50, 60, 90, 100, 200]
     )
 
-    train_input_range_list = ["full", "0-10pa", "0-40t"]
+    train_input_range_list = [
+        "0-60pa",
+        "full",
+        # "0-50pa",
+        # "30-90pa",
+        # "0-200pa",
+    ]
 
-    NUM_DOMAIN = [40]  # [1600] [800] [400] [300] [80] [40] [20]
-    NUM_TEST = [40]  # [1600] [800] [400] [300] [80] [40] [20]
-    NUM_INIT = [20]  # [10] [20] [60] [80] 20 era o valor dos primeiros testes
+    NUM_DOMAIN = [32] #32  # [1600] [800] [400] [300] [80] [40] [20]
+    NUM_TEST = [32]  # [1600] [800] [400] [300] [80] [40] [20]
+    NUM_INIT = [16] #16 # [10] [20] [60] [80] 20 era o valor dos primeiros testes
     NUM_BOUNDARY = 0
 
     # -------------------------------
@@ -110,22 +106,28 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
     func = "tanh"  #'tanh' 'swish' 'selu' 'relu'
     mini_batch = [None]  # [None] [20] [40] [80] [2]
     initializer = "Glorot uniform"  #'Glorot normal' #'Glorot uniform' #'Orthogonal'
-    train_distribution_list = ["uniform"]  # "LHS" "Hammersley" "uniform"
+    train_distribution_list = ["LHS"]  # "LHS" "Hammersley" "uniform"
     # GLOROT UNIFORM # Era Glorot Normal nos testes sem swish
     # LR_list = ["1e-2", "5e-3", "1e-3", "5e-4", "5e-5", "1e-5", "1e-6"]
     # LR_list = ["5e-2", "1e-3", "3e-3", "5e-3", "8e-3", "1e-4", "3e-4", "5e-4", "1e-5"]
-    LR_list = ["1e-3"]# ["1e-3", "1e-4", "1e-5"]
+    LR_list = [
+        # "1e-1",
+        # "1e-2",
+        "1e-3",
+        "1e-4",
+        "1e-5",
+    ]  # ["8e-4", "5e-4", "1e-4", "7e-5"]  # ["1e-3", "1e-4", "1e-5"]
 
     lbfgs_pre = 0  # 0 1
     lbfgs_post = 1  # 0 1
-    ADAM_EPOCHS_list = ["100"]  # ["100", "1k", "10k"]
+    ADAM_EPOCHS_list = ["6k"]  # ["25k"]  # ["100", "1k", "10k"]
     SGD_EPOCHS = 0  # 1000
-    neurons = [4] #[16]  # [16, 32, 60]  # [16, 32, 60] [80, 120] [10]
-    layers = [3]  # [1, 2, 3, 4, 5]  # [2, 3, 4]  # [2, 3, 4, 5] [6, 7, 8]
+    neurons = [32, 16]  # [16]  # [16, 32, 60]  # [16, 32, 60] [80, 120] [10]
+    layers = [3, 2]  # [1, 2, 3, 4, 5]  # [2, 3, 4]  # [2, 3, 4, 5] [6, 7, 8]
 
     # Se irá aplicar a estratégia de adimensionalização padrão
     NondimSelectedOptions = [
-        # NondimAvailableOptions["None"],
+        NondimAvailableOptions["None"],
         NondimAvailableOptions["Linear"],
         # NondimAvailableOptions["Desvio"],
     ]
@@ -162,6 +164,9 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
     input_str = "in_"
     for i in input_variables:
         input_str += i
+    output_str = "out_"
+    for o in output_variables:
+        output_str += o
 
     # Específicos
     for train_input_range_key in train_input_range_list:
@@ -192,14 +197,14 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
                                                 nondim_str = f'ND{ nd["abrv"] }'
                                                 key = (
                                                     # Primeiro o "core"
-                                                    f"{NL}x{HL} {input_str} {func}"
+                                                    f"{NL}x{HL} {input_str} {output_str} {func}"
                                                     # Depois coisas l relacionadas ao treino
                                                     + f" l{loss_version}"
                                                     + f" LR-{LR_str}"
                                                     + f" {nondim_str} {minibatch_str}"
                                                     + f" nd{n_domain} nt{n_test} ni{n_init}"
                                                     + f" TD-{train_distribution}"
-                                                    + f" {ADAM_EPOCHS}ep"
+                                                    + f" {adam_str}ep"
                                                     + f" tr-{train_input_range_key}"
                                                 )
 
