@@ -51,7 +51,7 @@ def run_reactor(
     # como todos são obrigatórios, basta fazer o contrário dos params
     # o que não tiver lá vai aqui
     time_domain = dde.geometry.TimeDomain(
-        solver_params.train_input_range[0][0],
+        scaler.toNondim({"t": solver_params.train_input_range[0][0]}, "t"),
         scaler.toNondim({"t": solver_params.train_input_range[0][-1]}, "t"),
     )
 
