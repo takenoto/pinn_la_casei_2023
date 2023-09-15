@@ -105,6 +105,9 @@ def save_each_pinn(
 
     prediction = pinn.model.predict(vals)
     pred_end_time = timer()
+    pred_time = pred_end_time - pred_start_time
+    
+    
     dNdt_keys = ["dXdt", "dPdt", "dSdt", "dVdt"]
 
     # Obtenção da derivada:
@@ -175,7 +178,6 @@ def save_each_pinn(
         else:
             N_pinn_derivative[type] = None
 
-    pred_time = pred_end_time - pred_start_time
     path_to_file = os.path.join(folder_to_save, f"{pinn.model_name}.json")
     file = open(path_to_file, "a")
     file.writelines(
@@ -219,7 +221,7 @@ def save_each_pinn(
         num.S,  # if _out.S else None,
         num.V,  # if _out.V else None,
     ]
-    num_dNdt = [num.dX_dt, num.dP_dt, num.dS_dt, num.dV_dt]
+    num_dNdt_Nondim = [num.dX_dt, num.dP_dt, num.dS_dt, num.dV_dt]
 
     num_vals_json = """{
             "t":[%s],
@@ -368,8 +370,8 @@ def save_each_pinn(
             "cases": [
                 {
                     "x": num.t,
-                    "y": pinn.solver_params.non_dim_scaler.toNondim(
-                        {dNdt_keys[i]: num_dNdt[i]}, dNdt_keys[i]
+                    "y": pinn.solver_params.non_dim_scaler.fromNondim(
+                        {dNdt_keys[i]: num_dNdt_Nondim[i]}, dNdt_keys[i]
                     ),
                     "color": pinn_colors[0],
                     "l": "-",
