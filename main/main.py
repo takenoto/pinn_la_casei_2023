@@ -435,10 +435,10 @@ def main():
     # ----------------------
     run_fedbatch = False
 
-    run_cr = True
+    run_cr = False
     cr_version = "cstr"  # "cstr" "cr-1L" "cr-0.1L"
 
-    run_batch = False
+    run_batch = True
 
     # --------------------------------------------
     # ----------------MAIN CODE-------------------
@@ -607,7 +607,7 @@ def main():
         pass
 
     if run_batch:
-        folder_to_save = create_folder_to_save(subfolder=subfolder + "-batch")
+        folder_to_save = create_folder_to_save(subfolder=subfolder + "batch")
 
         print("RUN BATCH")
         cases, cols, rows = change_layer_fix_neurons_number(
