@@ -207,7 +207,12 @@ def save_each_pinn(
     items = {}
     titles = ["X", "P", "S", "V"]
     derivatives = {}
-    derivatives_titles = ["dX/dt", "dP/dt", "dS/dt", "dV/dt"]
+    derivatives_titles = [
+        "$dX_{A}/dt_{A}$",
+        "$dP_{A}/dt_{A}$",
+        "$dS_{A}/dt_{A}$",
+        "$dV_{A}/dt_{A}$",
+    ]
     pinn_vals = [N_pinn[type] if type in _out.order else None for type in titles]
     pinn_nondim_vals = [
         N_nondim_pinn[type] if type in _out.order else None for type in titles
