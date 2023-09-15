@@ -565,7 +565,7 @@ def main():
         
         print("RUN CR")
         cases, cols, rows = change_layer_fix_neurons_number(
-            eq_params, process_params_feed_fb, hyperfolder=folder_to_save
+            eq_params, process_params_feed_cr, hyperfolder=folder_to_save
         )
 
         def cr_f_out_calc_numeric(max_reactor_volume, f_in_v, volume):
@@ -611,7 +611,7 @@ def main():
 
         print("RUN BATCH")
         cases, cols, rows = change_layer_fix_neurons_number(
-            eq_params, process_params_feed_fb, hyperfolder=folder_to_save
+            eq_params, process_params_feed_off, hyperfolder=folder_to_save
         )
         num_results = run_numerical_methods(
             eq_params=eq_params,
