@@ -168,10 +168,10 @@ def save_each_pinn(
     }
     N_pinn_derivative = {}
     for type in N_nondim_pinn_derivatives:
-        if(N_nondim_pinn_derivatives[type] is not None):
+        if N_nondim_pinn_derivatives[type] is not None:
             N_pinn_derivative[type] = pinn.solver_params.non_dim_scaler.fromNondim(
-                    N_nondim_pinn_derivatives, type
-                )
+                N_nondim_pinn_derivatives, type
+            )
         else:
             N_pinn_derivative[type] = None
 
@@ -334,10 +334,10 @@ def save_each_pinn(
                     ",\n",
                     '"pinn_epochs":' + f"{pinn.loss_history.steps}" ",\n",
                     '"pinn_loss_story_test":'
-                    + f"{[loss for loss in np.array(np.sum(pinn.loss_history.loss_test, axis=1))]}"
+                    + f"{[loss for loss in np.array(np.sum(pinn.loss_history.loss_test, axis=1))]}"  # noqa: E501
                     ",\n",
                     '"pinn_loss_story_train":'
-                    + f"{[loss for loss in np.sum(pinn.loss_history.loss_train, axis=1)]}"
+                    + f"{[loss for loss in np.sum(pinn.loss_history.loss_train, axis=1)]}"  # noqa: E501
                     ",\n",
                     '"total_training_time":' + f"{pinn.total_training_time}" "\n",
                     "}",
@@ -489,28 +489,29 @@ def save_each_pinn(
     # plt.savefig(file_path)
     plt.savefig(file_path, bbox_inches="tight", dpi=600)
     plt.close(fig)
-    
-    
-    
-    #------------------------
+
+    # ------------------------
     # POINTS USED IN SIMULATION
     fig = plt.figure()
     plt.plot(
         t_num_normal,
         t_num_normal,
         linestyle="solid",
-        linewidth=5,
-        color=pinn_colors[-3],
+        linewidth=2,
+        color=pinn_colors[-5],
         label="t",
+        zorder=1
     )
     plt.plot(
         np.array(pinn.train_state.X_test),
         np.array(pinn.train_state.X_test),
-        marker="o",
-        markersize=1,
-        linewidth=0,
+        "x",
+        mew=2,
+        ms=4,
+        alpha=.7,
         color=pinn_colors[-1],
         label="t(TR)",
+        zorder=2
     )
     plt.ylabel("t(h)")
     plt.title("Time (train) vs time (discret)")
