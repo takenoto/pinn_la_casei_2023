@@ -1,6 +1,9 @@
 # Todo List
 
-# Entregáveis
+## Main
+  - Cronograma com datas em que pretendo concluir cada um desses trambei
+
+## Entregáveis
   - Reação:
     - Gráfico LR x Loss x NL. Um pra cada HL. totalizando 4 talvez então?
     - Determinar a menor loss que representa reação adequadamente
