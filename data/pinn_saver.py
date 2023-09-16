@@ -208,10 +208,10 @@ def save_each_pinn(
     titles = ["X", "P", "S", "V"]
     derivatives = {}
     derivatives_titles = [
-        "$dX_{A}/dt_{A}$",
-        "$dP_{A}/dt_{A}$",
-        "$dS_{A}/dt_{A}$",
-        "$dV_{A}/dt_{A}$",
+        "$dX/dt$",
+        "$dP/dt$",
+        "$dS/dt$",
+        "$dV/dt$",
     ]
     pinn_vals = [N_pinn[type] if type in _out.order else None for type in titles]
     pinn_nondim_vals = [
@@ -228,7 +228,7 @@ def save_each_pinn(
         num.S,  # if _out.S else None,
         num.V,  # if _out.V else None,
     ]
-    num_dNdt_Nondim = [num.dX_dt, num.dP_dt, num.dS_dt, num.dV_dt]
+    num_dNdt = [num.dX_dt, num.dP_dt, num.dS_dt, num.dV_dt]
 
     num_vals_json = """{
             "t":[%s],
@@ -419,7 +419,7 @@ def save_each_pinn(
             "cases": [
                 {
                     "x": num.t,
-                    "y": num_dNdt_Nondim[i],
+                    "y": num_dNdt[i],
                     "color": pinn_colors[0],
                     "l": "-",
                 },
@@ -442,7 +442,8 @@ def save_each_pinn(
                 # PINN
                 {
                     "x": num.t,
-                    "y": pinn_nondim_derivative_vals[i],
+                    # "y": pinn_nondim_derivative_vals[i],
+                    "y": pinn_derivative_vals[i],
                     "color": pinn_colors[1],
                     "l": "--",
                 }

@@ -52,14 +52,14 @@ class EulerMethod:
         S_nondim_array = np.ones(len(t_space_nondim)) * non_dim_scaler.toNondim(N0, "S")
         V_nondim_array = np.ones(len(t_space_nondim)) * non_dim_scaler.toNondim(N0, "V")
         
-        dX_dt_nondim_array = np.zeros(len(t_space_nondim)) 
-        dP_dt_nondim_array = np.zeros(len(t_space_nondim)) 
-        dS_dt_nondim_array = np.zeros(len(t_space_nondim)) 
-        dV_dt_nondim_array = np.zeros(len(t_space_nondim)) 
-        dX_dt_nondim_array[0] = None
-        dP_dt_nondim_array[0] = None
-        dS_dt_nondim_array[0] = None
-        dV_dt_nondim_array[0] = None
+        dX_dt_normal_array = np.zeros(len(t_space_nondim)) 
+        dP_dt_normal_array = np.zeros(len(t_space_nondim)) 
+        dS_dt_normal_array = np.zeros(len(t_space_nondim)) 
+        dV_dt_normal_array = np.zeros(len(t_space_nondim)) 
+        dX_dt_normal_array[0] = None
+        dP_dt_normal_array[0] = None
+        dS_dt_normal_array[0] = None
+        dV_dt_normal_array[0] = None
 
         inlet = process_params.inlet
         f_in = inlet.volume
@@ -144,16 +144,16 @@ class EulerMethod:
             S_nondim_array[t] = non_dim_scaler.toNondim(N, "S")
             V_nondim_array[t] = non_dim_scaler.toNondim(N, "V")
             
-            dX_dt_nondim_array[t] = non_dim_scaler.toNondim(N, "dXdt")
-            dP_dt_nondim_array[t] = non_dim_scaler.toNondim(N, "dPdt")
-            dS_dt_nondim_array[t] = non_dim_scaler.toNondim(N, "dSdt")
-            dV_dt_nondim_array[t] = non_dim_scaler.toNondim(N, "dVdt")
+            dX_dt_normal_array[t] = dX_dt
+            dP_dt_normal_array[t] = dP_dt
+            dS_dt_normal_array[t] = dS_dt
+            dV_dt_normal_array[t] = dV_dt
             
         # Seta a derivada em 0 como igual à em 1 pra não bagunçar muito o gráfico
-        dX_dt_nondim_array[0] = dX_dt_nondim_array[1]
-        dP_dt_nondim_array[0] = dP_dt_nondim_array[1]
-        dS_dt_nondim_array[0] = dS_dt_nondim_array[1]
-        dV_dt_nondim_array[0] = dV_dt_nondim_array[1]
+        dX_dt_normal_array[0] = dX_dt_normal_array[1]
+        dP_dt_normal_array[0] = dP_dt_normal_array[1]
+        dS_dt_normal_array[0] = dS_dt_normal_array[1]
+        dV_dt_normal_array[0] = dV_dt_normal_array[1]
     
 
         return NumericSolverModelResults(
@@ -166,8 +166,8 @@ class EulerMethod:
             t=t_space_nondim,
             dt=dt,
             non_dim_scaler=scaler,
-            dX_dt=dX_dt_nondim_array,
-            dP_dt=dP_dt_nondim_array,
-            dS_dt=dS_dt_nondim_array,
-            dV_dt=dV_dt_nondim_array
+            dX_dt=dX_dt_normal_array,
+            dP_dt=dP_dt_normal_array,
+            dS_dt=dS_dt_normal_array,
+            dV_dt=dV_dt_normal_array
         )
