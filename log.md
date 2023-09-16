@@ -25,6 +25,13 @@
 
 ## by date
 
+### 2023-09-16
+
+- Corrigido bug no plot da derivada. Era pra ser a derivada normal, e não a adimensional mesmo.
+- Cases to try: substituído forma de declarar nondim scalers.
+- Implementação explícita das condições de adimensionalização do tempo e demais variáveis
+- Testes para reação: LR e Epochs
+
 ### 2023-09-15
 
 - Permitir (cases_to_try, grid_search, run_reactor, solver_params json) o uso de tempos min. e máximo do experimento diferentes de 0 e t_max para avaliar isso.

@@ -1,4 +1,15 @@
-# Todo list - qualificação
+# TODO
+
+# Entregáveis
+  - Reação:
+    -  Gráfico LR x Loss x NL. Um pra cada HL. totalizando 4 talvez então?
+
+## Todo list - qualificação
+
+- TODO eu tinha ficado de ver pq a derivada com o não lin dá tão diferente mesmo quando os valores das coisas em si batem em cima. to fazendo alguma conversão extra desnecessária na hora de plotar??? O None dá certo então deve ser isso... Meu método to_nondim tá errado???
+
+- Faz o nondim como um dict externo
+- E lá já deixa as opções salvas...
 
 - verifique de novo o gráfico de derivadas. Ainda acho que tem algo nondim errado. Tem que testar pelo menos no batelada 1x com nd=1 (sem nondim) e outra com nondim linear pra confirmar que tá OK.
 
@@ -10,6 +21,8 @@
     - Aí eu conseguiria fazer um modelo generalista
     - Mas isso é só pra depois né. Primeiro vamos brincar de fazer o cstr funcionar...
 - Rodar só a reação com loss v5 contra lossv6 já mostra que a 5 para a REAÇÃO.
+- Ler o artigo que o Amaro enviou por email
+- TODO Sabe o que era bom fazer? Um dos testes ser SÓ o volume de saída. Aí avalio só a reação, só o volume, e depois eles combinados.
 
 
 
