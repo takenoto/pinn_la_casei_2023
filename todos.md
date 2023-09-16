@@ -1,8 +1,17 @@
-# TODO
+# Todo List
 
 # Entregáveis
   - Reação:
-    -  Gráfico LR x Loss x NL. Um pra cada HL. totalizando 4 talvez então?
+    - Gráfico LR x Loss x NL. Um pra cada HL. totalizando 4 talvez então?
+    - Determinar a menor loss que representa reação adequadamente
+    - Determinar 
+  - Reator SÓ VOLUME
+    - Predição APENAS do volume para batch, CSTR e 2 casos CR. Funciona? não preciso esticar aqui. Só pra validar ele individualmente e avaliar possíveis problemas na formulação...
+  - Reator batch
+    - Testes de LR, HL, NL, tempos de treino e predição (comparar loss 4 e 5) etc
+    - Validação contra o gráfico experimental
+  - Reator CR1
+    - TODO
 
 ## Todo list - qualificação
 
