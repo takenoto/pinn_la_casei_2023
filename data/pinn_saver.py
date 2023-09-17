@@ -11,8 +11,8 @@ xp_colors = ["#F2545B"]
 Cores apra dados experimentais
 """
 pinn_colors = [
-    "#7293A0",
-    "#C2E812",
+    "olivedrab", # "#7293A0",
+    "darkorange", # "#C2E812",
     "#ED9B40",
     "#B4869F",
     "#45B69C",
@@ -65,6 +65,7 @@ def save_each_pinn(
     showNondim=False,
     folder_to_save=None,
     plot_derivatives=True,
+    showTimeSpan=True
 ):
     # PRINTAR O MELHOR DOS PINNS
     items = {}
@@ -398,18 +399,17 @@ def save_each_pinn(
 
     units = ["g/L", "g/L", "g/L", "L"]
 
+    pinn_time_normal = pinn.solver_params.non_dim_scaler.fromNondim(
+        {"t": pinn.train_state.X_test}, "t"
+    )
+
     for i in range(4):
         items[i + 1] = {
             "title": titles[i],
             "y_label": units[i],
             "cases": [
                 # Numeric
-                {
-                    "x": num.t,
-                    "y": num_vals[i],
-                    "color": pinn_colors[0],
-                    "l": "-",
-                },
+                {"x": num.t, "y": num_vals[i], "color": pinn_colors[0], "l": "-"},
             ],
         }
 
@@ -461,12 +461,46 @@ def save_each_pinn(
                 }
             )
 
+        if showTimeSpan:
+            items[i + 1]["cases"].append(
+                # Background
+                {
+                    "x": None,
+                    "y": None,
+                    "axvspan": {
+                        "from": np.min(pinn_time_normal),
+                        "to": np.max(pinn_time_normal),
+                        "edgecolor": "lightgrey",
+                        "facecolor": "white",
+                        "hatch": "++",
+                    },
+                },
+            )
+            
+            derivatives[i + 1]["cases"].append(
+                # Background
+                {
+                    "x": None,
+                    "y": None,
+                    "axvspan": {
+                        "from": np.min(pinn_time_normal),
+                        "to": np.max(pinn_time_normal),
+                        "edgecolor": "lightgrey",
+                        "facecolor": "white",
+                        "hatch": "++",
+                    },
+                },
+            )
+
     labels = ["Euler"]
     if showPINN:
         labels.append("PINN")
 
     if showNondim:
         labels.append("ND PINN")
+        
+    if showTimeSpan:
+        labels.append("$t_{TR}$")
 
     plot_comparer_multiple_grid(
         suptitle=pinn.model_name,
@@ -504,7 +538,7 @@ def save_each_pinn(
             title_for_each=True,
             supxlabel="t (h)",
             folder_to_save=folder_to_save,
-            filename=f"DERIVND-{pinn.model_name}.png" if folder_to_save else None,
+            filename=f"DERIV-{pinn.model_name}.png" if folder_to_save else None,
             showPlot=False if folder_to_save else True,
             legend_bbox_to_anchor=(0.5, -0.1),
         )
@@ -547,14 +581,14 @@ def save_each_pinn(
         t_num_normal,
         t_num_normal,
         linestyle="solid",
-        linewidth=2,
+        linewidth=7,
         color=pinn_colors[-5],
         label="$t_{SIM}$",
         zorder=1,
     )
     plt.plot(
-        np.array(pinn.train_state.X_test),
-        np.array(pinn.train_state.X_test),
+        np.array(pinn_time_normal),
+        np.array(pinn_time_normal),
         "x",
         mew=2,
         ms=4,

@@ -25,7 +25,7 @@ def plot_comparer_multiple_grid(
     folder_to_save=None,
     filename=None,
     showPlot=False,
-    legend_bbox_to_anchor=(0.5,-0.07)
+    legend_bbox_to_anchor=(0.5, -0.07),
 ):
     """
     x and y are the keys to access the x and y values in the dictionary
@@ -60,12 +60,12 @@ def plot_comparer_multiple_grid(
         gridspec_kw=gridspec_kw,
         sharex=sharex,
         sharey=sharey,
-        layout="constrained"
+        layout="constrained",
     )
 
     if suptitle:
-        sssuptitle = '\n'.join(wrap(suptitle,80))
-        fig.suptitle('\n\n'+sssuptitle, y=-0.07)#, y=-0.1, wrap=False, )#, y=0.14)
+        sssuptitle = "\n".join(wrap(suptitle, 80))
+        fig.suptitle("\n\n" + sssuptitle, y=-0.07)  # , y=-0.1, wrap=False, )#, y=0.14)
     if supxlabel:
         fig.supxlabel(supxlabel)
     if supylabel:
@@ -79,7 +79,7 @@ def plot_comparer_multiple_grid(
         has_title = i[s + 1].get(title_key, None)
         if has_title:
             # ref https://stackoverflow.com/questions/15740682/wrapping-long-y-labels-in-matplotlib-tight-layout-using-setp
-            tttitle = '\n'.join(wrap(i[s + 1][title_key],16))
+            tttitle = "\n".join(wrap(i[s + 1][title_key], 16))
             ax.set_title(tttitle)
 
         # Se tiver a key 'cases', então os ys e xs estão vindo em pares (o x não é o mesmo pra todos)
@@ -91,6 +91,7 @@ def plot_comparer_multiple_grid(
                 ___y = d["y"]
                 ___line_args = d.get("l", "None")
                 ___marker = d.get("marker", None)
+                ___axvspan = d.get("axvspan", None)
                 if ___x is None or ___y is None:
                     pass
                 else:
@@ -106,6 +107,15 @@ def plot_comparer_multiple_grid(
                         markersize=3,
                     )
                     ax.ticklabel_format(useOffset=False)
+
+                if ___axvspan is not None:
+                    ax.axvspan(
+                        ___axvspan["from"],
+                        ___axvspan["to"],
+                        edgecolor=___axvspan.get("edgecolor", None),
+                        facecolor=___axvspan.get("facecolor", None),
+                        hatch=___axvspan.get("hatch", "X"),
+                    )
                 pass
             pass
 
@@ -138,8 +148,8 @@ def plot_comparer_multiple_grid(
         fig.legend(
             labels,
             loc="lower center",
-            # loc="best",#"upper right",#"upper center",  
-            bbox_to_anchor=legend_bbox_to_anchor,# bbox_to_anchor=(1,-0.1),
+            # loc="best",#"upper right",#"upper center",
+            bbox_to_anchor=legend_bbox_to_anchor,  # bbox_to_anchor=(1,-0.1),
             ncol=len(labels),
             # bbox_transform=fig.transFigure,
         )
@@ -147,11 +157,11 @@ def plot_comparer_multiple_grid(
     # plt.tight_layout()
     if filename:
         file_path = filename
-        if(folder_to_save):
+        if folder_to_save:
             file_path = os.path.join(folder_to_save, filename)
         # Save the figure
         # plt.savefig(file_path)
-        plt.savefig(file_path, bbox_inches='tight', dpi=600)
+        plt.savefig(file_path, bbox_inches="tight", dpi=600)
         plt.close(fig)
         if showPlot:
             plt.show()
