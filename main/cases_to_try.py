@@ -28,14 +28,21 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
     train_input_range_list = [
         "full",
         # "0-60pa",
-        # "0-50pa",
-        # "30-90pa",
+        "0-90pa",
         # "0-200pa",
     ]
 
-    NUM_DOMAIN = [32]  # 32  # [1600] [800] [400] [300] [80] [40] [20]
-    NUM_TEST = [32]  # [1600] [800] [400] [300] [80] [40] [20]
-    NUM_INIT = [16]  # 16 # [10] [20] [60] [80] 20 era o valor dos primeiros testes
+    N_POINTS = [
+        # test points, domain points
+        (32, 32),
+        # (100, 100),
+        # (70, 70),
+        # (10, 10),
+        # (300, 300),
+    ]  # [1600] [800] [400] [300] [80] [40] [20]
+    NUM_INIT = [16,
+                # 80
+                ]  # 16 # [10] [20] [60] [80] 20 era o valor dos primeiros testes
     NUM_BOUNDARY = 0
 
     # -------------------------------
@@ -48,29 +55,42 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
     # LR_list = ["1e-2", "5e-3", "1e-3", "5e-4", "5e-5", "1e-5", "1e-6"]
     # LR_list = ["5e-2", "1e-3", "3e-3", "5e-3", "8e-3", "1e-4", "3e-4", "5e-4", "1e-5"]
     LR_list = [
-        # "1e-1",
-        "1e-2",
-        "1e-3",
-        "7e-4",
-        "5e-4",
-        "1e-4",
-        "5e-5",
-        "1e-5",
+        # "E-2_1",
+        # "E-3_5",  # = 5e-3
+        "E-3_1",  # = 1e-3
+        # "E-4_7",
+        "E-4_5",
+        "E-4_1",  # = 1e-4
+        # "E-5_5", # = 5e-5
+        # "E-5_1", # = 1e-5
     ]
 
     lbfgs_pre = 0  # 0 1
     lbfgs_post = 1  # 0 1
-    ADAM_EPOCHS_list = ["35k"]  # ["25k"]  # ["100", "1k", "10k"]
+    ADAM_EPOCHS_list = [
+        "100",
+        "10k",
+        # "10k",
+        # "60k"
+        # "35k",
+        # "25k",
+        # "1k",
+    ]
     SGD_EPOCHS = 0  # 1000
     neurons = [
-        48,
-        32,
-        16,
-        8,
+        # 20,
+        30,
+        # 45,
+        60,
+        # 80,
     ]  # , 16, 8]  # [16]  # [16, 32, 60]  # [16, 32, 60] [80, 120] [10]
-    layers = [2, 3, 4, 5]  # [1, 2, 3, 4, 5]  # [2, 3, 4]  # [2, 3, 4, 5] [6, 7, 8]
+    layers = [
+        2,
+        3,
+        # 4,
+        # 5
+    ]  # [1, 2, 3, 4, 5]  # [2, 3, 4]  # [2, 3, 4, 5] [6, 7, 8]
 
-    
     # -------------------------------
     # NONDIMENSIONALIZER
     # -------------------------------
@@ -79,24 +99,30 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
         # strategy, tscode, scalers_code
         # Esse é o mesmo que ser sem adimensionalização
         ("None", "t1", "1"),
-        #----------
-        # Linear comum: t normal o resto nondim
-        ("Lin", "t1", "F1"),
-        # Escalados por 10
-        ("Lin", "t1", "F1x10"),
-        # Divididos por 10
-        ("Lin", "t1", "F1d10"),
-        
-        #---------------------------
+        #
+        # ----------
+        # # Linear comum: t normal o resto nondim
+        # ("Lin", "t1", "F1"),
+        #
+        # ----------
+        # # Escalados por 10
+        # ("Lin", "t1", "F1x10"),
+        #
+        # ----------
+        # # Divididos por 10
+        # ("Lin", "t1", "F1d10"),
+        #
+        # ---------------------------
         # Apenas o tempo nondim:
-        # ("Lin", "t2", "1"),
+        ("Lin", "t2", "1"),
         # ("Lin", "t3", "1"),
         # ("Lin", "t4", "1"),
         # ("Lin", "t5", "1"),
         # ("Lin", "t6", "1"),
         # ("Lin", "t7", "1"),
         # ("Lin", "t8", "1"),
-        #---------------------------
+        #
+        # ---------------------------
         # Tudo nondim (XPSV) incluindo o tempo:
         # ("Lin", "t2", "F1")
         # ("Lin", "t3", "F1")
@@ -107,19 +133,11 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
         # ("Lin", "t8", "F1")
     ]
 
-
     # Loss Weight
     IS_LOSS_WEIGHT = False
 
     cols = len(neurons) * len(train_distribution_list) * len(NDList)
-    rows = (
-        len(layers)
-        * len(NUM_TEST)
-        * len(NUM_INIT)
-        * len(NUM_DOMAIN)
-        * len(mini_batch)
-        * len(LR_list)
-    )
+    rows = len(layers) * len(N_POINTS) * len(NUM_INIT) * len(mini_batch) * len(LR_list)
 
     # Globais
     input_str = "in_"
@@ -130,124 +148,114 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
         output_str += o
 
     # Específicos
-    
+
     for train_input_range_key in train_input_range_list:
         for adam_str in ADAM_EPOCHS_list:
             for LR_str in LR_list:
                 for train_distribution in train_distribution_list:
-                    for n_domain in NUM_DOMAIN:
-                        for n_test in NUM_TEST:
-                            for n_init in NUM_INIT:
-                                for NL in neurons:
-                                    for HL in layers:
-                                        for mb in mini_batch:
-                                            for nd in NDList:
-                                                train_input_range = (
-                                                    train_input_range_dict[
-                                                        train_input_range_key
-                                                    ]
-                                                )
+                    for n_points in N_POINTS:
+                        for n_init in NUM_INIT:
+                            for NL in neurons:
+                                for HL in layers:
+                                    for mb in mini_batch:
+                                        for nd in NDList:
+                                            n_test, n_domain = n_points
+                                            train_input_range = train_input_range_dict[
+                                                train_input_range_key
+                                            ]
 
-                                                ADAM_EPOCHS = ADAM_EPOCHS_dict[adam_str]
-                                                LR = LRs_dict[LR_str]
-                                                (
-                                                    nd_strategy,
-                                                    nd_tscode,
-                                                    nd_scalers_code,
-                                                ) = nd
-                                                nondim_scaler = get_nondim_scaler(
-                                                    process_params=process_params,
-                                                    eq_params=eq_params,
-                                                    strategy=nd_strategy,
-                                                    ts_code=nd_tscode,
-                                                    scalers_code=nd_scalers_code,
-                                                )
-                                                # Montando o nome:
-                                                minibatch_str = (
-                                                    f"m{mb}" if mb is not None else "m-"
-                                                )
+                                            ADAM_EPOCHS = ADAM_EPOCHS_dict[adam_str]
+                                            LR = LRs_dict[LR_str]
+                                            (
+                                                nd_strategy,
+                                                nd_tscode,
+                                                nd_scalers_code,
+                                            ) = nd
+                                            nondim_scaler = get_nondim_scaler(
+                                                process_params=process_params,
+                                                eq_params=eq_params,
+                                                strategy=nd_strategy,
+                                                ts_code=nd_tscode,
+                                                scalers_code=nd_scalers_code,
+                                            )
+                                            # Montando o nome:
+                                            minibatch_str = (
+                                                f"m{mb}" if mb is not None else "m-"
+                                            )
 
-                                                key = (
-                                                    # Primeiro o "core"
-                                                    f"{NL}x{HL} {input_str} {output_str} {func}"
-                                                    # Depois coisas l relacionadas ao treino
-                                                    + f" l{loss_version}"
-                                                    + f" LR-{LR_str}"
-                                                    + f" ND-{nondim_scaler.name} {minibatch_str}"
-                                                    + f" p{n_domain}-{n_test}-{n_init}"
-                                                    + f" TD-{train_distribution}"
-                                                    + f" {adam_str}ep"
-                                                    + f" tr-{train_input_range_key}"
-                                                )
+                                            key = (
+                                                # Primeiro o "core"
+                                                f"ND-{nondim_scaler.name}"
+                                                + f" {input_str} {output_str} {func}"
+                                                + f" tr-{train_input_range_key}"
+                                                + f" L{loss_version}"
+                                                + f" LR-{LR_str}"
+                                                + f" {NL}x{HL}"
+                                                + f" p{n_init}-{n_domain}-{n_test}"
+                                                + f" {adam_str}ep"
+                                                + f" lbfgs-{lbfgs_post}"
+                                                + f" TD-{train_distribution}"
+                                                + f" {minibatch_str}"
+                                            )
 
-                                                # Executando ações:
-                                                dictionary[key] = {
-                                                    "layer_size": [len(input_variables)]
-                                                    + [NL] * HL
-                                                    + [len(output_variables)],
-                                                    "adam_epochs": ADAM_EPOCHS,
-                                                    "sgd_epochs": SGD_EPOCHS,
-                                                }
-                                                dictionary[key][
-                                                    "scaler"
-                                                ] = nondim_scaler
+                                            # Executando ações:
+                                            dictionary[key] = {
+                                                "layer_size": [len(input_variables)]
+                                                + [NL] * HL
+                                                + [len(output_variables)],
+                                                "adam_epochs": ADAM_EPOCHS,
+                                                "sgd_epochs": SGD_EPOCHS,
+                                            }
+                                            dictionary[key]["scaler"] = nondim_scaler
 
-                                                if IS_LOSS_WEIGHT:
-                                                    dictionary[key][
-                                                        "w_X"
-                                                    ] = 10  # 100 # 1 / 3
-                                                    dictionary[key][
-                                                        "w_P"
-                                                    ] = 1  # 1000 #1 / 100
-                                                    dictionary[key][
-                                                        "w_S"
-                                                    ] = 1  # 1/10 #1 / 1000
-                                                    dictionary[key]["w_V"] = 10
+                                            if IS_LOSS_WEIGHT:
+                                                dictionary[key][
+                                                    "w_X"
+                                                ] = 10  # 100 # 1 / 3
+                                                dictionary[key][
+                                                    "w_P"
+                                                ] = 1  # 1000 #1 / 100
+                                                dictionary[key][
+                                                    "w_S"
+                                                ] = 1  # 1/10 #1 / 1000
+                                                dictionary[key]["w_V"] = 10
 
-                                                dictionary[key]["activation"] = func
-                                                if mini_batch:
-                                                    dictionary[key]["mini_batch"] = mb
-                                                dictionary[key]["num_domain"] = n_domain
-                                                dictionary[key]["num_test"] = n_test
-                                                dictionary[key]["num_init"] = n_init
-                                                dictionary[key][
-                                                    "num_bound"
-                                                ] = NUM_BOUNDARY
-                                                dictionary[key]["lbfgs_pre"] = lbfgs_pre
-                                                dictionary[key][
-                                                    "lbfgs_post"
-                                                ] = lbfgs_post
-                                                dictionary[key]["LR"] = LR
-                                                dictionary[key]["hyperfolder"] = (
-                                                    hyperfolder
-                                                    if hyperfolder is not None
-                                                    else f"{input_str} {nondim_scaler.name}"
-                                                )
-                                                dictionary[key]["isplot"] = False
-                                                dictionary[key][
-                                                    "initializer"
-                                                ] = initializer
-                                                dictionary[key][
-                                                    "output_variables"
-                                                ] = output_variables
-                                                dictionary[key][
-                                                    "input_variables"
-                                                ] = input_variables
-                                                dictionary[key][
-                                                    "loss_version"
-                                                ] = loss_version
-                                                dictionary[key][
-                                                    "custom_loss_version"
-                                                ] = {
-                                                    # 'X':3,
-                                                    # 'V':3,
-                                                }
-                                                dictionary[key][
-                                                    "train_distribution"
-                                                ] = train_distribution
-                                                dictionary[key][
-                                                    "train_input_range"
-                                                ] = train_input_range
+                                            dictionary[key]["activation"] = func
+                                            if mini_batch:
+                                                dictionary[key]["mini_batch"] = mb
+                                            dictionary[key]["num_domain"] = n_domain
+                                            dictionary[key]["num_test"] = n_test
+                                            dictionary[key]["num_init"] = n_init
+                                            dictionary[key]["num_bound"] = NUM_BOUNDARY
+                                            dictionary[key]["lbfgs_pre"] = lbfgs_pre
+                                            dictionary[key]["lbfgs_post"] = lbfgs_post
+                                            dictionary[key]["LR"] = LR
+                                            dictionary[key]["hyperfolder"] = (
+                                                hyperfolder
+                                                if hyperfolder is not None
+                                                else f"{input_str} {nondim_scaler.name}"
+                                            )
+                                            dictionary[key]["isplot"] = False
+                                            dictionary[key]["initializer"] = initializer
+                                            dictionary[key][
+                                                "output_variables"
+                                            ] = output_variables
+                                            dictionary[key][
+                                                "input_variables"
+                                            ] = input_variables
+                                            dictionary[key][
+                                                "loss_version"
+                                            ] = loss_version
+                                            dictionary[key]["custom_loss_version"] = {
+                                                # 'X':3,
+                                                # 'V':3,
+                                            }
+                                            dictionary[key][
+                                                "train_distribution"
+                                            ] = train_distribution
+                                            dictionary[key][
+                                                "train_input_range"
+                                            ] = train_input_range
 
     return (dictionary, cols, rows)
 
@@ -331,9 +339,9 @@ def get_nondim_scaler_values(
         case "t2":
             ts = process_params.t_final
         case "t2x10":
-            ts = process_params.t_final*10
+            ts = process_params.t_final * 10
         case "t2d10":
-            ts = process_params.t_final/10
+            ts = process_params.t_final / 10
         case "t3":
             ts = 10 * process_params.t_final
         case "t4":
@@ -403,7 +411,7 @@ def get_nondim_scaler_values(
 
 
 LRs_dict = {
-    f"{num}e-{exp}": num * (10**-exp) for num in range(1, 10) for exp in range(1, 10)
+    f"E-{exp}_{num}": num * (10**-exp) for num in range(1, 10) for exp in range(1, 10)
 }
 
 ADAM_EPOCHS_dict = {
