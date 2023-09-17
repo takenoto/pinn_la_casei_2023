@@ -40,7 +40,12 @@ def grid_search(
     # ---------------------------------------------------------
     for i in range(len(solver_params_list)):
         solver_params = solver_params_list[i]
-        print(f"process {i+1} of {len(solver_params_list)}")
+        print(f"""
+              ------------------------------------------
+              process {i+1} of {len(solver_params_list)}
+              {solver_params.name}
+              ------------------------------------------
+              """)
         # print("\n--------------------------------------\n")
         # print(f"---------GRIDSEARCH: SIM {name} ----------")
         # print("\n--------------------------------------\n")
