@@ -93,5 +93,7 @@ def grid_search(
             "}\n" "}",
         ]
     )
+    
+    file.close()
 
     return (best_pinn_test_index, best_pinn_test_error)
