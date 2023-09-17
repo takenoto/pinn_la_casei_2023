@@ -1,8 +1,6 @@
 import os
 import numpy as np
 
-from domain.params.solver_params import SolverParams
-from domain.run_reactor.pinn_reactor_model_results import PINNReactorModelResults
 from domain.optimization.ode_system_caller import RunReactorSystemCaller
 
 
