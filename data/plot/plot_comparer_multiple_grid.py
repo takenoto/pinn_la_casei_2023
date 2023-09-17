@@ -39,7 +39,8 @@ def plot_comparer_multiple_grid(
         #etc
     }
     Tem que ser uma lista pra que eu saiba a ordem
-    Pode ter uma cor pra cada valor de y, mas no caso a lista tem que ter a mesma dimensão do vetor y ou apenas 1.
+    Pode ter uma cor pra cada valor de y, mas no caso a lista tem que ter a mesma
+    dimensão do vetor y ou apenas 1.
     Não é possível especificar cor só pra 2 de 3 por exemplo.
 
     yscale pode ser 'log' ou 'linear' por exemplo. Mais em # https://matplotlib.org/3.1.3/gallery/pyplots/pyplot_scales.html
@@ -82,7 +83,8 @@ def plot_comparer_multiple_grid(
             tttitle = "\n".join(wrap(i[s + 1][title_key], 16))
             ax.set_title(tttitle)
 
-        # Se tiver a key 'cases', então os ys e xs estão vindo em pares (o x não é o mesmo pra todos)
+        # Se tiver a key 'cases', então os ys e xs estão vindo em pares
+        # (o x não é o mesmo pra todos)
         if "cases" in i[s + 1].keys():
             for d in i[s + 1]["cases"]:
                 # Itera lista de cases, plotando x, y e color
