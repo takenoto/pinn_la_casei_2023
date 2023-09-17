@@ -1,0 +1,16 @@
+Esse teste mostra claramente ele acertando todas as derivadas menos o volume. Isso sim é algo MUITO relevante e que pode aparecer lá...
+
+Foi a versão 6 da loss super simples:
+Pra volume:
+if loss_version >= 6:
+                        loss_maxmin = tf.where(
+                            tf.less(V, 0),
+                            V,
+                            tf.zeros_like(V),
+                        )
+                        loss_derivative_abs = tf.abs(loss_derivative)
+                        loss_maxmin_abs = tf.abs(loss_maxmin)
+                        loss_V = loss_derivative_abs + loss_maxmin_abs
+
+
+O resto segue a mesma coisa. bem simples e sem os multiplicadores.

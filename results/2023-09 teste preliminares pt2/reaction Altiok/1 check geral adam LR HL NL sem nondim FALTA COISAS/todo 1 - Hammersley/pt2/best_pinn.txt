@@ -1,0 +1,2 @@
+Pinn best index = 13
+Pinn best error = 0.00012128596426919103

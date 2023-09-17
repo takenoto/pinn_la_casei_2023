@@ -1,0 +1,3 @@
+TALVEZ TENHA QUE EXECUTAR PT 1 E 2 DE NOVO? O ARQUIVO PINNS.JSON NÃO FUNCIONOU MDS...
+
+Além de tudo eu tinha esquecido de dar file.close num ponto e isso piorava a performance a cada modelo adicional

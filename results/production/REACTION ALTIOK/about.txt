@@ -1,0 +1,9 @@
+This folder contains the results of simulations for the reaction ONLY without volume variation or stuff.
+
+Seria bom eu fazer gráficos 3D relacionando LR
+
+Pra cada HL fixo mostro a diferença de várias LRs para NL variando. Então são 3 eixos:
+
+NL, Lr e Loss para cada HL fixo. Aí só faço umas 3 HL diferentes.
+
+Isso tudo 1x pra Normal e outro pra nondim linear. Seria bom eu já testar os diferentes ts?

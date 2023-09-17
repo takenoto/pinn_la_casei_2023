@@ -1,0 +1,1 @@
+Aqui vou fazer somente variação de NL em cada pasta. Assim consigo operacionalizar sem muito sofrimento.
