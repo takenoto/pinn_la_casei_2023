@@ -399,6 +399,13 @@ def save_each_pinn(
 
     units = ["g/L", "g/L", "g/L", "L"]
 
+    # print("!!!!!!!!!!!!!!!!!")
+    # print("!PINN TRAIN STATE X!")
+    # print(np.array(pinn.train_state.X_test))
+    # print(np.array(pinn.train_state.X_test)[0])
+    # # Gera lista só com os primeiros:
+    # print(np.array(pinn.train_state.X_test)[:,0])
+    # print("----------------------------")
     pinn_time_normal = pinn.solver_params.non_dim_scaler.fromNondim(
         {"t": pinn.train_state.X_test}, "t"
     )
