@@ -363,9 +363,9 @@ def save_each_pinn(
     # Fecha o arquivo
     # Fecha o body e fecha o error
     file.write('\n"error": {\n')
-    for l in range(len(error_lines)):
-        line = error_lines[l]
-        if l < len(error_lines) - 1:
+    for lll in range(len(error_lines)):
+        line = error_lines[lll]
+        if lll < len(error_lines) - 1:
             file.writelines([line, ",\n"])
         else:
             file.writelines(
