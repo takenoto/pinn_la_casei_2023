@@ -31,6 +31,13 @@
 - Cases to try: substituído forma de declarar nondim scalers.
 - Implementação explícita das condições de adimensionalização do tempo e demais variáveis
 - Testes para reação: LR e Epochs
+- Testes de LR e Adams. Fazer todos juntos fica inviável pelo tempo eu acho...
+- Mais testes de noite (19-22)
+  - De 0-60% t na reação only batch fica bem fácil de acertar. 0-90 desanda.
+  - No gráfico: agora plota uma linha indicando o intervalo de treino.
+- Criar arquivo "thinking.md"
+- Encontrei algumas redes boas em 30x3 para 0-90pa e com t_ND=caso "t2". 
+- Pra amanhã, é bom ver se consigo desenrolar logo e dar uma olhada nos testes do t nondim...
 
 ### 2023-09-15
 
