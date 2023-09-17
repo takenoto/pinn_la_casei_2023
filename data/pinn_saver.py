@@ -65,7 +65,8 @@ def save_each_pinn(
     showNondim=False,
     folder_to_save=None,
     plot_derivatives=True,
-    showTimeSpan=True
+    showTimeSpan=True,
+    create_time_points_plot = False,
 ):
     # PRINTAR O MELHOR DOS PINNS
     items = {}
@@ -583,33 +584,34 @@ def save_each_pinn(
 
     # ------------------------
     # POINTS USED IN SIMULATION
-    fig = plt.figure()
-    plt.plot(
-        t_num_normal,
-        t_num_normal,
-        linestyle="solid",
-        linewidth=7,
-        color=pinn_colors[-5],
-        label="$t_{SIM}$",
-        zorder=1,
-    )
-    plt.plot(
-        np.array(pinn_time_normal),
-        np.array(pinn_time_normal),
-        "x",
-        mew=2,
-        ms=4,
-        alpha=0.7,
-        color=pinn_colors[-1],
-        label="$t_{TR}$",
-        zorder=2,
-    )
-    plt.ylabel("t(h)")
-    plt.title("Time (train) vs time (discret)")
-    plt.legend()
-    if folder_to_save:
-        file_path = os.path.join(folder_to_save, f"TIME-{pinn.model_name}.png")
-    # Save the figure
-    # plt.savefig(file_path)
-    plt.savefig(file_path, bbox_inches="tight", dpi=600)
-    plt.close(fig)
+    if create_time_points_plot:
+        fig = plt.figure()
+        plt.plot(
+            t_num_normal,
+            t_num_normal,
+            linestyle="solid",
+            linewidth=7,
+            color=pinn_colors[-5],
+            label="$t_{SIM}$",
+            zorder=1,
+        )
+        plt.plot(
+            np.array(pinn_time_normal),
+            np.array(pinn_time_normal),
+            "x",
+            mew=2,
+            ms=4,
+            alpha=0.7,
+            color=pinn_colors[-1],
+            label="$t_{TR}$",
+            zorder=2,
+        )
+        plt.ylabel("t(h)")
+        plt.title("Time (train) vs time (discret)")
+        plt.legend()
+        if folder_to_save:
+            file_path = os.path.join(folder_to_save, f"TIME-{pinn.model_name}.png")
+        # Save the figure
+        # plt.savefig(file_path)
+        plt.savefig(file_path, bbox_inches="tight", dpi=600)
+        plt.close(fig)
