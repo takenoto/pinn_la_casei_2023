@@ -279,7 +279,8 @@ def get_nondim_scaler(
 
         scalers_code (str): Scalers string. Defines the scalers parameters.
 
-        ts_code = "t1" => No time nondimensionalizations. The others are defined in the document.
+        ts_code = "t1" => No time nondimensionalizations.
+        The others are defined in the document.
     """
     t_S, X_S, P_S, S_S, V_S = get_nondim_scaler_values(
         process_params=process_params,
