@@ -1,7 +1,5 @@
 # python -m domain.params.solver_params
 
-from typing import Self
-
 import numpy as np
 from data.pinn_saver import PINNSaveCaller
 from domain.optimization.non_dim_scaler import NonDimScaler
@@ -35,11 +33,6 @@ class SystemSimulationType:
 
         # Estabelece o index de cada uma, sempre seguindo um padrão,
         # que independe de "supported_variables"
-        # self.t_index = 0 if t else None
-        # self.X_index = None if not X else (self.t_index+1 if t else 0)
-        # self.P_index = None if not P else (self.X_index+1 if X else self.t_index+1 if t else 0) #1 if P and X else 1 if P else None
-        # self.S_index = None if not S else (self.P_index+1 if P else self.X_index+1 if X else self.t_index+1 if t else 0) #2 if P and S else None # o S não pode ser calculado sem o P
-        # self.V_index = None if not V else (self.S_index+1 if S else self.P_index+1 if P else self.X_index+1 if X else self.t_index+1 if t else 0)#3 if X and P and S else 2 if P else 1 if X else 0 if V else None;
         self.X_index = None
         self.P_index = None
         self.S_index = None
@@ -142,17 +135,6 @@ class SolverParams:
         "Variáveis de entrada (XPSV)"
         self.loss_version = loss_version
         """Versão do solver.
-
-        1=> Versão tradicional, que retorna as derivadas.
-        
-        2 => Versão que, caso a variável predita (X, P, S, V) seja menor que zero,
-        retorna a própria variável no lugar de calcular a derivada. Parece que não funcionou. Ignore que existiu.
-        
-        3 => Mesma linha que 2. Termina sendo = à loss 1.
-        
-        4 => Efetivamente retorna os valores de XPS caso sejam <min ou >max, a loss é a absoluta
-        # E é a soma do erro da derivada + o valor de XPS se teve desvio
-        # V no caso só entra se V<0, não forcei limite superior
         """
 
         self.custom_loss_version = custom_loss_version
@@ -219,10 +201,10 @@ if __name__ == "__main__":
     """
 
     normal = SystemSimulationType()
-    assert normal.X == True, "as expected from default"
-    assert normal.P == True, "as expected from default"
-    assert normal.S == True, "as expected from default"
-    assert normal.V == True, "as expected from default"
+    assert normal.X is True, "as expected from default"
+    assert normal.P is True, "as expected from default"
+    assert normal.S is True, "as expected from default"
+    assert normal.V is True, "as expected from default"
     assert normal.X_index == 0, "as expected from default"
     assert normal.P_index == 1, "as expected from default"
     assert normal.S_index == 2, "as expected from default"
@@ -234,13 +216,13 @@ if __name__ == "__main__":
     assert len(normal.order) == 4
 
     xv = SystemSimulationType(["X", "V"])
-    assert xv.X == True
-    assert xv.P == False
-    assert xv.S == False
-    assert xv.V == True
+    assert xv.X is True
+    assert xv.P is False
+    assert xv.S is False
+    assert xv.V is True
     assert xv.X_index == 0
-    assert xv.P_index == None
-    assert xv.S_index == None
+    assert xv.P_index is None
+    assert xv.S_index is None
     assert xv.V_index == 1
     assert xv.order[0] == "X"
     assert xv.order[1] == "V"
@@ -248,16 +230,16 @@ if __name__ == "__main__":
 
     # Sistema com tempo
     xv = SystemSimulationType(["t", "V"])
-    assert xv.t == True
-    assert xv.X == False
-    assert xv.P == False
-    assert xv.S == False
-    assert xv.V == True
+    assert xv.t is True
+    assert xv.X is False
+    assert xv.P is False
+    assert xv.S is False
+    assert xv.V is True
     assert xv.V_index == 0
     assert xv.t_index == 1, "t_index must always be the last"
-    assert xv.X_index == None
-    assert xv.P_index == None
-    assert xv.S_index == None
+    assert xv.X_index is None
+    assert xv.P_index is None
+    assert xv.S_index is None
     assert xv.order[0] == "V"
     assert xv.order[1] == "t"
     assert len(xv.order) == 2
