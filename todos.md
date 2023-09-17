@@ -1,13 +1,18 @@
 # Todo List
 
+
 ## Main
   - Cronograma com datas em que pretendo concluir cada um desses trambei
+  - Seguinte, como vou ter que justificar o número de epochs de treino, até isso vou ter que variar. Então é melhor fazer cada treino com HL fixo e aí depois junto tudo na mesma pasta...
+  - #TODO eu já devia exportar os dados que quero agrupados. Imagina a trabalheira que vai ser ir abrindo os jsons um a um pra pegar lr vs hl vs nl???? Só se eu fizer um script que plota os gráficos do quye tiver numa pasta e aí eu rebolar os que quero dentro dessa pasta. É 8um pouco menos burro...
+    - Pega a LR Ótima pra um Adam alto. Depois só fazer o teste reduzindo adam. Mas não tem cabimento fazer isso tudo junto. 504 testes, vai acabar nunca!
 
 ## Entregáveis
   - Reação:
     - Gráfico LR x Loss x NL. Um pra cada HL. totalizando 4 talvez então?
     - Determinar a menor loss que representa reação adequadamente
-    - Determinar 
+    - Fazer loss v4 e v5, comparar
+    - Depois disso tudo => aí sim faça uma variação em um tempo discretizado maior e menor que o intervalo estudado de fato para ver no que dá...
   - Reator SÓ VOLUME
     - Predição APENAS do volume para batch, CSTR e 2 casos CR. Funciona? não preciso esticar aqui. Só pra validar ele individualmente e avaliar possíveis problemas na formulação...
   - Reator batch
@@ -15,6 +20,7 @@
     - Validação contra o gráfico experimental
   - Reator CR1
     - TODO
+    - Seria mais interessante jáf azer ele parametrizado? É possível??
 
 ## Todo list - qualificação
 
