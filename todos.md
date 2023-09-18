@@ -1,10 +1,22 @@
 # Todo List
 
+
+0) Exibir todas as legends não só umas
+1) Reduzir tamanho do texto das legendas e padding. Tá ocupando espaço demais.
+1) Implementar surface plot também
+2) Fazer plotar vários num só possível passando cols e rows...
+3) Encontrar ângulos melhores que escolhi uns meio feios viu
+
 1) Testar se salvar funciona e plota todas as variações de ângulos...
 2) Botar estilos como cores e afins
 3) Colocar color bar caso se aplique?????? veja os antigos que fiz
 
 2) Gráfico 3D surface. Como? acho que os 2 são 1 só e muda só o dict que passo, viu...
+https://stackoverflow.com/questions/12423601/simplest-way-to-plot-3d-surface-given-3d-points
+https://stackoverflow.com/questions/9170838/surface-plots-in-matplotlib
+
+- Adaptative LR:
+https://deepxde.readthedocs.io/en/latest/modules/deepxde.html?highlight=decay#deepxde.model.Model.compile
 
 GRÁFICOS
 1) Fixa por rede. Ex: 10x2. Aí faz o plot adam vs LR por MAD no lugar de loss e outro com loss.

@@ -33,6 +33,10 @@
 - Plot caller e gráficos relacionados + integração com o json_viewer
   - Padronização do dict para scatter
   - Gráfico scatter implementado
+  - FIX: Figura era resetada ao girar, o que salvava uma imagem em branco.
+  - UPDATE: Mudado o padrão do dict passado por argumento do 3d plot.
+  - Plot por ângulo funcionando OK
+  - 
 
 ### 2023-09-17
 
