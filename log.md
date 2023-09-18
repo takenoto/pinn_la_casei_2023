@@ -25,6 +25,22 @@
 
 ## by date
 
+### 2023-09-18
+
+- Finalizar testes redes p/ reaction only
+- Até mesmo a rede 10x2 teve uns casos aceitáveis. Vou então fazer o teste variando a LR.
+- Criado o arquivo json_viewer, que abre todos os jsons dada uma lista de nomes de arquivos. Daí ele pega as informações marcadas (através de um callback para ser chamado por fora) e fecha os arquivos. Assim posso pegar por exemplo todas as últimas loss dos arquivos X e Y.
+- Plot caller e gráficos relacionados + integração com o json_viewer
+  - Padronização do dict para scatter
+  - Gráfico scatter implementado
+
+### 2023-09-17
+
+- Novos testes com LR
+- Determinação que treino por Hammersley é bem melhor que distribuição uniform. Ver: "results\2023-09 teste preliminares pt2\reaction Altiok\1 hammersley e uniform dif ABSURDA"
+- Corrigido: em "grid_search.py" File não estava sendo close() (fechado) o que impactava a performance e esculhambava o arquivo pinns.json
+- Testes de NL e LR para reação. Fiz 1/6.
+
 ### 2023-09-16
 
 - Corrigido bug no plot da derivada. Era pra ser a derivada normal, e não a adimensional mesmo.

@@ -1,5 +1,40 @@
 # Todo List
 
+1) Testar se salvar funciona e plota todas as variações de ângulos...
+2) Botar estilos como cores e afins
+3) Colocar color bar caso se aplique?????? veja os antigos que fiz
+
+2) Gráfico 3D surface. Como? acho que os 2 são 1 só e muda só o dict que passo, viu...
+
+GRÁFICOS
+1) Fixa por rede. Ex: 10x2. Aí faz o plot adam vs LR por MAD no lugar de loss e outro com loss.
+Além disso, faz com e sem lbfgs. Aí passo a ter respostas que prestem.
+
+# IMPORTANTE
+- Talvez eu devesse não plotar o resultados de todas as redes nas mesmas settings, mas o melhor resultado de cada uma? Dentre todos os investigados???
+
+1) OK Arquivo json viewer + testar
+2) Cada plotagem fica por fora e é chamada por uma função
+3) Aí o arquivo que tem os nomes do arquivo e que vai ser chamado pra cada novo gráfico fica numa coisa externa. Assim, só vou precisar editar ele e mais ninguém.
+
+Aí agora escolha 2 bons de mesmo NL e faça variação de LR. Quero ver se vou encontrar um padrão óbvio...
+De preferência um pequeno, tipo 10 ou 20, e um grande, tipo 80. Daí posso mostrar que a diferença da LR é alta talvez? Parece estar influenciando MUITO
+E um que deu errado em tudo, como o x10, pra ver se só a LR resolveria. 10x2 já ficou quase bom posso usar pra essa primeira avaliação!!! Pq é pequeno e termina logo.
+
+1) 10x2 e x3 vs várias LRs
+2) 10x2 e x3 com 3 LRs adaptativas diferentes...
+# Paraece que preciso afinar ainda mais as LRs....
+
+# Parte 2 : Reator
+- Faz investigação dos 3 modelos com variação de volume pra ver se tem bode em algum canto.
+
+- Já que a rede 100x deu tão certo, fixa uma delas e varia LR e Adam. Aí vejo a influência deles.
+
+1) Fazer Hammersley reaction loss5 => faz a distribuição de pontos 1 a 1 pra ver qual é melhor. São 96 ao todo então fica demais fazer tudo mas se for por partes consigo terminar ainda hoje...
+  1) OK
+  2) OK
+  3) faltando
+  4) faltando
 
 ## Main
   - Cronograma com datas em que pretendo concluir cada um desses trambei
@@ -9,9 +44,10 @@
 
 ## Entregáveis
   - Reação:
+    - Fazer loss v4 e v5, comparar
+    - Justificar observações de n_points e afins. Pelo teste inicial já parece que só se justifica em layers muito pequenas (16x3) as 30x2 e 30x3 não parecem precisar muito.
     - Gráfico LR x Loss x NL. Um pra cada HL. totalizando 4 talvez então?
     - Determinar a menor loss que representa reação adequadamente
-    - Fazer loss v4 e v5, comparar
     - Depois disso tudo => aí sim faça uma variação em um tempo discretizado maior e menor que o intervalo estudado de fato para ver no que dá...
   - Reator SÓ VOLUME
     - Predição APENAS do volume para batch, CSTR e 2 casos CR. Funciona? não preciso esticar aqui. Só pra validar ele individualmente e avaliar possíveis problemas na formulação...
