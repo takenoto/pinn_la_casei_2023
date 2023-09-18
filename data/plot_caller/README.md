@@ -1,0 +1,1 @@
+The "plot_caller_input" folder should be used solely for pasting the json that will be evaluated by plot_callers
