@@ -557,12 +557,16 @@ def main():
             cases_to_try=cases,
         )
         end_time = timer()
-        print(f"elapsed time for test = {end_time - start_time} secs")
+        print(
+            f"""
+            time for test = {end_time - start_time} s
+            = {(end_time - start_time)/60} min"""
+        )
         pass
 
     if run_cr:
         folder_to_save = create_folder_to_save(subfolder=subfolder + cr_version)
-        
+
         print("RUN CR")
         cases, cols, rows = change_layer_fix_neurons_number(
             eq_params, process_params_feed_cr, hyperfolder=folder_to_save
@@ -588,7 +592,7 @@ def main():
         )
         for case_name in cases:
             cases[case_name]["save_caller"] = save_caller
-            
+
         start_time = timer()
 
         def cr_f_out_calc_tensorflow(max_reactor_volume, f_in_v, volume):
@@ -603,7 +607,11 @@ def main():
             cases_to_try=cases,
         )
         end_time = timer()
-        print(f"elapsed time for test = {end_time - start_time} secs")
+        print(
+            f"""
+            time for test = {end_time - start_time} s
+            = {(end_time - start_time)/60} min"""
+        )
         pass
 
     if run_batch:
@@ -630,7 +638,7 @@ def main():
         )
         for case_name in cases:
             cases[case_name]["save_caller"] = save_caller
-            
+
         start_time = timer()
 
         print(f"NUMBER OF CASES ={len(cases)}")
@@ -646,7 +654,11 @@ def main():
         )
         end_time = timer()
 
-        print(f"elapsed time for BATCH NONDIM test = {end_time - start_time} secs")
+        print(
+            f"""
+            time for test = {end_time - start_time} s
+            = {(end_time - start_time)/60} min"""
+        )
         pass
 
 
