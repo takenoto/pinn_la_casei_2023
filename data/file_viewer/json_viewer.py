@@ -4,15 +4,11 @@ import os
 import glob
 from typing import Callable
 
-def json_viewer(callback:Callable[[dict], None], folder_path=None, files_list=None):
+def json_viewer(callback:Callable[[dict], None], folder_path=None):
     """_summary_
 
     Args:
         folder_path (str): The path to the folder that contains all files to be opened.
-        If not None, all files from this folder 
-        will be opened and files_list argument will be discarded.
-
-        files_list (list(str)): A list of file name w/ path to be opened
         
         (function): Receives a [json] file that was read and should
         do the required processing of the info from the json. the file is
