@@ -58,13 +58,13 @@ class ODEPreparer:
             initial_state = self.initial_state
             scaler = solver_params.non_dim_scaler
 
-            X_nondim = None
-            P_nondim = None
-            S_nondim = None
+            X_nondim = 0
+            P_nondim = 0
+            S_nondim = 0
             V_nondim = 1
-            dX_dt_nondim = None
-            dP_dt_nondim = None
-            dS_dt_nondim = None
+            dX_dt_nondim = 0
+            dP_dt_nondim = 0
+            dS_dt_nondim = 0
             dV_dt_nondim = 0
             # ---------------------
             # OUTPUT VARIABLES
@@ -210,19 +210,16 @@ class ODEPreparer:
                 )
                 return value
 
-            rX = (X * mu_max * S / (K_S + S)) * f_x_calc_func() * h_p_calc_func()
-            rP = alpha * rX + beta * X
-            rS = -(1 / Y_PS) * rP - ms * X
+            if outputSimulationType.X and outputSimulationType.P and outputSimulationType.S:
+                rX = (X * mu_max * S / (K_S + S)) * f_x_calc_func() * h_p_calc_func()
+                rP = alpha * rX + beta * X
+                rS = -(1 / Y_PS) * rP - ms * X
 
-            # -----------------------
-            # Calculating the loss
-            # Procura cada variável registrada como de saída e
-            # adiciona o cálculo da sua função como componente da loss
-
-            # Zerar reações na marra para testar modelo sem reação
-            # rX = 0
-            # rP = 0
-            # rS = 0
+                # -----------------------
+                # Calculating the loss
+                # Procura cada variável registrada como de saída e
+                # adiciona o cálculo da sua função como componente da loss
+                
 
             for o in outputSimulationType.order:
                 # Pode dar NaN quando predizer valores abaixo de 0
