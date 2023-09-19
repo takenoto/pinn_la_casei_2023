@@ -11,8 +11,8 @@ xp_colors = ["#F2545B"]
 Cores apra dados experimentais
 """
 pinn_colors = [
-    "olivedrab", # "#7293A0",
-    "darkorange", # "#C2E812",
+    "olivedrab",  # "#7293A0",
+    "darkorange",  # "#C2E812",
     "#ED9B40",
     "#B4869F",
     "#45B69C",
@@ -66,7 +66,7 @@ def save_each_pinn(
     folder_to_save=None,
     plot_derivatives=True,
     showTimeSpan=True,
-    create_time_points_plot = False,
+    create_time_points_plot=False,
 ):
     # PRINTAR O MELHOR DOS PINNS
     items = {}
@@ -400,13 +400,6 @@ def save_each_pinn(
 
     units = ["g/L", "g/L", "g/L", "L"]
 
-    # print("!!!!!!!!!!!!!!!!!")
-    # print("!PINN TRAIN STATE X!")
-    # print(np.array(pinn.train_state.X_test))
-    # print(np.array(pinn.train_state.X_test)[0])
-    # # Gera lista só com os primeiros:
-    # print(np.array(pinn.train_state.X_test)[:,0])
-    # print("----------------------------")
     pinn_time_normal = pinn.solver_params.non_dim_scaler.fromNondim(
         {"t": pinn.train_state.X_test}, "t"
     )
@@ -435,12 +428,22 @@ def save_each_pinn(
         }
 
         if showPINN:
-            # pinn_nondim_vals
+            # Isso é necessário para mostrar a legenda corretamente
+            # Se não os valores de Y ficam como None e se não estiverem no último não
+            # serão exibidos
+            if pinn_vals[i] is None:
+                pinn_y = 0
+                deriv_pinn_y = 0
+                pinn_x = 0
+            else:
+                pinn_y = pinn_vals[i]
+                deriv_pinn_y = pinn_derivative_vals[i]
+                pinn_x = num.t
             items[i + 1]["cases"].append(
                 # PINN
                 {
-                    "x": num.t,
-                    "y": pinn_vals[i],
+                    "x": pinn_x,
+                    "y": pinn_y,
                     "color": pinn_colors[1],
                     "l": "--",
                 }
@@ -449,16 +452,14 @@ def save_each_pinn(
             derivatives[i + 1]["cases"].append(
                 # PINN
                 {
-                    "x": num.t,
-                    # "y": pinn_nondim_derivative_vals[i],
-                    "y": pinn_derivative_vals[i],
+                    "x": pinn_x,
+                    "y": deriv_pinn_y,
                     "color": pinn_colors[1],
                     "l": "--",
                 }
             )
 
         if showNondim:
-            pinn_nondim_vals
             items[i + 1]["cases"].append(
                 # PINN nondim
                 {
@@ -484,7 +485,7 @@ def save_each_pinn(
                     },
                 },
             )
-            
+
             derivatives[i + 1]["cases"].append(
                 # Background
                 {
@@ -506,7 +507,7 @@ def save_each_pinn(
 
     if showNondim:
         labels.append("ND PINN")
-        
+
     if showTimeSpan:
         labels.append("$t_{TR}$")
 
