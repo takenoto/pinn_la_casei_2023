@@ -1,11 +1,20 @@
 # Thinking
 
+## Gráficos chave
+
+1) Loss vs epochs vs LR para alguns tipos de redes selecionados
+2) Comparar diferentes nondim de alguma forma. 3D com todas e loss talvez seja o mais prático mas pode ficar difícil de enxergar. Preciso testar.
+
 ## Experiments
 
 ### parte 1 - reaction
 
 1) Faz a nondim de 10x3 só com o tempo, sem XPS
 2) Daí acho que eu já posso escolher uns bons e fazer LR e os gráficos 3D
+3) LR vs Loss vs ts para: 
+  3.1) sem nondim
+  3.2) nondim em 0 a 1
+  3.3) nondim em 0 a 10
 
 ### parte 2 - reactor volume
 

@@ -27,7 +27,15 @@
 
 ### 2023-09-19
 
-- Novos testes com nondim e redes 30x e 10x. Ainda não fiz a adimensionalização do tempo. A adimensionalização das variáveis sozinha (F1d10) foi consideravelmente melhor que as outras e que as opções sem adimensionalização.
+- Novos testes com nondim e redes 30x e 10x. A adimensionalização das variáveis sozinha (F1d10) foi consideravelmente melhor que as outras e que as opções sem adimensionalização.
+- Testes nondim t
+  - Testes em rede 10x3 adimensionalizando o tempo e XPS
+  - Testes em rede 10x3 adimensionalizando apenas o tempo
+  - Adimensionalização t4 parece ser, no geral, pior que as demais (é a /10)
+  - t only
+    - t7 ficou bom em 3 faixas de lr bem distintas (1e-2, 1e-3 e 1e-4). Isso é muito bom.
+    - t3 ficou aceitável em 3
+    - vários outros ficaram bons em 2 das 3 faixas, incluindo o sem nondim. Eu iria de t7. Mas o valor numérico de t7 é bem próximo do t2, então seja só uma coincidência.
 
 ### 2023-09-18
 

@@ -24,6 +24,7 @@ https://stackoverflow.com/questions/9170838/surface-plots-in-matplotlib
 https://deepxde.readthedocs.io/en/latest/modules/deepxde.html?highlight=decay#deepxde.model.Model.compile
 
 GRÁFICOS
+0) Acho que eu poderia fazer pra 10x3: Loss vs ts vs escala dos outros (0a1, 0a10, 0a0.1 etc)
 1) Fixa por rede. Ex: 10x2. Aí faz o plot adam vs LR por MAD no lugar de loss e outro com loss.
 Além disso, faz com e sem lbfgs. Aí passo a ter respostas que prestem.
 JUMENTO SE TU FAZ O ADAM A 80K TU JÁ FEZ TODOS OS VALORES INTERMEDIÁRIOS WTF TÁ FAZENDO TUDO 200X ??????????????
