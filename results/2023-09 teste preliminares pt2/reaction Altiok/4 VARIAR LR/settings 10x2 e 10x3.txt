@@ -60,15 +60,20 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
     train_distribution_list = ["Hammersley"]  # "LHS" "Hammersley" "uniform"
     # GLOROT UNIFORM # Era Glorot Normal nos testes sem swish
     LR_list = [
-        # "E-2_1",
-        # "E-3_7",  # = 7e-3
-        # "E-3_5",  # = 5e-3
+        "E-2_1",
+        "E-3_7",  # = 7e-3
+        "E-3_5",  # = 5e-3
+        "E-3_3",  # = 3e-3
         "E-3_1",  # = 1e-3
-        # "E-4_7",
-        # "E-4_5",
+        "E-4_7",
+        "E-4_5",
+        "E-4_3",
         "E-4_1",  # = 1e-4
-        # "E-5_5", # = 5e-5
-        # "E-5_1", # = 1e-5
+        "E-5_7", # = 7e-5
+        "E-5_5", # = 5e-5
+        "E-5_3", # 3e-5
+        "E-5_1", # = 1e-5
+        "E-6_1", # = 1e-6
     ]
 
     lbfgs_pre = 0  # 0 1
@@ -84,7 +89,8 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
     ]
     SGD_EPOCHS = 0  # 1000
     neurons = [
-        20,
+        10,
+        # 20,
         # 30,
         # 45,
         # 60,
@@ -94,11 +100,11 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
     layers = [
         2,
         3,
-        4,
-        5,
-        6,
-        7,
-        8
+        # 4,
+        # 5,
+        # 6,
+        # 7,
+        # 8
     ] 
 
     # -------------------------------

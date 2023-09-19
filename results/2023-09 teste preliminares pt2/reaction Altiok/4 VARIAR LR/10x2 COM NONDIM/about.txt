@@ -1,0 +1,1 @@
+ND-Lin-t1-F1 tá claramente tendo um problema ao estagnar o valor inicial de X0. talvez mexer nos weigths resolvesse???

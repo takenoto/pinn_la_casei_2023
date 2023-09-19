@@ -60,31 +60,53 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
     train_distribution_list = ["Hammersley"]  # "LHS" "Hammersley" "uniform"
     # GLOROT UNIFORM # Era Glorot Normal nos testes sem swish
     LR_list = [
-        # "E-2_1",
-        # "E-3_7",  # = 7e-3
-        # "E-3_5",  # = 5e-3
+        "E-2_1",
+        "E-3_9",  # = 9e-3
+        "E-3_8",  # = 8e-3
+        "E-3_7",  # = 7e-3
+        "E-3_6",  # = 6e-3
+        "E-3_5",  # = 5e-3
+        "E-3_4",  # = 4e-3
+        "E-3_3",  # = 3e-3
+        "E-3_2",  # = 2e-3
         "E-3_1",  # = 1e-3
-        # "E-4_7",
-        # "E-4_5",
+        "E-4_8",  # = 9e-4
+        "E-4_8",  # = 8e-4
+        "E-4_7",  # = 7e-4
+        "E-4_6",  # = 6e-4
+        "E-4_5",  # = 5e-4
+        "E-4_4",  # = 4e-4
+        "E-4_3",  # = 3e-4
+        "E-4_2",  # = 2e-4
         "E-4_1",  # = 1e-4
-        # "E-5_5", # = 5e-5
-        # "E-5_1", # = 1e-5
+        "E-5_9",  # = 9e-5
+        "E-5_8",  # = 8e-5
+        "E-5_7",  # = 7e-5
+        "E-5_6",  # = 6e-5
+        "E-5_5",  # = 5e-5
+        "E-5_4",  # = 4e-5
+        "E-5_3",  # = 3e-5
+        "E-5_2",  # = 2e-5
+        "E-5_1",  # = 1e-5
+        "E-6_5",  # = 5e-6
+        "E-6_1",  # = 1e-6
     ]
 
     lbfgs_pre = 0  # 0 1
-    lbfgs_post = 1  # 0 1
+    lbfgs_post = 0  # 0 1
     ADAM_EPOCHS_list = [
-        # "100",
-        # "1k",
-        # "10k",
-        # "25k",
+        "100",
+        "1k",
+        "10k",
+        "25k",
         "30k",
-        # "35k",
-        # "60k"
+        "35k",
+        "60k"
     ]
     SGD_EPOCHS = 0  # 1000
     neurons = [
-        20,
+        10,
+        # 20,
         # 30,
         # 45,
         # 60,
@@ -93,12 +115,12 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
     ]
     layers = [
         2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8
+        # 3,
+        # 4,
+        # 5,
+        # 6,
+        # 7,
+        # 8
     ] 
 
     # -------------------------------
