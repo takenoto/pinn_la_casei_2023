@@ -356,7 +356,7 @@ def save_each_pinn(
         if pinn_nondim_derivative_vals[3] is None
         else ",".join(
             np.char.mod(
-                "%f", np.array(N_nondim_pinn_derivatives["dSdt"][:, 0]).tolist()
+                "%f", np.array(N_nondim_pinn_derivatives["dVdt"][:, 0]).tolist()
             )
         ),
     )
