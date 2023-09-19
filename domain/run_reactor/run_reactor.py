@@ -2,7 +2,6 @@
 # 2023-08-12 => Removi o save pra cada modelo individual de cada tipo de treinamento.
 #               Agora salva só o final. Esses modelos pesam muito no HD, não vale à pena.
 
-
 # Foreign imports
 import deepxde as dde
 from timeit import default_timer as timer
@@ -15,6 +14,7 @@ from domain.reactor.reactor_state import ReactorState
 from domain.reactions_ode_system_preparers.ode_preparer import ODEPreparer
 
 from domain.run_reactor.pinn_reactor_model_results import PINNReactorModelResults
+
 
 
 def run_reactor(
@@ -271,14 +271,15 @@ def run_reactor(
     # Por algum motivo o plot não funciona nem aqui nem no saveplot de baixo aff
     if solver_params.isplot:
         dde.saveplot(loss_history, train_state, issave=False, isplot=True)
-    model.save(f"{hyperfolder_path}/models/{solver_params.name}")
-    dde.saveplot(
-        loss_history,
-        train_state,
-        issave=True,
-        isplot=False,
-        output_dir=f"{hyperfolder_path}/models/{solver_params.name}",
-    )
+    if(solver_params.is_save_model):
+        model.save(f"{hyperfolder_path}/models/{solver_params.name}")
+        dde.saveplot(
+            loss_history,
+            train_state,
+            issave=True,
+            isplot=False,
+            output_dir=f"{hyperfolder_path}/models/{solver_params.name}",
+        )
     # dde.saveplot(loss_history, train_state, issave=False, isplot=True)
 
     # ---------------------------------------
@@ -322,5 +323,8 @@ def run_reactor(
     )
 
     solver_params.save_caller.save_pinn(pinn=pinn, folder_to_save=hyperfolder_path)
+    pinn.model = None #to tentando esvaziar a memória
+    # o consumo vai de  600 mb (vscode normal) para até ~9gb conforme mais modelos são
+    # executados, o que não faz nenhum sentido????
 
     return pinn

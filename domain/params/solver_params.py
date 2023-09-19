@@ -91,12 +91,13 @@ class SolverParams:
         mini_batch=None,
         hyperfolder=None,
         isplot=False,
+        is_save_model=False,
         outputSimulationType: SystemSimulationType = SystemSimulationType(),
         inputSimulationType: SystemSimulationType = SystemSimulationType(),
         loss_version=1,
         custom_loss_version={},
         train_distribution="Hammersley",
-        save_caller:PINNSaveCaller=None,
+        save_caller: PINNSaveCaller = None,
         train_input_range=None,
     ):
         self.name = name if name else None
@@ -127,10 +128,16 @@ class SolverParams:
         # Hyperfolder é a pasta padrão
         # onde salvar os resultados daquele trambei
         self.hyperfolder = hyperfolder
+        
         self.isplot = isplot
         "Se vai plotar usando o arg isplot em run_reactor (dde.save)"
+
+        self.is_save_model = is_save_model
+        "Se vai salver o modelo usando dde.save"
+
         self.outputSimulationType = outputSimulationType
         "Variáveis de saída (XPSV)"
+
         self.inputSimulationType = inputSimulationType
         "Variáveis de entrada (XPSV)"
         self.loss_version = loss_version
@@ -147,8 +154,8 @@ class SolverParams:
         """
 
         self.train_distribution = train_distribution
-        self.save_caller=save_caller
-        self.train_input_range=train_input_range
+        self.save_caller = save_caller
+        self.train_input_range = train_input_range
 
     def get_loss_version_for_type(self, type):
         """
@@ -180,7 +187,7 @@ class SolverParams:
             '"mini_batch": '
             + f"{none_str if self.mini_batch is None else self.mini_batch}",
             '"nondim_scaler":' + self.non_dim_scaler.toJson(),
-            '"train_input_range":' + f"{np.array(self.train_input_range).tolist()}"
+            '"train_input_range":' + f"{np.array(self.train_input_range).tolist()}",
         ]
 
         json = "{"
