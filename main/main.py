@@ -435,10 +435,10 @@ def main():
     # ----------------------
     run_fedbatch = False
 
-    run_cr = False
+    run_cr = True
     cr_version = "cstr"  # "cstr" "cr-1L" "cr-0.1L"
 
-    run_batch = True
+    run_batch = False
 
     # --------------------------------------------
     # ----------------MAIN CODE-------------------
