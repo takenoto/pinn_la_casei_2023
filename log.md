@@ -36,6 +36,10 @@
     - t7 ficou bom em 3 faixas de lr bem distintas (1e-2, 1e-3 e 1e-4). Isso é muito bom.
     - t3 ficou aceitável em 3
     - vários outros ficaram bons em 2 das 3 faixas, incluindo o sem nondim. Eu iria de t7. Mas o valor numérico de t7 é bem próximo do t2, então seja só uma coincidência.
+- Add param: solver params > is_save => determina se vai salvar ou não o modelo, padrão é falso
+- Bug fix: o que foi salvo como dV/dt era na verdade dSdt. Só não deu em nada porque todos os testes até agora tinham sido somente a reação, então não tinha dV/dt para ser salvo. Código estava em pinn_saver.py.
+- Implementar: Agora é possível rodar apenas a predição de volume
+- plot_comparer_multiple_grid => Agora seta automaticamente limites superiores e inferiores de y para cropar valores muito próximos e evitar aquela notação "+5" no topo, por exemplo, quando os valores variavam entre 4.9999 e 5.00001.
 
 ### 2023-09-18
 
