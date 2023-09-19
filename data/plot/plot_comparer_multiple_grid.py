@@ -1,7 +1,33 @@
 import os
+import numpy as np
 from textwrap import wrap
-
 from matplotlib import pyplot as plt
+from matplotlib.ticker import FuncFormatter
+
+
+# ref: https://stackoverflow.com/questions/20127388/scientific-notation-on-each-tick-in-the-default-font-in-pyplot
+def SciFormatter(x, lim):
+    if x <= 100 and x >= 0.01:
+        return "{0:.1f}".format(x)
+
+    if x == 0:
+        return 0
+
+    firstNum = "{0:.1f}".format(
+        np.sign(x) * 10 ** (-np.floor(np.log10(abs(x))) + np.log10(abs(x)))
+    )
+    firstNum = "{" + firstNum + "}"
+
+    exponent = "{0:.0f}".format(np.floor(np.log10(abs(x))))
+
+    exponent = "{" + exponent + "}"
+
+    # about math regular:
+    # https://stackoverflow.com/questions/27698377/how-do-i-make-sans-serif-superscript-or-subscript-text-in-matplotlib
+    return "$\mathregular" + f"{firstNum}x10^{exponent}" + "$"
+
+
+plotTickFormatter = FuncFormatter(SciFormatter)
 
 
 def plot_comparer_multiple_grid(
@@ -85,21 +111,38 @@ def plot_comparer_multiple_grid(
 
         # Se tiver a key 'cases', então os ys e xs estão vindo em pares
         # (o x não é o mesmo pra todos)
+
+        # Lims Y for current axis
+        lowestY = None
+        biggestY = None
+
         if "cases" in i[s + 1].keys():
             for d in i[s + 1]["cases"]:
                 # Itera lista de cases, plotando x, y e color
                 ___color = d.get("color", "b")
                 ___x = d["x"]
                 ___y = d["y"]
+
+                if ___y is not None:
+                    if lowestY is None:
+                        lowestY = np.min(___y)
+                    else:
+                        newLowY = np.min(___y)
+                        lowestY = np.min([lowestY, newLowY])
+
+                if ___x is not None:
+                    if biggestY is None:
+                        biggestY = np.max(___y)
+                    else:
+                        newBigY = np.max(___y)
+                        biggestY = np.max([biggestY, newBigY])
+
                 ___line_args = d.get("l", "None")
                 ___marker = d.get("marker", None)
                 ___axvspan = d.get("axvspan", None)
                 if ___x is None or ___y is None:
                     pass
                 else:
-                    # Remove auto offset
-                    # ref: https://stackoverflow.com/questions/28371674/prevent-scientific-notation
-                    ax.ticklabel_format(useOffset=False)
                     ax.plot(
                         ___x,
                         ___y,
@@ -108,7 +151,6 @@ def plot_comparer_multiple_grid(
                         marker=___marker,
                         markersize=3,
                     )
-                    ax.ticklabel_format(useOffset=False)
 
                 if ___axvspan is not None:
                     ax.axvspan(
@@ -142,6 +184,21 @@ def plot_comparer_multiple_grid(
             ax.yaxis.set_major_locator(y_majlocator)
         if y_minlocator:
             ax.yaxis.set_minor_locator(y_minlocator)
+
+        # Set lims Y na força
+        diffY = biggestY - lowestY
+        average = (biggestY + lowestY) / 2
+        diffYPerc = (biggestY - lowestY) / (biggestY)
+
+        # Se diff < 1% força pra não ficar tão ruim de ler,
+        # ou se a dif absoluta for menor que 0.001
+        if diffY < 0.005:
+            ax.set_ylim(average + 0.005, average - 0.005)
+        if diffYPerc <= 0.03:
+            ax.set_ylim(biggestY  +  0.03*average, lowestY - average*0.03)
+            if np.abs(lowestY < 0.01) or np.abs(biggestY) < 0.01:
+                ax.yaxis.set_major_formatter(plotTickFormatter)
+
         pass
 
     if yscale:
