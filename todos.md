@@ -1,5 +1,9 @@
 # Todo List
 
+-> O gráfico que exibe o voluem ainda tá botando aquelas besteiras de 1e-6 etc; não consegui deixar num range razoável de variação. Af. 
+-> Legendas estão invertidas ????????? Quando não tem XPS o PINN aparece com legenda tr
+
+Já que eu to é eguando com esses testes, seria bom já agilizar logo o da variação de volume apenas...
 1) Anotar em thinking meu passo a passo e seguir ele rigorosamente pra eu poder terminar...
 
 1) Como o contorno tá nondim a loss  dele dá artificialmente baixa e isso prejudica tudo. Talvez eu pudesse colocar weigth x10 pros pesos???

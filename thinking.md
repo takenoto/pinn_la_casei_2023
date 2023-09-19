@@ -16,6 +16,12 @@
   3.2) nondim em 0 a 1
   3.3) nondim em 0 a 10
 
+- TODO 
+  - Agora faz pra rede 10x3 e todos os lrs, as nondim:
+    - ("Lin", "t6", "F1d10"),
+    - ("None", "t1", "1"), 
+    - ("Lin", "t7", "1"),
+
 ### parte 2 - reactor volume
 
 1) Faz testes nos valores de reaction que já sei que vai ficar bom. Preciso validar o volume para cstr e CRs 1 e 2... Pra ver se de fato tá tudo ok viu...
