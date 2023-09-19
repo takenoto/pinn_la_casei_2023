@@ -2,6 +2,15 @@
 
 ## Experiments
 
+### parte 1 - reaction
+
+1) Faz a nondim de 10x3 só com o tempo, sem XPS
+2) Daí acho que eu já posso escolher uns bons e fazer LR e os gráficos 3D
+
+### parte 2 - reactor volume
+
+1) Faz testes nos valores de reaction que já sei que vai ficar bom. Preciso validar o volume para cstr e CRs 1 e 2... Pra ver se de fato tá tudo ok viu...
+
 - Reaction
   - Find an OK LR/Adam/NL/HL com teste relativamente aberto (não faz muito fininho não)
   - Depois acho um bonzinho e faço variações ao redor dele. Faz mais sentido.
