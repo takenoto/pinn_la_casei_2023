@@ -1,5 +1,10 @@
 # Todo List
 
+1) Anotar em thinking meu passo a passo e seguir ele rigorosamente pra eu poder terminar...
+
+1) Como o contorno tá nondim a loss  dele dá artificialmente baixa e isso prejudica tudo. Talvez eu pudesse colocar weigth x10 pros pesos???
+2) Por isso que o d10 fica bom, porque é como se eu tivesse botando um peso de 10x nelas zzz...
+)1º Comparar F1 x10 e d10 e daí já escolho só 1 dos 2 pra seguir em frente.
 
 0) Exibir todas as legends não só umas
 1) Reduzir tamanho do texto das legendas e padding. Tá ocupando espaço demais.
@@ -21,21 +26,16 @@ https://deepxde.readthedocs.io/en/latest/modules/deepxde.html?highlight=decay#de
 GRÁFICOS
 1) Fixa por rede. Ex: 10x2. Aí faz o plot adam vs LR por MAD no lugar de loss e outro com loss.
 Além disso, faz com e sem lbfgs. Aí passo a ter respostas que prestem.
+JUMENTO SE TU FAZ O ADAM A 80K TU JÁ FEZ TODOS OS VALORES INTERMEDIÁRIOS WTF TÁ FAZENDO TUDO 200X ??????????????
+Talvez fosse bom fazer um gráfico que fosse a diferença entre LoV e LoT. Aí consigo ver os que tão divergindo???
+2) Talvez ficasse legal X por LR e tempo. Aí daria pra ver justo os que divergem...
 
 # IMPORTANTE
 - Talvez eu devesse não plotar o resultados de todas as redes nas mesmas settings, mas o melhor resultado de cada uma? Dentre todos os investigados???
 
-1) OK Arquivo json viewer + testar
-2) Cada plotagem fica por fora e é chamada por uma função
-3) Aí o arquivo que tem os nomes do arquivo e que vai ser chamado pra cada novo gráfico fica numa coisa externa. Assim, só vou precisar editar ele e mais ninguém.
-
-Aí agora escolha 2 bons de mesmo NL e faça variação de LR. Quero ver se vou encontrar um padrão óbvio...
-De preferência um pequeno, tipo 10 ou 20, e um grande, tipo 80. Daí posso mostrar que a diferença da LR é alta talvez? Parece estar influenciando MUITO
-E um que deu errado em tudo, como o x10, pra ver se só a LR resolveria. 10x2 já ficou quase bom posso usar pra essa primeira avaliação!!! Pq é pequeno e termina logo.
-
-1) 10x2 e x3 vs várias LRs
-2) 10x2 e x3 com 3 LRs adaptativas diferentes...
-# Paraece que preciso afinar ainda mais as LRs....
+Minha sugestão de metodologia por enquanto tá assim:
+1) Teste aberto geral para ter noção e ver se alguma rede já consegue resultados minimamente razoáveis
+2) Explorar adimensionalização na menor rede testada e na melhor, já com variação de LR
 
 # Parte 2 : Reator
 - Faz investigação dos 3 modelos com variação de volume pra ver se tem bode em algum canto.

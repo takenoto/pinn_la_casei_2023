@@ -25,6 +25,10 @@
 
 ## by date
 
+### 2023-09-19
+
+- Novos testes com nondim e redes 30x e 10x. Ainda não fiz a adimensionalização do tempo. A adimensionalização das variáveis sozinha (F1d10) foi consideravelmente melhor que as outras e que as opções sem adimensionalização.
+
 ### 2023-09-18
 
 - Finalizar testes redes p/ reaction only
