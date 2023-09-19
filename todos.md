@@ -1,5 +1,7 @@
 # Todo List
 
+1) gráficos V => cstr, CR1 e CR0.1. Depois faça os gráficos 3D. Quero ter a possibilidade de plotar os  3D até quinta no máximo...
+
 -> O gráfico que exibe o voluem ainda tá botando aquelas besteiras de 1e-6 etc; não consegui deixar num range razoável de variação. Af. 
 -> Legendas estão invertidas ????????? Quando não tem XPS o PINN aparece com legenda tr
 
