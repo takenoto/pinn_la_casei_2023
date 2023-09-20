@@ -1,3 +1,4 @@
+import gc
 import os
 import numpy as np
 
@@ -36,7 +37,9 @@ def grid_search(
             if best_pinn_test_error > i_pinn_error:
                 best_pinn_test_error = i_pinn_error
                 best_pinn_test_index = i
-                
+          
+        unreachable = gc.collect()      
+        print(f"{unreachable} unreachable objects")
     # ---------------------------------------------------------
 
     path_to_file = os.path.join(solver_params_list[0].hyperfolder, "best_pinn.txt")
