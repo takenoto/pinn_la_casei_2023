@@ -32,6 +32,7 @@ deepxde.config.set_random_seed(0)
 # Increasing precision
 # dde.config.real.set_float64()
 
+
 def create_folder_to_save(subfolder):
     current_directory_path = os.getcwd()
     folder_to_save = os.path.join(
@@ -141,19 +142,6 @@ def main():
         ),
     }
 
-    initial_state_cr = cr_states_dict[cr_version]
-
-    process_params_feed_cr = ProcessParams(
-        max_reactor_volume=5,
-        inlet=ConcentrationFlow(
-            volume=0.25,
-            X=eq_params.Xo * 0,  # *0.1,
-            P=eq_params.Po * 0,
-            S=eq_params.So,
-        ),
-        t_final=24 * 3,
-    )
-
     if run_fedbatch:
         folder_to_save = create_folder_to_save(subfolder=subfolder + "-fb")
         print("RUN FED-BATCH")
@@ -198,6 +186,18 @@ def main():
 
     if run_cr:
         for cr_version in cr_versions:
+            initial_state_cr = cr_states_dict[cr_version]
+
+            process_params_feed_cr = ProcessParams(
+                max_reactor_volume=5,
+                inlet=ConcentrationFlow(
+                    volume=0.25,
+                    X=eq_params.Xo * 0,  # *0.1,
+                    P=eq_params.Po * 0,
+                    S=eq_params.So,
+                ),
+                t_final=24 * 3,
+            )
             folder_to_save = create_folder_to_save(subfolder=subfolder + cr_version)
 
             print(f"RUN CR {cr_version}")
