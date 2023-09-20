@@ -1,0 +1,7 @@
+{
+"pinn_best_index": 1,
+"pinn_best_error": 7.410592672840721e-08,
+"pinns":{"0":"ND-N-t1-1 in_t out_V tanh tr-0-100pa L5 LR-E-2_1 10x3 p16-32-32 100ep lbfgs-1 TD-Hammersley m-",
+"1":"ND-Lin-t6-F1d10 in_t out_V tanh tr-0-100pa L5 LR-E-2_1 10x3 p16-32-32 100ep lbfgs-1 TD-Hammersley m-"
+}
+}

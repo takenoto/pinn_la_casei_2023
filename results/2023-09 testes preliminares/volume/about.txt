@@ -1,0 +1,3 @@
+Testes minúsculos e super simples, só 100 adam, e foram PERFEITAMENTE CAPAZES DE SIMULAR O VOLUME. NÃO VALE NEM À PENA INSISTIR EM VER MUITA BESTEIRA. TALVEZ SÓ VARIA ESTRATÉGIA DE ADIMENSIONALIZAÇÃO MESMO.
+
+Porque isso só prova que a rede 10x3 já tem complexidade o suficiente pra lidar com os volumes de todos os casos. E acabou.
