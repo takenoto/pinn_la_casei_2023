@@ -10,7 +10,9 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
     # --------- LOSS FUNCTION -----------
     loss_version = 5  # 6 5 4 3 2
 
-    output_variables = ["X", "P", "S"]  # "V"
+    output_variables = ["X", "P", "S", "V"]  # "V" # "X", "P", "S"
+    # output_variables = ["X", "P", "S"]
+    # output_variables = ["V"]
     input_variables = ["t"]
 
     # -------------------------------
@@ -24,10 +26,11 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
         percent_min_range=[
             0,
         ],  # [0,50] => iria fazer modelos iniciando em 0 e em 50
-        percent_max_range=[50, 60, 90, 100, 200],
+        percent_max_range=[25, 50, 60, 90, 100, 200],
     )
 
     train_input_range_list = [
+        "0-25pa",
         # "0-60pa",
         # "0-90pa",
         "0-100pa",
@@ -67,16 +70,16 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
         # "E-3_8",  # = 8e-3
         # "E-3_7",  # = 7e-3
         # "E-3_6",  # = 6e-3
-        # "E-3_5",  # = 5e-3
+        "E-3_5",  # = 5e-3
         # "E-3_4",  # = 4e-3
         # "E-3_3",  # = 3e-3
         # "E-3_2",  # = 2e-3
         "E-3_1",  # = 1e-3
-        # "E-4_8",  # = 9e-4
+        # "E-4_9",  # = 9e-4
         # "E-4_8",  # = 8e-4
         # "E-4_7",  # = 7e-4
         # "E-4_6",  # = 6e-4
-        # "E-4_5",  # = 5e-4
+        "E-4_5",  # = 5e-4
         # "E-4_4",  # = 4e-4
         # "E-4_3",  # = 3e-4
         # "E-4_2",  # = 2e-4
@@ -86,12 +89,12 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
         # "E-5_7",  # = 7e-5
         # "E-5_6",  # = 6e-5
         # "E-5_5",  # = 5e-5
-        # "E-5_4",  # = 4e-5
+        "E-5_4",  # = 4e-5
         # "E-5_3",  # = 3e-5
         # "E-5_2",  # = 2e-5
         # "E-5_1",  # = 1e-5
         # "E-6_5",  # = 5e-6
-        # "E-6_1",  # = 1e-6
+        "E-6_1",  # = 1e-6
     ]
 
     lbfgs_pre = 0  # 0 1
@@ -103,9 +106,10 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
         # "25k",
         # "30k",
         # "35k",
-        "45k",
+        # "45k",
         # "60k",
-        # "90k"
+        # "90k",
+        "120k"
     ]
     SGD_EPOCHS = 0  # 1000
     neurons = [
@@ -132,7 +136,9 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
     # -------------------------------
     # Se irá aplicar a estratégia de adimensionalização padrão
     NDList = [
-        # strategy, tscode, scalers_code
+        # Order:
+        # (strategy, tscode, scalers_code)
+        #
         # Esse é o mesmo que ser sem adimensionalização
         # ("None", "t1", "1"),
         #
@@ -157,6 +163,7 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
         # ("Lin", "t6", "1"),
         # ("Lin", "t7", "1"),
         # ("Lin", "t8", "1"),
+        # ("Lin", "t9", "1"),
         #
         # ---------------------------
         # Tudo nondim (XPSV) incluindo o tempo:
@@ -171,14 +178,14 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
         #
         # ---------------------------
         # Tudo nondim F1d10 (XPSV) incluindo o tempo:
-        ("Lin", "t2", "F1d10"),
-        ("Lin", "t3", "F1d10"),
-        ("Lin", "t4", "F1d10"),
-        ("Lin", "t5", "F1d10"),
-        ("Lin", "t6", "F1d10"),
+        # ("Lin", "t2", "F1d10"),
+        # ("Lin", "t3", "F1d10"),
+        # ("Lin", "t4", "F1d10"),
+        # ("Lin", "t5", "F1d10"),
+        # ("Lin", "t6", "F1d10"),
         ("Lin", "t7", "F1d10"),
-        ("Lin", "t8", "F1d10"),
-        # ATENÇÃO: T9 NÃO FAZ SENTIDO QUANDO VIN = 0!!!
+        # ("Lin", "t8", "F1d10"),
+        # ## ATENÇÃO: T9 NÃO FAZ SENTIDO QUANDO VIN = 0!!!
         # ("Lin", "t9", "F1d10"),
     ]
 
@@ -407,7 +414,7 @@ def get_nondim_scaler_values(
         case "t9":
             # Proíbe que volumes iguais a zero ou valores não numéricos sejam executados
             assert np.array(process_params.inlet.volume)[0] != 0
-            assert 0*np.array(process_params.inlet.volume)[0] == 0
+            assert 0 * np.array(process_params.inlet.volume)[0] == 0
             ts = process_params.max_reactor_volume / process_params.inlet.volume
         case _:
             assert False, "case must exist"
@@ -451,7 +458,11 @@ def get_nondim_scaler_values(
             print(scalers_code)
             assert False, "case must exist"
 
-    return (np.array(ts)[0], Xs, Ps, Ss, Vs)
+    # ref: https://stackoverflow.com/questions/16807011/python-how-to-identify-if-a-variable-is-an-array-or-a-scalar
+    if isinstance(ts, (list, tuple, np.ndarray)):
+        ts = np.array(ts)[0]
+
+    return (ts, Xs, Ps, Ss, Vs)
 
 
 LRs_dict = {
@@ -460,7 +471,7 @@ LRs_dict = {
 
 ADAM_EPOCHS_dict = {
     f"{num}{'k' if mult==1000 else ''}": num * mult
-    for num in range(1, 101)
+    for num in range(1, 201)
     for mult in [1, 1000]
 }
 
