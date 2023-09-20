@@ -3,39 +3,17 @@ import numpy as np
 
 from domain.optimization.ode_system_caller import RunReactorSystemCaller
 
-
-def __get_best_pinn(pinn_errors):
-    """
-    Returns the index and error of the pinn that had the smallest error of all
-    """
-
-    best_pinn_test_index = 0
-    "O Index do PINN que apresentou menor erro na fase de testes"
-
-    best_pinn_test_error = None
-
-    for i in range(len(pinn_errors)):
-        i_pinn_error = pinn_errors[i]
-
-        if best_pinn_test_error is None:
-            best_pinn_test_error = i_pinn_error
-        else:
-            if best_pinn_test_error > i_pinn_error:
-                best_pinn_test_error = i_pinn_error
-                best_pinn_test_index = i
-
-    return best_pinn_test_index, best_pinn_test_error
-
-
 def grid_search(
     pinn_system_caller: RunReactorSystemCaller,
     solver_params_list: list,  # SolverParams,
 ):
     "Receive a list of each kind of parameter and test them"
 
-    pinn_results = []  # Physics-Informed Neural Network results
-
+    best_pinn_test_error = None
+    best_pinn_test_index = None
+                
     # ---------------------------------------------------------
+    
     for i in range(len(solver_params_list)):
         solver_params = solver_params_list[i]
         print(f"""
@@ -51,13 +29,15 @@ def grid_search(
             solver_params=solver_params,
         )
 
-        pinn_results.append(np.sum(pinn_model_results.best_loss_test))
-        pinn_model_results = None #free memory???
+        i_pinn_error = np.sum(pinn_model_results.best_loss_test)
+        if best_pinn_test_error is None:
+            best_pinn_test_error = i_pinn_error
+        else:
+            if best_pinn_test_error > i_pinn_error:
+                best_pinn_test_error = i_pinn_error
+                best_pinn_test_index = i
+                
     # ---------------------------------------------------------
-
-    best_pinn_test_index, best_pinn_test_error = __get_best_pinn(
-        pinn_errors=pinn_results
-    )
 
     path_to_file = os.path.join(solver_params_list[0].hyperfolder, "best_pinn.txt")
     file = open(path_to_file, "a")
