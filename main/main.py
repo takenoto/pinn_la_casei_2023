@@ -436,7 +436,7 @@ def main():
     run_fedbatch = False
 
     run_cr = True
-    cr_version = "cstr"  # "cstr" "cr-1L" "cr-0.1L"
+    cr_versions = ["cr-1L", "cr-1E-1L", "cstr"]  # "cstr" "cr-1L" "cr-1-E1L"
 
     run_batch = False
 
@@ -501,7 +501,7 @@ def main():
             P=eq_params.Po,
             S=eq_params.So,
         ),
-        "cr-0.1L": ReactorState(
+        "cr-1E-1L": ReactorState(
             volume=np.array([0.1]),
             X=eq_params.Xo,
             P=eq_params.Po,
@@ -565,54 +565,55 @@ def main():
         pass
 
     if run_cr:
-        folder_to_save = create_folder_to_save(subfolder=subfolder + cr_version)
+        for cr_version in cr_versions:
+            folder_to_save = create_folder_to_save(subfolder=subfolder + cr_version)
 
-        print("RUN CR")
-        cases, cols, rows = change_layer_fix_neurons_number(
-            eq_params, process_params_feed_cr, hyperfolder=folder_to_save
-        )
+            print(f"RUN CR {cr_version}")
+            cases, cols, rows = change_layer_fix_neurons_number(
+                eq_params, process_params_feed_cr, hyperfolder=folder_to_save
+            )
 
-        def cr_f_out_calc_numeric(max_reactor_volume, f_in_v, volume):
-            return f_in_v * pow(volume / max_reactor_volume, 7)
+            def cr_f_out_calc_numeric(max_reactor_volume, f_in_v, volume):
+                return f_in_v * pow(volume / max_reactor_volume, 7)
 
-        num_results = run_numerical_methods(
-            eq_params=eq_params,
-            process_params=process_params_feed_cr,
-            initial_state=initial_state_cr,
-            f_out_value_calc=cr_f_out_calc_numeric,
-            t_discretization_points=[400],
-            non_dim_scaler=NonDimScaler(),
-        )
+            num_results = run_numerical_methods(
+                eq_params=eq_params,
+                process_params=process_params_feed_cr,
+                initial_state=initial_state_cr,
+                f_out_value_calc=cr_f_out_calc_numeric,
+                t_discretization_points=[400],
+                non_dim_scaler=NonDimScaler(),
+            )
 
-        # Creates the saver for this session
-        save_caller = PINNSaveCaller(
-            num_results=num_results,
-            showPINN=showPINN,
-            showNondim=showNondim,
-        )
-        for case_name in cases:
-            cases[case_name]["save_caller"] = save_caller
+            # Creates the saver for this session
+            save_caller = PINNSaveCaller(
+                num_results=num_results,
+                showPINN=showPINN,
+                showNondim=showNondim,
+            )
+            for case_name in cases:
+                cases[case_name]["save_caller"] = save_caller
 
-        start_time = timer()
+            start_time = timer()
 
-        def cr_f_out_calc_tensorflow(max_reactor_volume, f_in_v, volume):
-            return f_in_v * tf.math.pow(volume / max_reactor_volume, 7)
+            def cr_f_out_calc_tensorflow(max_reactor_volume, f_in_v, volume):
+                return f_in_v * tf.math.pow(volume / max_reactor_volume, 7)
 
-        run_pinn_grid_search(
-            solver_params_list=None,
-            eq_params=eq_params,
-            process_params=process_params_feed_cr,
-            initial_state=initial_state_cr,
-            f_out_value_calc=cr_f_out_calc_tensorflow,
-            cases_to_try=cases,
-        )
-        end_time = timer()
-        print(
-            f"""
-            time for test = {end_time - start_time} s
-            = {(end_time - start_time)/60} min"""
-        )
-        pass
+            run_pinn_grid_search(
+                solver_params_list=None,
+                eq_params=eq_params,
+                process_params=process_params_feed_cr,
+                initial_state=initial_state_cr,
+                f_out_value_calc=cr_f_out_calc_tensorflow,
+                cases_to_try=cases,
+            )
+            end_time = timer()
+            print(
+                f"""
+                time for test = {end_time - start_time} s
+                = {(end_time - start_time)/60} min"""
+            )
+            pass
 
     if run_batch:
         folder_to_save = create_folder_to_save(subfolder=subfolder + "batch")
