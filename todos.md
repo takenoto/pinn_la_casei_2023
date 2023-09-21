@@ -1,9 +1,8 @@
 # Todo List
 
-1) gráficos V => cstr, CR1 e CR0.1. Depois faça os gráficos 3D. Quero ter a possibilidade de plotar os  3D até quinta no máximo...
+- Talvez testar a função de inicialização seja ainda mais importante e eu esteja negligenciando
+https://stats.stackexchange.com/questions/229669/when-should-i-use-the-normal-distribution-or-the-uniform-distribution-when-using
 
--> O gráfico que exibe o voluem ainda tá botando aquelas besteiras de 1e-6 etc; não consegui deixar num range razoável de variação. Af. 
--> Legendas estão invertidas ????????? Quando não tem XPS o PINN aparece com legenda tr
 
 Já que eu to é eguando com esses testes, seria bom já agilizar logo o da variação de volume apenas...
 1) Anotar em thinking meu passo a passo e seguir ele rigorosamente pra eu poder terminar...
