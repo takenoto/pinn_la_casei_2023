@@ -4,27 +4,7 @@ from textwrap import wrap
 from matplotlib import pyplot as plt
 from matplotlib.ticker import FuncFormatter
 
-
-# ref: https://stackoverflow.com/questions/20127388/scientific-notation-on-each-tick-in-the-default-font-in-pyplot
-def SciFormatter(x, lim):
-    if x <= 100 and x >= 0.01:
-        return "{0:.1f}".format(x)
-
-    if x == 0:
-        return 0
-
-    firstNum = "{0:.1f}".format(
-        np.sign(x) * 10 ** (-np.floor(np.log10(abs(x))) + np.log10(abs(x)))
-    )
-    firstNum = "{" + firstNum + "}"
-
-    exponent = "{0:.0f}".format(np.floor(np.log10(abs(x))))
-
-    exponent = "{" + exponent + "}"
-
-    # about math regular:
-    # https://stackoverflow.com/questions/27698377/how-do-i-make-sans-serif-superscript-or-subscript-text-in-matplotlib
-    return "$\mathregular" + f"{firstNum}x10^{exponent}" + "$"
+from data.sci_tick_formatter import SciFormatter
 
 
 plotTickFormatter = FuncFormatter(SciFormatter)
@@ -193,9 +173,9 @@ def plot_comparer_multiple_grid(
         # Se diff < 1% força pra não ficar tão ruim de ler,
         # ou se a dif absoluta for menor que 0.001
         if diffY < 0.005:
-            ax.set_ylim(average + 0.005, average - 0.005)
+            ax.set_ylim(top=average + 0.005, bottom=average - 0.005)
         if diffYPerc <= 0.03:
-            ax.set_ylim(biggestY  +  0.03*average, lowestY - average*0.03)
+            ax.set_ylim(top=biggestY  +  0.03*average, bottom=lowestY - average*0.03)
             if np.abs(lowestY < 0.01) or np.abs(biggestY) < 0.01:
                 ax.yaxis.set_major_formatter(plotTickFormatter)
 
