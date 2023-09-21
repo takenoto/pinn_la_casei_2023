@@ -19,7 +19,7 @@ def plot3D(
 
             - meta_params (dict): Parameters like resolution tilte and labels.
     """
-    # TODO implementar multiplot num exemplo simples. Como??
+
     meta_params_default = data["meta_params"]
     standalone_plots = data["standalone_plots"]
     plot_angles_default = meta_params_default.get("plot_angles", (30, 45, 0))
