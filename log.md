@@ -25,6 +25,15 @@
 
 ## by date
 
+### 2023-09-20
+
+- Add garbage collector
+- Add novo estudo de caso CR: cr-4x5L. O reator inicia em 4.5L e só vai até 5L. Assim consigo ver se numa variação pequena ele ainda teria essa dificuldade que os outros CRs (fora o constante) estão apresentando. Deu pra ver que não, ele fica bem tranquilo e dá tudo certo rapidinho. Isso serviu pra validar o equacionamento...
+- Novos testes pros reatores CR. Não preciso botar todos mas quero ao menos ver se chego em alguma conclusão razoável.
+- Pelos meus testes do reator cr-1E-1L o problema não parece ser meramente a profundidade ou neurônios da rede, porque a 80x3 também deu na mesma. Realmente acho que é algo no treino ou na loss, e que talvez eu arrume ainda nas redes 10x. Como tá demorando MUITO. Acho que vou ter que fazer cada NL, HL e Nondim individualmente por todos os LRs. Se não for assim vai passar de 60 iterações, e a partir daí elas são tão absurdamente mais lentas que simplesmente não compensa.
+  - Olha, pensando bem, eu poderia começar fazer só 0-10% do tempo de simulação, depois 0-20% e indo assim até encontrar qual o "t" problemático, se é onde acontecem os picos...
+- Mais testes pro CR. Precisei aumentar adam pochs pra 120k e ainda assim não sei se foi o suficiente. Testei apenas apra t7  FD Lin.
+
 ### 2023-09-19
 
 - Novos testes com nondim e redes 30x e 10x. A adimensionalização das variáveis sozinha (F1d10) foi consideravelmente melhor que as outras e que as opções sem adimensionalização.
