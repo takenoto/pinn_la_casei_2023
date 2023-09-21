@@ -3,6 +3,21 @@
 - Talvez testar a função de inicialização seja ainda mais importante e eu esteja negligenciando
 https://stats.stackexchange.com/questions/229669/when-should-i-use-the-normal-distribution-or-the-uniform-distribution-when-using
 
+# Gráficos
+
+- Colocar os ticks como opcional a depender dos parâmetros passados
+- Colocar a fonte de matemática lá no arquivo base como a mesma pra notação científica ????
+- Agora que já foi feito muda a fonte de mat no arquivo de configuração e isso deve resolver tudo
+- usar locator_params para setar nbins =4 pra todas as direções. Assim só vão ser 4 ticks e não vai ficar feioso.
+  - depois pega como argumento e só usa 4 como default
+  - https://stackoverflow.com/questions/6682784/reducing-number-of-plot-ticks
+  - https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.locator_params.html
+
+
+0) Colocar todas as legendas como uma só pra figura toda
+1) permitir o countourf
+2) Colocar uma surface
+- https://aleksandarhaber.com/explanation-of-pythons-meshgrid-function-numpy-and-3d-plotting-in-python/
 
 Já que eu to é eguando com esses testes, seria bom já agilizar logo o da variação de volume apenas...
 1) Anotar em thinking meu passo a passo e seguir ele rigorosamente pra eu poder terminar...
