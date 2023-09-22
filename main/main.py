@@ -2,6 +2,7 @@
 
 import os
 from timeit import default_timer as timer
+from typing import List
 
 
 import numpy as np
@@ -69,7 +70,22 @@ def main():
     run_fedbatch = False
 
     run_cr = True
-    cr_versions = ["cr-1L", "cr-1E-1L", "cstr"]  # "cstr" "cr-1L" "cr-1-E1L"
+
+    cr_versions = [
+        # (V0, Vmax, F_in, F_inE)
+        # F_inE é o multiplicador por 10 de notação científica de Fin
+        # Ex: Fin = 2.5*10^-1 ==> Fin=25 e F_inE = -2 ==> 25E-2
+        # ---------------
+        # CSTR:
+        (5, 5, "0", "0"),
+        # ---------------
+        # CRs:
+        (4, 5, "25", "-2"),
+        # Curva suave
+        (4, 5, "5", "-1"),
+        # Enchimento rápido
+        (0, 5, "5", "0"),
+    ]
 
     run_batch = False
 
@@ -120,28 +136,6 @@ def main():
         t_final=2 * 10.2,
     )
 
-    # CR
-    cr_states_dict = {
-        "cstr": ReactorState(
-            volume=np.array([5]),
-            X=eq_params.Xo,
-            P=eq_params.Po,
-            S=eq_params.So,
-        ),
-        "cr-1L": ReactorState(
-            volume=np.array([1]),
-            X=eq_params.Xo,
-            P=eq_params.Po,
-            S=eq_params.So,
-        ),
-        "cr-1E-1L": ReactorState(
-            volume=np.array([0.1]),
-            X=eq_params.Xo,
-            P=eq_params.Po,
-            S=eq_params.So,
-        ),
-    }
-
     if run_fedbatch:
         folder_to_save = create_folder_to_save(subfolder=subfolder + "-fb")
         print("RUN FED-BATCH")
@@ -186,19 +180,26 @@ def main():
 
     if run_cr:
         for cr_version in cr_versions:
-            initial_state_cr = cr_states_dict[cr_version]
+            cr_id, V0, Vmax, Fin = cr_get_variables(cr_version)
 
             process_params_feed_cr = ProcessParams(
-                max_reactor_volume=5,
+                max_reactor_volume=Vmax,
                 inlet=ConcentrationFlow(
-                    volume=0.25,
-                    X=eq_params.Xo * 0,  # *0.1,
+                    volume=Fin,
+                    X=eq_params.Xo * 0,
                     P=eq_params.Po * 0,
                     S=eq_params.So,
                 ),
                 t_final=24 * 3,
             )
-            folder_to_save = create_folder_to_save(subfolder=subfolder + cr_version)
+            initial_state_cr = ReactorState(
+                volume=np.array([V0]),
+                X=eq_params.Xo,
+                P=eq_params.Po,
+                S=eq_params.So,
+            )
+
+            folder_to_save = create_folder_to_save(subfolder=subfolder + cr_id)
 
             print(f"RUN CR {cr_version}")
             cases, cols, rows = change_layer_fix_neurons_number(
@@ -293,6 +294,29 @@ def main():
             = {(end_time - start_time)/60} min"""
         )
         pass
+
+
+def cr_get_variables(params: List):
+    def create_id(V0, Vmax, F_in, F_inE):
+        return f"V0-{int(V0)}--Vmax-{Vmax}--Fin-{F_in}E{F_inE}"
+
+    # for V0 in range(0, 6):
+    #     for Vmax in range(0, 10):
+    #         for F_in in range(0, 100):
+    #             for F_inE in range(-2, 2):
+    #                 id = create_id(V0, Vmax, F_in, F_inE)
+    #                 params_dict[id] = (V0, Vmax, F_in * (10**F_inE))
+
+    Findict = {}
+    for Fin in range(0, 101):
+        for FinE in range(-3, 3):
+            Findict[f"{Fin}-E{FinE}"] = Fin * (10**FinE)
+
+    variables = {}
+
+    V0, Vmax, Fin, FinE = params
+    id = create_id(V0, Vmax, Fin, FinE)
+    return id, V0, Vmax, Findict[f"{Fin}-E{FinE}"]
 
 
 if __name__ == "__main__":
