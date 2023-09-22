@@ -8,7 +8,7 @@ from domain.params.process_params import ProcessParams
 def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None):
     dictionary = {}
     # --------- LOSS FUNCTION -----------
-    loss_version = 5  # 6 5 4 3 2
+    loss_version = 5 # 5  # 6 5 4 3 2
 
     output_variables = ["X", "P", "S", "V"]  # "V" # "X", "P", "S"
     # output_variables = ["X", "P", "S"]
@@ -33,7 +33,7 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
         "0-25pa",
         # "0-60pa",
         # "0-90pa",
-        "0-100pa",
+        # "0-100pa",
         # "0-200pa",
     ]
 
@@ -113,10 +113,10 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
     ]
     SGD_EPOCHS = 0  # 1000
     neurons = [
-        2,
-        4,
-        6,
-        8,
+        # 2,
+        # 4,
+        # 6,
+        # 8,
         10,
         # 20,
         # 30,
@@ -145,7 +145,7 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
         # (strategy, tscode, scalers_code)
         #
         # Esse é o mesmo que ser sem adimensionalização
-        # ("None", "t1", "1"),
+        ("None", "t1", "1"),
         #
         # ----------
         # # Linear comum: t normal o resto nondim
@@ -153,11 +153,11 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
         #
         # ----------
         # # Escalados por 10
-        # ("Lin", "t1", "F1x10"),
+        ("Lin", "t1", "F1x10"),
         #
         # ----------
         # # Divididos por 10
-        # ("Lin", "t1", "F1d10"),
+        ("Lin", "t1", "F1d10"),
         #
         # ---------------------------
         # Apenas o tempo nondim:
@@ -188,7 +188,7 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
         # ("Lin", "t4", "F1d10"),
         # ("Lin", "t5", "F1d10"),
         # ("Lin", "t6", "F1d10"),
-        ("Lin", "t7", "F1d10"),
+        # ("Lin", "t7", "F1d10"),
         # ("Lin", "t8", "F1d10"),
         # ## ATENÇÃO: T9 NÃO FAZ SENTIDO QUANDO VIN = 0!!!
         # ("Lin", "t9", "F1d10"),

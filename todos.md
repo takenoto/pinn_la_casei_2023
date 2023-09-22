@@ -3,6 +3,9 @@
 - Talvez testar a função de inicialização seja ainda mais importante e eu esteja negligenciando
 https://stats.stackexchange.com/questions/229669/when-should-i-use-the-normal-distribution-or-the-uniform-distribution-when-using
 
+- Testar nova rede: só uma HL!!!!!!!!!!!
+- Releia artigos pinns e veja a metodologia que já esqueci zzz
+
 # Gráficos
 
 - Colocar os ticks como opcional a depender dos parâmetros passados
@@ -14,9 +17,11 @@ https://stats.stackexchange.com/questions/229669/when-should-i-use-the-normal-di
   - https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.locator_params.html
 
 
-0) Colocar todas as legendas como uma só pra figura toda
-1) permitir o countourf
-2) Colocar uma surface
+Testes com CR:
+- Atualizar a loss v6. Colocar o peso do volume enorme pra tentar punir essa ida a 0 no começo, que é o que tá esculhambando tudo.
+
+GRÁFICOS:
+1) Colocar uma surface
 - https://aleksandarhaber.com/explanation-of-pythons-meshgrid-function-numpy-and-3d-plotting-in-python/
 
 Já que eu to é eguando com esses testes, seria bom já agilizar logo o da variação de volume apenas...

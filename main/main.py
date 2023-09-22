@@ -77,9 +77,14 @@ def main():
         # Ex: Fin = 2.5*10^-1 ==> Fin=25 e F_inE = -2 ==> 25E-2
         # ---------------
         # CSTR:
-        (5, 5, "0", "0"),
+        # (5, 5, "0", "0"),
         # ---------------
         # CRs:
+        # Aumentando muito MUITO lentamente
+        (1, 5, "1", "-3"),
+        # Aumentando muito lentamente
+        (1, 5, "1", "-2"),
+        # Normal
         (4, 5, "25", "-2"),
         # Curva suave
         (4, 5, "5", "-1"),
