@@ -65,7 +65,7 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
     train_distribution_list = ["Hammersley"]  # "LHS" "Hammersley" "uniform"
     # GLOROT UNIFORM # Era Glorot Normal nos testes sem swish
     LR_list = [
-        "E-2_1",
+        # "E-2_1",
         # "E-3_9",  # = 9e-3
         # "E-3_8",  # = 8e-3
         # "E-3_7",  # = 7e-3
@@ -94,7 +94,7 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
         # "E-5_2",  # = 2e-5
         # "E-5_1",  # = 1e-5
         # "E-6_5",  # = 5e-6
-        "E-6_1",  # = 1e-6
+        # "E-6_1",  # = 1e-6
     ]
 
     lbfgs_pre = 0  # 0 1
@@ -103,16 +103,20 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
         # "100",
         # "1k",
         # "10k",
-        # "25k",
+        "25k",
         # "30k",
         # "35k",
         # "45k",
         # "60k",
         # "90k",
-        "120k"
+        # "120k"
     ]
     SGD_EPOCHS = 0  # 1000
     neurons = [
+        2,
+        4,
+        6,
+        8,
         10,
         # 20,
         # 30,
@@ -122,7 +126,8 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
         # 100,
     ]
     layers = [
-        # 2,
+        1,
+        2,
         3,
         # 4,
         # 5,
@@ -244,8 +249,8 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
                                             + f" {input_str} {output_str} {func}"
                                             + f" tr-{train_input_range_key}"
                                             + f" L{loss_version}"
-                                            + f" LR-{LR_str}"
                                             + f" {NL}x{HL}"
+                                            + f" LR-{LR_str}"
                                             + f" p{n_init}-{n_domain}-{n_test}"
                                             + f" {adam_str}ep"
                                             + f" lbfgs-{lbfgs_post}"
