@@ -25,6 +25,16 @@
 
 ## by date
 
+### 2023-09-22
+
+- Implementar variação de CRs com params
+- Nova lógica para geração da id do modelo
+- Testes preliminares com redes minúsculas (2-10 neurônios, 1-3 camadas) no CSTR. 0-20 pa mas tá tudo indo relativamente bem. O problema realmente devem ser nos valores com pico e queda...
+
+### 2023-09-21
+
+- Nos gráficos 3D a escala log é bugada, então vou ter que fazer por fora se for o caso. Colocar log_scale faz somente com que exiba os número em log (10^-3 etc) mas não vai colocar em escala log de fato...
+
 ### 2023-09-20
 
 - Add garbage collector
