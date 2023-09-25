@@ -25,6 +25,12 @@
 
 ## by date
 
+### 2023-09-25
+
+- Novas variações da loss v6
+  - Multiplicar loss dVdt por 50 resolveu mas ainda não tá muito legal.
+- Consegui alguns resultados aparentemente aceitáveis usando t6 e Fd10 com tempo 0-15pa para o CR menorzinho. Já é um começo.
+
 ### 2023-09-22
 
 - Implementar variação de CRs com params
