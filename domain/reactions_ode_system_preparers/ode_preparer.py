@@ -210,7 +210,11 @@ class ODEPreparer:
                 )
                 return value
 
-            if outputSimulationType.X and outputSimulationType.P and outputSimulationType.S:
+            if (
+                outputSimulationType.X
+                and outputSimulationType.P
+                and outputSimulationType.S
+            ):
                 rX = (X * mu_max * S / (K_S + S)) * f_x_calc_func() * h_p_calc_func()
                 rP = alpha * rX + beta * X
                 rS = -(1 / Y_PS) * rP - ms * X
@@ -219,7 +223,6 @@ class ODEPreparer:
                 # Calculating the loss
                 # Procura cada variável registrada como de saída e
                 # adiciona o cálculo da sua função como componente da loss
-                
 
             for o in outputSimulationType.order:
                 # Pode dar NaN quando predizer valores abaixo de 0
@@ -227,9 +230,30 @@ class ODEPreparer:
                 loss_version = solver_params.get_loss_version_for_type(o)
 
                 if o == "X":
-                    loss_derivative = dXdt * V - (V * rX + (f_in * inlet.X - f_out * X))
+                    deriv_calc = V * rX + (f_in * inlet.X - f_out * X)
+                    loss_derivative = dXdt * V - deriv_calc
                     loss_X = 0
                     if loss_version >= 6:
+                        loss_maxmin = tf.where(
+                            tf.less(X, 0),
+                            tf.math.pow(X, 3),
+                            tf.where(
+                                tf.greater(X, tf.ones_like(X) * Xm),
+                                X - Xm,
+                                tf.zeros_like(X),
+                            ),
+                        )
+                        loss_derivative_abs = tf.abs(loss_derivative)
+                        loss_maxmin_abs = tf.abs(loss_maxmin)
+                        sign_deriv_pred = tf.math.sign(dXdt)
+                        sign_deriv_calc = tf.math.sign(deriv_calc)
+                        loss_multiplier = tf.abs(
+                            sign_deriv_pred - sign_deriv_calc
+                        )
+
+                        loss_V = 100*(1 + 10 * loss_multiplier) * (
+                            20*loss_derivative_abs + loss_maxmin_abs
+                        )
                         pass
                     if loss_version >= 5:
                         loss_maxmin = tf.where(
@@ -261,10 +285,30 @@ class ODEPreparer:
                     loss_pde.append(loss_X)
 
                 elif o == "P":
-                    loss_derivative = dPdt * V - (V * rP + (f_in * inlet.P - f_out * P))
+                    deriv_calc = V * rP + (f_in * inlet.P - f_out * P)
+                    loss_derivative = dPdt * V - deriv_calc
                     loss_P = 0
                     if loss_version >= 6:
-                        pass
+                        loss_maxmin = tf.where(
+                            tf.less(S, 0),
+                            tf.math.pow(S, 3),
+                            tf.where(
+                                tf.greater(S, tf.ones_like(S) * initial_state.S[0]),
+                                S - initial_state.S[0],
+                                tf.zeros_like(S),
+                            ),
+                        )
+                        loss_derivative_abs = tf.abs(loss_derivative)
+                        loss_maxmin_abs = tf.abs(loss_maxmin)
+                        sign_deriv_pred = tf.math.sign(dPdt)
+                        sign_deriv_calc = tf.math.sign(deriv_calc)
+                        loss_multiplier = tf.abs(
+                            sign_deriv_pred - sign_deriv_calc
+                        )
+
+                        loss_V = (1 + 10 * loss_multiplier) * (
+                            loss_derivative_abs + loss_maxmin_abs
+                        )
                     if loss_version >= 5:
                         loss_maxmin = tf.where(
                             tf.less(P, 0),
@@ -293,10 +337,32 @@ class ODEPreparer:
                     loss_pde.append(loss_P)
 
                 elif o == "S":
-                    loss_derivative = dSdt * V - (V * rS + (f_in * inlet.S - f_out * S))
+                    deriv_calc = V * rS + (f_in * inlet.S - f_out * S)
+                    loss_derivative = dSdt * V - deriv_calc
                     loss_S = 0
                     if loss_version >= 6:
-                        pass
+                        loss_maxmin = tf.where(
+                            tf.less(S, 0),
+                            tf.math.pow(S, 3),
+                            tf.where(
+                                tf.greater(S, tf.ones_like(S) * initial_state.S[0]),
+                                S - initial_state.S[0],
+                                tf.zeros_like(S),
+                            ),
+                        )
+                        loss_derivative_abs = tf.abs(loss_derivative)
+                        loss_maxmin_abs = tf.abs(loss_maxmin)
+                        sign_deriv_pred = tf.math.sign(dSdt)
+                        sign_deriv_calc = tf.math.sign(deriv_calc)
+                        # If equal, = 0
+                        # If not, = -1 or +1 or +2 or -2
+                        loss_multiplier = tf.abs(
+                            sign_deriv_pred - sign_deriv_calc
+                        )
+
+                        loss_V = (1 + 10 * loss_multiplier) * (
+                            loss_derivative_abs + loss_maxmin_abs
+                        )
                     if loss_version >= 5:
                         loss_maxmin = tf.where(
                             tf.less(S, 0),
@@ -339,7 +405,18 @@ class ODEPreparer:
                         )
                         loss_derivative_abs = tf.abs(loss_derivative)
                         loss_maxmin_abs = tf.abs(loss_maxmin)
-                        loss_V = 100*loss_derivative_abs + loss_maxmin_abs
+
+                        sign_deriv_pred = tf.math.sign(dVdt)
+                        sign_deriv_calc = tf.math.sign(dVdt_calc)
+                        # If equal, = 0
+                        # If not, = -1 or +1 or +2 or -2
+                        loss_multiplier = tf.abs(
+                            sign_deriv_pred - sign_deriv_calc
+                        )
+
+                        loss_V = (1 + 10 * loss_multiplier) * (
+                            20*loss_derivative_abs + loss_maxmin_abs
+                        )
                     elif loss_version == 5:
                         loss_maxmin = tf.where(
                             tf.less(V, 0),
