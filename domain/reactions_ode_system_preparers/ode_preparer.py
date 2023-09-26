@@ -251,11 +251,11 @@ class ODEPreparer:
                             sign_deriv_pred - sign_deriv_calc
                         )
 
-                        loss_V = 100*(1 + 10 * loss_multiplier) * (
+                        loss_X = 100*(1 + 10 * loss_multiplier) * (
                             20*loss_derivative_abs + loss_maxmin_abs
                         )
                         pass
-                    if loss_version >= 5:
+                    if loss_version == 5:
                         loss_maxmin = tf.where(
                             tf.less(X, 0),
                             tf.math.pow(X, 3),
@@ -306,10 +306,10 @@ class ODEPreparer:
                             sign_deriv_pred - sign_deriv_calc
                         )
 
-                        loss_V = (1 + 10 * loss_multiplier) * (
+                        loss_P = (1 + 10 * loss_multiplier) * (
                             loss_derivative_abs + loss_maxmin_abs
                         )
-                    if loss_version >= 5:
+                    elif loss_version == 5:
                         loss_maxmin = tf.where(
                             tf.less(P, 0),
                             tf.math.pow(P, 3),
@@ -360,10 +360,10 @@ class ODEPreparer:
                             sign_deriv_pred - sign_deriv_calc
                         )
 
-                        loss_V = (1 + 10 * loss_multiplier) * (
+                        loss_S = (1 + 10 * loss_multiplier) * (
                             loss_derivative_abs + loss_maxmin_abs
                         )
-                    if loss_version >= 5:
+                    elif loss_version == 5:
                         loss_maxmin = tf.where(
                             tf.less(S, 0),
                             tf.math.pow(S, 3),
