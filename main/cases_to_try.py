@@ -8,7 +8,7 @@ from domain.params.process_params import ProcessParams
 def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None):
     dictionary = {}
     # --------- LOSS FUNCTION -----------
-    loss_version = 5 # 5  # 6 5 4 3 2
+    loss_version = 6  # 5  # 6 5 4 3 2
 
     output_variables = ["X", "P", "S", "V"]  # "V" # "X", "P", "S"
     # output_variables = ["X", "P", "S"]
@@ -26,11 +26,14 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
         percent_min_range=[
             0,
         ],  # [0,50] => iria fazer modelos iniciando em 0 e em 50
-        percent_max_range=[25, 50, 60, 90, 100, 200],
+        percent_max_range=[10, 15, 25, 35, 50, 60, 90, 100, 200],
     )
 
     train_input_range_list = [
-        "0-25pa",
+        # "0-10pa",
+        "0-15pa",
+        # "0-25pa",
+        # "0-35pa",
         # "0-60pa",
         # "0-90pa",
         # "0-100pa",
@@ -74,12 +77,12 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
         # "E-3_4",  # = 4e-3
         # "E-3_3",  # = 3e-3
         # "E-3_2",  # = 2e-3
-        "E-3_1",  # = 1e-3
+        # "E-3_1",  # = 1e-3
         # "E-4_9",  # = 9e-4
-        # "E-4_8",  # = 8e-4
+        "E-4_8",  # = 8e-4
         # "E-4_7",  # = 7e-4
         # "E-4_6",  # = 6e-4
-        "E-4_5",  # = 5e-4
+        # "E-4_5",  # = 5e-4
         # "E-4_4",  # = 4e-4
         # "E-4_3",  # = 3e-4
         # "E-4_2",  # = 2e-4
@@ -89,7 +92,7 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
         # "E-5_7",  # = 7e-5
         # "E-5_6",  # = 6e-5
         # "E-5_5",  # = 5e-5
-        "E-5_4",  # = 4e-5
+        # "E-5_4",  # = 4e-5
         # "E-5_3",  # = 3e-5
         # "E-5_2",  # = 2e-5
         # "E-5_1",  # = 1e-5
@@ -103,11 +106,11 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
         # "100",
         # "1k",
         # "10k",
-        "25k",
+        # "25k",
         # "30k",
         # "35k",
         # "45k",
-        # "60k",
+        "60k",
         # "90k",
         # "120k"
     ]
@@ -126,7 +129,7 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
         # 100,
     ]
     layers = [
-        1,
+        # 1,
         2,
         3,
         # 4,
@@ -145,7 +148,7 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
         # (strategy, tscode, scalers_code)
         #
         # Esse é o mesmo que ser sem adimensionalização
-        ("None", "t1", "1"),
+        # ("None", "t1", "1"),
         #
         # ----------
         # # Linear comum: t normal o resto nondim
@@ -153,11 +156,11 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
         #
         # ----------
         # # Escalados por 10
-        ("Lin", "t1", "F1x10"),
+        # ("Lin", "t1", "F1x10"),
         #
         # ----------
         # # Divididos por 10
-        ("Lin", "t1", "F1d10"),
+        # ("Lin", "t1", "F1d10"),
         #
         # ---------------------------
         # Apenas o tempo nondim:
@@ -182,16 +185,24 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
         # ("Lin", "t9", "F1"),
         #
         # ---------------------------
+        # Tudo nondim F1d5 (XPSV) incluindo o tempo:
+        ("Lin", "t6", "F1d5"),
+        #
+        # ---------------------------
         # Tudo nondim F1d10 (XPSV) incluindo o tempo:
         # ("Lin", "t2", "F1d10"),
         # ("Lin", "t3", "F1d10"),
         # ("Lin", "t4", "F1d10"),
         # ("Lin", "t5", "F1d10"),
-        # ("Lin", "t6", "F1d10"),
+        ("Lin", "t6", "F1d10"),
         # ("Lin", "t7", "F1d10"),
         # ("Lin", "t8", "F1d10"),
         # ## ATENÇÃO: T9 NÃO FAZ SENTIDO QUANDO VIN = 0!!!
         # ("Lin", "t9", "F1d10"),
+        # ---------------------------
+        # Tudo nondim F1d20 (XPSV) incluindo o tempo:
+        ("Lin", "t6", "F1d20"),
+        # ("Lin", "t7", "F1d20"),
     ]
 
     # Loss Weight
@@ -449,11 +460,21 @@ def get_nondim_scaler_values(
             Ss = eq_params.So * 100
             Vs = process_params.max_reactor_volume * 100
         # O "d" representa uma divisão
+        case "F1d5":
+            Xs = eq_params.Xm / 5
+            Ps = eq_params.Pm / 5
+            Ss = eq_params.So / 5
+            Vs = process_params.max_reactor_volume / 5
         case "F1d10":
             Xs = eq_params.Xm / 10
             Ps = eq_params.Pm / 10
             Ss = eq_params.So / 10
             Vs = process_params.max_reactor_volume / 10
+        case "F1d20":
+            Xs = eq_params.Xm / 20
+            Ps = eq_params.Pm / 20
+            Ss = eq_params.So / 20
+            Vs = process_params.max_reactor_volume / 100
         case "F1d100":
             Xs = eq_params.Xm / 100
             Ps = eq_params.Pm / 100
