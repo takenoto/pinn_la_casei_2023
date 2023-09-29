@@ -1,5 +1,10 @@
 # Thinking
 
+## Falar com eles
+
+- Achei uma adimensionalização que torna praticamente todos as LRs válidas pra rede 10x3. Isso já é bom.
+- CR ainda tá horrível, talvez fosse bom suspender??
+
 ## Gráficos chave
 
 1) Loss vs epochs vs LR para alguns tipos de redes selecionados
