@@ -4,11 +4,16 @@ from domain.optimization.non_dim_scaler import NonDimScaler
 from domain.params import altiok_2006_params
 from domain.params.process_params import ProcessParams
 
+# ----------------------------
+# CAUTION
+# OS CASES T3 E T4 SÃO T2D10 E T2X10 JÁ!!!!!!!!!
+# ----------------------------
+
 
 def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None):
     dictionary = {}
     # --------- LOSS FUNCTION -----------
-    loss_version = 6  # 5  # 6 5 4 3 2
+    loss_version = 5  # 5  # 6 5 4 3 2
 
     output_variables = ["X", "P", "S", "V"]  # "V" # "X", "P", "S"
     # output_variables = ["X", "P", "S"]
@@ -31,8 +36,8 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
 
     train_input_range_list = [
         # "0-10pa",
-        "0-15pa",
-        # "0-25pa",
+        # "0-15pa",
+        "0-25pa",
         # "0-35pa",
         # "0-60pa",
         # "0-90pa",
@@ -69,34 +74,34 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
     # GLOROT UNIFORM # Era Glorot Normal nos testes sem swish
     LR_list = [
         # "E-2_1",
-        # "E-3_9",  # = 9e-3
+        "E-3_9",  # = 9e-3
         # "E-3_8",  # = 8e-3
         # "E-3_7",  # = 7e-3
         # "E-3_6",  # = 6e-3
         "E-3_5",  # = 5e-3
         # "E-3_4",  # = 4e-3
-        # "E-3_3",  # = 3e-3
+        "E-3_3",  # = 3e-3
         # "E-3_2",  # = 2e-3
-        # "E-3_1",  # = 1e-3
+        "E-3_1",  # = 1e-3
         # "E-4_9",  # = 9e-4
         "E-4_8",  # = 8e-4
         # "E-4_7",  # = 7e-4
         # "E-4_6",  # = 6e-4
-        # "E-4_5",  # = 5e-4
+        "E-4_5",  # = 5e-4
         # "E-4_4",  # = 4e-4
-        # "E-4_3",  # = 3e-4
+        "E-4_3",  # = 3e-4
         # "E-4_2",  # = 2e-4
-        "E-4_1",  # = 1e-4
+        # "E-4_1",  # = 1e-4
         # "E-5_9",  # = 9e-5
-        # "E-5_8",  # = 8e-5
+        "E-5_8",  # = 8e-5
         # "E-5_7",  # = 7e-5
-        # "E-5_6",  # = 6e-5
+        "E-5_6",  # = 6e-5
         # "E-5_5",  # = 5e-5
         # "E-5_4",  # = 4e-5
-        # "E-5_3",  # = 3e-5
+        "E-5_3",  # = 3e-5
         # "E-5_2",  # = 2e-5
         # "E-5_1",  # = 1e-5
-        # "E-6_5",  # = 5e-6
+        "E-6_5",  # = 5e-6
         # "E-6_1",  # = 1e-6
     ]
 
@@ -110,8 +115,8 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
         # "30k",
         # "35k",
         # "45k",
-        "60k",
-        # "90k",
+        # "60k",
+        "90k",
         # "120k"
     ]
     SGD_EPOCHS = 0  # 1000
@@ -120,9 +125,9 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
         # 4,
         # 6,
         # 8,
-        10,
+        # 10,
         # 20,
-        # 30,
+        30,
         # 45,
         # 60,
         # 80,
@@ -132,7 +137,7 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
         # 1,
         2,
         3,
-        # 4,
+        4,
         # 5,
         # 6,
         # 7,
@@ -144,6 +149,35 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
     # -------------------------------
     # Se irá aplicar a estratégia de adimensionalização padrão
     NDList = [
+        #
+        # CURRENT ITERATION
+        #
+        # 1º Noção geral do impacto de t crescendo e diminuindo
+        # ("None", "t1", "1"),
+        # ("None", "t2", "1"),
+        # ("None", "t2x5", "1"),
+        ("None", "t2x10", "1"),
+        # ("None", "t2x100", "1"),
+        # ("None", "t2d5", "1"),
+        # ("None", "t2d10", "1"),
+        # ("None", "t2d100", "1"),
+        # 2º tempos combinados com nondim das saídas
+        # TODO VEJA OS TEMPOS QUE AJUDARAM MAIS E USE ELES COM OS TIPOS DE NONDIM
+        # PRA VER OS ÓTIMOS
+        # ("Lin", "t2x5", "F1"),
+        # ("Lin", "t2x5", "F1d5"),
+        # ("Lin", "t2x5", "F1d10"),
+        # ("Lin", "t2x5", "F1d100"),
+        # ("Lin", "t2x10", "F1"),
+        # ("Lin", "t2x100", "F1"),
+        # ("Lin", "t2d5", "F1"),
+        # ("Lin", "t2d10", "F1"),
+        # ("Lin", "t2d100", "F1"),
+        #
+        # -----------------------------------
+        #
+        # DEFAULT VALUES:
+        #
         # Order:
         # (strategy, tscode, scalers_code)
         #
@@ -161,6 +195,24 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
         # ----------
         # # Divididos por 10
         # ("Lin", "t1", "F1d10"),
+        #
+        # ---------------------------
+        # Escala tempo E F1
+        # ("Lin", "t2x5", "F1"),
+        # ("Lin", "t2x10", "F1"),
+        # ("Lin", "t2x100", "F1"),
+        # ("Lin", "t2d5", "F1"),
+        # ("Lin", "t2d5", "F1d10"),
+        # ("Lin", "t2d10", "F1"),
+        # ("Lin", "t2d100", "F1"),
+        ## F1 "d" e "x"
+        # ("Lin", "t2d10", "F1d10"),
+        # ("Lin", "t2d10", "F1d5"),
+        # ("Lin", "t2x10", "F1d10"),
+        # ("Lin", "t2x10", "F1d5"),
+        # ("Lin", "t2d10", "F1"),
+        # ("Lin", "t2x10", "F1d10"),
+        # ("Lin", "t2d10", "F1d10"),
         #
         # ---------------------------
         # Apenas o tempo nondim:
@@ -186,7 +238,7 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
         #
         # ---------------------------
         # Tudo nondim F1d5 (XPSV) incluindo o tempo:
-        ("Lin", "t6", "F1d5"),
+        # ("Lin", "t6", "F1d5"),
         #
         # ---------------------------
         # Tudo nondim F1d10 (XPSV) incluindo o tempo:
@@ -194,14 +246,14 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
         # ("Lin", "t3", "F1d10"),
         # ("Lin", "t4", "F1d10"),
         # ("Lin", "t5", "F1d10"),
-        ("Lin", "t6", "F1d10"),
+        # ("Lin", "t6", "F1d10"),
         # ("Lin", "t7", "F1d10"),
         # ("Lin", "t8", "F1d10"),
         # ## ATENÇÃO: T9 NÃO FAZ SENTIDO QUANDO VIN = 0!!!
         # ("Lin", "t9", "F1d10"),
         # ---------------------------
         # Tudo nondim F1d20 (XPSV) incluindo o tempo:
-        ("Lin", "t6", "F1d20"),
+        # ("Lin", "t6", "F1d20"),
         # ("Lin", "t7", "F1d20"),
     ]
 
@@ -402,10 +454,18 @@ def get_nondim_scaler_values(
             ts = 1
         case "t2":
             ts = process_params.t_final
-        # case "t2x10":
-        #     ts = process_params.t_final * 10
-        # case "t2d10":
-        #     ts = process_params.t_final / 10
+        case "t2x5":
+            ts = process_params.t_final * 5
+        case "t2d5":
+            ts = process_params.t_final / 5
+        case "t2x100":
+            ts = process_params.t_final * 100
+        case "t2d100":
+            ts = process_params.t_final / 100
+        case "t2x10":
+            ts = process_params.t_final * 10
+        case "t2d10":
+            ts = process_params.t_final / 10
         case "t3":
             ts = process_params.t_final * 10
         case "t4":
