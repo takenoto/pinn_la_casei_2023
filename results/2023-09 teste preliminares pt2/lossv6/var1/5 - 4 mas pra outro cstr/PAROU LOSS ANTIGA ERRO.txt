@@ -1,0 +1,2 @@
+A loss 6 antiga estava fazendo loss_V = blablbla
+em TODOS os termos então a loss estava sendo basicamente ignorada nesse coco. Só a do volume. Por isso o volume tão bom e os outros tão ruins

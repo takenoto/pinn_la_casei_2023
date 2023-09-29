@@ -1,0 +1,17 @@
+{
+"pinn_best_index": 3,
+"pinn_best_error": 0.036156028509140015,
+"pinns":{"0":"ND-N-t1-1 in_t out_XPSV tanh tr-0-25pa L6 10x3 LR-E-4_5 p16-32-32 25kep lbfgs-1 TD-Hammersley m-",
+"1":"ND-Lin-t1-F1x10 in_t out_XPSV tanh tr-0-25pa L6 10x3 LR-E-4_5 p16-32-32 25kep lbfgs-1 TD-Hammersley m-",
+"2":"ND-Lin-t1-F1d10 in_t out_XPSV tanh tr-0-25pa L6 10x3 LR-E-4_5 p16-32-32 25kep lbfgs-1 TD-Hammersley m-",
+"3":"ND-N-t1-1 in_t out_XPSV tanh tr-0-25pa L6 45x3 LR-E-4_5 p16-32-32 25kep lbfgs-1 TD-Hammersley m-",
+"4":"ND-Lin-t1-F1x10 in_t out_XPSV tanh tr-0-25pa L6 45x3 LR-E-4_5 p16-32-32 25kep lbfgs-1 TD-Hammersley m-",
+"5":"ND-Lin-t1-F1d10 in_t out_XPSV tanh tr-0-25pa L6 45x3 LR-E-4_5 p16-32-32 25kep lbfgs-1 TD-Hammersley m-",
+"6":"ND-N-t1-1 in_t out_XPSV tanh tr-0-25pa L6 10x3 LR-E-5_4 p16-32-32 25kep lbfgs-1 TD-Hammersley m-",
+"7":"ND-Lin-t1-F1x10 in_t out_XPSV tanh tr-0-25pa L6 10x3 LR-E-5_4 p16-32-32 25kep lbfgs-1 TD-Hammersley m-",
+"8":"ND-Lin-t1-F1d10 in_t out_XPSV tanh tr-0-25pa L6 10x3 LR-E-5_4 p16-32-32 25kep lbfgs-1 TD-Hammersley m-",
+"9":"ND-N-t1-1 in_t out_XPSV tanh tr-0-25pa L6 45x3 LR-E-5_4 p16-32-32 25kep lbfgs-1 TD-Hammersley m-",
+"10":"ND-Lin-t1-F1x10 in_t out_XPSV tanh tr-0-25pa L6 45x3 LR-E-5_4 p16-32-32 25kep lbfgs-1 TD-Hammersley m-",
+"11":"ND-Lin-t1-F1d10 in_t out_XPSV tanh tr-0-25pa L6 45x3 LR-E-5_4 p16-32-32 25kep lbfgs-1 TD-Hammersley m-"
+}
+}

@@ -1,0 +1,4 @@
+time for test = 738.8143482999994 s
+            = 12.313572471666657 min
+
+Só os 15 últimos! Então deve ter sido uns 20 min na verdade

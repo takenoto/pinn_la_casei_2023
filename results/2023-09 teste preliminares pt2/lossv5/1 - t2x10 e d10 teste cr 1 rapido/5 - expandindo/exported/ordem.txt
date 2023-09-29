@@ -1,0 +1,31 @@
+Roda primeiro redes x30. Só depois tento outros neurons
+
+#
+        # CURRENT ITERATION
+        #
+        # 1º Noção geral do impacto de t crescendo e diminuindo
+        ("None", "t1", "1"),
+        ("None", "t2", "1"),
+        ("None", "t2x5", "1"),
+        ("None", "t2x10", "1"),
+        ("None", "t2x100", "1"),
+        ("None", "t2d5", "1"),
+        ("None", "t2d10", "1"),
+        ("None", "t2d100", "1"),
+        # 2º tempos combinados com nondim das saídas
+        # ("Lin", "t2x5", "F1"),
+        # ("Lin", "t2x10", "F1"),
+        # ("Lin", "t2x100", "F1"),
+        # ("Lin", "t2d5", "F1"),
+        # ("Lin", "t2d5", "F1d10"),
+        # ("Lin", "t2d10", "F1"),
+        # ("Lin", "t2d100", "F1"),
+        # ("Lin", "t2d10", "F1d10"),
+        # ("Lin", "t2d10", "F1d5"),
+        # ("Lin", "t2x10", "F1d10"),
+        # ("Lin", "t2x10", "F1d5"),
+        # ("Lin", "t2d10", "F1"),
+        # ("Lin", "t2x10", "F1d10"),
+        # ("Lin", "t2d10", "F1d10"),
+        #
+        # -----------------------------------

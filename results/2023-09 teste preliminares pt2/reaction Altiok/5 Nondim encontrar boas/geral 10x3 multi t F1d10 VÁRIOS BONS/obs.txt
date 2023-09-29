@@ -1,0 +1,2 @@
+O valor de t9 não faz sentido! Simplesmente porque v_in = 0 então ts = infinito
+Esse teste t9 não pode fazer pro batelada, 0 lógicas

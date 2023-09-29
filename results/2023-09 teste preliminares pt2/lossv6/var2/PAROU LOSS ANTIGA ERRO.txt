@@ -1,0 +1,6 @@
+A loss 6 antiga estava fazendo loss_V = blablbla
+em TODOS os termos então a loss estava sendo basicamente ignorada nesse coco e indo pra loss v5 mesmo... Só a do volume. Por isso o volume tão bom e os outros tão ruins
+
+
+
+HIPÓTESE: NA LOSS ANTIGA ELE SUBIA DUMA VEZ PRA X=XM OU P-PM E DEPOIS DISSO ZERAVA. DÁ PRA EVITAR ISSO TIRANDO O PESO DE TOPO???
