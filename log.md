@@ -25,11 +25,29 @@
 
 ## by date
 
+### 2023-09-29
+
+- Mais testes com variação de nondim  (t2, t2x5, t2x10)
+
+### 2023-09-28
+
+- Criação de modelos t2 x10 x100 x5 e d5 d10 d100;
+- Voltei à loss v5. A v6 é muito cheia de lero lero e dá muito trabalho.
+- Me parece que ainda assim são MUITO sensíveis à LR... Mesmo com rede 30x3. Talvez fosse bom eu testar em combinação com os F1d10 e afins (só fiz com F1 e os t2 x e d valores). Em progresso porque demora muito. As redes 10x não estavam tão boas então decidir aumentar pra garantir que não fosse por falta de capacidade da rede... Esses testes todos foram só 0-15pa. Alguns quiseram prestar mas prestar que é bom nenhum rolou.
+- De novo tem uns ok mas desandam depois dos 15% de tempo. Acho bom eu fazer um 0-30pa e daí já testar. Pego as redes 10 e 30 x2 e x3 e daí rodo pra vários LR uma ou duas nondims por vez
+- Mais testes com redes 30x3 e afins pra NDN t2 e t1. Os outros não consigo fazer hoje, vão ficar pra amanhã. De vez em quando tem uns interessantes, mas francamente nada muito bom.
+
+### 2023-09-26
+
+- Modelos t6F1d10 para CR... testando.
+
 ### 2023-09-25
 
 - Novas variações da loss v6
   - Multiplicar loss dVdt por 50 resolveu mas ainda não tá muito legal.
-- Consegui alguns resultados aparentemente aceitáveis usando t6 e Fd10 com tempo 0-15pa para o CR menorzinho. Já é um começo.
+- Consegui alguns resultados aparentemente aceitáveis usando t6 e Fd10 com tempo 0-15pa para o CR menorzinho. Já é um
+- Loss v6: nova iteração zzzz... Estava dando default pra loss v5 pra tudo com exceção de V, por isso minha modificações não tinham surtido efeito algum.
+- Voltar a fazer treinos na região 0-15pa e ir ajustando a loss na marra com base em hipóteses, e só depois ir pras demais...
 
 ### 2023-09-22
 
