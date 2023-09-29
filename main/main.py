@@ -81,15 +81,15 @@ def main():
         # ---------------
         # CRs:
         # Aumentando muito MUITO lentamente
-        (1, 5, "1", "-3"),
+        # (1, 5, "1", "-3"),
         # Aumentando muito lentamente
-        (1, 5, "1", "-2"),
+        # (1, 5, "1", "-2"),
         # Normal
-        (4, 5, "25", "-2"),
+        (3, 5, "25", "-2"),
         # Curva suave
-        (4, 5, "5", "-1"),
+        # (4, 5, "5", "-1"),
         # Enchimento rápido
-        (0, 5, "5", "0"),
+        # (0, 5, "5", "0"),
     ]
 
     run_batch = False
