@@ -156,9 +156,9 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
         # ("None", "t1", "1"),
         # ("None", "t2", "1"),
         # ("None", "t2x5", "1"),
-        ("None", "t2x10", "1"),
+        # ("None", "t2x10", "1"),
         # ("None", "t2x100", "1"),
-        # ("None", "t2d5", "1"),
+        ("None", "t2d5", "1"),
         # ("None", "t2d10", "1"),
         # ("None", "t2d100", "1"),
         # 2º tempos combinados com nondim das saídas
