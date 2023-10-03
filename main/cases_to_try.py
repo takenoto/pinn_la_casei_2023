@@ -158,21 +158,16 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
         # ("None", "t2x5", "1"),
         # ("None", "t2x10", "1"),
         # ("None", "t2x100", "1"),
-        ("None", "t2d5", "1"),
+        # ("None", "t2d5", "1"),
         # ("None", "t2d10", "1"),
         # ("None", "t2d100", "1"),
         # 2º tempos combinados com nondim das saídas
         # TODO VEJA OS TEMPOS QUE AJUDARAM MAIS E USE ELES COM OS TIPOS DE NONDIM
         # PRA VER OS ÓTIMOS
-        # ("Lin", "t2x5", "F1"),
-        # ("Lin", "t2x5", "F1d5"),
-        # ("Lin", "t2x5", "F1d10"),
-        # ("Lin", "t2x5", "F1d100"),
-        # ("Lin", "t2x10", "F1"),
-        # ("Lin", "t2x100", "F1"),
-        # ("Lin", "t2d5", "F1"),
-        # ("Lin", "t2d10", "F1"),
-        # ("Lin", "t2d100", "F1"),
+        ("Lin", "t2d10", "F1"),
+        # ("Lin", "t2d10", "F1d5"),
+        # ("Lin", "t2d10", "F1d10"),
+        # ("Lin", "t2d10", "F1d100"),
         #
         # -----------------------------------
         #
