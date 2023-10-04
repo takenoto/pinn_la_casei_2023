@@ -2,6 +2,9 @@ import gc
 import os
 import numpy as np
 
+import tensorflow as tf
+import deepxde
+
 from domain.optimization.ode_system_caller import RunReactorSystemCaller
 
 def grid_search(
@@ -16,6 +19,10 @@ def grid_search(
     # ---------------------------------------------------------
     
     for i in range(len(solver_params_list)):
+        tf.keras.backend.clear_session()    
+        # The seed was deleted and needs to be set again
+        deepxde.config.set_random_seed(0)
+        
         solver_params = solver_params_list[i]
         print(f"""
               ------------------------------------------
@@ -38,8 +45,14 @@ def grid_search(
                 best_pinn_test_error = i_pinn_error
                 best_pinn_test_index = i
           
-        unreachable = gc.collect()      
+        unreachable = gc.collect()  
+        
+        # Clear old objects, making the train in loop much easier
+        tf.keras.backend.clear_session()    
         print(f"{unreachable} unreachable objects")
+        unreachable = gc.collect()  
+        print(f"{unreachable} unreachable objects AFTER CLEANING UP KERAS SESSION")
+        
     # ---------------------------------------------------------
 
     path_to_file = os.path.join(solver_params_list[0].hyperfolder, "best_pinn.txt")
