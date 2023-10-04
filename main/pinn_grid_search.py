@@ -1,4 +1,3 @@
-import tensorflow as tf
 import numpy as np
 
 from domain.params.altiok_2006_params import Altiok2006Params
@@ -11,11 +10,8 @@ from domain.params.solver_params import (
 from domain.run_reactor.plot_params import PlotParams
 from domain.optimization.ode_system_caller import RunReactorSystemCaller
 from domain.optimization.grid_search import grid_search
-from domain.optimization.non_dim_scaler import NonDimScaler
 from domain.reactor.reactor_state import ReactorState
 from domain.flow.concentration_flow import ConcentrationFlow
-
-from domain.reactions_ode_system_preparers.ode_preparer import ODEPreparer
 
 
 # Parâmetros default
