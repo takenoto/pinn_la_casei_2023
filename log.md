@@ -25,6 +25,37 @@
 
 ## by date
 
+TODOS: t2-f1d10 mas na rede 30NL, aí comparo com a 20...
+- Eu acho que aquele teste que tinha ficado bom foi praquele reator que a variação de volume era quase nada e que eu tava tentando ver a partir de quanto a simulação desandava e beirava o impossível de treinar.
+TODO: testa alguma rede maior tipo 80x5, aí nem precisa fazer micro variações de outras coisas. Só pra ver se sai algo que preste mesmo.
+
+### 2023-10-04
+
+- Rede 20NL, lossv5:
+  - t2d10-F1d10 (em progresso)
+
+### 2023-10-03
+
+- Novos resultados: (30 NL por padrão)
+  - reactor-V0-3--Vmax-5--Fin-25E-2
+    - t2d5-1
+    - t2d10-1
+    - t2d100-1
+      - ^ Esse foi de longe o pior. Os outros não teve um que foi efetivamente melhor que os demais...
+    - t2d10-F1
+      - se ficar ruim, talvez eu tenha que fazer na rede 20x de novo mds... Agora pq funciona num e na outra não? 0 sentidos viu
+    - t2d10-F1d10
+      - A partir desse, incluí o teste pra LR=1e-2 porque era a usada no original, que tinha dado certo...
+      - Esse antigamente tinha dado certo, e motivou essa escolha: ND-Lin-t4-F1d10 in_t out_XPSV tanh tr-0-25pa L5 LR-E-2_1 20x2 p16-32-32 45kep lbfgs-1 TD-Hammersley m-
+      - A única diferença é que eram 20 neurons e não 30. Pelo amor...
+    - t2-F1d10 SÓ 20 NEURONS X2-3-4
+      - Não ficou bom. Refazer com t2d10 pra 20NL.
+      - opinião ????
+
+### 2023-10-02
+
+- Novos resultados (t2x100, etc...)
+
 ### 2023-09-29
 
 - Mais testes com variação de nondim  (t2, t2x5, t2x10)
