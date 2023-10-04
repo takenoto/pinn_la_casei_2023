@@ -24,9 +24,6 @@ from main.cases_to_try import change_layer_fix_neurons_number
 from main.pinn_grid_search import run_pinn_grid_search
 from main.numerical_methods import run_numerical_methods
 
-from data.plot.plot_comparer_multiple_grid import *
-from main.plotting import *
-
 
 # For obtaining fully reproducible results
 deepxde.config.set_random_seed(0)
@@ -305,19 +302,11 @@ def cr_get_variables(params: List):
     def create_id(V0, Vmax, F_in, F_inE):
         return f"V0-{int(V0)}--Vmax-{Vmax}--Fin-{F_in}E{F_inE}"
 
-    # for V0 in range(0, 6):
-    #     for Vmax in range(0, 10):
-    #         for F_in in range(0, 100):
-    #             for F_inE in range(-2, 2):
-    #                 id = create_id(V0, Vmax, F_in, F_inE)
-    #                 params_dict[id] = (V0, Vmax, F_in * (10**F_inE))
-
     Findict = {}
     for Fin in range(0, 101):
         for FinE in range(-3, 3):
             Findict[f"{Fin}-E{FinE}"] = Fin * (10**FinE)
 
-    variables = {}
 
     V0, Vmax, Fin, FinE = params
     id = create_id(V0, Vmax, Fin, FinE)
