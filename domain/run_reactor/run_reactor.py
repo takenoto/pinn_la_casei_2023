@@ -1,10 +1,12 @@
 # LOG
 # 2023-08-12 => Removi o save pra cada modelo individual de cada tipo de treinamento.
-#               Agora salva só o final. Esses modelos pesam muito no HD, não vale à pena.
+# Agora salva só o final. Esses modelos pesam muito no HD, não vale à pena.
 
 # Foreign imports
 import deepxde as dde
 from timeit import default_timer as timer
+
+import numpy as np
 
 # Local imports
 from domain.params.solver_params import SolverParams
@@ -14,7 +16,6 @@ from domain.reactor.reactor_state import ReactorState
 from domain.reactions_ode_system_preparers.ode_preparer import ODEPreparer
 
 from domain.run_reactor.pinn_reactor_model_results import PINNReactorModelResults
-
 
 
 def run_reactor(
@@ -28,10 +29,12 @@ def run_reactor(
     # NÃO! O objetivo dessa função deve ser só calcular. printar, salvar, tudo por fora.
     """
     Runs a reactor that supports both outlet and inlet.
-    The outlet can be controlled using the f_out_value_calc(max_reactor_volume, f_in_v, volume)
+    The outlet can be controlled using the
+    f_out_value_calc(max_reactor_volume, f_in_v, volume)
 
     # O ode system preparer usa as constantes fornecidas para gerar uma função
-    ode_system_preparer --> ode_system_preparer(solver_params: SolverParams, eq_params:Altiok2006Params, process_params: ProcessParams, f_out_value_calc)
+    ode_system_preparer --> ode_system_preparer(solver_params: SolverParams,
+    eq_params:Altiok2006Params, process_params: ProcessParams, f_out_value_calc)
     |-> retorna o ode-system (a função que foi gerada com as constantes)
     ode_system --> ode_system(x, y)
 
@@ -51,10 +54,14 @@ def run_reactor(
     # como todos são obrigatórios, basta fazer o contrário dos params
     # o que não tiver lá vai aqui
     time_domain = dde.geometry.TimeDomain(
-        scaler.toNondim({"t": solver_params.train_input_range[0][0]}, "t"),
-        scaler.toNondim({"t": solver_params.train_input_range[0][-1]}, "t"),
+        scaler.toNondim(
+            {"t": solver_params.train_input_range[0][0] * process_params.t_final}, "t"
+        ),
+        scaler.toNondim(
+            {"t": solver_params.train_input_range[0][-1] * process_params.t_final}, "t"
+        ),
     )
-
+    
     # ref:
     # https://deepxde.readthedocs.io/en/latest/demos/pinn_forward/burgers.html?highlight=geometry
     # ref2:
@@ -66,31 +73,48 @@ def run_reactor(
         geom = time_domain  # Isso deixa da forma como estava antes
     elif len(inputSimulationType.order) == 2:
         # Valores adimensionalizados das variáveis em t0
-        Nondim_boundaries = {
-            "X": scaler.toNondim({"X": solver_params.train_input_range[-1][-1]}, "X"),
-            "P": scaler.toNondim({"P": solver_params.train_input_range[-1][-1]}, "P"),
-            "S": scaler.toNondim({"S": solver_params.train_input_range[-1][-1]}, "S"),
-            "V": scaler.toNondim({"V": solver_params.train_input_range[-1][-1]}, "V"),
+        XPSVboundsMultipliers = {
+            "X": eq_params.Xm[0],
+            "P": eq_params.Pm[0],
+            "S": initial_state.S[0],
+            "V": process_params.max_reactor_volume,
         }
 
-        if inputSimulationType.X:
-            dimension_geom = dde.geometry.Interval(
-                solver_params.train_input_range[-1][0], Nondim_boundaries["X"]
+        def getNondimBoundary(N):
+            "N is the variable (X, P, S, V, etc)"
+            minVal = scaler.toNondim(
+                {N: 0
+                 },
+                N,
             )
+            maxVal = (
+                scaler.toNondim(
+                    {
+                        N: XPSVboundsMultipliers[N]
+                    },
+                    N,
+                ),
+            )
+            if isinstance(maxVal, (list, tuple, np.ndarray)):
+                maxVal = np.array(maxVal)[0].astype(float)
+            if isinstance(minVal, (list, tuple, np.ndarray)):
+                minVal = np.array(minVal)[0].astype(float)
+
+            return minVal, maxVal
+
+        if inputSimulationType.X:
+            minVal, maxVal = getNondimBoundary("X")
 
         elif inputSimulationType.P:
-            dimension_geom = dde.geometry.Interval(
-                solver_params.train_input_range[-1][0], Nondim_boundaries["P"]
-            )
-        elif inputSimulationType.S:
-            dimension_geom = dde.geometry.Interval(
-                solver_params.train_input_range[-1][0], Nondim_boundaries["S"]
-            )
-        elif inputSimulationType.V:
-            dimension_geom = dde.geometry.Interval(
-                solver_params.train_input_range[-1][0], Nondim_boundaries["V"]
-            )
+            minVal, maxVal = getNondimBoundary("P")
 
+        elif inputSimulationType.S:
+            minVal, maxVal = getNondimBoundary("S")
+
+        elif inputSimulationType.V:
+            minVal, maxVal = getNondimBoundary("V")
+
+        dimension_geom = dde.geometry.Interval(minVal, maxVal)
         geom = dde.geometry.GeometryXTime(dimension_geom, time_domain)
 
     # ---------------------------------------
@@ -158,15 +182,28 @@ def run_reactor(
         ics.append(icV)
 
     # Setting the data for the NN
-    data = dde.data.PDE(
-        geometry=geom,
-        pde=ode_system_preparer.prepare(),
-        bcs=ics,
-        num_domain=solver_params.num_domain,
-        num_boundary=solver_params.num_init,
-        num_test=solver_params.num_test,
-        train_distribution=solver_params.train_distribution,
-    )
+    
+    if geom == time_domain:
+        data = dde.data.PDE(
+            geometry=geom,
+            pde=ode_system_preparer.prepare(),
+            bcs=ics,
+            num_domain=solver_params.num_domain,
+            num_boundary=solver_params.num_init,
+            num_test=solver_params.num_test,
+            train_distribution=solver_params.train_distribution,
+        )
+    else:
+        data = dde.data.TimePDE(
+            geometryxtime=geom,
+            pde=ode_system_preparer.prepare(),
+            ic_bcs=ics,
+            num_domain=solver_params.num_domain,
+            num_initial=solver_params.num_init,
+            num_boundary=solver_params.num_boundary,
+            num_test=solver_params.num_test,
+            train_distribution=solver_params.train_distribution,
+        )
 
     # Creating the model and the net
     net = dde.nn.FNN(
@@ -271,7 +308,7 @@ def run_reactor(
     # Por algum motivo o plot não funciona nem aqui nem no saveplot de baixo aff
     if solver_params.isplot:
         dde.saveplot(loss_history, train_state, issave=False, isplot=True)
-    if(solver_params.is_save_model):
+    if solver_params.is_save_model:
         model.save(f"{hyperfolder_path}/models/{solver_params.name}")
         dde.saveplot(
             loss_history,
@@ -323,7 +360,7 @@ def run_reactor(
     )
 
     solver_params.save_caller.save_pinn(pinn=pinn, folder_to_save=hyperfolder_path)
-    pinn.model = None #to tentando esvaziar a memória
+    pinn.model = None  # to tentando esvaziar a memória
     # o consumo vai de  600 mb (vscode normal) para até ~9gb conforme mais modelos são
     # executados, o que não faz nenhum sentido????
 
