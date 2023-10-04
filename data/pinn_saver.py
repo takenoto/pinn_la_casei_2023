@@ -400,9 +400,14 @@ def save_each_pinn(
 
     units = ["g/L", "g/L", "g/L", "L"]
 
-    pinn_time_normal = pinn.solver_params.non_dim_scaler.fromNondim(
-        {"t": pinn.train_state.X_test}, "t"
-    )
+    if len(_in.order)>=2:
+        pinn_time_normal = pinn.solver_params.non_dim_scaler.fromNondim(
+            {"t": pinn.train_state.X_test}, "t"
+        )[:, _in.t_index:_in.t_index+1]
+    else:
+        pinn_time_normal = pinn.solver_params.non_dim_scaler.fromNondim(
+            {"t": pinn.train_state.X_test}, "t"
+        )
 
     for i in range(4):
         items[i + 1] = {
