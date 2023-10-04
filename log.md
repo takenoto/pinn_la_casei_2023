@@ -31,8 +31,26 @@ TODO: testa alguma rede maior tipo 80x5, aí nem precisa fazer micro variações
 
 ### 2023-10-04
 
+
+TODO
+1) resolver bug dessas condiççoes iniciais dando NaN
+2) Passar arquivos pro ssd e executar de lá, hd tá esquentando muito...
+
 - Rede 20NL, lossv5:
-  - t2d10-F1d10 (em progresso)
+  - t2d10-F1d10
+    - O sistema que havia funcionado antes foi o de 4.5 a 5L... Por isso. É ooooutra coisa fi.
+    - Perfis semelhantes à rede 30NL, mas no geral um pouco piores e loss maior (entre 1e-3 e 1e-2, antes ficava entre 1e-4 e 1e-3)
+- FIX ME
+  - Agora deleta normalmente todos os objetos do keras/tensorflow a cada atualização (arquivo grid_search.py).
+    - ref: [Tensorflow Clear Session](https://www.tensorflow.org/api_docs/python/tf/keras/backend/clear_session)
+- Atualizar run_reactor e cases_totry: t range modificado e agora é só o PERCENTUAL, não o valor de t já multiplicado.
+- Rodar agora sim teste relativamente grande, variando camadas, LRs, tudo no mundo, e que me dará boas respostas. SÓ NÃO PODEREI USAR TEMPO DE TREINO E PREDIÇÃO PORQUE ESTOU USANDO O COMPUTADOR ENQUANTO RODA!!!!
+  - 1º: Teste com XPS de saída e t e V de entrada...
+  - Realmente NÃO consegui determinar o bug dos NaNs nas condições iniciais quando alguma variável de entrada outra que o tempo é acionada. Ele alega, indiretamente, que está recebendo um tuple ou algo parecido.
+- FIX: Encontrei o erro. Quando a geometrica se tornava TimeGeometry, era necessário usar uma classe diferente para DATA, bem como condições de contorno diferentes. Arquivos atualizados: run_reactor, cases_to_try. Também modifiquei parte a lógica de determinar o % a ser explorado no treino em relação ao máximo.
+
+- TODO comparar aquele antigo bom com o novo, o perfil de topo e fundo, se muda muito nas derivadas. Pra me dar uma pista né zz.
+E depois manda um com muitos neurônios
 
 ### 2023-10-03
 
