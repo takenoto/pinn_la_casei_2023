@@ -29,6 +29,11 @@ TODOS: t2-f1d10 mas na rede 30NL, aí comparo com a 20...
 - Eu acho que aquele teste que tinha ficado bom foi praquele reator que a variação de volume era quase nada e que eu tava tentando ver a partir de quanto a simulação desandava e beirava o impossível de treinar.
 TODO: testa alguma rede maior tipo 80x5, aí nem precisa fazer micro variações de outras coisas. Só pra ver se sai algo que preste mesmo.
 
+### 2023-10-06
+
+1) Veja os todos do dia anterior e passe pra cá, SÓ DEPOIS FAÇA ALGO
+2) Comece a preparar para ter como entrada todas as variáveis (Xo, Po, Vmax, etc). O padrão de saída do reator a gente pode manter daí não precisa de eq. saída, só da vazão de entrada mesmo.
+
 ### 2023-10-05
 
 TODO faça novos com o reator de 4.5L pra 5, não lembro qual é ou se era 4 pra 5 com 1L/h
