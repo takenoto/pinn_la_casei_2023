@@ -267,7 +267,7 @@ def run_reactor(
             metrics=metrics,
         )
         loss_history, train_state = model.train(
-            epochs=solver_params.adam_epochs,
+            iterations=solver_params.adam_epochs,
             display_every=solver_params.adam_display_every,
             callbacks=[pde_resampler] if pde_resampler else None,
             # model_save_path=f"{hyperfolder_path}{solver_params.name}/adam"
@@ -284,7 +284,7 @@ def run_reactor(
             metrics=metrics,
         )
         loss_history, train_state = model.train(
-            epochs=solver_params.sgd_epochs,
+            iterations=solver_params.sgd_epochs,
             display_every=solver_params.adam_display_every,
             callbacks=[pde_resampler] if pde_resampler else None,
             # model_save_path=f"{hyperfolder_path}{solver_params.name}/sgd"
