@@ -34,6 +34,16 @@ TODO: testa alguma rede maior tipo 80x5, aí nem precisa fazer micro variações
 TODO faça novos com o reator de 4.5L pra 5, não lembro qual é ou se era 4 pra 5 com 1L/h
 *Outra coisa, me pareceu novamente que não é falta de complexidade da rede não... Algumas 8x ficaram melhores. E redes menores devem ser mais fáceis de treinar então é melhor eu realmente ir por elas e fazer só 1 ou 2 grandes pra mostrar que meramente aumentar NL ou HL não resolveria o problema. É paia mas minha conclusão pode ser sim que uma variação grande de volume não pôde ser modelada, e aí mostro esse reator simplezinho dando certo.
 
+- Parece que desanda quando aumenta o tempo total, mesmo sem nondim de tempo. Não entendi o porquê. Mesmo que use o treinamento só num pedaço equivalente ao original. Por exemplo, a rede toda treinada de 0-15pa (~11h) em 72h pro CR que a entrada é praticamente zero fica bem ruim, mas rodar ele todo em 12h já fica bom. Sem sentido total.
+  - reactor-V0-1--Vmax-5--Fin-1E-4
+    - Para 0-100pa de 12h: F1d100 e F1x10 no geral ficaram ruins e t7F1d10 mostrou bons resultados
+    - Para 0-15pa de 72h (~10.8h): ficou bom de novo o t7-F1d10
+    - Para 0-100pa de 72h:
+  - Hipótese: parte desses problemas de zerar o volume é pq é a maneira mais fácil de garantir o estado estacionário quando está chegando perto, já que zera tudo. Eu poderia fazer umas loss v7 que é igual à v5, a única diferença que d(X,P,S) não multiplica pelo volume e sim divide. E quando o volume for < 0, usar apenas um valor extremamente pequeno como 1e-10
+
+- Refatoração do código de ODE_PREPARARER: LOSSES
+- Implementação e testes da loss v7 (em progresso)
+
 ### 2023-10-04
 
 - Rede 20NL, lossv5:
