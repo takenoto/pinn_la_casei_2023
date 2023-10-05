@@ -32,6 +32,7 @@ TODO: testa alguma rede maior tipo 80x5, aí nem precisa fazer micro variações
 ### 2023-10-05
 
 TODO faça novos com o reator de 4.5L pra 5, não lembro qual é ou se era 4 pra 5 com 1L/h
+*Outra coisa, me pareceu novamente que não é falta de complexidade da rede não... Algumas 8x ficaram melhores. E redes menores devem ser mais fáceis de treinar então é melhor eu realmente ir por elas e fazer só 1 ou 2 grandes pra mostrar que meramente aumentar NL ou HL não resolveria o problema. É paia mas minha conclusão pode ser sim que uma variação grande de volume não pôde ser modelada, e aí mostro esse reator simplezinho dando certo.
 
 ### 2023-10-04
 
