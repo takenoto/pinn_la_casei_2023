@@ -1,4 +1,6 @@
+from numpy import float32
 import tensorflow as tf
+import deepxde as dde
 
 def lossV7(o, args):
     (
@@ -20,6 +22,11 @@ def lossV7(o, args):
         Pm,
         initial_state,
         process_params,
+        t,
+        dXdt_2,
+        dPdt_2,
+        dSdt_2,
+        dVdt_2,
     ) = args
 
     # ----------------------
@@ -83,7 +90,7 @@ def lossV7(o, args):
     # calc loss derivative signal
     # ----------------------
     sign_deriv_pred = tf.math.sign(dNdt)
-    sign_deriv_calc = tf.math.sign(dNdt_calc)
+    sign_deriv_calc = tf.cast(tf.math.sign(dNdt_calc), dtype=float32)
     loss_multiplier = tf.abs(sign_deriv_pred - sign_deriv_calc)
     loss = (1 + loss_multiplier/10) * (loss_derivative_abs + loss_minmax)
     # ----------------------
