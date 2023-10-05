@@ -19,7 +19,7 @@ pinn_colors = [
     "#FFE66D",
     "#E78F8E",
     "#861388",
-    "#34312D",
+    "#045275",
 ]
 """
 Lista de cores que representam diversos pinns
@@ -450,7 +450,7 @@ def save_each_pinn(
                     "x": pinn_x,
                     "y": pinn_y,
                     "color": pinn_colors[1],
-                    "l": "--",
+                    "l": "-",
                 }
             )
 
@@ -460,7 +460,7 @@ def save_each_pinn(
                     "x": pinn_x,
                     "y": deriv_pinn_y,
                     "color": pinn_colors[1],
-                    "l": "--",
+                    "l": "-",
                 }
             )
 
@@ -572,7 +572,7 @@ def save_each_pinn(
     plt.plot(
         pinn.loss_history.steps,
         np.sum(pinn.loss_history.loss_test, axis=1),
-        linestyle="dotted",
+        linestyle="solid",
         color=pinn_colors[-1],
         label="LoV",
     )
