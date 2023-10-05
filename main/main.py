@@ -1,5 +1,13 @@
 # python -m main.main
 
+# Changed the backend using:
+# python -m deepxde.backend.set_default_backend BACKEND
+# ref: https://deepxde.readthedocs.io/en/latest/user/installation.html#working-with-different-backends
+#
+# NOTE: Setting environment variables (both user and system) did not work.
+# Windows 11, 2023-05-10.
+
+
 import os
 from timeit import default_timer as timer
 from typing import List
@@ -66,6 +74,8 @@ def main():
     # ----------------------
     run_fedbatch = False
 
+    run_batch = True
+
     run_cr = True
 
     cr_versions = [
@@ -78,19 +88,18 @@ def main():
         # ---------------
         # CRs:
         # Aumentando muito MUITO lentamente
+        (1, 5, "1", "-4"),
         # (1, 5, "1", "-3"),
         # Aumentando muito lentamente
         # (1, 5, "1", "-2"),
         # Normal
         # (3, 5, "25", "-2"),
-        (1, 5, "25", "-2"),
+        # (1, 5, "25", "-2"),
         # Curva suave
         # (4, 5, "5", "-1"),
         # Enchimento rápido
         # (0, 5, "5", "0"),
     ]
-
-    run_batch = False
 
     # --------------------------------------------
     # ----------------MAIN CODE-------------------
@@ -193,7 +202,7 @@ def main():
                     P=eq_params.Po * 0,
                     S=eq_params.So,
                 ),
-                t_final=24 * 3,
+                t_final= 24 * 3,
             )
             initial_state_cr = ReactorState(
                 volume=np.array([V0]),
