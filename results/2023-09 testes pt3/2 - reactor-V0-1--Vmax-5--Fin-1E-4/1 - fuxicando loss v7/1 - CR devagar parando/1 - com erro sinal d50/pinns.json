@@ -1,0 +1,9 @@
+{
+"pinn_best_index": None,
+"pinn_best_error": 0.027789393439888954,
+"pinns":{"0":"ND-Lin-t7-F1d10 in_t out_XPSV tanh tr-0-15pa L7 10x2 LR-E-3_1 p16-32-32 60kep lbfgs-1 TD-Hammersley m-",
+"1":"ND-Lin-t7-F1d10 in_t out_XPSV tanh tr-0-15pa L7 10x2 LR-E-4_1 p16-32-32 60kep lbfgs-1 TD-Hammersley m-",
+"2":"ND-Lin-t7-F1d10 in_t out_XPSV tanh tr-0-15pa L7 10x3 LR-E-3_1 p16-32-32 60kep lbfgs-1 TD-Hammersley m-",
+"3":"ND-Lin-t7-F1d10 in_t out_XPSV tanh tr-0-15pa L7 10x3 LR-E-4_1 p16-32-32 60kep lbfgs-1 TD-Hammersley m-"
+}
+}

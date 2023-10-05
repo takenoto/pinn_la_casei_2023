@@ -1,0 +1,6 @@
+A lossv7 com o abs da difereça mais ajuda que atrapalha
+	
+	sign_deriv_pred = tf.math.sign(dNdt)
+	sign_deriv_calc = tf.math.sign(dNdt_calc)
+	loss_multiplier = tf.abs(sign_deriv_pred - sign_deriv_calc)
+	loss = (1 + loss_multiplier/50) * (loss_derivative_abs + loss_minmax)

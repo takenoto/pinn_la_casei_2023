@@ -1,0 +1,4 @@
+Fui fazendo e mexendo
+
+selu não ficou muito legal, nem swish mas não rodei demais.
+Terminei decidindo rodar só em 2 LR (1e-3 e 1e-4) pra facilitar minha vida e conseguir fazer mais testes.
