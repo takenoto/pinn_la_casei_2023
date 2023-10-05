@@ -189,7 +189,54 @@ def main():
             = {(end_time - start_time)/60} min"""
         )
         pass
+    
+    if run_batch:
+        folder_to_save = create_folder_to_save(subfolder=subfolder + "batch")
 
+        print("RUN BATCH")
+        cases, cols, rows = change_layer_fix_neurons_number(
+            eq_params, process_params_feed_off, hyperfolder=folder_to_save
+        )
+        num_results = run_numerical_methods(
+            eq_params=eq_params,
+            process_params=process_params_feed_off,
+            initial_state=initial_state,
+            f_out_value_calc=lambda max_reactor_volume, f_in_v, volume: 0,
+            t_discretization_points=[400],
+            non_dim_scaler=NonDimScaler(),
+        )
+
+        # Creates the saver for this session
+        save_caller = PINNSaveCaller(
+            num_results=num_results,
+            showPINN=showPINN,
+            showNondim=showNondim,
+        )
+        for case_name in cases:
+            cases[case_name]["save_caller"] = save_caller
+
+        start_time = timer()
+
+        print(f"NUMBER OF CASES ={len(cases)}")
+
+        run_pinn_grid_search(
+            solver_params_list=None,
+            eq_params=eq_params,
+            process_params=process_params_feed_off,
+            initial_state=initial_state,
+            f_out_value_calc=lambda max_reactor_volume, f_in_v, volume: 0,
+            cases_to_try=cases,
+            save_caller=save_caller,
+        )
+        end_time = timer()
+
+        print(
+            f"""
+            time for test = {end_time - start_time} s
+            = {(end_time - start_time)/60} min"""
+        )
+        pass
+    
     if run_cr:
         for cr_version in cr_versions:
             cr_id, V0, Vmax, Fin = cr_get_variables(cr_version)
@@ -259,53 +306,6 @@ def main():
                 = {(end_time - start_time)/60} min"""
             )
             pass
-
-    if run_batch:
-        folder_to_save = create_folder_to_save(subfolder=subfolder + "batch")
-
-        print("RUN BATCH")
-        cases, cols, rows = change_layer_fix_neurons_number(
-            eq_params, process_params_feed_off, hyperfolder=folder_to_save
-        )
-        num_results = run_numerical_methods(
-            eq_params=eq_params,
-            process_params=process_params_feed_off,
-            initial_state=initial_state,
-            f_out_value_calc=lambda max_reactor_volume, f_in_v, volume: 0,
-            t_discretization_points=[400],
-            non_dim_scaler=NonDimScaler(),
-        )
-
-        # Creates the saver for this session
-        save_caller = PINNSaveCaller(
-            num_results=num_results,
-            showPINN=showPINN,
-            showNondim=showNondim,
-        )
-        for case_name in cases:
-            cases[case_name]["save_caller"] = save_caller
-
-        start_time = timer()
-
-        print(f"NUMBER OF CASES ={len(cases)}")
-
-        run_pinn_grid_search(
-            solver_params_list=None,
-            eq_params=eq_params,
-            process_params=process_params_feed_off,
-            initial_state=initial_state,
-            f_out_value_calc=lambda max_reactor_volume, f_in_v, volume: 0,
-            cases_to_try=cases,
-            save_caller=save_caller,
-        )
-        end_time = timer()
-
-        print(
-            f"""
-            time for test = {end_time - start_time} s
-            = {(end_time - start_time)/60} min"""
-        )
-        pass
 
 
 def cr_get_variables(params: List):
