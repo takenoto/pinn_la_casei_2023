@@ -43,6 +43,26 @@ TODO faça novos com o reator de 4.5L pra 5, não lembro qual é ou se era 4 pra
 
 - Refatoração do código de ODE_PREPARARER: LOSSES
 - Implementação e testes da loss v7 (em progresso)
+  - FIXED: apenas na loss7 dá um problema no where
+    - Atualizei pra tensorflow 2 e parou. Parece que poderia ser um bug de novo e eu ia passar horas tentando contornar zzzzz.....
+    - o Erro no where do V_threshold foi culpa minha, que não havia botado a última parte (O "else" do .where)
+    - O tensorflow v2 tá BEM mais demorado que o 1 e emitindo muitos erros, então vou de volta pra minha terra zzz.
+      - No v1 continua com o erro. então talvez o 2 lerdasse porque tá tendo um erro que ele resolvia automaticamente mas isso tinha um custo, e o v1 simplesmente joga na minha cara.
+      - O erro era que eu tava retornando zero, e não zeroes_like daí dava mismatch no shape
+      - No threshold do volume, acontecia algo super parecido. Eu basicamente retornava o threshold, o certo era retornar tf.ones_like(V) vezes o threshold.
+        - Comparei resultados lossv7 usando ou não o absoluto como multiplicador quando o sinal da derivada predita e calculada era oposto, e pareceu representar melhor o sistema (loss maior para desvios maiores) E COISA BOA O QUE FOI PRA ZERO, FICOU COM LOSS ALTA (1E1!!!!). Isso é excelente porque torna a loss uma métrica melhor. Mas veja que não foi tanta diferença assim e dá uma lerdada no treino viu...
+        - Mas aí eu só to treinando 0-15. Se treinasse os 100%, com a penalidade do erro da direção da derivada, talvez funcionasse, já que é nessa região que acontece de inverter a subida e a descida...
+
+- Create: Loss Modules
+
+- Voltar pro tensorflow 1 mesmo ok
+
+- Acho que vou ter que mexer na lossv7 mais um pouco ainda... Essa ideia da soma se baseou numa coisa correta (derivadas errasdas) mas não tem sentido pq eu precisaria comparar é as derivadas segundas!! Porque o sinal das derivadas em si ele não tá errando tanto.
+
+- Implementar derivadas segundas e testar losses antigas, que não usam. Funcionando OK lossv5 reator batelada, bons resultados.
+- Agora sim testar e fazer a loss v7 no reator batelada mesmo pra saber se to fazendo direito
+  - Deu certo! Batch ficou OK pra loss com a d2 e pareceu otimizar em menos epochs. Mas falta testar melhor pq foi um único teste e a 0-15pa de +/-12h né...
+
 
 ### 2023-10-04
 
@@ -66,8 +86,6 @@ TODO faça novos com o reator de 4.5L pra 5, não lembro qual é ou se era 4 pra
   - Ainda parecem bem ruins, swish e tanh. Usei nondim tempo mas nos testes antigos todos os nondim tempo tinham ficado ruins. Nos novos tinham uns bons pq não fiz para o reator CR, só isso e fim. Então é melhor eu tentar sem mesmo...
   - Fiz mais e continuam péssimos...
 
-- TODO comparar aquele antigo bom com o novo, o perfil de topo e fundo, se muda muito nas derivadas. Pra me dar uma pista né zz.
-E depois manda um com muitos neurônios
 
 ### 2023-10-03
 
