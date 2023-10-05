@@ -7,6 +7,7 @@ import deepxde as dde
 from domain.params.solver_params import SolverParams
 from domain.params.process_params import ProcessParams
 from domain.params.altiok_2006_params import Altiok2006Params
+import keras.backend as K
 
 from domain.reactor.reactor_state import ReactorState
 
@@ -182,8 +183,7 @@ class ODEPreparer:
             # tf.wherenão funcionaram
             # Só funciona se fizer a atribuição do valor de X ou P por fora
             # e usar esses novos valores nos cáculos.
-            # Se fizer um tf.where tendo como condicional o próprio X ou
-            # o valor da expressão não ser NaN, não presta, não adianta.
+            # Se fizer um tf.where tendo como condicional o próprio X ou o valor da expressão não ser NaN, não presta, não adianta.
 
             def f_x_calc_func():
                 loss_version = solver_params.get_loss_version_for_type("X")

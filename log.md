@@ -29,12 +29,11 @@ TODOS: t2-f1d10 mas na rede 30NL, aí comparo com a 20...
 - Eu acho que aquele teste que tinha ficado bom foi praquele reator que a variação de volume era quase nada e que eu tava tentando ver a partir de quanto a simulação desandava e beirava o impossível de treinar.
 TODO: testa alguma rede maior tipo 80x5, aí nem precisa fazer micro variações de outras coisas. Só pra ver se sai algo que preste mesmo.
 
+### 2023-10-05
+
+TODO faça novos com o reator de 4.5L pra 5, não lembro qual é ou se era 4 pra 5 com 1L/h
+
 ### 2023-10-04
-
-
-TODO
-1) resolver bug dessas condiççoes iniciais dando NaN
-2) Passar arquivos pro ssd e executar de lá, hd tá esquentando muito...
 
 - Rede 20NL, lossv5:
   - t2d10-F1d10
@@ -48,6 +47,13 @@ TODO
   - 1º: Teste com XPS de saída e t e V de entrada...
   - Realmente NÃO consegui determinar o bug dos NaNs nas condições iniciais quando alguma variável de entrada outra que o tempo é acionada. Ele alega, indiretamente, que está recebendo um tuple ou algo parecido.
 - FIX: Encontrei o erro. Quando a geometrica se tornava TimeGeometry, era necessário usar uma classe diferente para DATA, bem como condições de contorno diferentes. Arquivos atualizados: run_reactor, cases_to_try. Também modifiquei parte a lógica de determinar o % a ser explorado no treino em relação ao máximo.
+- Novo reator padrão: reactor-V0-1--Vmax-5--Fin-25E-2
+  - Acho que a rede 10x é o suficiente. Tenho que explorar é estratégias. Então faça nela que vc consegue testar mais coisas.
+  - selu não ficou muito legal, nem swish mas não rodei demais. Terminei decidindo rodar só em 2 LR (1e-3 e 1e-4) pra facilitar minha vida e conseguir fazer mais testes.
+  - Fiz testes com 10k adam tb pareceu pouco. Vou apagar e fazer mais com mais pontos.
+  - Novos testes zzz.. Se ficarem ruins, nos outros aumentar pra 32 NL porque já tive bons resultados com 32x3 e 32x5 no passado.
+  - Ainda parecem bem ruins, swish e tanh. Usei nondim tempo mas nos testes antigos todos os nondim tempo tinham ficado ruins. Nos novos tinham uns bons pq não fiz para o reator CR, só isso e fim. Então é melhor eu tentar sem mesmo...
+  - Fiz mais e continuam péssimos...
 
 - TODO comparar aquele antigo bom com o novo, o perfil de topo e fundo, se muda muito nas derivadas. Pra me dar uma pista né zz.
 E depois manda um com muitos neurônios
