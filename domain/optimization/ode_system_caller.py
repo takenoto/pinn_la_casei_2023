@@ -4,7 +4,6 @@ from domain.params.solver_params import SolverParams
 from domain.params.altiok_2006_params import Altiok2006Params
 from domain.params.process_params import ProcessParams
 from domain.reactor.reactor_state import ReactorState
-from domain.run_reactor.plot_params import PlotParams
 from domain.reactions_ode_system_preparers.ode_preparer import ODEPreparer
 from domain.run_reactor.run_reactor import run_reactor
 from domain.run_reactor.pinn_reactor_model_results import PINNReactorModelResults
