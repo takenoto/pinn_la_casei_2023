@@ -82,7 +82,8 @@ def main():
         # Aumentando muito lentamente
         # (1, 5, "1", "-2"),
         # Normal
-        (3, 5, "25", "-2"),
+        # (3, 5, "25", "-2"),
+        (1, 5, "25", "-2"),
         # Curva suave
         # (4, 5, "5", "-1"),
         # Enchimento rápido
@@ -304,7 +305,7 @@ def cr_get_variables(params: List):
 
     Findict = {}
     for Fin in range(0, 101):
-        for FinE in range(-3, 3):
+        for FinE in range(-5, 5):
             Findict[f"{Fin}-E{FinE}"] = Fin * (10**FinE)
 
 
