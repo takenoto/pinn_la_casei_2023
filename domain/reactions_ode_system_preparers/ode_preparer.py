@@ -58,9 +58,6 @@ class ODEPreparer:
             initial_state = self.initial_state
             scaler = solver_params.non_dim_scaler
 
-            t_nondim = x[
-                :, inputSimulationType.t_index : inputSimulationType.t_index + 1
-            ]
             X_nondim = 0
             P_nondim = 0
             S_nondim = 0
@@ -140,7 +137,6 @@ class ODEPreparer:
             # Se não existir, faz o default de volume pra 1 e dVdt pra 0 pra
             # possibilitar cálculos
             N_nondim = {
-                "t": t_nondim,
                 "X": X_nondim,
                 "P": P_nondim,
                 "S": S_nondim,
@@ -153,7 +149,6 @@ class ODEPreparer:
 
             # Nondim to dim
             N = {type: scaler.fromNondim(N_nondim, type) for type in N_nondim}
-            t = N["t"]
             X = N["X"]
             P = N["P"]
             S = N["S"]
@@ -162,12 +157,6 @@ class ODEPreparer:
             dPdt = N["dPdt"]
             dSdt = N["dSdt"]
             dVdt = N["dVdt"]
-
-            # Derivadas segundas:
-            dXdt_2 = dde.grad.hessian(X, x, j=inputSimulationType.t_index, grad_y=dXdt)
-            dPdt_2 = dde.grad.hessian(P, x, j=inputSimulationType.t_index, grad_y=dPdt)
-            dSdt_2 = dde.grad.hessian(S, x, j=inputSimulationType.t_index, grad_y=dSdt)
-            dVdt_2 = dde.grad.hessian(V, x, j=inputSimulationType.t_index, grad_y=dVdt)
 
             # ------------------------
             # ---- INLET AND OUTLET --
@@ -259,10 +248,8 @@ class ODEPreparer:
                 Pm,
                 initial_state,
                 process_params,
-                dXdt_2,
-                dPdt_2,
-                dSdt_2,
-                dVdt_2,
+                x,
+                inputSimulationType,
             )
 
             for o in outputSimulationType.order:
