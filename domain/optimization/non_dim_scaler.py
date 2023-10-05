@@ -29,11 +29,11 @@ class NonDimScaler:
     def __init__(
         self, X=1, P=1, S=1, V=1, t=1, toNondim=None, fromNondim=None, name="NULL!!!!"
     ):
-        self.X = tf.cast(X, tf.float32)
-        self.P = tf.cast(P, tf.float32)
-        self.S = tf.cast(S, tf.float32)
-        self.V = tf.cast(V, tf.float32)
-        self.t = tf.cast(t, tf.float32)
+        self.X = X
+        self.P = P
+        self.S = S
+        self.V = V
+        self.t = t
 
         self.X_not_tensor = X
         self.P_not_tensor = P
