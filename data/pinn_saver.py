@@ -3,7 +3,6 @@ from matplotlib import pyplot as plt
 import numpy as np
 from timeit import default_timer as timer
 import deepxde as dde
-import tensorflow as tf
 
 from data.plot.plot_comparer_multiple_grid import plot_comparer_multiple_grid
 
