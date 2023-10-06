@@ -1,4 +1,5 @@
 import os
+import json
 from matplotlib import pyplot as plt
 import numpy as np
 from timeit import default_timer as timer
@@ -136,7 +137,7 @@ def save_each_pinn(
         dNdt_2key = f"d{N}dt_2"
         dNdt_2_keys.append(dNdt_2key)
         N_pinn[N] = prediction_y[:, N_index]
-        
+
         N_pinn_derivatives[dNdtkey] = pinn.model.predict(
             input_x_dde,
             operator=lambda x, y: dde.grad.jacobian(
@@ -156,7 +157,6 @@ def save_each_pinn(
                 # grad_y=N_pinn_derivatives[dNdtkey]
             ),
         )
-        
 
     # Predicting values
     # pinn_dNdt_keys = []
@@ -374,6 +374,17 @@ def save_each_pinn(
         ),
     )
 
+    # LOSS ICSBCS
+    loss_icsbcs_test = {}
+    for N_index in range(len(_out.order)):
+        N = _out.order[N_index]
+        # As condições de contorno vem no final, e são a mesma qtde das
+        # saídas. Então se vão de 0 a 4, bcs e ics são de 4-8
+        index = _out.get_index_for(N) + len(_out.order)
+        loss_icsbcs_test[N] = np.array(pinn.loss_history.loss_test)[
+            :, index : index + 1
+        ].tolist()
+
     # Fecha o arquivo
     # Fecha o body e fecha o error
     file.write('\n"error": {\n')
@@ -398,6 +409,9 @@ def save_each_pinn(
                     '"pinn_loss_history_test":'
                     + f"{np.array(pinn.loss_history.loss_test).tolist()}"
                     ",\n",
+                    '"pinn_loss_history_test_ICSBCS":'
+                    + json.dumps(loss_icsbcs_test)
+                    + ",\n",
                     '"pinn_loss_history_test_SUM":'
                     + f"{[loss for loss in np.array(np.sum(pinn.loss_history.loss_test, axis=1))]}"  # noqa: E501
                     ",\n",
@@ -413,6 +427,15 @@ def save_each_pinn(
             )
     file.close()
 
+    file = open(path_to_file, "r")
+    read_json = json.load(file)
+    file.close()
+    # ATENÇÃO: ABRIR UM ARQUIVO NO FORMATO WRITE AUTOMATICAMENTE
+    # APAGA TUDO QUE TINHA NELE ANTES!!!
+    file = open(path_to_file, "w")
+    pretty_json = json.dumps(read_json, indent=1)
+    file.write(pretty_json)
+    file.close()
     units = ["g/L", "g/L", "g/L", "L"]
 
     if len(_in.order) >= 2:
@@ -651,7 +674,7 @@ def save_each_pinn(
     plt.legend()
     if folder_to_save:
         file_path = os.path.join(folder_to_save, f"LOSS-{pinn.model_name}.png")
-    plt.savefig(file_path, bbox_inches="tight", dpi=600)
+    plt.savefig(file_path, bbox_inches="tight", dpi=300)
     plt.close(fig)
 
     # ---------------------
@@ -676,7 +699,7 @@ def save_each_pinn(
         plt.legend()
         if folder_to_save:
             file_path = os.path.join(folder_to_save, f"LoT-{pinn.model_name}.png")
-        plt.savefig(file_path, bbox_inches="tight", dpi=180)
+        plt.savefig(file_path, bbox_inches="tight", dpi=120)
         plt.close(fig)
 
         # TEST/VALIDATION LOSS
@@ -697,23 +720,19 @@ def save_each_pinn(
         plt.legend()
         if folder_to_save:
             file_path = os.path.join(folder_to_save, f"LoV-{pinn.model_name}.png")
-        plt.savefig(file_path, bbox_inches="tight", dpi=180)
+        plt.savefig(file_path, bbox_inches="tight", dpi=120)
         plt.close(fig)
 
         # LoV of boundary conditions
         fig = plt.figure()
-        for N in _out.order:
-            # As condições de contorno vem no final, e são a mesma qtde das
-            # saídas. Então se vão de 0 a 4, bcs e ics são de 4-8
-            index = _out.get_index_for(N) + len(_out.order)
-            if index is not None:
-                index + len(_out.order)
-                plt.plot(
-                    pinn.loss_history.steps,
-                    np.array(pinn.loss_history.loss_test)[:, index : index + 1],
-                    linestyle="solid",
-                    label=f"${N}_0$",
-                )
+        for N in loss_icsbcs_test:
+            plt.plot(
+                pinn.loss_history.steps,
+                loss_icsbcs_test[N],
+                linestyle="solid",
+                label=f"${N}_0$",
+            )
+
         plt.yscale("log")
         plt.xlabel("i")
         plt.ylabel("Loss")
@@ -721,7 +740,7 @@ def save_each_pinn(
         plt.legend()
         if folder_to_save:
             file_path = os.path.join(folder_to_save, f"LoV_IC-{pinn.model_name}.png")
-        plt.savefig(file_path, bbox_inches="tight", dpi=180)
+        plt.savefig(file_path, bbox_inches="tight", dpi=120)
         plt.close(fig)
 
     # ------------------------
@@ -755,5 +774,5 @@ def save_each_pinn(
             file_path = os.path.join(folder_to_save, f"TIME-{pinn.model_name}.png")
         # Save the figure
         # plt.savefig(file_path)
-        plt.savefig(file_path, bbox_inches="tight", dpi=600)
+        plt.savefig(file_path, bbox_inches="tight", dpi=120)
         plt.close(fig)
