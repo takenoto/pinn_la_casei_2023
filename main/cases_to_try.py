@@ -39,9 +39,9 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
 
     train_input_range_list = [
         # "0-10pa",
-        "0-15pa",
+        # "0-15pa",
         # "0-25pa",
-        # "0-35pa",
+        "0-35pa",
         # "0-60pa",
         # "0-90pa",
         # "0-100pa",
@@ -106,7 +106,7 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
         # "E-4_4",  # = 4e-4
         # "E-4_3",  # = 3e-4
         # "E-4_2",  # = 2e-4
-        "E-4_1",  # = 1e-4
+        # "E-4_1",  # = 1e-4
         # "E-5_9",  # = 9e-5
         # "E-5_8",  # = 8e-5
         # "E-5_7",  # = 7e-5
@@ -122,15 +122,15 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
     ]
 
     lbfgs_pre = 0  # 0 1
-    lbfgs_post = 0  # 0 1
+    lbfgs_post = 1  # 0 1
     ADAM_EPOCHS_list = [
         # "100",
         # "1k",
-        # "10k",
+        "10k",
         # "25k",
         # "30k",
         # "35k",
-        "45k",
+        # "45k",
         # "60k",
         # "90k",
         # "120k",
@@ -173,13 +173,15 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
         #
         # 1º Noção geral do impacto de t crescendo e diminuindo
         ("Lin", "t1", "1"),
-        # ("Lin", "t1", "F1d10"),
+        ("Lin", "t1", "F1d10"),
         # ("Lin", "t1", "F1x10"),
-        ("Lin", "t2", "F1d10"),
+        # ("Lin", "t2", "1"),
+        ("Lin", "t7", "1"),
+        # ==> ("Lin", "t2", "F1d10"),
         # ("Lin", "t1", "F1d100"),
         # ("Lin", "t1", "F1x10"),
         # ("Lin", "t6", "F1d10"),
-        ("Lin", "t7", "F1d10"),
+        # ("Lin", "t7", "F1d10"),
         # ("Lin", "t2", "F1d10"),
         # ("Lin", "t2d10", "F1d10"),
         # ("Lin", "t2x10", "F1d10"),

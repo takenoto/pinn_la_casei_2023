@@ -74,7 +74,7 @@ def main():
     # ----------------------
     run_fedbatch = False
 
-    run_batch = True
+    run_batch = False
 
     run_cr = True
 
@@ -89,12 +89,11 @@ def main():
         # CRs:
         # Aumentando muito MUITO lentamente
         (1, 5, "1", "-4"),
-        # (1, 5, "1", "-3"),
         # Aumentando muito lentamente
         # (1, 5, "1", "-2"),
         # Normal
+        (1, 5, "25", "-2"),
         # (3, 5, "25", "-2"),
-        # (1, 5, "25", "-2"),
         # Curva suave
         # (4, 5, "5", "-1"),
         # Enchimento rápido
