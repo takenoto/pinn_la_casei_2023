@@ -55,6 +55,12 @@ class SystemSimulationType:
         if t:
             self.t_index = len(self.order)
             self.order.append("t")
+            
+    def get_index_for(self, N):
+        if N in self.order:
+            return self.order.index(N)
+        else:
+            return None
 
 
 class SolverLBFGSParams:
