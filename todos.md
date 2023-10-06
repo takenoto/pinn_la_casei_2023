@@ -1,7 +1,10 @@
 # Todo List
 
+- No desenho do fluxorama que vai representar o processo, incluir a etapa de limpar objetos da memória
 - Talvez testar a função de inicialização seja ainda mais importante e eu esteja negligenciando
 https://stats.stackexchange.com/questions/229669/when-should-i-use-the-normal-distribution-or-the-uniform-distribution-when-using
+
+Loss v8: é a 7 mas sem o abs que ajusta o sinal. Parece que ele faz com que a loss represente melhor o desvio (errou = loss alta) e que evita as zonas de solução tivial. E mesmo quando vai pra elas, o erro fica alto, o que é muito justificado. Então como um todo ela é mais coerente.
 
 - Testar nova rede: só uma HL!!!!!!!!!!!
 - Releia artigos pinns e veja a metodologia que já esqueci zzz
