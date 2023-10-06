@@ -58,14 +58,7 @@ class EulerMethod:
         dP_dt_normal_array[0] = None
         dS_dt_normal_array[0] = None
         dV_dt_normal_array[0] = None
-        dX_dt_2_normal_array = np.zeros(len(t_space))
-        dP_dt_2_normal_array = np.zeros(len(t_space))
-        dS_dt_2_normal_array = np.zeros(len(t_space))
-        dV_dt_2_normal_array = np.zeros(len(t_space))
-        dX_dt_2_normal_array[0] = None
-        dP_dt_2_normal_array[0] = None
-        dS_dt_2_normal_array[0] = None
-        dV_dt_2_normal_array[0] = None
+        dN_dt_2 = {N: np.zeros(len(t_space)) for N in ["X", "P", "S", "V"]}
 
         inlet = process_params.inlet
         f_in = inlet.volume
@@ -154,16 +147,27 @@ class EulerMethod:
         # ------------------------------
         # Calculate 2 order derivatives
         # ------------------------------
-
+        # ref: https://personal.math.ubc.ca/~jfeng/CHBE553/Example7/Formulae.pdf
         # A função "f" são os próprios valores de XPSV calculados, posso usar eles!!!
         # TODO declara XPSV como vetor e itera todos, acho que é mais fácil
         # e não precisa se repetir
-        # TODO 1 ponto => único
-        # TODO centered pontos intermediários => loop for
-        # TODO backward ponto final
-        # Centered when 1<t<len => único
-        # if(t>1 and t<len(t_space_nondim)):
-        #     dX_dt_2_normal_array[t] =
+        XPSV = {
+            "X": X_array,
+            "P": P_array,
+            "S": S_array,
+            "V": V_array,
+        }
+        
+        for N_key in XPSV:
+            # First point
+            N = XPSV[N_key]
+            dN_dt_2[N_key][0] = (2*N[0] - 5*N[1] + 4*N[2] - N[3])/(dt**2)
+            # Center points:
+            for t in range(1, len(t_space)-1):
+                dN_dt_2[N_key][t] = (N[t+1] - 2*N[t]  + N[t-1])/(dt**2)
+            # Backward
+            dN_dt_2[N_key][-1] = (2*N[-1] - 5*N[-2] + 4*N[-3] - N[-4])/(dt**2)
+                
 
         return NumericSolverModelResults(
             model=self,
@@ -179,8 +183,8 @@ class EulerMethod:
             dP_dt=dP_dt_normal_array,
             dS_dt=dS_dt_normal_array,
             dV_dt=dV_dt_normal_array,
-            dX_dt_2=None,
-            dP_dt_2=None,
-            dS_dt_2=None,
-            dV_dt_2=None,
+            dX_dt_2=dN_dt_2["X"],
+            dP_dt_2=dN_dt_2["P"],
+            dS_dt_2=dN_dt_2["S"],
+            dV_dt_2=dN_dt_2["V"],
         )

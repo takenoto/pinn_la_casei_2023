@@ -56,46 +56,41 @@ class ODEPreparer:
             inputSimulationType = self.solver_params.inputSimulationType
             outputSimulationType = self.solver_params.outputSimulationType
             initial_state = self.initial_state
-            scaler = solver_params.non_dim_scaler
 
-            X_nondim = 0
-            P_nondim = 0
-            S_nondim = 0
-            V_nondim = 1
-            dX_dt_nondim = 0
-            dP_dt_nondim = 0
-            dS_dt_nondim = 0
-            dV_dt_nondim = 0
+            # Init with 0s for safety when no value is given
+            X, P, S = 0, 0, 0
+            V = 1
+            dXdt, dPdt, dSdt, dVdt = 0, 0, 0, 0
 
             # ---------------------
             # OUTPUT VARIABLES
             # ---------------------
             if outputSimulationType.X:
-                X_nondim = y[
+                X = y[
                     :, outputSimulationType.X_index : outputSimulationType.X_index + 1
                 ]
-                dX_dt_nondim = dde.grad.jacobian(
+                dXdt = dde.grad.jacobian(
                     y, x, i=outputSimulationType.X_index, j=inputSimulationType.t_index
                 )
             if outputSimulationType.P:
-                P_nondim = y[
+                P = y[
                     :, outputSimulationType.P_index : outputSimulationType.P_index + 1
                 ]
-                dP_dt_nondim = dde.grad.jacobian(
+                dPdt = dde.grad.jacobian(
                     y, x, i=outputSimulationType.P_index, j=inputSimulationType.t_index
                 )
             if outputSimulationType.S:
-                S_nondim = y[
+                S = y[
                     :, outputSimulationType.S_index : outputSimulationType.S_index + 1
                 ]
-                dS_dt_nondim = dde.grad.jacobian(
+                dSdt = dde.grad.jacobian(
                     y, x, i=outputSimulationType.S_index, j=inputSimulationType.t_index
                 )
             if outputSimulationType.V:
-                V_nondim = y[
+                V = y[
                     :, outputSimulationType.V_index : outputSimulationType.V_index + 1
                 ]
-                dV_dt_nondim = dde.grad.jacobian(
+                dVdt = dde.grad.jacobian(
                     y, x, i=outputSimulationType.V_index, j=inputSimulationType.t_index
                 )
 
@@ -103,60 +98,25 @@ class ODEPreparer:
             # INPUT VARIABLES
             # ---------------------
             if inputSimulationType.X:
-                X_nondim = x[
-                    :, inputSimulationType.X_index : inputSimulationType.X_index + 1
-                ]
-                dX_dt_nondim = dde.grad.jacobian(
+                X = x[:, inputSimulationType.X_index : inputSimulationType.X_index + 1]
+                dXdt = dde.grad.jacobian(
                     x, x, i=inputSimulationType.X_index, j=outputSimulationType.t_index
                 )
             if inputSimulationType.P:
-                P_nondim = x[
-                    :, inputSimulationType.P_index : inputSimulationType.P_index + 1
-                ]
-                dP_dt_nondim = dde.grad.jacobian(
+                P = x[:, inputSimulationType.P_index : inputSimulationType.P_index + 1]
+                dPdt = dde.grad.jacobian(
                     x, x, i=inputSimulationType.P_index, j=inputSimulationType.t_index
                 )
             if inputSimulationType.S:
-                S_nondim = x[
-                    :, inputSimulationType.S_index : inputSimulationType.S_index + 1
-                ]
-                dS_dt_nondim = dde.grad.jacobian(
+                S = x[:, inputSimulationType.S_index : inputSimulationType.S_index + 1]
+                dSdt = dde.grad.jacobian(
                     x, x, i=inputSimulationType.S_index, j=inputSimulationType.t_index
                 )
             if inputSimulationType.V:
-                V_nondim = x[
-                    :, inputSimulationType.V_index : inputSimulationType.V_index + 1
-                ]
-                dV_dt_nondim = dde.grad.jacobian(
+                V = x[:, inputSimulationType.V_index : inputSimulationType.V_index + 1]
+                dVdt = dde.grad.jacobian(
                     x, x, i=inputSimulationType.V_index, j=inputSimulationType.t_index
                 )
-
-            # ------------------------
-            # ---- DECLARING AS "N" --
-            # ------------------------
-            # Se não existir, faz o default de volume pra 1 e dVdt pra 0 pra
-            # possibilitar cálculos
-            N_nondim = {
-                "X": X_nondim,
-                "P": P_nondim,
-                "S": S_nondim,
-                "V": V_nondim,
-                "dXdt": dX_dt_nondim,
-                "dPdt": dP_dt_nondim,
-                "dSdt": dS_dt_nondim,
-                "dVdt": dV_dt_nondim,
-            }
-
-            # Nondim to dim
-            N = {type: scaler.fromNondim(N_nondim, type) for type in N_nondim}
-            X = N["X"]
-            P = N["P"]
-            S = N["S"]
-            V = N["V"]
-            dXdt = N["dXdt"]
-            dPdt = N["dPdt"]
-            dSdt = N["dSdt"]
-            dVdt = N["dVdt"]
 
             # ------------------------
             # ---- INLET AND OUTLET --

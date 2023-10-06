@@ -3,6 +3,7 @@ from matplotlib import pyplot as plt
 import numpy as np
 from timeit import default_timer as timer
 import deepxde as dde
+import tensorflow as tf
 
 from data.plot.plot_comparer_multiple_grid import plot_comparer_multiple_grid
 
@@ -45,7 +46,12 @@ class PINNSaveCaller:
         folder_to_save,
         showPINN=None,
         showNondim=None,
+        # Derivatives:
         plot_derivatives=True,
+        # Second order derivatives:
+        plot_derivatives_2=True,
+        # Individual losses of each output and inicial conditions
+        plot_individual_losses=True,
     ):
         "Saves the plot and json of the pinn"
         save_each_pinn(
@@ -54,6 +60,8 @@ class PINNSaveCaller:
             showPINN=showPINN if showPINN else self.showPINN,
             showNondim=showNondim if showNondim else self.showNondim,
             plot_derivatives=plot_derivatives,
+            plot_derivatives_2=plot_derivatives_2,
+            plot_individual_losses=plot_individual_losses,
             folder_to_save=folder_to_save,
         )
 
@@ -65,6 +73,8 @@ def save_each_pinn(
     showNondim=False,
     folder_to_save=None,
     plot_derivatives=True,
+    plot_derivatives_2=True,
+    plot_individual_losses=True,
     showTimeSpan=True,
     create_time_points_plot=False,
 ):
@@ -74,110 +84,133 @@ def save_each_pinn(
     # Plotar todos os resultados, um a um
     num = num_results[0]
 
-    pred_start_time = timer()
-    # O t já é nondim!!!!!!!!!!!!!!!
-    # Mesmo que fosse é outra escala. Não é assim que funciona.
-
-    t_num_normal = num.non_dim_scaler.fromNondim({"t": num.t}, "t")
-    t_nondim = pinn.solver_params.non_dim_scaler.toNondim({"t": t_num_normal}, "t")
-
     _in = pinn.solver_params.inputSimulationType
     _out = pinn.solver_params.outputSimulationType
     if len(_in.order) == 1:
-        vals = np.vstack(
+        input_x_dde = np.vstack(
             np.ravel(
-                t_nondim,
+                num.t,
             )
         )
 
-    elif len(_in.order) == 2:
-        # Determina as entradas
-        if _in.X:
-            X_nondim = num.X
-            vals = np.array([[X_nondim[i], t_nondim[i]] for i in range(len(t_nondim))])
-        elif _in.P:
-            P_nondim = num.X
-            vals = np.array([[P_nondim[i], t_nondim[i]] for i in range(len(t_nondim))])
-        elif _in.S:
-            S_nondim = num.S
-            vals = np.array([[S_nondim[i], t_nondim[i]] for i in range(len(t_nondim))])
-        elif _in.V:
-            V_nondim = num.V
-            vals = np.array([[V_nondim[i], t_nondim[i]] for i in range(len(t_nondim))])
+    elif len(_in.order) >= 2:
+        inputs_dict = {
+            "t": num.t,
+            "X": num.X,
+            "P": num.P,
+            "S": num.S,
+            "V": num.V,
+            # etc => o resto viria aqui
+        }
+        values_of_input = []
+        for N in pinn.solver_params.inputSimulationType.order:
+            N_input_index = pinn.solver_params.inputSimulationType.get_index_for(N)
+            if N_input_index is not None:
+                values_of_input.append(inputs_dict[N])
+        input_x_dde = np.concatenate(values_of_input, axis=1)
 
-    prediction = pinn.model.predict(vals)
+    pred_start_time = timer()
+    prediction_y = pinn.model.predict(input_x_dde)
     pred_end_time = timer()
     pred_time = pred_end_time - pred_start_time
 
-    dNdt_keys = ["dXdt", "dPdt", "dSdt", "dVdt"]
+    dNdt_keys = []
+    dNdt_2_keys = []
 
     # Obtenção da derivada:
     # Ref: https://github.com/lululxvi/deepxde/issues/177
     # def dydx(x, y):
     #     return dde.grad.jacobian(y, x, i=0, j=0)
 
-    N_nondim_pinn = {}
-    N_nondim_pinn_derivatives = {}
-    pinn_dNdt_keys = []
+    N_pinn = {}
+    N_pinn_derivatives = {}
 
-    # Predicting values
-    if "X" in _out.order:
-        pinn_dNdt_keys.append("dXdt")
-        N_nondim_pinn["X"] = prediction[:, _out.X_index]
-        N_nondim_pinn_derivatives["dXdt"] = pinn.model.predict(
-            vals,
+    # Initialize with none
+    for N in ["X", "P", "S", "V"]:
+        N_pinn_derivatives[f"d{N}dt"] = None
+        N_pinn_derivatives[f"d{N}dt_2"] = None
+
+    for N in _out.order:
+        N_index = _out.get_index_for(N)
+        dNdtkey = f"d{N}dt"
+        dNdt_keys.append(dNdtkey)
+        dNdt_2key = f"d{N}dt_2"
+        dNdt_2_keys.append(dNdt_2key)
+        N_pinn[N] = prediction_y[:, N_index]
+        
+        N_pinn_derivatives[dNdtkey] = pinn.model.predict(
+            input_x_dde,
             operator=lambda x, y: dde.grad.jacobian(
                 y, x, i=_out.X_index, j=_in.t_index
             ),
         )
-    else:
-        N_nondim_pinn_derivatives["dXdt"] = None
-    if "P" in _out.order:
-        pinn_dNdt_keys.append("dPdt")
-        N_nondim_pinn["P"] = prediction[:, _out.P_index]
-        N_nondim_pinn_derivatives["dPdt"] = pinn.model.predict(
-            vals,
-            operator=lambda x, y: dde.grad.jacobian(
-                y, x, i=_out.P_index, j=_in.t_index
-            ),
-        )
-    else:
-        N_nondim_pinn_derivatives["dPdt"] = None
-    if "S" in _out.order:
-        pinn_dNdt_keys.append("dSdt")
-        N_nondim_pinn["S"] = prediction[:, _out.S_index]
-        N_nondim_pinn_derivatives["dSdt"] = pinn.model.predict(
-            vals,
-            operator=lambda x, y: dde.grad.jacobian(
-                y, x, i=_out.S_index, j=_in.t_index
-            ),
-        )
-    else:
-        N_nondim_pinn_derivatives["dSdt"] = None
-    if "V" in _out.order:
-        pinn_dNdt_keys.append("dVdt")
-        N_nondim_pinn["V"] = prediction[:, _out.V_index]
-        N_nondim_pinn_derivatives["dVdt"] = pinn.model.predict(
-            vals,
-            operator=lambda x, y: dde.grad.jacobian(
-                y, x, i=_out.V_index, j=_in.t_index
-            ),
-        )
-    else:
-        N_nondim_pinn_derivatives["dVdt"] = None
 
-    N_pinn = {
-        type: pinn.solver_params.non_dim_scaler.fromNondim(N_nondim_pinn, type)
-        for type in N_nondim_pinn
-    }
-    N_pinn_derivative = {}
-    for type in N_nondim_pinn_derivatives:
-        if N_nondim_pinn_derivatives[type] is not None:
-            N_pinn_derivative[type] = pinn.solver_params.non_dim_scaler.fromNondim(
-                N_nondim_pinn_derivatives, type
-            )
-        else:
-            N_pinn_derivative[type] = None
+        N_pinn_derivatives[dNdt_2key] = pinn.model.predict(
+            input_x_dde,
+            operator=lambda x, y: dde.grad.hessian(
+                y,
+                x,
+                component=N_index,
+                i=_in.t_index,
+                j=_in.t_index,
+                # Se ligar isso ele quebra:
+                # grad_y=N_pinn_derivatives[dNdtkey]
+            ),
+        )
+        
+
+    # Predicting values
+    # pinn_dNdt_keys = []
+    # if "X" in _out.order:
+    #     pinn_dNdt_keys.append("dXdt")
+    #     N_pinn["X"] = prediction[:, _out.X_index]
+    #     N_pinn_derivatives["dXdt"] = pinn.model.predict(
+    #         vals,
+    #         operator=lambda x, y: dde.grad.jacobian(
+    #             y, x, i=_out.X_index, j=_in.t_index
+    #         ),
+    #     )
+    #     N_pinn_derivatives["dXdt_2"] = pinn.model.predict(
+    #         vals,
+    #         operator=lambda x, y: dde.grad.hessian(
+    #             y, x, i=_out.X_index, j=_in.t_index, grad_y=
+    #         ),
+    #     )
+    # else:
+    #     N_pinn_derivatives["dXdt"] = None
+    # if "P" in _out.order:
+    #     pinn_dNdt_keys.append("dPdt")
+    #     N_pinn["P"] = prediction[:, _out.P_index]
+    #     N_pinn_derivatives["dPdt"] = pinn.model.predict(
+    #         vals,
+    #         operator=lambda x, y: dde.grad.jacobian(
+    #             y, x, i=_out.P_index, j=_in.t_index
+    #         ),
+    #     )
+    # else:
+    #     N_pinn_derivatives["dPdt"] = None
+    # if "S" in _out.order:
+    #     pinn_dNdt_keys.append("dSdt")
+    #     N_pinn["S"] = prediction[:, _out.S_index]
+    #     N_pinn_derivatives["dSdt"] = pinn.model.predict(
+    #         vals,
+    #         operator=lambda x, y: dde.grad.jacobian(
+    #             y, x, i=_out.S_index, j=_in.t_index
+    #         ),
+    #     )
+    # else:
+    #     N_pinn_derivatives["dSdt"] = None
+    # if "V" in _out.order:
+    #     pinn_dNdt_keys.append("dVdt")
+    #     N_pinn["V"] = prediction[:, _out.V_index]
+    #     N_pinn_derivatives["dVdt"] = pinn.model.predict(
+    #         vals,
+    #         operator=lambda x, y: dde.grad.jacobian(
+    #             y, x, i=_out.V_index, j=_in.t_index
+    #         ),
+    #     )
+    # else:
+    #     N_pinn_derivatives["dVdt"] = None
 
     path_to_file = os.path.join(folder_to_save, f"{pinn.model_name}.json")
     file = open(path_to_file, "a")
@@ -209,20 +242,30 @@ def save_each_pinn(
     items = {}
     titles = ["X", "P", "S", "V"]
     derivatives = {}
+    derivatives_2 = {}
     derivatives_titles = [
         "$dX/dt$",
         "$dP/dt$",
         "$dS/dt$",
         "$dV/dt$",
     ]
+    derivatives_2_titles = [
+        "$d^{2}X/dt^{2}$",
+        "$d^{2}P/dt^{2}$",
+        "$d^{2}S/dt^{2}$",
+        "$d^{2}V/dt^{2}$",
+    ]
     pinn_vals = [N_pinn[type] if type in _out.order else None for type in titles]
+
     pinn_nondim_vals = [
-        N_nondim_pinn[type] if type in _out.order else None for type in titles
+        pinn.solver_params.non_dim_scaler.toNondim(N_pinn, type)
+        if type in _out.order
+        else None
+        for type in titles
     ]
-    pinn_derivative_vals = [N_pinn_derivative[type] for type in dNdt_keys]
-    pinn_nondim_derivative_vals = [
-        N_nondim_pinn_derivatives[type] for type in dNdt_keys
-    ]
+
+    pinn_derivative_vals = [N_pinn_derivatives[type] for type in dNdt_keys]
+    pinn_derivative_2_vals = [N_pinn_derivatives[type] for type in dNdt_2_keys]
 
     num_vals = [
         num.X,  # if _out.X else None,
@@ -231,6 +274,7 @@ def save_each_pinn(
         num.V,  # if _out.V else None,
     ]
     num_dNdt = [num.dX_dt, num.dP_dt, num.dS_dt, num.dV_dt]
+    num_dNdt_2 = [num.dX_dt_2, num.dP_dt_2, num.dS_dt_2, num.dV_dt_2]
 
     num_vals_json = """{
             "t":[%s],
@@ -238,12 +282,12 @@ def save_each_pinn(
             "P":[%s],
             "S":[%s],
             "V":[%s],
-            "dXdt_nondim":[%s],
-            "dPdt_nondim":[%s],
-            "dSdt_nondim":[%s],
-            "dVdt_nondim":[%s]
+            "dXdt":[%s],
+            "dPdt":[%s],
+            "dSdt":[%s],
+            "dVdt":[%s]
             }""" % (
-        ",".join(np.char.mod("%f", np.array(t_num_normal))),
+        ",".join(np.char.mod("%f", np.array(num.t))),
         ",".join(np.char.mod("%f", np.array(num_vals[0]))),
         ",".join(np.char.mod("%f", np.array(num_vals[1]))),
         ",".join(np.char.mod("%f", np.array(num_vals[2]))),
@@ -284,14 +328,18 @@ def save_each_pinn(
     error_lines.append(f'"Total": {np.nansum(error_L)}')
 
     pinn_vals_json = """{
-        "t_nondim":[%s],
+        "t":[%s],
         "X":[%s],
         "P":[%s],
         "S":[%s],
-        "V":[%s]
+        "V":[%s],
+        "dXdt":[%s],
+        "dPdt":[%s],
+        "dSdt":[%s],
+        "dVdt":[%s]
         }""" % (
         # Values
-        ",".join(np.char.mod("%f", np.array(t_nondim))),
+        ",".join(np.char.mod("%f", np.array(num.t))),
         '"None"'
         if pinn_vals[0] is None
         else ",".join(np.char.mod("%f", np.array(pinn_vals[0]))),
@@ -304,60 +352,26 @@ def save_each_pinn(
         '"None"'
         if pinn_vals[3] is None
         else ",".join(np.char.mod("%f", np.array(pinn_vals[3]))),
-    )
-
-    pinn_nondim_vals_json = """{
-        "t_nondim":[%s],
-        "X":[%s],
-        "P":[%s],
-        "S":[%s],
-        "V":[%s],
-        "dXdt":[%s],
-        "dPdt":[%s],
-        "dSdt":[%s],
-        "dVdt":[%s]
-        }""" % (
-        ",".join(np.char.mod("%f", np.array(t_nondim))),
-        '"None"'
-        if pinn_nondim_vals[0] is None
-        else ",".join(np.char.mod("%f", np.array(pinn_nondim_vals[0]))),
-        '"None"'
-        if pinn_nondim_vals[1] is None
-        else ",".join(np.char.mod("%f", np.array(pinn_nondim_vals[1]))),
-        '"None"'
-        if pinn_nondim_vals[2] is None
-        else ",".join(np.char.mod("%f", np.array(pinn_nondim_vals[2]))),
-        '"None"'
-        if pinn_nondim_vals[3] is None
-        else ",".join(np.char.mod("%f", np.array(pinn_nondim_vals[3]))),
         # Derivatives
         '"None"'
-        if pinn_nondim_derivative_vals[0] is None
+        if pinn_derivative_vals[0] is None
         else ",".join(
-            np.char.mod(
-                "%f", np.array(N_nondim_pinn_derivatives["dXdt"][:, 0]).tolist()
-            )
+            np.char.mod("%f", np.array(N_pinn_derivatives["dXdt"][:, 0]).tolist())
         ),
         '"None"'
-        if pinn_nondim_derivative_vals[1] is None
+        if pinn_derivative_vals[1] is None
         else ",".join(
-            np.char.mod(
-                "%f", np.array(N_nondim_pinn_derivatives["dPdt"][:, 0]).tolist()
-            )
+            np.char.mod("%f", np.array(N_pinn_derivatives["dPdt"][:, 0]).tolist())
         ),
         '"None"'
-        if pinn_nondim_derivative_vals[2] is None
+        if pinn_derivative_vals[2] is None
         else ",".join(
-            np.char.mod(
-                "%f", np.array(N_nondim_pinn_derivatives["dSdt"][:, 0]).tolist()
-            )
+            np.char.mod("%f", np.array(N_pinn_derivatives["dSdt"][:, 0]).tolist())
         ),
         '"None"'
-        if pinn_nondim_derivative_vals[3] is None
+        if pinn_derivative_vals[3] is None
         else ",".join(
-            np.char.mod(
-                "%f", np.array(N_nondim_pinn_derivatives["dVdt"][:, 0]).tolist()
-            )
+            np.char.mod("%f", np.array(N_pinn_derivatives["dVdt"][:, 0]).tolist())
         ),
     )
 
@@ -379,17 +393,19 @@ def save_each_pinn(
                     ",\n",
                     '"pinn_vals":',
                     pinn_vals_json,
-                    ",\n",
-                    '"pinn_nondim_vals":',
-                    pinn_nondim_vals_json,
-                    "\n",
                     # Essa parte é confusa e não sai direito
                     ",\n",
                     '"pinn_epochs":' + f"{pinn.loss_history.steps}" ",\n",
-                    '"pinn_loss_story_test":'
+                    '"pinn_loss_history_test":'
+                    + f"{np.array(pinn.loss_history.loss_test).tolist()}"
+                    ",\n",
+                    '"pinn_loss_history_test_SUM":'
                     + f"{[loss for loss in np.array(np.sum(pinn.loss_history.loss_test, axis=1))]}"  # noqa: E501
                     ",\n",
-                    '"pinn_loss_story_train":'
+                    '"pinn_loss_history_train":'
+                    + f"{np.array(pinn.loss_history.loss_train).tolist()}"
+                    ",\n",
+                    '"pinn_loss_history_train_SUM":'
                     + f"{[loss for loss in np.sum(pinn.loss_history.loss_train, axis=1)]}"  # noqa: E501
                     ",\n",
                     '"total_training_time":' + f"{pinn.total_training_time}" "\n",
@@ -400,14 +416,10 @@ def save_each_pinn(
 
     units = ["g/L", "g/L", "g/L", "L"]
 
-    if len(_in.order)>=2:
-        pinn_time_normal = pinn.solver_params.non_dim_scaler.fromNondim(
-            {"t": pinn.train_state.X_test}, "t"
-        )[:, _in.t_index:_in.t_index+1]
+    if len(_in.order) >= 2:
+        pinn_time_normal = pinn.train_state.X_test[:, _in.t_index : _in.t_index + 1]
     else:
-        pinn_time_normal = pinn.solver_params.non_dim_scaler.fromNondim(
-            {"t": pinn.train_state.X_test}, "t"
-        )
+        pinn_time_normal = pinn.train_state.X_test
 
     for i in range(4):
         items[i + 1] = {
@@ -432,6 +444,18 @@ def save_each_pinn(
             ],
         }
 
+        derivatives_2[i + 1] = {
+            "title": derivatives_2_titles[i],
+            "y_label": None,
+            "cases": [
+                {
+                    "x": num.t,
+                    "y": num_dNdt_2[i],
+                    "color": pinn_colors[0],
+                    "l": "-",
+                },
+            ],
+        }
         if showPINN:
             # Isso é necessário para mostrar a legenda corretamente
             # Se não os valores de Y ficam como None e se não estiverem no último não
@@ -443,6 +467,7 @@ def save_each_pinn(
             else:
                 pinn_y = pinn_vals[i]
                 deriv_pinn_y = pinn_derivative_vals[i]
+                deriv_pinn_y_2 = pinn_derivative_2_vals[i]
                 pinn_x = num.t
             items[i + 1]["cases"].append(
                 # PINN
@@ -459,6 +484,15 @@ def save_each_pinn(
                 {
                     "x": pinn_x,
                     "y": deriv_pinn_y,
+                    "color": pinn_colors[1],
+                    "l": "-",
+                }
+            )
+
+            derivatives_2[i + 1]["cases"].append(
+                {
+                    "x": pinn_x,
+                    "y": deriv_pinn_y_2,
                     "color": pinn_colors[1],
                     "l": "-",
                 }
@@ -492,6 +526,21 @@ def save_each_pinn(
             )
 
             derivatives[i + 1]["cases"].append(
+                # Background
+                {
+                    "x": None,
+                    "y": None,
+                    "axvspan": {
+                        "from": np.min(pinn_time_normal),
+                        "to": np.max(pinn_time_normal),
+                        "edgecolor": "lightgrey",
+                        "facecolor": "white",
+                        "hatch": "++",
+                    },
+                },
+            )
+
+            derivatives_2[i + 1]["cases"].append(
                 # Background
                 {
                     "x": None,
@@ -540,7 +589,7 @@ def save_each_pinn(
     # --------------------
     if plot_derivatives:
         plot_comparer_multiple_grid(
-            suptitle=f"Nondim derivatives ({pinn.model_name})",
+            suptitle=f"Derivatives ({pinn.model_name})",
             labels=labels,
             figsize=(8, 6),
             gridspec_kw={"hspace": 0.042, "wspace": 0.03},
@@ -558,9 +607,29 @@ def save_each_pinn(
         )
         pass
 
-    # -----------------
-    # LOSS
-    # -----------------
+        if plot_derivatives_2:
+            plot_comparer_multiple_grid(
+                suptitle=f"2 order derivatives ({pinn.model_name})",
+                labels=labels,
+                figsize=(8, 6),
+                gridspec_kw={"hspace": 0.042, "wspace": 0.03},
+                yscale="linear",
+                sharey=False,
+                nrows=2,
+                ncols=2,
+                items=derivatives_2,
+                title_for_each=True,
+                supxlabel="t (h)",
+                folder_to_save=folder_to_save,
+                filename=f"DERIV2-{pinn.model_name}.png" if folder_to_save else None,
+                showPlot=False if folder_to_save else True,
+                legend_bbox_to_anchor=(0.5, -0.1),
+            )
+        pass
+
+    # ---------------------
+    # TOTAL LOSS
+    # ---------------------
     fig = plt.figure()
     plt.plot(
         pinn.loss_history.steps,
@@ -583,18 +652,86 @@ def save_each_pinn(
     plt.legend()
     if folder_to_save:
         file_path = os.path.join(folder_to_save, f"LOSS-{pinn.model_name}.png")
-    # Save the figure
-    # plt.savefig(file_path)
     plt.savefig(file_path, bbox_inches="tight", dpi=600)
     plt.close(fig)
+
+    # ---------------------
+    # INDIVIDUAL LOSSES
+    # ---------------------
+    if plot_individual_losses:
+        # TRAIN
+        fig = plt.figure()
+        for N in _out.order:
+            index = _out.get_index_for(N)
+            if index is not None:
+                plt.plot(
+                    pinn.loss_history.steps,
+                    np.array(pinn.loss_history.loss_train)[:, index : index + 1],
+                    linestyle="solid",
+                    label=N,
+                )
+        plt.yscale("log")
+        plt.xlabel("i")
+        plt.ylabel("Loss")
+        plt.title("LoT x i")
+        plt.legend()
+        if folder_to_save:
+            file_path = os.path.join(folder_to_save, f"LoT-{pinn.model_name}.png")
+        plt.savefig(file_path, bbox_inches="tight", dpi=180)
+        plt.close(fig)
+
+        # TEST/VALIDATION LOSS
+        fig = plt.figure()
+        for N in _out.order:
+            index = _out.get_index_for(N)
+            if index is not None:
+                plt.plot(
+                    pinn.loss_history.steps,
+                    np.array(pinn.loss_history.loss_test)[:, index : index + 1],
+                    linestyle="solid",
+                    label=N,
+                )
+        plt.yscale("log")
+        plt.xlabel("i")
+        plt.ylabel("Loss")
+        plt.title("LoV x i")
+        plt.legend()
+        if folder_to_save:
+            file_path = os.path.join(folder_to_save, f"LoV-{pinn.model_name}.png")
+        plt.savefig(file_path, bbox_inches="tight", dpi=180)
+        plt.close(fig)
+
+        # LoV of boundary conditions
+        fig = plt.figure()
+        for N in _out.order:
+            # As condições de contorno vem no final, e são a mesma qtde das
+            # saídas. Então se vão de 0 a 4, bcs e ics são de 4-8
+            index = _out.get_index_for(N) + len(_out.order)
+            if index is not None:
+                index + len(_out.order)
+                plt.plot(
+                    pinn.loss_history.steps,
+                    np.array(pinn.loss_history.loss_test)[:, index : index + 1],
+                    linestyle="solid",
+                    label=f"${N}_0$",
+                )
+        plt.yscale("log")
+        plt.xlabel("i")
+        plt.ylabel("Loss")
+        plt.title("IC LoV x i")
+        plt.legend()
+        if folder_to_save:
+            file_path = os.path.join(folder_to_save, f"LoV_IC-{pinn.model_name}.png")
+        plt.savefig(file_path, bbox_inches="tight", dpi=180)
+        plt.close(fig)
 
     # ------------------------
     # POINTS USED IN SIMULATION
     if create_time_points_plot:
         fig = plt.figure()
         plt.plot(
-            t_num_normal,
-            t_num_normal,
+            num.t,
+            num.t,
             linestyle="solid",
             linewidth=7,
             color=pinn_colors[-5],
