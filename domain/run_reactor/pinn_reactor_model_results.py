@@ -11,11 +11,6 @@ class PINNReactorModelResults:
         process_params=None,
         initial_state=None,
         f_out_value_calc=None,
-        t=None,
-        X=None,
-        P=None,
-        S=None,
-        V=None,
         best_step=None,
         best_loss_test=None,
         best_loss_train=None,
@@ -36,12 +31,6 @@ class PINNReactorModelResults:
         self.process_params = process_params
         self.initial_state = initial_state
         self.f_out_value_calc = f_out_value_calc
-
-        self.t = t
-        self.X = X
-        self.P = P
-        self.S = S
-        self.V = V
 
         self.best_step = best_step
         self.best_loss_test = best_loss_test

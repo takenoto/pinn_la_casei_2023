@@ -7,6 +7,7 @@ import deepxde as dde
 from timeit import default_timer as timer
 
 import numpy as np
+import tensorflow as tf
 
 # Local imports
 from domain.params.solver_params import SolverParams
@@ -54,14 +55,10 @@ def run_reactor(
     # como todos são obrigatórios, basta fazer o contrário dos params
     # o que não tiver lá vai aqui
     time_domain = dde.geometry.TimeDomain(
-        scaler.toNondim(
-            {"t": solver_params.train_input_range[0][0] * process_params.t_final}, "t"
-        ),
-        scaler.toNondim(
-            {"t": solver_params.train_input_range[0][-1] * process_params.t_final}, "t"
-        ),
+        solver_params.train_input_range[0][0] * process_params.t_final,
+        solver_params.train_input_range[0][-1] * process_params.t_final,
     )
-    
+
     # ref:
     # https://deepxde.readthedocs.io/en/latest/demos/pinn_forward/burgers.html?highlight=geometry
     # ref2:
@@ -83,15 +80,12 @@ def run_reactor(
         def getNondimBoundary(N):
             "N is the variable (X, P, S, V, etc)"
             minVal = scaler.toNondim(
-                {N: 0
-                 },
+                {N: 0},
                 N,
             )
             maxVal = (
                 scaler.toNondim(
-                    {
-                        N: XPSVboundsMultipliers[N]
-                    },
+                    {N: XPSVboundsMultipliers[N]},
                     N,
                 ),
             )
@@ -133,34 +127,31 @@ def run_reactor(
         "V": initial_state.volume[0],
     }
 
-    # Initial conditions (XPSV), without dimension
-    N0_nondim = {type: scaler.toNondim(N0_dim, type) for type in N0_dim}
-
     ## X
     icX = dde.icbc.IC(
         geom,
-        lambda x: N0_nondim["X"],
+        lambda x: N0_dim["X"],
         boundary,
         component=outputSimulationType.X_index,  # 0
     )
     ## P
     icP = dde.icbc.IC(
         geom,
-        lambda x: N0_nondim["P"],
+        lambda x: N0_dim["P"],
         boundary,
         component=outputSimulationType.P_index,  # 1,
     )
     ## S
     icS = dde.icbc.IC(
         geom,
-        lambda x: N0_nondim["S"],
+        lambda x: N0_dim["S"],
         boundary,
         component=outputSimulationType.S_index,  # 2,
     )
     ## Volume
     icV = dde.icbc.IC(
         geom,
-        lambda x: N0_nondim["V"],
+        lambda x: N0_dim["V"],
         boundary,
         component=outputSimulationType.V_index,  # 3,
     )
@@ -182,7 +173,7 @@ def run_reactor(
         ics.append(icV)
 
     # Setting the data for the NN
-    
+
     if geom == time_domain:
         data = dde.data.PDE(
             geometry=geom,
@@ -204,11 +195,45 @@ def run_reactor(
             num_test=solver_params.num_test,
             train_distribution=solver_params.train_distribution,
         )
-
+    # ---------------------------------
     # Creating the model and the net
+    # ---------------------------------
     net = dde.nn.FNN(
         solver_params.layer_size, solver_params.activation, solver_params.initializer
     )
+    
+    #
+    # TRANSFORM --------------------
+    #
+    # INPUT
+    def input_transform(x):
+        transformed_inputs = []
+        for N in inputSimulationType.order:
+            N_input_index = inputSimulationType.get_index_for(N)
+            if N_input_index is not None:
+                N_dim = x[:, N_input_index : N_input_index + 1]
+                N_val = solver_params.non_dim_scaler.toNondim({N: N_dim}, N)
+                transformed_inputs.append(N_val)
+
+        return tf.concat(transformed_inputs, axis=1)
+    net.apply_feature_transform(input_transform)
+
+    # OUTPUT
+    def output_transform(x, y):
+        transformed_outputs = []
+        for N in outputSimulationType.order:
+            N_output_index = outputSimulationType.get_index_for(N)
+            # If it is not None, then it is valid
+            # Era aqui o problema. Se for if is ignora o 0 também, não só nones
+            # !!!!!!!!! que comportamento questionvel pelo amor viu.
+            if N_output_index is not None:
+                N_nondim = y[:, N_output_index : N_output_index + 1]
+                N_val = solver_params.non_dim_scaler.fromNondim({N: N_nondim}, N)
+                transformed_outputs.append(N_val)
+        # TODO talvez aqui eu faça algo pra transformar a entrada e ficar tudo bem...
+        return tf.concat(transformed_outputs, axis=1)
+    net.apply_output_transform(output_transform)
+
     model = dde.Model(data, net)
 
     # Loss Weights
@@ -333,23 +358,6 @@ def run_reactor(
         process_params=process_params,
         initial_state=initial_state,
         f_out_value_calc=f_out_value_calc,
-        t=solver_params.non_dim_scaler.t_not_tensor * train_state.X_test,
-        X=solver_params.non_dim_scaler.X_not_tensor
-        * train_state.best_y[:, outputSimulationType.X_index]
-        if outputSimulationType.X
-        else None,
-        P=solver_params.non_dim_scaler.P_not_tensor
-        * train_state.best_y[:, outputSimulationType.P_index]
-        if outputSimulationType.P
-        else None,
-        S=solver_params.non_dim_scaler.S_not_tensor
-        * train_state.best_y[:, outputSimulationType.S_index]
-        if outputSimulationType.S
-        else None,
-        V=solver_params.non_dim_scaler.V_not_tensor
-        * train_state.best_y[:, outputSimulationType.V_index]
-        if outputSimulationType.V
-        else None,
         best_step=train_state.best_step,
         best_loss_test=train_state.best_loss_test,
         best_loss_train=train_state.best_loss_train,
