@@ -28,11 +28,17 @@
 TODOS: t2-f1d10 mas na rede 30NL, aí comparo com a 20...
 - Eu acho que aquele teste que tinha ficado bom foi praquele reator que a variação de volume era quase nada e que eu tava tentando ver a partir de quanto a simulação desandava e beirava o impossível de treinar.
 TODO: testa alguma rede maior tipo 80x5, aí nem precisa fazer micro variações de outras coisas. Só pra ver se sai algo que preste mesmo.
+TODO faça novos com o reator de 4.5L pra 5, não lembro qual é ou se era 4 pra 5 com 1L/h
 
 ### 2023-10-07
 
 2023-10-06 @ 6:47 PM ué rodei e pareceram OK no batelada até com a nondim to ficando é doido ????
-
+TODOS: 
+1) ORGANIZA. TEM COISA DEMAIS, MUITO LERO LERO. BOTA NO ARQUIVO DE TODOS MESMO...
+2) Faz um teste tirando o volume da equação de XPS. Ele consegue dar um output OK? Claro que vai estar tecnicamente errado, mas é só pra saber se ele sai um volume variando e o xps do batelada simultaneamente
+4) Bota uma variação de volume grande 3 executa num intervalo minúsculo tipo 0-1h que pareça o batelada. Preciso ver se errei no equacionamento do balanço de volume pelamor
+5) Bota artigos numa pasta do zotero pra ler
+3) Comece a preparar psicologicamente para ter como entrada todas as variáveis (Xo, Po, Vmax, etc). O padrão de saída do reator a gente pode manter daí não precisa de eq. saída, só da vazão de entrada mesmo.
 TODO lembre que ainda ficou tudo pelo meio de ver o pq a adimensionalização de variáveis esculhambava valores e a do tempo não dá em nada. Isso é a prioridade pra que eu possa fazer novos testes.
 Comece 1) usando a loss v5 pra ver se ainda ficam resultados nada a ver quando usa nondim que não a do tempo. Preciso encontrar o erro zzzz.
 Agora tenho que ver as derivadas 1ª que não fazem nenhum sentido. As 2 tão batendo ok.
@@ -61,11 +67,9 @@ Ok testei pro batch a 0.35 do tempo e deu certo nos 3. tem nada errado não zzzz
   - Corrigido bug que fazia todas as derivadas segundas pra plotagem usando X e não a respectiva variável de saída no index.
   - Pronto, deu tudo certo. Tá validado e funcionando pro batelada. Agora posso melhorar a lossv7 sabendo o range de valores com que to trabalhando.
 
-# TODO se ficar dando trabalho talvez eu possa converter o projeto e aí faço tudo batelada, mas variando os parâmetros. Que tal? Tipo os de entrada, V0 e afins
-TODO testa com a lossv5, ela não tem esse lero lero do jacobiano um dentor do outro
-# TODO checar o json de saída novamente, mudei muita coisa...
 
 2) testa com o batelada usando uma adimensionalização bem doida pra ver se sai certo.
+Deu certo, ok!
 
 1.1) Acho que eu vou ter que fazer também o gráfico de derivada segunda
   - Então seria bom já botar isso no Euler e no pinn_saver(img e json MDS)
@@ -77,18 +81,9 @@ TODO testa com a lossv5, ela não tem esse lero lero do jacobiano um dentor do o
 2.2) Novo teste: variando o volume, mas Cin e Co X != 0 e o resto igual a zero. Quero ver se mantém conc. constante.
 - 
   - Roda uma batelada pra comparar
-2) Faz um teste tirando o volume da equação de XPS. Ele consegue dar um output OK? Claro que vai estar tecnicamente errado, mas é só pra saber se ele sai um volume variando e o xps do batelada simultaneamente
-4) Bota uma variação de volume grande 3 executa num intervalo minúsculo tipo 0-1h que pareça o batelada. Preciso ver se errei no equacionamento do balanço de volume pelamor
-5) Bota artigos numa pasta do zotero pra ler
-
-1) Veja os todos do dia anterior e passe pra cá, SÓ DEPOIS FAÇA ALGO
-2) Plote também as loss individuais de cada eixo (x, p, s, v) numere a saída simplesmente como 1,2,3, etc e faça a loss. vai me dar uma noção. Algumas dessas loss tão travadas em loss_x = 2e-2 e isso segura todo mundo.. Troquei o signal multiplier de /2 pra *5 e parece ter melhorado um pouco. *100 parece ter pioraado. To fazendo é nada. Preciso dos gráficos zzzz.
-2.1) !!!! Por padrão todas as predições "nascem" perto de zero. Então o treino tem que ir tirando elas dali. Talvez se minha adimensionalização levar o "0" pra outro lugar ela resolva. Por exemplo, 0 da rede vai gerar -5 ou +5. Daí faço a nondim com base nisso. Então adimensionalizar de forma que uma entrada 0 gere um numero maior que zero, tipo 10. Ficaria tipo 0-5 => 1~6 por exemplo
-3) Comece a preparar psicologicamente para ter como entrada todas as variáveis (Xo, Po, Vmax, etc). O padrão de saída do reator a gente pode manter daí não precisa de eq. saída, só da vazão de entrada mesmo.
 
 ### 2023-10-05
 
-TODO faça novos com o reator de 4.5L pra 5, não lembro qual é ou se era 4 pra 5 com 1L/h
 *Outra coisa, me pareceu novamente que não é falta de complexidade da rede não... Algumas 8x ficaram melhores. E redes menores devem ser mais fáceis de treinar então é melhor eu realmente ir por elas e fazer só 1 ou 2 grandes pra mostrar que meramente aumentar NL ou HL não resolveria o problema. É paia mas minha conclusão pode ser sim que uma variação grande de volume não pôde ser modelada, e aí mostro esse reator simplezinho dando certo.
 
 - Parece que desanda quando aumenta o tempo total, mesmo sem nondim de tempo. Não entendi o porquê. Mesmo que use o treinamento só num pedaço equivalente ao original. Por exemplo, a rede toda treinada de 0-15pa (~11h) em 72h pro CR que a entrada é praticamente zero fica bem ruim, mas rodar ele todo em 12h já fica bom. Sem sentido total.
