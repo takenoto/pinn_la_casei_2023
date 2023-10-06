@@ -32,7 +32,9 @@ TODO: testa alguma rede maior tipo 80x5, aí nem precisa fazer micro variações
 ### 2023-10-06
 
 1) Veja os todos do dia anterior e passe pra cá, SÓ DEPOIS FAÇA ALGO
-2) Comece a preparar para ter como entrada todas as variáveis (Xo, Po, Vmax, etc). O padrão de saída do reator a gente pode manter daí não precisa de eq. saída, só da vazão de entrada mesmo.
+2) Plote também as loss individuais de cada eixo (x, p, s, v) numere a saída simplesmente como 1,2,3, etc e faça a loss. vai me dar uma noção. Algumas dessas loss tão travadas em loss_x = 2e-2 e isso segura todo mundo.. Troquei o signal multiplier de /2 pra *5 e parece ter melhorado um pouco. *100 parece ter pioraado. To fazendo é nada. Preciso dos gráficos zzzz.
+2.1) !!!! Por padrão todas as predições "nascem" perto de zero. Então o treino tem que ir tirando elas dali. Talvez se minha adimensionalização levar o "0" pra outro lugar ela resolva. Por exemplo, 0 da rede vai gerar -5 ou +5. Daí faço a nondim com base nisso. Então adimensionalizar de forma que uma entrada 0 gere um numero maior que zero, tipo 10. Ficaria tipo 0-5 => 1~6 por exemplo
+3) Comece a preparar psicologicamente para ter como entrada todas as variáveis (Xo, Po, Vmax, etc). O padrão de saída do reator a gente pode manter daí não precisa de eq. saída, só da vazão de entrada mesmo.
 
 ### 2023-10-05
 
@@ -68,6 +70,12 @@ TODO faça novos com o reator de 4.5L pra 5, não lembro qual é ou se era 4 pra
 - Agora sim testar e fazer a loss v7 no reator batelada mesmo pra saber se to fazendo direito
   - Deu certo! Batch ficou OK pra loss com a d2 e pareceu otimizar em menos epochs. Mas falta testar melhor pq foi um único teste e a 0-15pa de +/-12h né...
 
+- Rodei pro batch a nova loss em pontos 64/64/64 e num pedacinho do batch. Até pra 6 neurônios x2 e x3 ficou bom!!! Isso já pode validar essa função loss nova viu
+- Achei um artigo que escreve muito bem e muito resumido, num estilo que posso adotar pra mim. Sobre gPINN.
+- O treino com essa nova loss parece ser mais estável, tem muito menos oscilações na loss.
+
+TODO faz pro CR esses testes rápidos. Talvez me dê alguma pista.
+TODO faça a lista que tá no celular. Novo gráfico, de derivadas segundas numéricas vs do PINN e botar no json.
 
 ### 2023-10-04
 

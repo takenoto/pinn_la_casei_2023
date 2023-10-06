@@ -13,15 +13,15 @@ from domain.params.process_params import ProcessParams
 def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None):
     dictionary = {}
     # --------- LOSS FUNCTION -----------
-    loss_version = 5  # 5  # 6 5 4 3 2
+    loss_version = 7 # 5 # 7 6 5 4 3 2
 
     output_variables = ["X", "P", "S", "V"]  # "V" # "X", "P", "S"
     # output_variables = ["X", "P", "S"]
     # output_variables = ["V"]
     input_variables = ["t"]
 
-    output_variables = ["X", "P", "S"]
-    input_variables = ["t", "V"]
+    output_variables = ["X", "P", "S", "V"]
+    input_variables = ["t"]
 
     # -------------------------------
     # DATA SAMPLING
@@ -39,8 +39,8 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
 
     train_input_range_list = [
         # "0-10pa",
-        # "0-15pa",
-        "0-25pa",
+        "0-15pa",
+        # "0-25pa",
         # "0-35pa",
         # "0-60pa",
         # "0-90pa",
@@ -50,11 +50,16 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
 
     N_POINTS = [
         # initial points, domain points, test points
+        # TESTANDO:
+        # (64, 64, 64),
+        (8, 24, 24),
+        #
+        # PADRÃO:
         # (16, 32, 32),
         #
         # ---------------
         # Ppontos que avaliam se compensa ou não aumentar npoints
-        (16, 32, 32),
+        # (16, 32, 32),
         # (100, 32, 32),
         # (16, 300, 300),
         # (300, 300, 300),
@@ -70,8 +75,15 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
 
     # -------------------------------
     # ---------------- NN ------------------
-    activation_functions = ["tanh"]  #'tanh' 'swish' 'selu' 'relu'
+    #'tanh' 'swish' 'selu' 'relu'
+    activation_functions = [
+        "tanh",
+        # "swish",
+        # "selu",
+        # "relu",
+    ]
     mini_batch = [None]  # [None] [20] [40] [80] [2]
+    # O padrão era Glorot Uniform
     initializer = "Glorot uniform"  #'Glorot normal' #'Glorot uniform' #'Orthogonal'
     train_distribution_list = ["Hammersley"]  # "LHS" "Hammersley" "uniform"
     # GLOROT UNIFORM # Era Glorot Normal nos testes sem swish
@@ -94,7 +106,7 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
         # "E-4_4",  # = 4e-4
         # "E-4_3",  # = 3e-4
         # "E-4_2",  # = 2e-4
-        # "E-4_1",  # = 1e-4
+        "E-4_1",  # = 1e-4
         # "E-5_9",  # = 9e-5
         # "E-5_8",  # = 8e-5
         # "E-5_7",  # = 7e-5
@@ -106,43 +118,47 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
         # "E-5_1",  # = 1e-5
         # "E-6_5",  # = 5e-6
         # "E-6_1",  # = 1e-6
+        # "E-7_1", # = 1e-7
     ]
 
     lbfgs_pre = 0  # 0 1
-    lbfgs_post = 1  # 0 1
+    lbfgs_post = 0  # 0 1
     ADAM_EPOCHS_list = [
         # "100",
         # "1k",
-        "10k",
+        # "10k",
         # "25k",
         # "30k",
         # "35k",
-        # "45k",
+        "45k",
         # "60k",
         # "90k",
-        # "120k"
+        # "120k",
+        # "150k",
     ]
     SGD_EPOCHS = 0  # 1000
     neurons = [
         # 2,
         # 4,
         # 6,
-        8,
+        # 8,
         10,
-        20,
-        30,
-        45,
-        60,
-        80,
+        # 20,
+        # 30,
+        # 32,
+        # 45,
+        # 60,
+        # 80,
         # 100,
+        # 160
     ]
     layers = [
         # 1,
-        2,
+        # 2,
         3,
-        4,
-        5,
-        6,
+        # 4,
+        # 5,
+        # 6,
         # 7,
         # 8
     ]
@@ -156,30 +172,20 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
         # CURRENT ITERATION
         #
         # 1º Noção geral do impacto de t crescendo e diminuindo
-        # ("None", "t1", "1"),
-        # ("None", "t2", "1"),
-        # ("None", "t2x5", "1"),
-        # ("None", "t2x10", "1"),
-        # ("None", "t2x100", "1"),
-        # ("None", "t2d5", "1"),
-        # ("None", "t2d10", "1"),
-        # ("None", "t2d100", "1"),
-        # 2º tempos combinados com nondim das saídas
-        # TODO VEJA OS TEMPOS QUE AJUDARAM MAIS E USE ELES COM OS TIPOS DE NONDIM
-        # PRA VER OS ÓTIMOS
-        # ("Lin", "t2d10", "F1"),
+        ("Lin", "t1", "1"),
+        # ("Lin", "t1", "F1d10"),
+        # ("Lin", "t1", "F1x10"),
+        ("Lin", "t2", "F1d10"),
+        # ("Lin", "t1", "F1d100"),
+        # ("Lin", "t1", "F1x10"),
+        # ("Lin", "t6", "F1d10"),
+        ("Lin", "t7", "F1d10"),
         # ("Lin", "t2", "F1d10"),
-        ("Lin", "t2d10", "F1d10"),
-        # TODO eu acho que é melhora fazer um t2x10 F1 e depois
-        # já parte pra igual ao que deu certo
-        # ("Lin", "t2d10", "F1d5"),
         # ("Lin", "t2d10", "F1d10"),
-        # ("Lin", "t2d10", "F1d100"),
+        # ("Lin", "t2x10", "F1d10"),
         # ("Lin", "t2", "F1"),
-        # ("Lin", "t2", "F1d5"),
-        # ("Lin", "t2", "F1d10"),
-        # ("Lin", "t2", "F1d100"),
-        #
+        # ("Lin", "t2d10", "F1"),
+        # ("Lin", "t2x10", "F1"),
         # -----------------------------------
         #
         # DEFAULT VALUES:
@@ -281,13 +287,13 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
     for func in activation_functions:
         for train_input_range_key in train_input_range_list:
             for adam_str in ADAM_EPOCHS_list:
-                for LR_str in LR_list:
-                    for train_distribution in train_distribution_list:
-                        for n_points in N_POINTS:
-                            for NL in neurons:
-                                for HL in layers:
-                                    for mb in mini_batch:
-                                        for nd in NDList:
+                for train_distribution in train_distribution_list:
+                    for n_points in N_POINTS:
+                        for NL in neurons:
+                            for HL in layers:
+                                for mb in mini_batch:
+                                    for nd in NDList:
+                                        for LR_str in LR_list:
                                             n_init, n_domain, n_test = n_points
                                             train_input_range = train_input_range_dict[
                                                 train_input_range_key

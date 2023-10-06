@@ -90,15 +90,19 @@ def lossV7(o, args):
 
     #
     # ----------------------
-    # calc loss second derivative signal
+    # calc loss second derivative
     # ----------------------
 
     # TODO faz direto a diferença ou faz pelo sinal?
     # Pode ficar um número muito minusculinho...
     # Talvez o sinal x 100 x a diferença??
     sign_d2_pred = tf.math.sign(dNdt_2)
-    # FIXME não sei se esse jacobiano do jacobiano tem cabimento não
     dNdt_2_calc = dde.grad.jacobian(dNdt, nn_input, j=inputSimulationType.t_index)
+    loss_d2 = tf.abs(dNdt_2 - dNdt_2_calc)*1e12
+    
+    # ----------------------
+    # calc loss second derivative signal
+    # ----------------------
     sign_d2_calc = tf.cast(tf.math.sign(dNdt_2_calc), dtype=float32)
     loss_multiplier = tf.abs(sign_d2_pred - sign_d2_calc)
 
@@ -106,7 +110,8 @@ def lossV7(o, args):
     # ----------------------
     # calc loss
     # ----------------------
-    loss = (1 + loss_multiplier / 10) * (loss_derivative_abs + loss_minmax)
+    # loss = (1 + loss_multiplier/2) * (loss_derivative_abs + loss_minmax + loss_d2)
+    loss = (1 + loss_multiplier) * (loss_derivative_abs + loss_minmax + loss_d2)
     # ----------------------
 
     return loss
