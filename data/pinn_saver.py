@@ -141,7 +141,7 @@ def save_each_pinn(
         N_pinn_derivatives[dNdtkey] = pinn.model.predict(
             input_x_dde,
             operator=lambda x, y: dde.grad.jacobian(
-                y, x, i=_out.X_index, j=_in.t_index
+                y, x, i=N_index, j=_in.t_index
             ),
         )
 
@@ -157,59 +157,6 @@ def save_each_pinn(
                 # grad_y=N_pinn_derivatives[dNdtkey]
             ),
         )
-
-    # Predicting values
-    # pinn_dNdt_keys = []
-    # if "X" in _out.order:
-    #     pinn_dNdt_keys.append("dXdt")
-    #     N_pinn["X"] = prediction[:, _out.X_index]
-    #     N_pinn_derivatives["dXdt"] = pinn.model.predict(
-    #         vals,
-    #         operator=lambda x, y: dde.grad.jacobian(
-    #             y, x, i=_out.X_index, j=_in.t_index
-    #         ),
-    #     )
-    #     N_pinn_derivatives["dXdt_2"] = pinn.model.predict(
-    #         vals,
-    #         operator=lambda x, y: dde.grad.hessian(
-    #             y, x, i=_out.X_index, j=_in.t_index, grad_y=
-    #         ),
-    #     )
-    # else:
-    #     N_pinn_derivatives["dXdt"] = None
-    # if "P" in _out.order:
-    #     pinn_dNdt_keys.append("dPdt")
-    #     N_pinn["P"] = prediction[:, _out.P_index]
-    #     N_pinn_derivatives["dPdt"] = pinn.model.predict(
-    #         vals,
-    #         operator=lambda x, y: dde.grad.jacobian(
-    #             y, x, i=_out.P_index, j=_in.t_index
-    #         ),
-    #     )
-    # else:
-    #     N_pinn_derivatives["dPdt"] = None
-    # if "S" in _out.order:
-    #     pinn_dNdt_keys.append("dSdt")
-    #     N_pinn["S"] = prediction[:, _out.S_index]
-    #     N_pinn_derivatives["dSdt"] = pinn.model.predict(
-    #         vals,
-    #         operator=lambda x, y: dde.grad.jacobian(
-    #             y, x, i=_out.S_index, j=_in.t_index
-    #         ),
-    #     )
-    # else:
-    #     N_pinn_derivatives["dSdt"] = None
-    # if "V" in _out.order:
-    #     pinn_dNdt_keys.append("dVdt")
-    #     N_pinn["V"] = prediction[:, _out.V_index]
-    #     N_pinn_derivatives["dVdt"] = pinn.model.predict(
-    #         vals,
-    #         operator=lambda x, y: dde.grad.jacobian(
-    #             y, x, i=_out.V_index, j=_in.t_index
-    #         ),
-    #     )
-    # else:
-    #     N_pinn_derivatives["dVdt"] = None
 
     path_to_file = os.path.join(folder_to_save, f"{pinn.model_name}.json")
     file = open(path_to_file, "a")
@@ -663,7 +610,7 @@ def save_each_pinn(
     plt.plot(
         pinn.loss_history.steps,
         np.sum(pinn.loss_history.loss_test, axis=1),
-        linestyle="solid",
+        linestyle=":",
         color=pinn_colors[-1],
         label="LoV",
     )
