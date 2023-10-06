@@ -29,7 +29,57 @@ TODOS: t2-f1d10 mas na rede 30NL, aí comparo com a 20...
 - Eu acho que aquele teste que tinha ficado bom foi praquele reator que a variação de volume era quase nada e que eu tava tentando ver a partir de quanto a simulação desandava e beirava o impossível de treinar.
 TODO: testa alguma rede maior tipo 80x5, aí nem precisa fazer micro variações de outras coisas. Só pra ver se sai algo que preste mesmo.
 
+### 2023-10-07
+
+2023-10-06 @ 6:47 PM ué rodei e pareceram OK no batelada até com a nondim to ficando é doido ????
+
+TODO lembre que ainda ficou tudo pelo meio de ver o pq a adimensionalização de variáveis esculhambava valores e a do tempo não dá em nada. Isso é a prioridade pra que eu possa fazer novos testes.
+Comece 1) usando a loss v5 pra ver se ainda ficam resultados nada a ver quando usa nondim que não a do tempo. Preciso encontrar o erro zzzz.
+Agora tenho que ver as derivadas 1ª que não fazem nenhum sentido. As 2 tão batendo ok.
+Ok testei pro batch a 0.35 do tempo e deu certo nos 3. tem nada errado não zzzz.
+2) fuxicando loss v7. Pela ordem, de grandeza já sei que a derivada 2 não é tão baixinha a ponto de precisar daquele super acréscimo gigantesco de 1e12. Começa por aí.
+
 ### 2023-10-06
+
+1) aplica tonondim e fromnondim na própria rede, como transformação de entrada e saída, pra não precisar ficar fazendo isso toda hora, só faz em um único lugar
+  - Arquivo run_reactor => aplicar transformação output e input
+  1.1) Output transform
+    - 1.1.1) Faz a transformacao pro adimensional
+    - 1.1.2) Editar no próprio ODEPreparer, não será mais necessária a etapa de desadimensionalização
+      - Sem nondim deu o valor certo, tá OK como esperado (todos os scalers =1)
+      - Com nondim tb mds. To começando a suspeitar que essa transform é apenas no treino, não na rede em si. Isso faz sentido??
+      - Se bem que eu não tirei o to e from, então ele converte 2x e desconverte 2x, e volta pro estado inicial zzzz
+      - Eu acho que vou ter que criar mais itens no from e to do nondimscaler: ddt1 e ddt2 (derivadas de 1ª e 2ª ordem em relação ao tempo, onde somente o tempo está adimensionalizado, mas as variáveis em si não.)
+      - 1º vou testar usando o from no t, que é a alternativa mais fácil e ver se dá bode.
+      - testar de novo sem nondim OK! Se for sem nondim do tempo. Com o tempo esculhamba tudo. O que fazer?
+        - F1d10 com t1 também se esculhamba então não é bem por aí.
+        - Enquanto isso t2-1 funcionou bem, então preciso rever é a adimensionalização das variáveis !!!!!!
+        - Ok, o problema NÃO é na nd do tempo porque só acontece quando usa a de XPSV ou ambas. Se for só tempo (t2, t6 ou t7) não dá errado.
+2) pinn_saver
+  - Adição de dois novos plots: LoT e LoV das variáveis de saída
+  - Novo plot: LoV condições de contorno
+  - Corrigido bug que fazia todas as derivadas segundas pra plotagem usando X e não a respectiva variável de saída no index.
+  - Pronto, deu tudo certo. Tá validado e funcionando pro batelada. Agora posso melhorar a lossv7 sabendo o range de valores com que to trabalhando.
+
+# TODO se ficar dando trabalho talvez eu possa converter o projeto e aí faço tudo batelada, mas variando os parâmetros. Que tal? Tipo os de entrada, V0 e afins
+TODO testa com a lossv5, ela não tem esse lero lero do jacobiano um dentor do outro
+# TODO checar o json de saída novamente, mudei muita coisa...
+
+2) testa com o batelada usando uma adimensionalização bem doida pra ver se sai certo.
+
+1.1) Acho que eu vou ter que fazer também o gráfico de derivada segunda
+  - Então seria bom já botar isso no Euler e no pinn_saver(img e json MDS)
+  - Euler retornar derivadas segundas
+  - Os métodos de adimensionalização devem suportar até a da derivada 2ª ????
+  - Pinn saver botar no json
+  - Pinn saver processar e salvar imagem
+1.2) Bota uma imagem com a loss de cada saída (XPSV quando houver) ao longo do tempo. Assim eu vejo quem tá mais desviando zzzz... e uma img separada pras condições iniciais. Então são +3 imgs.
+2.2) Novo teste: variando o volume, mas Cin e Co X != 0 e o resto igual a zero. Quero ver se mantém conc. constante.
+- 
+  - Roda uma batelada pra comparar
+2) Faz um teste tirando o volume da equação de XPS. Ele consegue dar um output OK? Claro que vai estar tecnicamente errado, mas é só pra saber se ele sai um volume variando e o xps do batelada simultaneamente
+4) Bota uma variação de volume grande 3 executa num intervalo minúsculo tipo 0-1h que pareça o batelada. Preciso ver se errei no equacionamento do balanço de volume pelamor
+5) Bota artigos numa pasta do zotero pra ler
 
 1) Veja os todos do dia anterior e passe pra cá, SÓ DEPOIS FAÇA ALGO
 2) Plote também as loss individuais de cada eixo (x, p, s, v) numere a saída simplesmente como 1,2,3, etc e faça a loss. vai me dar uma noção. Algumas dessas loss tão travadas em loss_x = 2e-2 e isso segura todo mundo.. Troquei o signal multiplier de /2 pra *5 e parece ter melhorado um pouco. *100 parece ter pioraado. To fazendo é nada. Preciso dos gráficos zzzz.
