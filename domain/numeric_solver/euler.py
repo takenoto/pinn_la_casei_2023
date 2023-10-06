@@ -51,6 +51,10 @@ class EulerMethod:
         P_nondim_array = np.ones(len(t_space_nondim)) * non_dim_scaler.toNondim(N0, "P")
         S_nondim_array = np.ones(len(t_space_nondim)) * non_dim_scaler.toNondim(N0, "S")
         V_nondim_array = np.ones(len(t_space_nondim)) * non_dim_scaler.toNondim(N0, "V")
+        X_array = np.ones(len(t_space_nondim)) * N0["X"]
+        P_array = np.ones(len(t_space_nondim)) * N0["P"]
+        S_array = np.ones(len(t_space_nondim)) * N0["S"]
+        V_array = np.ones(len(t_space_nondim)) * N0["V"]
         
         dX_dt_normal_array = np.zeros(len(t_space_nondim)) 
         dP_dt_normal_array = np.zeros(len(t_space_nondim)) 
@@ -151,6 +155,10 @@ class EulerMethod:
             P_nondim_array[t] = non_dim_scaler.toNondim(N, "P")
             S_nondim_array[t] = non_dim_scaler.toNondim(N, "S")
             V_nondim_array[t] = non_dim_scaler.toNondim(N, "V")
+            X_array[t] = X
+            P_array[t] = P
+            S_array[t] = S
+            V_array[t] = V
             
             dX_dt_normal_array[t] = dX_dt
             dP_dt_normal_array[t] = dP_dt
@@ -159,10 +167,10 @@ class EulerMethod:
                 
             
         # Seta a derivada em 0 como igual à em 1 pra não bagunçar muito o gráfico
-        dX_dt_normal_array[0] = (X[1] - X[0])/dt
-        dP_dt_normal_array[0] = dP_dt_normal_array[1]
-        dS_dt_normal_array[0] = dS_dt_normal_array[1]
-        dV_dt_normal_array[0] = dV_dt_normal_array[1]
+        dX_dt_normal_array[0] = (X_array[1] - X_array[0])/dt
+        dP_dt_normal_array[0] = (P_array[1] - P_array[0])/dt
+        dS_dt_normal_array[0] = (S_array[1] - S_array[0])/dt
+        dV_dt_normal_array[0] = (V_array[1] - V_array[0])/dt
         
         # TODO  
         # ------------------------------
