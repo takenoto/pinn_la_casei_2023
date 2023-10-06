@@ -1,11 +1,9 @@
 import numpy as np
-import matplotlib.pyplot as plt
 
 from domain.optimization.non_dim_scaler import NonDimScaler
 from domain.numeric_solver.numeric_solver_model_results import NumericSolverModelResults
 from domain.params.altiok_2006_params import Altiok2006Params
 from domain.params.process_params import ProcessParams
-from domain.params.solver_params import SolverParams
 from domain.reactor.reactor_state import ReactorState
 
 new_version = True
@@ -39,35 +37,31 @@ class EulerMethod:
         }
 
         scaler = non_dim_scaler
-        t_space_nondim = np.linspace(
+        t_space = np.linspace(
             start=0,
-            stop=non_dim_scaler.toNondim({"t": process_params.t_final}, "t"),
+            stop=process_params.t_final,
             num=t_discretization_points,
         )
 
-        dt = non_dim_scaler.fromNondim({"dt": t_space_nondim[1]}, "dt")
+        dt = t_space[1]
 
-        X_nondim_array = np.ones(len(t_space_nondim)) * non_dim_scaler.toNondim(N0, "X")
-        P_nondim_array = np.ones(len(t_space_nondim)) * non_dim_scaler.toNondim(N0, "P")
-        S_nondim_array = np.ones(len(t_space_nondim)) * non_dim_scaler.toNondim(N0, "S")
-        V_nondim_array = np.ones(len(t_space_nondim)) * non_dim_scaler.toNondim(N0, "V")
-        X_array = np.ones(len(t_space_nondim)) * N0["X"]
-        P_array = np.ones(len(t_space_nondim)) * N0["P"]
-        S_array = np.ones(len(t_space_nondim)) * N0["S"]
-        V_array = np.ones(len(t_space_nondim)) * N0["V"]
-        
-        dX_dt_normal_array = np.zeros(len(t_space_nondim)) 
-        dP_dt_normal_array = np.zeros(len(t_space_nondim)) 
-        dS_dt_normal_array = np.zeros(len(t_space_nondim)) 
-        dV_dt_normal_array = np.zeros(len(t_space_nondim)) 
+        X_array = np.ones(len(t_space)) * N0["X"]
+        P_array = np.ones(len(t_space)) * N0["P"]
+        S_array = np.ones(len(t_space)) * N0["S"]
+        V_array = np.ones(len(t_space)) * N0["V"]
+
+        dX_dt_normal_array = np.zeros(len(t_space))
+        dP_dt_normal_array = np.zeros(len(t_space))
+        dS_dt_normal_array = np.zeros(len(t_space))
+        dV_dt_normal_array = np.zeros(len(t_space))
         dX_dt_normal_array[0] = None
         dP_dt_normal_array[0] = None
         dS_dt_normal_array[0] = None
         dV_dt_normal_array[0] = None
-        dX_dt_2_normal_array = np.zeros(len(t_space_nondim)) 
-        dP_dt_2_normal_array = np.zeros(len(t_space_nondim)) 
-        dS_dt_2_normal_array = np.zeros(len(t_space_nondim)) 
-        dV_dt_2_normal_array = np.zeros(len(t_space_nondim)) 
+        dX_dt_2_normal_array = np.zeros(len(t_space))
+        dP_dt_2_normal_array = np.zeros(len(t_space))
+        dS_dt_2_normal_array = np.zeros(len(t_space))
+        dV_dt_2_normal_array = np.zeros(len(t_space))
         dX_dt_2_normal_array[0] = None
         dP_dt_2_normal_array[0] = None
         dS_dt_2_normal_array[0] = None
@@ -88,13 +82,13 @@ class EulerMethod:
         Pm = eq_params.Pm
         Xm = eq_params.Xm
 
-        for t in range(1, len(t_space_nondim)):
+        for t in range(1, len(t_space)):
             # Declara valores do ponto imediatamente anterior para usar
             N_previous = {
-                "X": X_nondim_array[t - 1],
-                "P": P_nondim_array[t - 1],
-                "S": S_nondim_array[t - 1],
-                "V": V_nondim_array[t - 1],
+                "X": X_array[t - 1],
+                "P": P_array[t - 1],
+                "S": S_array[t - 1],
+                "V": V_array[t - 1],
             }
             # Nondimensionalization:
             X = non_dim_scaler.fromNondim(N_previous, "X")
@@ -140,43 +134,27 @@ class EulerMethod:
             P = P * V_previous / V + (dP_dt * dt)
             S = S * V_previous / V + (dS_dt * dt)
 
-            N = {
-                "X": X,
-                "P": P,
-                "S": S,
-                "V": V,
-                "dXdt": dX_dt,
-                "dPdt": dP_dt,
-                "dSdt": dS_dt,
-                "dVdt": dV_dt,
-            }
-
-            X_nondim_array[t] = non_dim_scaler.toNondim(N, "X")
-            P_nondim_array[t] = non_dim_scaler.toNondim(N, "P")
-            S_nondim_array[t] = non_dim_scaler.toNondim(N, "S")
-            V_nondim_array[t] = non_dim_scaler.toNondim(N, "V")
             X_array[t] = X
             P_array[t] = P
             S_array[t] = S
             V_array[t] = V
-            
+
             dX_dt_normal_array[t] = dX_dt
             dP_dt_normal_array[t] = dP_dt
             dS_dt_normal_array[t] = dS_dt
             dV_dt_normal_array[t] = dV_dt
-                
-            
+
         # Seta a derivada em 0 como igual à em 1 pra não bagunçar muito o gráfico
-        dX_dt_normal_array[0] = (X_array[1] - X_array[0])/dt
-        dP_dt_normal_array[0] = (P_array[1] - P_array[0])/dt
-        dS_dt_normal_array[0] = (S_array[1] - S_array[0])/dt
-        dV_dt_normal_array[0] = (V_array[1] - V_array[0])/dt
-        
-        # TODO  
+        dX_dt_normal_array[0] = (X_array[1] - X_array[0]) / dt
+        dP_dt_normal_array[0] = (P_array[1] - P_array[0]) / dt
+        dS_dt_normal_array[0] = (S_array[1] - S_array[0]) / dt
+        dV_dt_normal_array[0] = (V_array[1] - V_array[0]) / dt
+
+        # TODO
         # ------------------------------
         # Calculate 2 order derivatives
-        #------------------------------
-        
+        # ------------------------------
+
         # A função "f" são os próprios valores de XPSV calculados, posso usar eles!!!
         # TODO declara XPSV como vetor e itera todos, acho que é mais fácil
         # e não precisa se repetir
@@ -185,8 +163,7 @@ class EulerMethod:
         # TODO backward ponto final
         # Centered when 1<t<len => único
         # if(t>1 and t<len(t_space_nondim)):
-        #     dX_dt_2_normal_array[t] = 
-    
+        #     dX_dt_2_normal_array[t] =
 
         return NumericSolverModelResults(
             model=self,
@@ -195,7 +172,7 @@ class EulerMethod:
             P=P_array,
             S=S_array,
             V=V_array,
-            t=t_space_nondim,
+            t=t_space,
             dt=dt,
             non_dim_scaler=scaler,
             dX_dt=dX_dt_normal_array,
