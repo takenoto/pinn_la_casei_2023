@@ -168,6 +168,8 @@ def plot_comparer_multiple_grid(
         # Set lims Y na força
         diffY = biggestY - lowestY
         average = (biggestY + lowestY) / 2
+        if biggestY == 0:
+            biggestY = 1
         diffYPerc = (biggestY - lowestY) / (biggestY)
 
         # Se diff < 1% força pra não ficar tão ruim de ler,
