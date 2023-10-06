@@ -60,6 +60,14 @@ class EulerMethod:
         dP_dt_normal_array[0] = None
         dS_dt_normal_array[0] = None
         dV_dt_normal_array[0] = None
+        dX_dt_2_normal_array = np.zeros(len(t_space_nondim)) 
+        dP_dt_2_normal_array = np.zeros(len(t_space_nondim)) 
+        dS_dt_2_normal_array = np.zeros(len(t_space_nondim)) 
+        dV_dt_2_normal_array = np.zeros(len(t_space_nondim)) 
+        dX_dt_2_normal_array[0] = None
+        dP_dt_2_normal_array[0] = None
+        dS_dt_2_normal_array[0] = None
+        dV_dt_2_normal_array[0] = None
 
         inlet = process_params.inlet
         f_in = inlet.volume
@@ -148,12 +156,28 @@ class EulerMethod:
             dP_dt_normal_array[t] = dP_dt
             dS_dt_normal_array[t] = dS_dt
             dV_dt_normal_array[t] = dV_dt
+                
             
         # Seta a derivada em 0 como igual à em 1 pra não bagunçar muito o gráfico
-        dX_dt_normal_array[0] = dX_dt_normal_array[1]
+        dX_dt_normal_array[0] = (X[1] - X[0])/dt
         dP_dt_normal_array[0] = dP_dt_normal_array[1]
         dS_dt_normal_array[0] = dS_dt_normal_array[1]
         dV_dt_normal_array[0] = dV_dt_normal_array[1]
+        
+        # TODO  
+        # ------------------------------
+        # Calculate 2 order derivatives
+        #------------------------------
+        
+        # A função "f" são os próprios valores de XPSV calculados, posso usar eles!!!
+        # TODO declara XPSV como vetor e itera todos, acho que é mais fácil
+        # e não precisa se repetir
+        # TODO 1 ponto => único
+        # TODO centered pontos intermediários => loop for
+        # TODO backward ponto final
+        # Centered when 1<t<len => único
+        # if(t>1 and t<len(t_space_nondim)):
+        #     dX_dt_2_normal_array[t] = 
     
 
         return NumericSolverModelResults(
@@ -169,5 +193,9 @@ class EulerMethod:
             dX_dt=dX_dt_normal_array,
             dP_dt=dP_dt_normal_array,
             dS_dt=dS_dt_normal_array,
-            dV_dt=dV_dt_normal_array
+            dV_dt=dV_dt_normal_array,
+            dX_dt_2=None,
+            dP_dt_2=None,
+            dS_dt_2=None,
+            dV_dt_2=None,
         )
