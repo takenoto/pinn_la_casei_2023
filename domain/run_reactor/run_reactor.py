@@ -46,7 +46,6 @@ def run_reactor(
     inputSimulationType = solver_params.inputSimulationType
     outputSimulationType = solver_params.outputSimulationType
 
-    scaler = solver_params.non_dim_scaler
 
     # ---------------------------------------
     # ------------- Geometry ----------------
@@ -79,16 +78,8 @@ def run_reactor(
 
         def getNondimBoundary(N):
             "N is the variable (X, P, S, V, etc)"
-            minVal = scaler.toNondim(
-                {N: 0},
-                N,
-            )
-            maxVal = (
-                scaler.toNondim(
-                    {N: XPSVboundsMultipliers[N]},
-                    N,
-                ),
-            )
+            minVal = 0
+            maxVal = XPSVboundsMultipliers[N]
             if isinstance(maxVal, (list, tuple, np.ndarray)):
                 maxVal = np.array(maxVal)[0].astype(float)
             if isinstance(minVal, (list, tuple, np.ndarray)):
@@ -201,7 +192,7 @@ def run_reactor(
     net = dde.nn.FNN(
         solver_params.layer_size, solver_params.activation, solver_params.initializer
     )
-    
+
     #
     # TRANSFORM --------------------
     #
@@ -216,6 +207,7 @@ def run_reactor(
                 transformed_inputs.append(N_val)
 
         return tf.concat(transformed_inputs, axis=1)
+
     net.apply_feature_transform(input_transform)
 
     # OUTPUT
@@ -232,6 +224,7 @@ def run_reactor(
                 transformed_outputs.append(N_val)
         # TODO talvez aqui eu faça algo pra transformar a entrada e ficar tudo bem...
         return tf.concat(transformed_outputs, axis=1)
+
     net.apply_output_transform(output_transform)
 
     model = dde.Model(data, net)
