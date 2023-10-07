@@ -61,6 +61,7 @@ class ODEPreparer:
             X, P, S = 0, 0, 0
             V = 1
             dXdt, dPdt, dSdt, dVdt = 0, 0, 0, 0
+            rX, rP, rS = 0, 0, 0
 
             # ---------------------
             # OUTPUT VARIABLES
