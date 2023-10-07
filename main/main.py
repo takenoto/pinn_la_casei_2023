@@ -7,6 +7,9 @@
 # NOTE: Setting environment variables (both user and system) did not work.
 # Windows 11, 2023-05-10.
 
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+
 
 import os
 from timeit import default_timer as timer
@@ -15,7 +18,6 @@ from typing import List
 import deepxde
 import tensorflow as tf
 
-import matplotlib.pyplot as plt
 from data.pinn_saver import PINNSaveCaller
 from domain.optimization.non_dim_scaler import NonDimScaler
 
@@ -31,11 +33,14 @@ from main.cases_to_try import change_layer_fix_neurons_number
 from main.pinn_grid_search import run_pinn_grid_search
 from main.numerical_methods import run_numerical_methods
 
+# Supostamente conserta erros pelo caminho
+mpl.rcParams.update(mpl.rcParamsDefault)
 
 # For obtaining fully reproducible results
 deepxde.config.set_random_seed(0)
 # Increasing precision
 # dde.config.real.set_float64()
+
 
 
 def create_folder_to_save(subfolder):
@@ -117,7 +122,7 @@ def main():
     # ----------------------
     # -CHOSE OPERATION MODE-
     # ----------------------
-    reactors_to_run = ["batch"]  # "batch" "fed-batch" "CR"
+    reactors_to_run = ["CR"]  # "batch" "fed-batch" "CR"
 
     batch_versions = [
         # tempo de simulação, Xo, Po, So
