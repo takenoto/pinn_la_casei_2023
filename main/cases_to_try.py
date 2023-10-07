@@ -1,3 +1,4 @@
+import os
 import numpy as np
 
 from domain.optimization.non_dim_scaler import NonDimScaler
@@ -124,11 +125,11 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
     ]
 
     lbfgs_pre = 0  # 0 1
-    lbfgs_post = 1  # 0 1
+    lbfgs_post = 0  # 0 1
     ADAM_EPOCHS_list = [
-        # "100",
+        "100",
         # "1k",
-        "10k",
+        # "10k",
         # "25k",
         # "30k",
         # "35k",
@@ -170,15 +171,28 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
     # -------------------------------
     # Se irá aplicar a estratégia de adimensionalização padrão
     NDList = [
+        # Order:
+        # (tscode, scalers_code, input strategy, output strategy)
         #
         # CURRENT ITERATION
         #
         # 1º Noção geral do impacto de t crescendo e diminuindo
-        ("Lin", "t1", "1"),
-        ("Lin", "t1", "F1d10"),
+        ("t1", "1", "Lin", "UPx1"),
+        (
+            "t1",
+            "1",
+            "Lin",
+            "Lin",
+        ),
+        (
+            "t1",
+            "F1d10",
+            "Lin",
+            "Lin",
+        ),
         # ("Lin", "t1", "F1x10"),
         # ("Lin", "t2", "1"),
-        ("Lin", "t7", "1"),
+        ("t7", "1", "Lin", "Lin"),
         # ==> ("Lin", "t2", "F1d10"),
         # ("Lin", "t1", "F1d100"),
         # ("Lin", "t1", "F1x10"),
@@ -194,8 +208,6 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
         #
         # DEFAULT VALUES:
         #
-        # Order:
-        # (strategy, tscode, scalers_code)
         #
         # Esse é o mesmo que ser sem adimensionalização
         # ("None", "t1", "1"),
@@ -301,31 +313,33 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
                                             for loss_weight_str in loss_weights_list:
                                                 insert_into_dict(
                                                     dictionary,
-                                                    hyperfolder,
-                                                    process_params,
-                                                    eq_params,
-                                                    input_str,
-                                                    input_variables,
-                                                    output_str,
-                                                    output_variables,
-                                                    loss_version,
-                                                    lbfgs_pre,
-                                                    lbfgs_post,
-                                                    loss_version,
-                                                    func,
-                                                    initializer,
-                                                    train_input_range_key,
-                                                    adam_str,
-                                                    train_distribution,
-                                                    train_input_range_dict,
-                                                    n_points,
-                                                    NUM_BOUNDARY,
-                                                    NL,
-                                                    HL,
-                                                    mb,
-                                                    nd,
-                                                    LR_str,
-                                                    loss_weight_str,
+                                                    args=(
+                                                        hyperfolder,
+                                                        process_params,
+                                                        eq_params,
+                                                        input_str,
+                                                        input_variables,
+                                                        output_str,
+                                                        output_variables,
+                                                        loss_version,
+                                                        lbfgs_pre,
+                                                        lbfgs_post,
+                                                        loss_version,
+                                                        func,
+                                                        initializer,
+                                                        train_input_range_key,
+                                                        adam_str,
+                                                        train_distribution,
+                                                        train_input_range_dict,
+                                                        n_points,
+                                                        NUM_BOUNDARY,
+                                                        NL,
+                                                        HL,
+                                                        mb,
+                                                        nd,
+                                                        LR_str,
+                                                        loss_weight_str,
+                                                    ),
                                                 )
 
     return (dictionary, cols, rows)
@@ -333,7 +347,6 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
 
 def insert_into_dict(dictionary, args):
     (
-        dictionary,
         hyperfolder,
         process_params,
         eq_params,
@@ -361,18 +374,20 @@ def insert_into_dict(dictionary, args):
         loss_weight_str,
     ) = args
     n_init, n_domain, n_test = n_points
-    train_input_range = train_input_range_dict[train_distribution]
+    train_input_range = train_input_range_dict[train_input_range_key]
     ADAM_EPOCHS = ADAM_EPOCHS_dict[adam_str]
     LR = LRs_dict[LR_str]
     (
-        nd_strategy,
         nd_tscode,
         nd_scalers_code,
+        nd_in_strategy,
+        nd_out_strategy,
     ) = nd
-    nondim_scaler = get_nondim_scaler(
+    input_nondim_scaler, output_nondim_scaler = get_nondim_scaler(
         process_params=process_params,
         eq_params=eq_params,
-        strategy=nd_strategy,
+        input_strategy=nd_in_strategy,
+        output_strategy=nd_out_strategy,
         ts_code=nd_tscode,
         scalers_code=nd_scalers_code,
     )
@@ -380,18 +395,14 @@ def insert_into_dict(dictionary, args):
     minibatch_str = f"m{mb}" if mb is not None else "m-"
 
     key = (
-        # Primeiro o "core"
-        f"ND-{nondim_scaler.name}"
-        + f" {input_str} {output_str} {func}"
-        + f" tr-{train_input_range_key}"
+        f"{NL}x{HL}"
+        + f" {func}"
         + f" L{loss_version}"
-        + f" {NL}x{HL}"
         + f" LR-{LR_str}"
-        + f"w{loss_weight_str}"
+        + f" w{loss_weight_str}"
         + f" p{n_init}-{n_domain}-{n_test}"
         + f" {adam_str}ep"
         + f" lbfgs-{lbfgs_post}"
-        + f" TD-{train_distribution}"
         + f" {minibatch_str}"
     )
 
@@ -400,7 +411,12 @@ def insert_into_dict(dictionary, args):
         "layer_size": [len(input_variables)] + [NL] * HL + [len(output_variables)],
         "adam_epochs": ADAM_EPOCHS,
     }
-    dictionary[key]["scaler"] = nondim_scaler
+
+    dictionary[key]["input_str"] = input_str
+    dictionary[key]["output_str"] = output_str
+
+    dictionary[key]["input_scaler"] = input_nondim_scaler
+    dictionary[key]["output_scaler"] = output_nondim_scaler
 
     dictionary[key]["loss_weights"] = loss_weights(config=loss_weight_str)
 
@@ -413,9 +429,6 @@ def insert_into_dict(dictionary, args):
     dictionary[key]["lbfgs_pre"] = lbfgs_pre
     dictionary[key]["lbfgs_post"] = lbfgs_post
     dictionary[key]["LR"] = LR
-    dictionary[key]["hyperfolder"] = (
-        hyperfolder if hyperfolder is not None else f"{input_str} {nondim_scaler.name}"
-    )
     dictionary[key]["isplot"] = False
     dictionary[key]["initializer"] = initializer
     dictionary[key]["output_variables"] = output_variables
@@ -428,11 +441,19 @@ def insert_into_dict(dictionary, args):
     dictionary[key]["train_distribution"] = train_distribution
     dictionary[key]["train_input_range"] = train_input_range
 
+    dictionary[key]["hyperfolder"] = os.path.join(
+        f"{input_str}-{output_str} -- tr {train_input_range_key}",
+        f"{initializer}-{train_distribution}",
+        f"ND-{input_nondim_scaler.strategy_str}-{output_nondim_scaler.strategy_str}-{nd_tscode}-{nd_scalers_code}",
+        func,
+    )
+
 
 def get_nondim_scaler(
     process_params: ProcessParams,
     eq_params: altiok_2006_params.Altiok2006Params,
-    strategy,
+    input_strategy,
+    output_strategy,
     ts_code,
     scalers_code,
 ):
@@ -458,58 +479,43 @@ def get_nondim_scaler(
         scalers_code=scalers_code,
     )
 
-    if strategy == "None":
+    def create_nondim_scaler(strategy):
+        to_nondim = None
+        from_nondim = None
+        etc_params = None
+        match strategy:
+            case "N":
+                pass
+            case "Lin":
+                to_nondim = NonDimScaler.toNondimLinearScaler
+                from_nondim = NonDimScaler.fromNondimLinearScaler
+            case "Desv":
+                to_nondim = NonDimScaler.toNondimDesvio
+                from_nondim = NonDimScaler.fromNondimDesvio
+            case "UPx1":
+                to_nondim = NonDimScaler.toNondimUpscale
+                from_nondim = NonDimScaler.fromNondimUpscale
+                etc_params = {"upscale_lowerbound": 1}
+
         return NonDimScaler(
-            name=f"N-{ts_code}-{scalers_code}", t=t_S, X=X_S, P=P_S, S=S_S, V=V_S
-        )
-    elif strategy == "Lin":
-        return NonDimScaler(
-            name=f"Lin-{ts_code}-{scalers_code}",
+            name=f"{strategy}-{ts_code}-{scalers_code}",
             t=t_S,
             X=X_S,
             P=P_S,
             S=S_S,
             V=V_S,
-            toNondim=NonDimScaler.toNondimLinearScaler,
-            fromNondim=NonDimScaler.fromNondimLinearScaler,
-        )
-    elif strategy == "Desv":
-        return NonDimScaler(
-            name=f"Desv-{ts_code}-{scalers_code}",
-            t=t_S,
-            X=X_S,
-            P=P_S,
-            S=S_S,
-            V=V_S,
-            toNondim=NonDimScaler.toNondimDesvio,
-            fromNondim=NonDimScaler.fromNondimDesvio,
-        )
-    elif strategy == "Desv":
-        return NonDimScaler(
-            name=f"Desv-{ts_code}-{scalers_code}",
-            t=t_S,
-            X=X_S,
-            P=P_S,
-            S=S_S,
-            V=V_S,
-            toNondim=NonDimScaler.toNondimDesvio,
-            fromNondim=NonDimScaler.fromNondimDesvio,
-        )
-    # UPSCALE
-    elif strategy == "UPx1":
-        return NonDimScaler(
-            name=f"Desv-{ts_code}-{scalers_code}",
-            t=t_S,
-            X=X_S,
-            P=P_S,
-            S=S_S,
-            V=V_S,
-            etc_params={"upscale_lowerbound":1},
-            toNondim=NonDimScaler.toNondimUpscale,
-            fromNondim=NonDimScaler.fromNondimUpscale,
+            toNondim=to_nondim,
+            fromNondim=from_nondim,
+            etc_params=etc_params,
+            strategy_str=strategy,
+            ts_code=ts_code,
+            scalers_code=scalers_code,
         )
 
-    pass
+    input_nondim_scaler = create_nondim_scaler(input_strategy)
+    output_nondim_scaler = create_nondim_scaler(output_strategy)
+
+    return input_nondim_scaler, output_nondim_scaler
 
 
 def loss_weights(config: str):

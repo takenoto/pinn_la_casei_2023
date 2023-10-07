@@ -48,7 +48,8 @@ def run_pinn_grid_search(
                 "output_variables",
                 "input_variables",
                 "isplot",
-                "train_input_range"
+                "train_input_range",
+                "loss_weights"
             ]:
                 return np.array(cases_to_try[case_key].get(thing_key, default)).item()
             else:
@@ -80,13 +81,9 @@ def run_pinn_grid_search(
                 initializer=get_thing_for_key(
                     case_key, "initializer", default="Glorot uniform"
                 ),
-                loss_weights=[
-                    get_thing_for_key(case_key, "w_X", 1),
-                    get_thing_for_key(case_key, "w_P", 1),
-                    get_thing_for_key(case_key, "w_S", 1),
-                    get_thing_for_key(case_key, "w_V", 1),
-                ],
-                non_dim_scaler=get_thing_for_key(case_key, "scaler", default=None),
+                loss_weights=get_thing_for_key(case_key, "loss_weights", None),
+                input_non_dim_scaler=get_thing_for_key(case_key, "input_scaler", default=None),
+                output_non_dim_scaler=get_thing_for_key(case_key, "output_scaler", default=None),
                 mini_batch=get_thing_for_key(case_key, "mini_batch", default=None),
                 hyperfolder=get_thing_for_key(case_key, "hyperfolder", default=None),
                 isplot=get_thing_for_key(case_key, "isplot", default=False),
@@ -105,9 +102,7 @@ def run_pinn_grid_search(
                 train_distribution=get_thing_for_key(
                     case_key, "train_distribution", default="Hammersley"
                 ),
-                save_caller=get_thing_for_key(
-                    case_key, "save_caller", default=None
-                ),
+                save_caller=get_thing_for_key(case_key, "save_caller", default=None),
                 train_input_range=get_thing_for_key(
                     case_key, "train_input_range", default=None
                 ),
@@ -139,8 +134,6 @@ def run_pinn_grid_search(
             S=eq_params.So,
         )
         process_params = ProcessParams(max_reactor_volume=5, inlet=inlet, t_final=16)
-
-
 
     # Define um caller para os parâmetros atuais (só necessita do solver depois)
     run_reactor_system_caller = RunReactorSystemCaller(

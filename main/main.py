@@ -51,6 +51,57 @@ def create_folder_to_save(subfolder):
     return folder_to_save
 
 
+# If true, also plots the nondim values from pinn
+showNondim = False
+showPINN = True
+
+
+# -------- END MATCH
+def compute_num_and_pinn(
+    base_folder, eq_params, process_params, initial_state, f_out_num, f_out_pinn, cases
+):
+    print("-------STARTING---------")
+
+    num_results = run_numerical_methods(
+        eq_params=eq_params,
+        process_params=process_params,
+        initial_state=initial_state,
+        f_out_value_calc=f_out_num,
+        t_discretization_points=[400],
+        non_dim_scaler=NonDimScaler(),
+    )
+    # Creates the saver for this session
+    save_caller = PINNSaveCaller(
+        num_results=num_results,
+        showPINN=showPINN,
+        showNondim=showNondim,
+    )
+    cases, cols, rows = change_layer_fix_neurons_number(eq_params, process_params)
+    for case_name in cases:
+        cases[case_name]["save_caller"] = save_caller
+        hyperfolder_updated = os.path.join(base_folder, cases[case_name]["hyperfolder"])
+        create_folder_to_save(hyperfolder_updated)
+        cases[case_name]["hyperfolder"] = hyperfolder_updated
+
+    start_time = timer()
+
+    run_pinn_grid_search(
+        solver_params_list=None,
+        eq_params=eq_params,
+        process_params=process_params,
+        initial_state=initial_state,
+        f_out_value_calc=f_out_pinn,
+        cases_to_try=cases,
+    )
+    end_time = timer()
+    print(
+        f"""
+        time for test = {end_time - start_time} s
+        = {(end_time - start_time)/60} min"""
+    )
+    pass
+
+
 def main():
     deepxde.config.set_random_seed(0)
 
@@ -62,21 +113,12 @@ def main():
 
     # If None, the plots will be shown()
     # If a directory, the plots will be saved
-    subfolder = "reactor-"
-    folder_to_save = create_folder_to_save(subfolder=subfolder)
-
-    # If true, also plots the nondim values from pinn
-    showNondim = False
-    showPINN = True
+    subfolder = "reactor_altiok2006"
 
     # ----------------------
     # -CHOSE OPERATION MODE-
     # ----------------------
-    run_fedbatch = False
-
-    run_batch = False
-
-    run_cr = True
+    reactors_to_run = ["batch"]  # "batch" "fed-batch" "CR"
 
     cr_versions = [
         # (V0, Vmax, F_in, F_inE)
@@ -109,202 +151,125 @@ def main():
     # Parâmetros de processo (será usado em todos)
     eq_params = altiok_models_to_run[0]
 
-    # BATCH
-    initial_state = ReactorState(
-        volume=np.array([5]),
-        X=eq_params.Xo,
-        P=eq_params.Po,
-        S=eq_params.So,
-    )
+    for current_reactor in reactors_to_run:
 
-    # Serve pra fed-batch
-    initial_state_fed_batch = ReactorState(
-        volume=np.array([1]),
-        X=eq_params.Xo,
-        P=eq_params.Po,
-        S=eq_params.So,
-    )
+        def f_out_num(max_reactor_volume, f_in_v, volume):
+            return 0
 
-    process_params_feed_off = ProcessParams(
-        max_reactor_volume=5,
-        inlet=ConcentrationFlow(
-            volume=0.0,
-            X=eq_params.Xo,
-            P=eq_params.Po,
-            S=eq_params.So,
-        ),
-        t_final=10.2,
-    )
+        f_out_pinn = f_out_num
+        initial_state = None
+        process_params = None
+        cases = []
 
-    process_params_feed_fb = ProcessParams(
-        max_reactor_volume=10,
-        inlet=ConcentrationFlow(
-            volume=0.25,  # L/h
-            X=eq_params.Xo,
-            P=eq_params.Po,
-            S=eq_params.So,
-        ),
-        t_final=2 * 10.2,
-    )
-
-    if run_fedbatch:
-        folder_to_save = create_folder_to_save(subfolder=subfolder + "-fb")
-        print("RUN FED-BATCH")
-        cases, cols, rows = change_layer_fix_neurons_number(
-            eq_params, process_params_feed_fb, hyperfolder=folder_to_save
+        # Folder creation
+        current_reactor_folder = create_folder_to_save(
+            subfolder=os.path.join(subfolder, current_reactor)
         )
 
-        num_results = run_numerical_methods(
-            eq_params=eq_params,
-            process_params=process_params_feed_fb,
-            initial_state=initial_state_fed_batch,
-            f_out_value_calc=lambda max_reactor_volume, f_in_v, volume: 0,
-            t_discretization_points=[400],
-            non_dim_scaler=NonDimScaler(),
-        )
+        match current_reactor:
+            case "fed-batch":
+                print("RUN FED-BATCH")
 
-        # Creates the saver for this session
-        save_caller = PINNSaveCaller(
-            num_results=num_results,
-            showPINN=showPINN,
-            showNondim=showNondim,
-        )
-        for case_name in cases:
-            cases[case_name]["save_caller"] = save_caller
-        start_time = timer()
+                def f_out_num(max_reactor_volume, f_in_v, volume):
+                    return 0
 
-        run_pinn_grid_search(
-            solver_params_list=None,
-            eq_params=eq_params,
-            process_params=process_params_feed_fb,
-            initial_state=initial_state_fed_batch,
-            f_out_value_calc=lambda max_reactor_volume, f_in_v, volume: 0,
-            cases_to_try=cases,
-        )
-        end_time = timer()
-        print(
-            f"""
-            time for test = {end_time - start_time} s
-            = {(end_time - start_time)/60} min"""
-        )
-        pass
-    
-    if run_batch:
-        folder_to_save = create_folder_to_save(subfolder=subfolder + "batch")
-
-        print("RUN BATCH")
-        cases, cols, rows = change_layer_fix_neurons_number(
-            eq_params, process_params_feed_off, hyperfolder=folder_to_save
-        )
-        num_results = run_numerical_methods(
-            eq_params=eq_params,
-            process_params=process_params_feed_off,
-            initial_state=initial_state,
-            f_out_value_calc=lambda max_reactor_volume, f_in_v, volume: 0,
-            t_discretization_points=[400],
-            non_dim_scaler=NonDimScaler(),
-        )
-
-        # Creates the saver for this session
-        save_caller = PINNSaveCaller(
-            num_results=num_results,
-            showPINN=showPINN,
-            showNondim=showNondim,
-        )
-        for case_name in cases:
-            cases[case_name]["save_caller"] = save_caller
-
-        start_time = timer()
-
-        print(f"NUMBER OF CASES ={len(cases)}")
-
-        run_pinn_grid_search(
-            solver_params_list=None,
-            eq_params=eq_params,
-            process_params=process_params_feed_off,
-            initial_state=initial_state,
-            f_out_value_calc=lambda max_reactor_volume, f_in_v, volume: 0,
-            cases_to_try=cases,
-            save_caller=save_caller,
-        )
-        end_time = timer()
-
-        print(
-            f"""
-            time for test = {end_time - start_time} s
-            = {(end_time - start_time)/60} min"""
-        )
-        pass
-    
-    if run_cr:
-        for cr_version in cr_versions:
-            cr_id, V0, Vmax, Fin = cr_get_variables(cr_version)
-
-            process_params_feed_cr = ProcessParams(
-                max_reactor_volume=Vmax,
-                inlet=ConcentrationFlow(
-                    volume=Fin,
-                    X=eq_params.Xo * 0,
-                    P=eq_params.Po * 0,
+                f_out_pinn = f_out_num
+                process_params = ProcessParams(
+                    max_reactor_volume=10,
+                    inlet=ConcentrationFlow(
+                        volume=0.25,  # L/h
+                        X=eq_params.Xo,
+                        P=eq_params.Po,
+                        S=eq_params.So,
+                    ),
+                    t_final=2 * 10.2,
+                )
+                initial_state = ReactorState(
+                    volume=np.array([1]),
+                    X=eq_params.Xo,
+                    P=eq_params.Po,
                     S=eq_params.So,
-                ),
-                t_final= 24 * 3,
-            )
-            initial_state_cr = ReactorState(
-                volume=np.array([V0]),
-                X=eq_params.Xo,
-                P=eq_params.Po,
-                S=eq_params.So,
-            )
+                )
+                compute_num_and_pinn(
+                    current_reactor_folder,
+                    eq_params,
+                    process_params,
+                    initial_state,
+                    f_out_num,
+                    f_out_pinn,
+                    cases,
+                )
+                pass
 
-            folder_to_save = create_folder_to_save(subfolder=subfolder + cr_id)
+            case "batch":
+                print("RUN BATCH")
+                process_params = ProcessParams(
+                    max_reactor_volume=5,
+                    inlet=ConcentrationFlow(
+                        volume=0.0,
+                        X=eq_params.Xo,
+                        P=eq_params.Po,
+                        S=eq_params.So,
+                    ),
+                    t_final=10.2,
+                )
+                initial_state = ReactorState(
+                    volume=np.array([5]),
+                    X=eq_params.Xo,
+                    P=eq_params.Po,
+                    S=eq_params.So,
+                )
+                compute_num_and_pinn(
+                    current_reactor_folder,
+                    eq_params,
+                    process_params,
+                    initial_state,
+                    f_out_num,
+                    f_out_pinn,
+                    cases,
+                )
+                pass
 
-            print(f"RUN CR {cr_version}")
-            cases, cols, rows = change_layer_fix_neurons_number(
-                eq_params, process_params_feed_cr, hyperfolder=folder_to_save
-            )
+            case "CR":
+                for cr_version in cr_versions:
+                    cr_id, V0, Vmax, Fin = cr_get_variables(cr_version)
 
-            def cr_f_out_calc_numeric(max_reactor_volume, f_in_v, volume):
-                return f_in_v * pow(volume / max_reactor_volume, 7)
+                    process_params = ProcessParams(
+                        max_reactor_volume=Vmax,
+                        inlet=ConcentrationFlow(
+                            volume=Fin,
+                            X=eq_params.Xo * 0,
+                            P=eq_params.Po * 0,
+                            S=eq_params.So,
+                        ),
+                        t_final=24 * 3,
+                    )
+                    initial_state = ReactorState(
+                        volume=np.array([V0]),
+                        X=eq_params.Xo,
+                        P=eq_params.Po,
+                        S=eq_params.So,
+                    )
 
-            num_results = run_numerical_methods(
-                eq_params=eq_params,
-                process_params=process_params_feed_cr,
-                initial_state=initial_state_cr,
-                f_out_value_calc=cr_f_out_calc_numeric,
-                t_discretization_points=[400],
-                non_dim_scaler=NonDimScaler(),
-            )
+                    def cr_f_out_calc_numeric(max_reactor_volume, f_in_v, volume):
+                        return f_in_v * pow(volume / max_reactor_volume, 7)
 
-            # Creates the saver for this session
-            save_caller = PINNSaveCaller(
-                num_results=num_results,
-                showPINN=showPINN,
-                showNondim=showNondim,
-            )
-            for case_name in cases:
-                cases[case_name]["save_caller"] = save_caller
+                    f_out_num = cr_f_out_calc_numeric
 
-            start_time = timer()
+                    def cr_f_out_calc_tensorflow(max_reactor_volume, f_in_v, volume):
+                        return f_in_v * tf.math.pow(volume / max_reactor_volume, 7)
 
-            def cr_f_out_calc_tensorflow(max_reactor_volume, f_in_v, volume):
-                return f_in_v * tf.math.pow(volume / max_reactor_volume, 7)
-
-            run_pinn_grid_search(
-                solver_params_list=None,
-                eq_params=eq_params,
-                process_params=process_params_feed_cr,
-                initial_state=initial_state_cr,
-                f_out_value_calc=cr_f_out_calc_tensorflow,
-                cases_to_try=cases,
-            )
-            end_time = timer()
-            print(
-                f"""
-                time for test = {end_time - start_time} s
-                = {(end_time - start_time)/60} min"""
-            )
-            pass
+                    f_out_pinn = cr_f_out_calc_tensorflow
+                    compute_num_and_pinn(
+                        current_reactor_folder,
+                        eq_params,
+                        process_params,
+                        initial_state,
+                        f_out_num,
+                        f_out_pinn,
+                        cases,
+                    )
+                    pass
 
 
 def cr_get_variables(params: List):
@@ -315,7 +280,6 @@ def cr_get_variables(params: List):
     for Fin in range(0, 101):
         for FinE in range(-5, 5):
             Findict[f"{Fin}-E{FinE}"] = Fin * (10**FinE)
-
 
     V0, Vmax, Fin, FinE = params
     id = create_id(V0, Vmax, Fin, FinE)

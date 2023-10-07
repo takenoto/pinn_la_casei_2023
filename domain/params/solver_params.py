@@ -55,7 +55,7 @@ class SystemSimulationType:
         if t:
             self.t_index = len(self.order)
             self.order.append("t")
-            
+
     def get_index_for(self, N):
         if N in self.order:
             return self.order.index(N)
@@ -92,8 +92,9 @@ class SolverParams:
         layer_size=None,
         activation=None,
         initializer=None,
-        loss_weights=[1, 1, 1, 1],
-        non_dim_scaler: NonDimScaler = None,
+        loss_weights=None,
+        input_non_dim_scaler: NonDimScaler = None,
+        output_non_dim_scaler: NonDimScaler = None,
         mini_batch=None,
         hyperfolder=None,
         isplot=False,
@@ -127,14 +128,13 @@ class SolverParams:
         self.activation = activation
         self.initializer = initializer
         self.loss_weights = loss_weights
-        self.non_dim_scaler = (
-            non_dim_scaler if non_dim_scaler else NonDimScaler(X=1, P=1, S=1, V=1, t=1)
-        )
+        self.input_non_dim_scaler = input_non_dim_scaler
+        self.output_non_dim_scaler = output_non_dim_scaler
         self.mini_batch = mini_batch
         # Hyperfolder é a pasta padrão
         # onde salvar os resultados daquele trambei
         self.hyperfolder = hyperfolder
-        
+
         self.isplot = isplot
         "Se vai plotar usando o arg isplot em run_reactor (dde.save)"
 
@@ -174,37 +174,28 @@ class SolverParams:
             loss_version = custom_loss_version
         return loss_version
 
-    def toJson(self) -> str:
-        none_str = '"None"'
-
-        stuff = [
-            '"num_init":' + f"{self.num_init}",
-            '"num_domain":' + f"{self.num_domain}",
-            '"num_test":' + f"{self.num_test}",
-            '"adam_epochs":'
-            + f"{none_str if self.adam_epochs is None else self.adam_epochs}",
-            '"adam_lr":' + f"{none_str if self.adam_lr is None else self.adam_lr}",
-            '"sgd_epochs":'
-            + f"{none_str if self.sgd_epochs is None else self.sgd_epochs}",
-            '"layer_size":' + f"{self.layer_size}",
-            '"activation":' + f'"{self.activation}"',
-            '"initializer":' + f'"{self.initializer}"',
-            '"loss_version":' + f'"{self.loss_version}"',
-            '"mini_batch": '
-            + f"{none_str if self.mini_batch is None else self.mini_batch}",
-            '"nondim_scaler":' + self.non_dim_scaler.toJson(),
-            '"train_input_range":' + f"{np.array(self.train_input_range).tolist()}",
-        ]
-
-        json = "{"
-        for s_index in range(len(stuff)):
-            s = stuff[s_index]
-            if s_index < len(stuff) - 1:
-                json += s + ", "
-            else:
-                json += s + " }"
-
-        return json
+    def toDict(self) -> str:
+        return {
+            "num_init": self.num_init,
+            "num_domain": self.num_domain,
+            "num_boundary": self.num_boundary,
+            "adam_epochs": self.adam_epochs,
+            "adam_lr": self.adam_lr,
+            "sgd-epochs": self.sgd_epochs,
+            "l_bfgs": {
+                "post": self.l_bfgs.do_post_optimization,
+                "pre": self.l_bfgs.do_pre_optimization,
+            },
+            "layer_size": self.layer_size,
+            "activation": self.activation,
+            "initializer": self.initializer,
+            "loss_version": self.loss_version,
+            "mini_batch": self.mini_batch,
+            "nondim_scaler_input": self.input_non_dim_scaler.toDict(),
+            "nondim_scaler_output": self.output_non_dim_scaler.toDict(),
+            "train_input_range": np.array(self.train_input_range).tolist(),
+            "loss_weights": self.loss_weights,
+        }
 
 
 # python -m domain.params.solver_params

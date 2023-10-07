@@ -202,7 +202,7 @@ def run_reactor(
             N_input_index = inputSimulationType.get_index_for(N)
             if N_input_index is not None:
                 N_dim = x[:, N_input_index : N_input_index + 1]
-                N_val = solver_params.non_dim_scaler.toNondim({N: N_dim}, N)
+                N_val = solver_params.input_non_dim_scaler.toNondim({N: N_dim}, N)
                 transformed_inputs.append(N_val)
 
         return tf.concat(transformed_inputs, axis=1)
@@ -219,7 +219,7 @@ def run_reactor(
             # !!!!!!!!! que comportamento questionvel pelo amor viu.
             if N_output_index is not None:
                 N_nondim = y[:, N_output_index : N_output_index + 1]
-                N_val = solver_params.non_dim_scaler.fromNondim({N: N_nondim}, N)
+                N_val = solver_params.output_non_dim_scaler.fromNondim({N: N_nondim}, N)
                 transformed_outputs.append(N_val)
         return tf.concat(transformed_outputs, axis=1)
 
@@ -329,6 +329,7 @@ def run_reactor(
             )
     end_time = timer()
     total_training_time = end_time - start_time
+    
 
     # Por algum motivo o plot não funciona nem aqui nem no saveplot de baixo aff
     if solver_params.isplot:

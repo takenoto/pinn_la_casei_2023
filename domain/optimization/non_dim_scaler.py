@@ -36,6 +36,9 @@ class NonDimScaler:
         fromNondim=None,
         name="NULL!!!!",
         etc_params=None,
+        strategy_str="NULL!!!!",
+        ts_code="NULL!!!!",
+        scalers_code="NULL!!!!",
     ):
         self.X = X
         self.P = P
@@ -81,8 +84,19 @@ class NonDimScaler:
         or upper boundary
         """
 
+        self.strategy_str = strategy_str
+        self.ts_code = ts_code
+        self.scalers_code = scalers_code
+
     def toDict(self):
-        return {"name": self.name, "scalers": self.scalers}
+        return {
+            "name": self.name,
+            "scalers": self.scalers,
+            "etc_params": self.etc_params,
+            "strategy_str": self.strategy_str,
+            "ts_code": self.ts_code,
+            "scalers_code": self.scalers_code,
+        }
 
     def toNondim(self, N, type):
         if self._toNondim:
