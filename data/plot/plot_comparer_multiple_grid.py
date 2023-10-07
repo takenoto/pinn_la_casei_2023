@@ -178,7 +178,7 @@ def plot_comparer_multiple_grid(
         plt.yscale(yscale)
     
     for ax in axes:
-        ax.ticklabel_format(useMathText=True)    
+        ax.ticklabel_format(useMathText=True, scilimits=(-2, +2))    
     
     if labels:
         fig.legend(
@@ -198,7 +198,9 @@ def plot_comparer_multiple_grid(
         # Save the figure
         # plt.savefig(file_path)
         plt.savefig(file_path, bbox_inches="tight", dpi=600)
+        plt.cla()
         plt.close(fig)
+        
         if showPlot:
             plt.show()
     else:
