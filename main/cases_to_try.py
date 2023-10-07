@@ -22,23 +22,14 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
         # ----------------------
         #
         # t => XPSV
-        (["t"], ["X", "P", "S", "V"]),
-        # # t => V
-        # (["t"], ["V"]),
+        # (["t"], ["X", "P", "S", "V"]),
+        # t => V
+        (["t"], ["V"]),
         # # t => XPS
         # (["t"], ["X", "P", "S"]),
         # # t, V => XPS
         # (["t", "V"], ["X", "P", "S"]),
     ]
-
-    output_variables = ["X", "P", "S", "V"]  # "V" # "X", "P", "S"
-    # output_variables = ["X", "P", "S"]
-    # output_variables = ["V"]
-    input_variables = ["t"]
-
-    output_variables = ["X", "P", "S", "V"]
-    input_variables = ["t"]
-
     # -------------------------------
     # DATA SAMPLING
     # -------------------------------
@@ -60,7 +51,7 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
         "0-35pa",
         # "0-60pa",
         # "0-90pa",
-        # "0-100pa",
+        "0-100pa",
         # "0-200pa",
     ]
 
@@ -94,7 +85,7 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
     #'tanh' 'swish' 'selu' 'relu'
     activation_functions = [
         "tanh",
-        "swish",
+        # "swish",
         # "selu",
         # "relu",
     ]
@@ -106,6 +97,12 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
     train_distribution_list = ["Hammersley"]  # "LHS" "Hammersley" "uniform"
     # GLOROT UNIFORM # Era Glorot Normal nos testes sem swish
     LR_list = [
+        # Default
+        "E-3_1",
+        "E-4_3"
+        #--------------------
+        # FULL LIST:
+        #--------------------
         # "E-2_1",
         # "E-3_9",  # = 9e-3
         # "E-3_8",  # = 8e-3
@@ -115,14 +112,14 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
         # "E-3_4",  # = 4e-3
         # "E-3_3",  # = 3e-3
         # "E-3_2",  # = 2e-3
-        "E-3_1",  # = 1e-3
+        # "E-3_1",  # = 1e-3
         # "E-4_9",  # = 9e-4
         # "E-4_8",  # = 8e-4
         # "E-4_7",  # = 7e-4
         # "E-4_6",  # = 6e-4
         # "E-4_5",  # = 5e-4
         # "E-4_4",  # = 4e-4
-        "E-4_3",  # = 3e-4
+        # "E-4_3",  # = 3e-4
         # "E-4_2",  # = 2e-4
         # "E-4_1",  # = 1e-4
         # "E-5_9",  # = 9e-5
@@ -140,7 +137,7 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
     ]
 
     lbfgs_pre = 0  # 0 1
-    lbfgs_post = 1  # 0 1
+    lbfgs_post = 0#1  # 0 1
     ADAM_EPOCHS_list = [
         # "100",
         # "1k",
