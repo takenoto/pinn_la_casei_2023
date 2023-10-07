@@ -1,3 +1,4 @@
+import json
 import numpy as np
 
 
@@ -82,26 +83,7 @@ class NonDimScaler:
         """
 
     def toJson(self):
-        stuff = [
-            # Add name
-            '"name": ' + f'"{self.name}"',
-            # Add scalers
-            f'"t": {np.array(self.t_not_tensor).tolist()}',
-            f'"X": {np.array(self.X_not_tensor).tolist()}',
-            f'"P": {np.array(self.P_not_tensor).tolist()}',
-            f'"S": {np.array(self.S_not_tensor).tolist()}',
-            f'"V": {np.array(self.V_not_tensor).tolist()}',
-        ]
-
-        json = "{"
-        for s_index in range(len(stuff)):
-            s = stuff[s_index]
-            if s_index < len(stuff) - 1:
-                json += s + ", "
-            else:
-                json += s + " }"
-
-        return json
+        return json.dumps({"name": self.name, "scalers": self.scalers})
 
     def toNondim(self, N, type):
         if self._toNondim:
@@ -222,7 +204,7 @@ class NonDimScaler:
         scaler = self
         if type in scaler.scalers:
             return scaler.scalers[type] * (
-                N[type] - self.etc_params["upscale_lowerbound"] 
+                N[type] - self.etc_params["upscale_lowerbound"]
             )
 
 
@@ -236,9 +218,7 @@ def test():
 
     _test_desvio()
 
-    # TODO
-    # Testando adimensionalização por raiz quadrada do valor após padronização
-    # N = sqrt[(N_ND*N_M)²]
+    test_upscale()
 
     print("SUCCESS")
 
@@ -445,6 +425,48 @@ def _test_desvio():
         assert np.isclose(
             normal_from_nondim, N[dN_type]
         ), "Derivative: Converting to nondim and back"
+
+
+def test_upscale():
+    print("UPSCALE TEST")
+    LB = 99
+    scaler = NonDimScaler(
+        X=4,
+        P=2,
+        S=-593,
+        V=5,
+        t=6,
+        toNondim=NonDimScaler.toNondimUpscale,
+        fromNondim=NonDimScaler.fromNondimUpscale,
+        etc_params={"upscale_lowerbound": LB},
+    )
+
+    N = {
+        "X": 4,
+        "P": 2,
+        "S": -593,
+        "V": 15,
+        "t": 3,
+    }
+
+    toNondimAnswers = {"X": 100, "P": 100, "S": 100, "V": 102, "t": 99.5}
+
+    # Converting forth and back:
+    for N_type in scaler.scalers:
+        normal_value = N[N_type]
+
+        # Checks to nondim:
+        nondimval = scaler.toNondim(N, type=N_type)
+        answer = toNondimAnswers[N_type]
+        assert np.isclose(answer, nondimval), "Calculating nondim"
+
+        # Checks from nondim:
+        normal_value_calc = scaler.fromNondim({N_type: nondimval}, type=N_type)
+        assert np.isclose(
+            normal_value, normal_value_calc
+        ), "Converting to nondim and back"
+
+    pass
 
 
 if __name__ == "__main__":
