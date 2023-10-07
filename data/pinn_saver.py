@@ -283,32 +283,32 @@ def save_each_pinn(
     
     
     # tain data
-    # file_dict["train time"] = pinn.total_training_time
-    # file_dict["train time"]: pinn.total_training_time
-    # file_dict["best loss test"]: np.array(pinn.best_loss_test).tolist()
-    # file_dict["best loss train"]: np.array(pinn.best_loss_train).tolist()
-    # file_dict["pred time"]: pred_time
-    # file_dict["initializer"]: pinn.solver_params.initializer
-    # file_dict["train_distribution"]: pinn.solver_params.train_distribution
-    # file_dict["pinn_x_test"]: np.array(pinn.train_state.X_test).tolist()
-    # file_dict["pinn_x_train"]: np.array(pinn.train_state.X_train).tolist()
-    # file_dict["pinn_input_oder"] = _in.order
-    # file_dict["pinn_output_oder"] = _out.order
-    # file_dict["num_vals"] = num_vals_dict
-    # file_dict["pinn_vals"] = pinn_vals_dict
-    # file_dict["pinn_epochs"] = np.array(pinn.loss_history.steps).tolist()
-    # file_dict["pinn_loss_history_test"] = np.array(pinn.loss_history.loss_test).tolist()
-    # file_dict["pinn_loss_history_test_ICSBCS"] = loss_icsbcs_test
-    # file_dict["pinn_loss_history_test_SUM"] = [
-    #     loss for loss in np.array(np.sum(pinn.loss_history.loss_test, axis=1)).tolist()
-    # ]
-    # file_dict["pinn_loss_history_train"] = np.array(
-    #     pinn.loss_history.loss_train
-    # ).tolist()
-    # file_dict["pinn_loss_history_train_SUM"] = [
-    #     loss for loss in np.sum(pinn.loss_history.loss_train, axis=1).tolist()
-    # ]
-    # file_dict["total_training_time"] = [pinn.total_training_time]
+    file_dict["train time"] = pinn.total_training_time
+    file_dict["train time"]: pinn.total_training_time
+    file_dict["best loss test"]: np.array(pinn.best_loss_test).tolist()
+    file_dict["best loss train"]: np.array(pinn.best_loss_train).tolist()
+    file_dict["pred time"]: pred_time
+    file_dict["initializer"]: pinn.solver_params.initializer
+    file_dict["train_distribution"]: pinn.solver_params.train_distribution
+    file_dict["pinn_x_test"]: np.array(pinn.train_state.X_test).tolist()
+    file_dict["pinn_x_train"]: np.array(pinn.train_state.X_train).tolist()
+    file_dict["pinn_input_oder"] = _in.order
+    file_dict["pinn_output_oder"] = _out.order
+    file_dict["num_vals"] = num_vals_dict
+    file_dict["pinn_vals"] = pinn_vals_dict
+    file_dict["pinn_epochs"] = np.array(pinn.loss_history.steps).tolist()
+    file_dict["pinn_loss_history_test"] = np.array(pinn.loss_history.loss_test).tolist()
+    file_dict["pinn_loss_history_test_ICSBCS"] = loss_icsbcs_test
+    file_dict["pinn_loss_history_test_SUM"] = [
+        loss for loss in np.array(np.sum(pinn.loss_history.loss_test, axis=1)).tolist()
+    ]
+    file_dict["pinn_loss_history_train"] = np.array(
+        pinn.loss_history.loss_train
+    ).tolist()
+    file_dict["pinn_loss_history_train_SUM"] = [
+        loss for loss in np.sum(pinn.loss_history.loss_train, axis=1).tolist()
+    ]
+    file_dict["total_training_time"] = [pinn.total_training_time]
 
     # ------------------------
     # SAVING THE FILE
@@ -579,7 +579,7 @@ def save_each_pinn(
         plt.xlabel("i")
         plt.ylabel("Loss")
         plt.title("LoT x i")
-        plt.legend()
+        plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
         if folder_to_save:
             file_path = os.path.join(folder_to_save, f"LoT-{pinn.model_name}.png")
         plt.savefig(file_path, bbox_inches="tight", dpi=120)
@@ -600,7 +600,7 @@ def save_each_pinn(
         plt.xlabel("i")
         plt.ylabel("Loss")
         plt.title("LoV x i")
-        plt.legend()
+        plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
         if folder_to_save:
             file_path = os.path.join(folder_to_save, f"LoV-{pinn.model_name}.png")
         plt.savefig(file_path, bbox_inches="tight", dpi=120)
@@ -620,7 +620,7 @@ def save_each_pinn(
         plt.xlabel("i")
         plt.ylabel("Loss")
         plt.title("IC LoV x i")
-        plt.legend()
+        plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
         if folder_to_save:
             file_path = os.path.join(folder_to_save, f"LoV_IC-{pinn.model_name}.png")
         plt.savefig(file_path, bbox_inches="tight", dpi=120)
