@@ -543,13 +543,16 @@ def save_each_pinn(
         color=pinn_colors[-3],
         label="LoT",
     )
-    plt.plot(
+    line, = plt.plot(
         pinn.loss_history.steps,
         np.sum(pinn.loss_history.loss_test, axis=1),
-        linestyle=":",
         color=pinn_colors[-1],
         label="LoV",
     )
+    # ref: https://matplotlib.org/stable/gallery/lines_bars_and_markers/line_demo_dash_control.html
+    line.set_dashes([2, 3, 5, 3])
+    line.set_dash_capstyle("round")
+    
     plt.yscale("log")
     plt.xlabel("i")
     plt.ylabel("Loss")
