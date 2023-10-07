@@ -14,19 +14,19 @@ class Altiok2006Params:
         The id of the given experiment. There were 6 models,
         so "id" goes from 1 to 6
         """
-        self.Xo = np.array([Xo])
-        self.Po = np.array([Po])
-        self.So = np.array([So])
-        self.mu_max = np.array([mu_max])
-        self.K_S = np.array([K_S])
-        self.alpha = np.array([alpha])
-        self.beta = np.array([beta])
-        self.Y_PS = np.array([Y_PS])
-        self.ms = np.array([ms])
-        self.f = np.array([f])
-        self.h = np.array([h])
-        self.Pm = np.array([Pm])
-        self.Xm = np.array([Xm])
+        self.Xo = Xo
+        self.Po = Po
+        self.So = So
+        self.mu_max = mu_max
+        self.K_S = K_S
+        self.alpha = alpha
+        self.beta = beta
+        self.Y_PS = Y_PS
+        self.ms = ms
+        self.f = f
+        self.h = h
+        self.Pm = Pm
+        self.Xm = Xm
         pass
 
     def copy_with(
@@ -48,19 +48,19 @@ class Altiok2006Params:
     ):
         return Altiok2006Params(
             xp_id=xp_id if xp_id else self.xp_id,
-            Xo=Xo if Xo else self.Xo[0],
-            Po=Po if Po else self.Po[0],
-            So=So if So else self.So[0],
-            mu_max=mu_max if mu_max else self.mu_max[0],
-            K_S=K_S if K_S else self.K_S[0],
-            alpha=alpha if alpha else self.alpha[0],
-            beta=beta if beta else self.beta[0],
-            Y_PS=Y_PS if Y_PS else self.Y_PS[0],
-            ms=ms if ms else self.ms[0],
-            f=f if f else self.f[0],
-            h=h if h else self.h[0],
-            Pm=Pm if Pm else self.Pm[0],
-            Xm=Xm if Xm else self.Xm[0],
+            Xo=Xo if Xo else self.Xo,
+            Po=Po if Po else self.Po,
+            So=So if So else self.So,
+            mu_max=mu_max if mu_max else self.mu_max,
+            K_S=K_S if K_S else self.K_S,
+            alpha=alpha if alpha else self.alpha,
+            beta=beta if beta else self.beta,
+            Y_PS=Y_PS if Y_PS else self.Y_PS,
+            ms=ms if ms else self.ms,
+            f=f if f else self.f,
+            h=h if h else self.h,
+            Pm=Pm if Pm else self.Pm,
+            Xm=Xm if Xm else self.Xm,
         )
 
 

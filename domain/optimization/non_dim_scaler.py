@@ -46,12 +46,6 @@ class NonDimScaler:
         self.V = V
         self.t = t
 
-        self.X_not_tensor = X
-        self.P_not_tensor = P
-        self.S_not_tensor = S
-        self.V_not_tensor = V
-        self.t_not_tensor = t
-
         self._toNondim = toNondim
         """
         _toNondim = _fromNondim(scaler ou self, N, type)

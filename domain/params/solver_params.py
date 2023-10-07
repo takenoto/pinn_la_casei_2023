@@ -186,7 +186,7 @@ class SolverParams:
                 "post": self.l_bfgs.do_post_optimization,
                 "pre": self.l_bfgs.do_pre_optimization,
             },
-            "layer_size": self.layer_size,
+            "layer_size": np.array(self.layer_size).tolist(),
             "activation": self.activation,
             "initializer": self.initializer,
             "loss_version": self.loss_version,
@@ -194,7 +194,7 @@ class SolverParams:
             "nondim_scaler_input": self.input_non_dim_scaler.toDict(),
             "nondim_scaler_output": self.output_non_dim_scaler.toDict(),
             "train_input_range": np.array(self.train_input_range).tolist(),
-            "loss_weights": self.loss_weights,
+            "loss_weights": np.array(self.loss_weights).tolist(),
         }
 
 

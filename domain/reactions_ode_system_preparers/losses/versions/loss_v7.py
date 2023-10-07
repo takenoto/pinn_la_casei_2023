@@ -33,9 +33,9 @@ def lossV7(o, args):
     # ----------------------
     minmax_dict = {
         # value itself, min, max
-        "X": (X, 0, Xm[0]),
-        "P": (P, 0, Pm[0]),
-        "S": (S, 0, initial_state.S[0]),
+        "X": (X, 0, Xm),
+        "P": (P, 0, Pm),
+        "S": (S, 0, initial_state.S),
         "V": (V, 0, process_params.max_reactor_volume),
     }
 

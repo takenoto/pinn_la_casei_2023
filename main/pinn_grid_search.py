@@ -40,20 +40,9 @@ def run_pinn_grid_search(
         # ---------------------------------------
         # ---------------------------------------
 
-        def get_thing_for_key(case_key, thing_key, default=np.array([1])):
-            if thing_key not in [
-                "layer_size",
-                "lbfgs_pre",
-                "lbfgs_post",
-                "output_variables",
-                "input_variables",
-                "isplot",
-                "train_input_range",
-                "loss_weights"
-            ]:
-                return np.array(cases_to_try[case_key].get(thing_key, default)).item()
-            else:
-                return cases_to_try[case_key].get(thing_key, default)
+        def get_thing_for_key(case_key, thing_key, default=1):
+            return cases_to_try[case_key].get(thing_key, default)
+
 
         solver_params_list = [
             SolverParams(

@@ -79,7 +79,7 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
     #'tanh' 'swish' 'selu' 'relu'
     activation_functions = [
         "tanh",
-        # "swish",
+        "swish",
         # "selu",
         # "relu",
     ]
@@ -107,7 +107,7 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
         # "E-4_6",  # = 6e-4
         # "E-4_5",  # = 5e-4
         # "E-4_4",  # = 4e-4
-        # "E-4_3",  # = 3e-4
+        "E-4_3",  # = 3e-4
         # "E-4_2",  # = 2e-4
         # "E-4_1",  # = 1e-4
         # "E-5_9",  # = 9e-5
@@ -156,8 +156,8 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
         # 160
     ]
     layers = [
-        # 1,
-        # 2,
+        1,
+        2,
         3,
         # 4,
         # 5,
@@ -177,22 +177,13 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
         # CURRENT ITERATION
         #
         # 1º Noção geral do impacto de t crescendo e diminuindo
-        ("t1", "1", "Lin", "UPx1"),
-        (
-            "t1",
-            "1",
-            "Lin",
-            "Lin",
-        ),
-        (
-            "t1",
-            "F1d10",
-            "Lin",
-            "Lin",
-        ),
+        ("t1", "F1", "Lin", "UPx1"),
+        ("t1", "1", "Lin", "Lin"),
+        ("t1", "F1d10", "Lin", "Lin"),
         # ("Lin", "t1", "F1x10"),
         # ("Lin", "t2", "1"),
         ("t7", "1", "Lin", "Lin"),
+        ("t7", "F1", "Lin", "UPx1"),
         # ==> ("Lin", "t2", "F1d10"),
         # ("Lin", "t1", "F1d100"),
         # ("Lin", "t1", "F1x10"),
