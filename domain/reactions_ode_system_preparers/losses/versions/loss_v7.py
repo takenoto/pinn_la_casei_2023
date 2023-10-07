@@ -97,9 +97,11 @@ def lossV7(o, args):
     # Pode ficar um número muito minusculinho...
     # Talvez o sinal x 100 x a diferença??
     sign_d2_pred = tf.math.sign(dNdt_2)
-    dNdt_2_calc = dde.grad.jacobian(dNdt, nn_input, j=inputSimulationType.t_index)
-    loss_d2 = tf.abs(dNdt_2 - dNdt_2_calc)*1e12
-    
+    dNdt_2_calc = dde.grad.jacobian(
+        tf.convert_to_tensor(dNdt_calc), nn_input, j=inputSimulationType.t_index, i=0
+    )
+    loss_d2 = tf.abs(dNdt_2 - dNdt_2_calc)
+
     # ----------------------
     # calc loss second derivative signal
     # ----------------------
@@ -112,6 +114,8 @@ def lossV7(o, args):
     # ----------------------
     # loss = (1 + loss_multiplier/2) * (loss_derivative_abs + loss_minmax + loss_d2)
     loss = (1 + loss_multiplier) * (loss_derivative_abs + loss_minmax + loss_d2)
+    loss = loss_derivative_abs
+    loss = loss_d2
     # ----------------------
 
     return loss
