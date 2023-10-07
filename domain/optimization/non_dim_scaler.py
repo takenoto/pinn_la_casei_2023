@@ -26,7 +26,16 @@ class NonDimScaler:
     """
 
     def __init__(
-        self, X=1, P=1, S=1, V=1, t=1, toNondim=None, fromNondim=None, name="NULL!!!!"
+        self,
+        X=1,
+        P=1,
+        S=1,
+        V=1,
+        t=1,
+        toNondim=None,
+        fromNondim=None,
+        name="NULL!!!!",
+        etc_params=None,
     ):
         self.X = X
         self.P = P
@@ -66,6 +75,11 @@ class NonDimScaler:
         """
 
         self.name = name
+
+        self.etc_params = etc_params
+        """Used when the nondim scalers functions need params, such as a lower boundary
+        or upper boundary
+        """
 
     def toJson(self):
         stuff = [
@@ -175,6 +189,41 @@ class NonDimScaler:
             if type == "dt":
                 return -N[type] * scaler.scalers[variableType]
             return (scaler.scalers[variableType] / scaler.scalers["t"]) * (N[type])
+
+    def toNondimUpscale(self, N, type):
+        """Scales the division between lowerbound and upperbound
+        N_A = lower_bound + N/N_s
+
+        Args:
+            N (_type_): _description_
+            type (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
+        scaler = self
+        if type in scaler.scalers:
+            return (
+                self.etc_params["upscale_lowerbound"] + N[type] / scaler.scalers[type]
+            )
+
+    def fromNondimUpscale(self, N, type):
+        """Scales the division between lowerbound and upperbound
+        N_A = lower_bound + N/N_s
+        N = N_s*(N_a - lower_bound)
+
+        Args:
+            N (_type_): _description_
+            type (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
+        scaler = self
+        if type in scaler.scalers:
+            return scaler.scalers[type] * (
+                self.etc_params["upscale_lowerbound"] + N[type]
+            )
 
 
 # -------------------------------------------------------------
