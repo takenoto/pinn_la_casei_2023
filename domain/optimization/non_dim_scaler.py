@@ -1,4 +1,3 @@
-import json
 import numpy as np
 
 
@@ -82,8 +81,8 @@ class NonDimScaler:
         or upper boundary
         """
 
-    def toJson(self):
-        return json.dumps({"name": self.name, "scalers": self.scalers})
+    def toDict(self):
+        return {"name": self.name, "scalers": self.scalers}
 
     def toNondim(self, N, type):
         if self._toNondim:
