@@ -1,7 +1,0 @@
-{
-"pinn_best_index": 1,
-"pinn_best_error": 3.9796359539031982,
-"pinns":{"0":"ND-Lin-t7-F1d10 in_t out_XPSV tanh tr-0-15pa L7 10x3 LR-E-3_1 p8-24-24 10kep lbfgs-0 TD-Hammersley m-",
-"1":"ND-Lin-t7-F1d10 in_t out_XPSV tanh tr-0-15pa L7 10x3 LR-E-4_1 p8-24-24 10kep lbfgs-0 TD-Hammersley m-"
-}
-}
