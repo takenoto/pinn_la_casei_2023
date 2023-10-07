@@ -12,8 +12,6 @@ import os
 from timeit import default_timer as timer
 from typing import List
 
-
-import numpy as np
 import deepxde
 import tensorflow as tf
 
@@ -23,6 +21,7 @@ from domain.optimization.non_dim_scaler import NonDimScaler
 
 
 from domain.params.altiok_2006_params import (
+    Altiok2006Params,
     get_altiok2006_params,
 )
 from domain.reactor.reactor_state import ReactorState
@@ -120,6 +119,20 @@ def main():
     # ----------------------
     reactors_to_run = ["batch"]  # "batch" "fed-batch" "CR"
 
+    batch_versions = [
+        # tempo de simulação, Xo, Po, So
+        #-----------
+        # Default 11
+        (11, "Xo", "Po", "So"),
+        # Default 24
+        (24, "Xo", "Po", "So"),
+        #-----------
+        # Alternatives:
+        # (11, "Xo", "Po", "So"),
+        # (11, "Xo", "0", "So"),
+        # (11, "0", "Po", "So"),
+    ]
+
     cr_versions = [
         # (V0, Vmax, F_in, F_inE)
         # F_inE é o multiplicador por 10 de notação científica de Fin
@@ -151,29 +164,27 @@ def main():
     # Parâmetros de processo (será usado em todos)
     eq_params = altiok_models_to_run[0]
 
+    # Zero vezes volume para já converter por si só quando for um tensor
+    def f_out_0(max_reactor_volume, f_in_v, volume):
+        return 0 * volume
+
     for current_reactor in reactors_to_run:
-
-        def f_out_num(max_reactor_volume, f_in_v, volume):
-            return 0
-
-        f_out_pinn = f_out_num
+        f_out_num = f_out_0
+        f_out_pinn = f_out_0
         initial_state = None
         process_params = None
         cases = []
 
         # Folder creation
-        current_reactor_folder = create_folder_to_save(
+        mega_reactor_folder = create_folder_to_save(
             subfolder=os.path.join(subfolder, current_reactor)
         )
 
         match current_reactor:
             case "fed-batch":
                 print("RUN FED-BATCH")
-
-                def f_out_num(max_reactor_volume, f_in_v, volume):
-                    return 0
-
-                f_out_pinn = f_out_num
+                f_out_num = f_out_0
+                f_out_pinn = f_out_0
                 process_params = ProcessParams(
                     max_reactor_volume=10,
                     inlet=ConcentrationFlow(
@@ -182,16 +193,19 @@ def main():
                         P=eq_params.Po,
                         S=eq_params.So,
                     ),
-                    t_final=2 * 10.2,
+                    t_final=22,
                 )
                 initial_state = ReactorState(
-                    volume=np.array([1]),
+                    volume=1,
                     X=eq_params.Xo,
                     P=eq_params.Po,
                     S=eq_params.So,
                 )
+
+                current_test_folder = mega_reactor_folder
+
                 compute_num_and_pinn(
-                    current_reactor_folder,
+                    current_test_folder,
                     eq_params,
                     process_params,
                     initial_state,
@@ -203,37 +217,54 @@ def main():
 
             case "batch":
                 print("RUN BATCH")
-                process_params = ProcessParams(
-                    max_reactor_volume=5,
-                    inlet=ConcentrationFlow(
-                        volume=0.0,
-                        X=eq_params.Xo,
-                        P=eq_params.Po,
-                        S=eq_params.So,
-                    ),
-                    t_final=10.2,
-                )
-                initial_state = ReactorState(
-                    volume=np.array([5]),
-                    X=eq_params.Xo,
-                    P=eq_params.Po,
-                    S=eq_params.So,
-                )
-                compute_num_and_pinn(
-                    current_reactor_folder,
-                    eq_params,
-                    process_params,
-                    initial_state,
-                    f_out_num,
-                    f_out_pinn,
-                    cases,
-                )
-                pass
+                f_out_num = f_out_0
+                f_out_pinn = f_out_0
+                for batch_version in batch_versions:
+                    params = batch_version
+                    # names:
+                    t_sim, Xo, Po, So = params
+                    current_test_folder = os.path.join(
+                        mega_reactor_folder,
+                        f" - t{t_sim}-{Xo}-{Po}-{So}",
+                    )
+                    t_sim, Xo, Po, So = batch_get_variables(
+                        params=params, eq_params=eq_params
+                    )
+
+                    process_params = ProcessParams(
+                        max_reactor_volume=5,
+                        inlet=ConcentrationFlow(
+                            volume=0.0,
+                            X=eq_params.Xo,
+                            P=eq_params.Po,
+                            S=eq_params.So,
+                        ),
+                        t_final=t_sim,
+                    )
+                    initial_state = ReactorState(
+                        volume=5,
+                        X=Xo,
+                        P=Po,
+                        S=So,
+                    )
+                    compute_num_and_pinn(
+                        current_test_folder,
+                        eq_params,
+                        process_params,
+                        initial_state,
+                        f_out_num,
+                        f_out_pinn,
+                        cases,
+                    )
+                    pass
 
             case "CR":
                 for cr_version in cr_versions:
                     cr_id, V0, Vmax, Fin = cr_get_variables(cr_version)
-
+                    current_test_folder = os.path.join(
+                        mega_reactor_folder,
+                        cr_id,
+                    )
                     process_params = ProcessParams(
                         max_reactor_volume=Vmax,
                         inlet=ConcentrationFlow(
@@ -245,7 +276,7 @@ def main():
                         t_final=24 * 3,
                     )
                     initial_state = ReactorState(
-                        volume=np.array([V0]),
+                        volume=V0,
                         X=eq_params.Xo,
                         P=eq_params.Po,
                         S=eq_params.So,
@@ -261,7 +292,7 @@ def main():
 
                     f_out_pinn = cr_f_out_calc_tensorflow
                     compute_num_and_pinn(
-                        current_reactor_folder,
+                        current_test_folder,
                         eq_params,
                         process_params,
                         initial_state,
@@ -270,6 +301,28 @@ def main():
                         cases,
                     )
                     pass
+
+
+def batch_get_variables(params, eq_params: Altiok2006Params):
+    t_sim, Xo, Po, So = params
+
+    match Xo:
+        case "0":
+            Xo = 0
+        case "Xo":
+            Xo = eq_params.Xo
+    match Po:
+        case "0":
+            Po = 0
+        case "Po":
+            Po = eq_params.Po
+    match So:
+        case "0":
+            So = 0
+        case "So":
+            So = eq_params.So
+
+    return t_sim, Xo, Po, So
 
 
 def cr_get_variables(params: List):

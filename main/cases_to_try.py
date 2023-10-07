@@ -16,6 +16,21 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
     # --------- LOSS FUNCTION -----------
     loss_version = 7  # 5 # 7 6 5 4 3 2
 
+    input_output_variables_list = [
+        # ----------------------
+        # Input, output
+        # ----------------------
+        #
+        # t => XPSV
+        (["t"], ["X", "P", "S", "V"]),
+        # # t => V
+        # (["t"], ["V"]),
+        # # t => XPS
+        # (["t"], ["X", "P", "S"]),
+        # # t, V => XPS
+        # (["t", "V"], ["X", "P", "S"]),
+    ]
+
     output_variables = ["X", "P", "S", "V"]  # "V" # "X", "P", "S"
     # output_variables = ["X", "P", "S"]
     # output_variables = ["V"]
@@ -125,11 +140,11 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
     ]
 
     lbfgs_pre = 0  # 0 1
-    lbfgs_post = 0  # 0 1
+    lbfgs_post = 1  # 0 1
     ADAM_EPOCHS_list = [
-        "100",
+        # "100",
         # "1k",
-        # "10k",
+        "10k",
         # "25k",
         # "30k",
         # "35k",
@@ -141,11 +156,13 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
     ]
     # SGD_EPOCHS = 0  # 1000
     neurons = [
-        # 2,
-        # 4,
-        # 6,
-        # 8,
+        2,
+        4,
+        6,
+        8,
         10,
+        12,
+        16,
         # 20,
         # 30,
         # 32,
@@ -177,13 +194,16 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
         # CURRENT ITERATION
         #
         # 1º Noção geral do impacto de t crescendo e diminuindo
-        ("t1", "F1", "Lin", "UPx1"),
         ("t1", "1", "Lin", "Lin"),
+        ("t1", "F1", "Lin", "UPx1"),
         ("t1", "F1d10", "Lin", "Lin"),
-        # ("Lin", "t1", "F1x10"),
-        # ("Lin", "t2", "1"),
         ("t7", "1", "Lin", "Lin"),
         ("t7", "F1", "Lin", "UPx1"),
+        #
+        # ---------------------------------
+        #
+        # ("Lin", "t1", "F1x10"),
+        # ("Lin", "t2", "1"),
         # ==> ("Lin", "t2", "F1d10"),
         # ("Lin", "t1", "F1d100"),
         # ("Lin", "t1", "F1x10"),
@@ -282,56 +302,48 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
     cols = len(neurons) * len(train_distribution_list) * len(NDList)
     rows = len(layers) * len(N_POINTS) * len(mini_batch) * len(LR_list)
 
-    # Globais
-    input_str = "in_"
-    for i in input_variables:
-        input_str += i
-    output_str = "out_"
-    for o in output_variables:
-        output_str += o
-
     # Específicos
-    for func in activation_functions:
-        for train_input_range_key in train_input_range_list:
-            for adam_str in ADAM_EPOCHS_list:
-                for train_distribution in train_distribution_list:
-                    for n_points in N_POINTS:
-                        for NL in neurons:
-                            for HL in layers:
-                                for mb in mini_batch:
-                                    for nd in NDList:
-                                        for LR_str in LR_list:
-                                            for loss_weight_str in loss_weights_list:
-                                                insert_into_dict(
-                                                    dictionary,
-                                                    args=(
-                                                        hyperfolder,
-                                                        process_params,
-                                                        eq_params,
-                                                        input_str,
-                                                        input_variables,
-                                                        output_str,
-                                                        output_variables,
-                                                        loss_version,
-                                                        lbfgs_pre,
-                                                        lbfgs_post,
-                                                        loss_version,
-                                                        func,
-                                                        initializer,
-                                                        train_input_range_key,
-                                                        adam_str,
-                                                        train_distribution,
-                                                        train_input_range_dict,
-                                                        n_points,
-                                                        NUM_BOUNDARY,
-                                                        NL,
-                                                        HL,
-                                                        mb,
-                                                        nd,
-                                                        LR_str,
-                                                        loss_weight_str,
-                                                    ),
-                                                )
+    for input_output_variables in input_output_variables_list:
+        for func in activation_functions:
+            for train_input_range_key in train_input_range_list:
+                for adam_str in ADAM_EPOCHS_list:
+                    for train_distribution in train_distribution_list:
+                        for n_points in N_POINTS:
+                            for NL in neurons:
+                                for HL in layers:
+                                    for mb in mini_batch:
+                                        for nd in NDList:
+                                            for LR_str in LR_list:
+                                                for (
+                                                    loss_weight_str
+                                                ) in loss_weights_list:
+                                                    insert_into_dict(
+                                                        dictionary,
+                                                        args=(
+                                                            hyperfolder,
+                                                            process_params,
+                                                            eq_params,
+                                                            input_output_variables,
+                                                            loss_version,
+                                                            lbfgs_pre,
+                                                            lbfgs_post,
+                                                            loss_version,
+                                                            func,
+                                                            initializer,
+                                                            train_input_range_key,
+                                                            adam_str,
+                                                            train_distribution,
+                                                            train_input_range_dict,
+                                                            n_points,
+                                                            NUM_BOUNDARY,
+                                                            NL,
+                                                            HL,
+                                                            mb,
+                                                            nd,
+                                                            LR_str,
+                                                            loss_weight_str,
+                                                        ),
+                                                    )
 
     return (dictionary, cols, rows)
 
@@ -341,10 +353,7 @@ def insert_into_dict(dictionary, args):
         hyperfolder,
         process_params,
         eq_params,
-        input_str,
-        input_variables,
-        output_str,
-        output_variables,
+        input_output_variables,
         loss_version,
         lbfgs_pre,
         lbfgs_post,
@@ -364,6 +373,16 @@ def insert_into_dict(dictionary, args):
         LR_str,
         loss_weight_str,
     ) = args
+
+    input_variables, output_variables = input_output_variables
+    # Globais
+    input_str = "in_"
+    for i in input_variables:
+        input_str += i
+    output_str = "out_"
+    for o in output_variables:
+        output_str += o
+
     n_init, n_domain, n_test = n_points
     train_input_range = train_input_range_dict[train_input_range_key]
     ADAM_EPOCHS = ADAM_EPOCHS_dict[adam_str]
@@ -433,8 +452,8 @@ def insert_into_dict(dictionary, args):
     dictionary[key]["train_input_range"] = train_input_range
 
     dictionary[key]["hyperfolder"] = os.path.join(
-        f"{input_str}-{output_str} -- tr {train_input_range_key}",
-        f"{initializer}-{train_distribution}",
+        f"{input_str}-{output_str} tr- {train_input_range_key}"
+        + f" {initializer}-{train_distribution}",
         f"ND-{input_nondim_scaler.strategy_str}-{output_nondim_scaler.strategy_str}-{nd_tscode}-{nd_scalers_code}",
         func,
     )
