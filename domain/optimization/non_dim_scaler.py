@@ -222,7 +222,7 @@ class NonDimScaler:
         scaler = self
         if type in scaler.scalers:
             return scaler.scalers[type] * (
-                self.etc_params["upscale_lowerbound"] + N[type]
+                N[type] - self.etc_params["upscale_lowerbound"] 
             )
 
 
