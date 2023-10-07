@@ -178,8 +178,6 @@ def plot_comparer_multiple_grid(
         plt.yscale(yscale)
     
     for ax in axes:
-        vvv = np.arange(0, 1, .01)
-        ax.plot(vvv * 1, vvv * 1e-10 + 1e20)
         ax.ticklabel_format(useMathText=True)    
     
     if labels:
