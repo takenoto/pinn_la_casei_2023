@@ -1,6 +1,5 @@
 from domain.optimization.non_dim_scaler import NonDimScaler
 from domain.numeric_solver.euler import EulerMethod
-import numpy as np
 
 
 def run_numerical_methods(
@@ -30,27 +29,7 @@ def run_numerical_methods(
             name=f"euler {t_disc}p",
         )
         num_results.append(num_result)
-    # euler = EulerMethod()
-    # num_result1 = euler.solve(
-    #     initial_state,
-    #     eq_params,
-    #     process_params,
-    #     f_out_value_calc,
-    #     non_dim_scaler=scaler,
-    #     t_discretization_points=240,#60,
-    #     #name="euler 60p",
-    #     name='euler 240p'
-    # )
-
-    # num_result2 = euler.solve(
-    #     initial_state,
-    #     eq_params,
-    #     process_params,
-    #     f_out_value_calc,
-    #     non_dim_scaler=scaler,
-    #     t_discretization_points=4,
-    #     name="euler 4p",
-    # )
+   
     # ---------------------------------------------------------
 
     return num_results
