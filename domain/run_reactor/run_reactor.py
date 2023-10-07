@@ -46,7 +46,6 @@ def run_reactor(
     inputSimulationType = solver_params.inputSimulationType
     outputSimulationType = solver_params.outputSimulationType
 
-
     # ---------------------------------------
     # ------------- Geometry ----------------
     # ---------------------------------------
@@ -222,7 +221,6 @@ def run_reactor(
                 N_nondim = y[:, N_output_index : N_output_index + 1]
                 N_val = solver_params.non_dim_scaler.fromNondim({N: N_nondim}, N)
                 transformed_outputs.append(N_val)
-        # TODO talvez aqui eu faça algo pra transformar a entrada e ficar tudo bem...
         return tf.concat(transformed_outputs, axis=1)
 
     net.apply_output_transform(output_transform)
@@ -233,7 +231,7 @@ def run_reactor(
     w = solver_params.loss_weights
     loss_weights = []
     # Os pesos vem primeiro todos na ordem depois repetem
-    for i in [1, 2]:
+    for i in [1]:
         if outputSimulationType.X:
             loss_weights.append(w[0])
         if outputSimulationType.P:
@@ -242,6 +240,15 @@ def run_reactor(
             loss_weights.append(w[2])
         if outputSimulationType.V:
             loss_weights.append(w[3])
+        # Boundary conditions
+        if outputSimulationType.X:
+            loss_weights.append(w[0 + int(len(w)/2)])
+        if outputSimulationType.P:
+            loss_weights.append(w[1 + int(len(w)/2)])
+        if outputSimulationType.S:
+            loss_weights.append(w[2 + int(len(w)/2)])
+        if outputSimulationType.V:
+            loss_weights.append(w[3 + int(len(w)/2)])
 
     # ------- CUSTOM LOSS --------------
     # REFS:
