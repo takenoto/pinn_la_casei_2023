@@ -202,13 +202,14 @@ def save_each_pinn(
         "$d^{2}V/dt^{2}$",
     ]
     pinn_vals = [N_pinn[type] if type in _out.order else None for type in titles]
-
-    pinn_nondim_vals = [
-        pinn.solver_params.non_dim_scaler.toNondim(N_pinn, type)
-        if type in _out.order
-        else None
-        for type in titles
-    ]
+    
+    if showNondim:
+        pinn_nondim_vals = [
+            pinn.solver_params.output_non_dim_scaler.toNondim(N_pinn, type)
+            if type in _out.order
+            else None
+            for type in titles
+        ]
 
     pinn_derivative_vals = [N_pinn_derivatives[type] for type in dNdt_keys]
     pinn_derivative_2_vals = [N_pinn_derivatives[type] for type in dNdt_2_keys]
