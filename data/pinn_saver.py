@@ -123,12 +123,13 @@ def save_each_pinn(
     #     return dde.grad.jacobian(y, x, i=0, j=0)
 
     N_pinn = {}
-    N_pinn_derivatives = {}
+    pinn_dNdt_dict = {}
+    pinn_dNdt_2_dict = {}
 
     # Initialize with none
     for N in ["X", "P", "S", "V"]:
-        N_pinn_derivatives[f"d{N}dt"] = None
-        N_pinn_derivatives[f"d{N}dt_2"] = None
+        pinn_dNdt_dict[f"d{N}dt"] = None
+        pinn_dNdt_2_dict[f"d{N}dt_2"] = None
 
     for N in _out.order:
         N_index = _out.get_index_for(N)
@@ -138,52 +139,43 @@ def save_each_pinn(
         dNdt_2_keys.append(dNdt_2key)
         N_pinn[N] = prediction_y[:, N_index]
 
-        N_pinn_derivatives[dNdtkey] = pinn.model.predict(
-            input_x_dde,
-            operator=lambda x, y: dde.grad.jacobian(
-                y, x, i=N_index, j=_in.t_index
-            ),
-        )
+        pinn_dNdt_dict[dNdtkey] = np.array(
+            pinn.model.predict(
+                input_x_dde,
+                operator=lambda x, y: dde.grad.jacobian(y, x, i=N_index, j=_in.t_index),
+            )
+        ).tolist()
 
-        N_pinn_derivatives[dNdt_2key] = pinn.model.predict(
-            input_x_dde,
-            operator=lambda x, y: dde.grad.hessian(
-                y,
-                x,
-                component=N_index,
-                i=_in.t_index,
-                j=_in.t_index,
-                # Se ligar isso ele quebra:
-                # grad_y=N_pinn_derivatives[dNdtkey]
-            ),
-        )
+        pinn_dNdt_2_dict[dNdt_2key] = np.array(
+            pinn.model.predict(
+                input_x_dde,
+                operator=lambda x, y: dde.grad.hessian(
+                    y,
+                    x,
+                    component=N_index,
+                    i=_in.t_index,
+                    j=_in.t_index,
+                    # Se ligar isso ele quebra:
+                    # grad_y=N_pinn_derivatives[dNdtkey]
+                ),
+            )
+        ).tolist()
 
-    path_to_file = os.path.join(folder_to_save, f"{pinn.model_name}.json")
-    file = open(path_to_file, "a")
-    file.writelines(
-        [
-            "{\n",
-            '"name": ' + f'"{pinn.model_name}"' + ",\n",
-            '"solver_params":',
-            pinn.solver_params.toJson() + ",\n",
-        ]
-    )
+    file_dict = {
+        "name": pinn.model_name,
+        "solver_params": pinn.solver_params.toDict(),
+    }
 
     # tain data
-    file.writelines(
-        [
-            '"train time":' + f"{pinn.total_training_time}" + ",\n",
-            '"best loss test":' + f"{pinn.best_loss_test}" + ",\n",
-            '"best loss train":' + f"{pinn.best_loss_train}" + ",\n",
-            '"pred time":' + f"{pred_time}" + ",\n",
-            '"initializer":' + f'"{pinn.solver_params.initializer}"' + ",\n"
-            '"train_distribution":'
-            + f'"{pinn.solver_params.train_distribution}"'
-            + ",\n",
-            '"pinn_x_test":' + f"{np.array(pinn.train_state.X_test).tolist()}" + ",\n",
-            '"pinn_x_train":' + f"{np.array(pinn.train_state.X_train).tolist()}" + ",",
-        ]
-    )
+    file_dict["train time"] = pinn.total_training_time
+    file_dict["train time"]: pinn.total_training_time
+    file_dict["best loss test"]: pinn.best_loss_test
+    file_dict["best loss train"]: pinn.best_loss_train
+    file_dict["pred time"]: pred_time
+    file_dict["initializer"]: pinn.solver_params.initializer
+    file_dict["train_distribution"]: pinn.solver_params.train_distribution
+    file_dict["pinn_x_test"]: np.array(pinn.train_state.X_test).tolist()
+    file_dict["pinn_x_train"]: np.array(pinn.train_state.X_train).tolist()
 
     items = {}
     titles = ["X", "P", "S", "V"]
@@ -202,7 +194,7 @@ def save_each_pinn(
         "$d^{2}V/dt^{2}$",
     ]
     pinn_vals = [N_pinn[type] if type in _out.order else None for type in titles]
-    
+
     if showNondim:
         pinn_nondim_vals = [
             pinn.solver_params.output_non_dim_scaler.toNondim(N_pinn, type)
@@ -211,39 +203,43 @@ def save_each_pinn(
             for type in titles
         ]
 
-    pinn_derivative_vals = [N_pinn_derivatives[type] for type in dNdt_keys]
-    pinn_derivative_2_vals = [N_pinn_derivatives[type] for type in dNdt_2_keys]
+    pinn_derivative_vals = [
+        np.array(pinn_dNdt_dict[type]).tolist() for type in dNdt_keys
+    ]
+    pinn_derivative_2_vals = [
+        np.array(pinn_dNdt_2_dict[type]).tolist() for type in dNdt_2_keys
+    ]
 
     num_vals = [
-        num.X,  # if _out.X else None,
-        num.P,  # if _out.P else None,
-        num.S,  # if _out.S else None,
-        num.V,  # if _out.V else None,
+        np.array(num.X).tolist(),
+        np.array(num.P).tolist(),
+        np.array(num.S).tolist(),
+        np.array(num.V).tolist(),
     ]
     num_dNdt = [num.dX_dt, num.dP_dt, num.dS_dt, num.dV_dt]
+    num_dNdt_dict = {
+        "dXdt": np.array(num.dX_dt).tolist(),
+        "dPdt": np.array(num.dP_dt).tolist(),
+        "dSdt": np.array(num.dS_dt).tolist(),
+        "dVdt": np.array(num.dV_dt).tolist(),
+    }
     num_dNdt_2 = [num.dX_dt_2, num.dP_dt_2, num.dS_dt_2, num.dV_dt_2]
+    num_dNdt_2_dict = {
+        "dXdt_2": np.array(num.dX_dt_2).tolist(),
+        "dPdt_2": np.array(num.dP_dt_2).tolist(),
+        "dSdt_2": np.array(num.dS_dt_2).tolist(),
+        "dVdt_2": np.array(num.dV_dt_2).tolist(),
+    }
 
-    num_vals_json = """{
-            "t":[%s],
-            "X":[%s],
-            "P":[%s],
-            "S":[%s],
-            "V":[%s],
-            "dXdt":[%s],
-            "dPdt":[%s],
-            "dSdt":[%s],
-            "dVdt":[%s]
-            }""" % (
-        ",".join(np.char.mod("%f", np.array(num.t))),
-        ",".join(np.char.mod("%f", np.array(num_vals[0]))),
-        ",".join(np.char.mod("%f", np.array(num_vals[1]))),
-        ",".join(np.char.mod("%f", np.array(num_vals[2]))),
-        ",".join(np.char.mod("%f", np.array(num_vals[3]))),
-        ",".join(np.char.mod("%f", np.array(num.dX_dt))),
-        ",".join(np.char.mod("%f", np.array(num.dP_dt))),
-        ",".join(np.char.mod("%f", np.array(num.dS_dt))),
-        ",".join(np.char.mod("%f", np.array(num.dV_dt))),
-    )
+    num_vals_dict = {
+        "t": np.array(num.t).tolist(),
+        "X": np.array(num.X).tolist(),
+        "P": np.array(num.P).tolist(),
+        "S": np.array(num.S).tolist(),
+        "V": np.array(num.V).tolist(),
+        "dNdt": num_dNdt_dict,
+        "dNdt_2": num_dNdt_2_dict,
+    }
 
     # Armazena os 4 erros
     error_L = []
@@ -274,53 +270,15 @@ def save_each_pinn(
 
     error_lines.append(f'"Total": {np.nansum(error_L)}')
 
-    pinn_vals_json = """{
-        "t":[%s],
-        "X":[%s],
-        "P":[%s],
-        "S":[%s],
-        "V":[%s],
-        "dXdt":[%s],
-        "dPdt":[%s],
-        "dSdt":[%s],
-        "dVdt":[%s]
-        }""" % (
-        # Values
-        ",".join(np.char.mod("%f", np.array(num.t))),
-        '"None"'
-        if pinn_vals[0] is None
-        else ",".join(np.char.mod("%f", np.array(pinn_vals[0]))),
-        '"None"'
-        if pinn_vals[1] is None
-        else ",".join(np.char.mod("%f", np.array(pinn_vals[1]))),
-        '"None"'
-        if pinn_vals[2] is None
-        else ",".join(np.char.mod("%f", np.array(pinn_vals[2]))),
-        '"None"'
-        if pinn_vals[3] is None
-        else ",".join(np.char.mod("%f", np.array(pinn_vals[3]))),
-        # Derivatives
-        '"None"'
-        if pinn_derivative_vals[0] is None
-        else ",".join(
-            np.char.mod("%f", np.array(N_pinn_derivatives["dXdt"][:, 0]).tolist())
-        ),
-        '"None"'
-        if pinn_derivative_vals[1] is None
-        else ",".join(
-            np.char.mod("%f", np.array(N_pinn_derivatives["dPdt"][:, 0]).tolist())
-        ),
-        '"None"'
-        if pinn_derivative_vals[2] is None
-        else ",".join(
-            np.char.mod("%f", np.array(N_pinn_derivatives["dSdt"][:, 0]).tolist())
-        ),
-        '"None"'
-        if pinn_derivative_vals[3] is None
-        else ",".join(
-            np.char.mod("%f", np.array(N_pinn_derivatives["dVdt"][:, 0]).tolist())
-        ),
-    )
+    pinn_vals_dict = {
+        # "t" = num.t, nem precisa repetir zzz
+        "X": np.array(pinn_vals[0]).tolist(),
+        "P": np.array(pinn_vals[1]).tolist(),
+        "S": np.array(pinn_vals[2]).tolist(),
+        "V": np.array(pinn_vals[3]).tolist(),
+        "dNdt": pinn_dNdt_dict,
+        "dNdt_2": pinn_dNdt_2_dict,
+    }
 
     # LOSS ICSBCS
     loss_icsbcs_test = {}
@@ -333,57 +291,33 @@ def save_each_pinn(
             :, index : index + 1
         ].tolist()
 
-    # Fecha o arquivo
-    # Fecha o body e fecha o error
-    file.write('\n"error": {\n')
-    for lll in range(len(error_lines)):
-        line = error_lines[lll]
-        if lll < len(error_lines) - 1:
-            file.writelines([line, ",\n"])
-        else:
-            file.writelines(
-                [
-                    line,
-                    "},",
-                    "\n",
-                    '"num_vals": ',
-                    num_vals_json,
-                    ",\n",
-                    '"pinn_vals":',
-                    pinn_vals_json,
-                    # Essa parte é confusa e não sai direito
-                    ",\n",
-                    '"pinn_epochs":' + f"{pinn.loss_history.steps}" ",\n",
-                    '"pinn_loss_history_test":'
-                    + f"{np.array(pinn.loss_history.loss_test).tolist()}"
-                    ",\n",
-                    '"pinn_loss_history_test_ICSBCS":'
-                    + json.dumps(loss_icsbcs_test)
-                    + ",\n",
-                    '"pinn_loss_history_test_SUM":'
-                    + f"{[loss for loss in np.array(np.sum(pinn.loss_history.loss_test, axis=1))]}"  # noqa: E501
-                    ",\n",
-                    '"pinn_loss_history_train":'
-                    + f"{np.array(pinn.loss_history.loss_train).tolist()}"
-                    ",\n",
-                    '"pinn_loss_history_train_SUM":'
-                    + f"{[loss for loss in np.sum(pinn.loss_history.loss_train, axis=1)]}"  # noqa: E501
-                    ",\n",
-                    '"total_training_time":' + f"{pinn.total_training_time}" "\n",
-                    "}",
-                ]
-            )
-    file.close()
+    file_dict["pinn_input_oder"] = _in.order
+    file_dict["pinn_output_oder"] = _out.order
+    file_dict["num_vals"] = num_vals_dict
+    file_dict["pinn_vals"] = pinn_vals_dict
+    file_dict["pinn_epochs"] = np.array(pinn.loss_history.steps).tolist()
+    file_dict["pinn_loss_history_test"] = np.array(pinn.loss_history.loss_test).tolist()
+    file_dict["pinn_loss_history_test_ICSBCS"] = loss_icsbcs_test
+    file_dict["pinn_loss_history_test_SUM"] = [
+        loss for loss in np.array(np.sum(pinn.loss_history.loss_test, axis=1)).tolist()
+    ]
+    file_dict["pinn_loss_history_train"] = np.array(
+        pinn.loss_history.loss_train
+    ).tolist()
+    file_dict["pinn_loss_history_train_SUM"] = [
+        loss for loss in np.sum(pinn.loss_history.loss_train, axis=1).tolist()
+    ]
+    file_dict["total_training_time"] = [pinn.total_training_time]
 
-    file = open(path_to_file, "r")
-    read_json = json.load(file)
-    file.close()
-    # ATENÇÃO: ABRIR UM ARQUIVO NO FORMATO WRITE AUTOMATICAMENTE
-    # APAGA TUDO QUE TINHA NELE ANTES!!!
-    file = open(path_to_file, "w")
-    pretty_json = json.dumps(read_json, indent=1)
+    # ------------------------
+    # SAVING THE FILE
+    path_to_file = os.path.join(folder_to_save, f"{pinn.model_name}.json")
+    file = open(path_to_file, "a")
+    pretty_json = json.dumps(file_dict, indent=1)
     file.write(pretty_json)
     file.close()
+
+
     units = ["g/L", "g/L", "g/L", "L"]
 
     if len(_in.order) >= 2:
