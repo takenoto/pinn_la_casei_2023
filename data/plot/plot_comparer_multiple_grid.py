@@ -2,12 +2,6 @@ import os
 import numpy as np
 from textwrap import wrap
 from matplotlib import pyplot as plt
-from matplotlib.ticker import FuncFormatter
-
-from data.sci_tick_formatter import SciFormatter
-
-
-plotTickFormatter = FuncFormatter(SciFormatter)
 
 
 def plot_comparer_multiple_grid(
@@ -168,8 +162,6 @@ def plot_comparer_multiple_grid(
         # Set lims Y na força
         diffY = biggestY - lowestY
         average = (biggestY + lowestY) / 2
-        if biggestY == 0:
-            biggestY = 1
         diffYPerc = (biggestY - lowestY) / (biggestY)
 
         # Se diff < 1% força pra não ficar tão ruim de ler,
@@ -177,14 +169,19 @@ def plot_comparer_multiple_grid(
         if diffY < 0.005:
             ax.set_ylim(top=average + 0.005, bottom=average - 0.005)
         if diffYPerc <= 0.03:
-            ax.set_ylim(top=biggestY  +  0.03*average, bottom=lowestY - average*0.03)
-            if np.abs(lowestY < 0.01) or np.abs(biggestY) < 0.01:
-                ax.yaxis.set_major_formatter(plotTickFormatter)
-
+            ax.set_ylim(
+                top=biggestY + 0.03 * abs(average), bottom=lowestY - 0.03 * abs(average)
+            )
         pass
-
+    
     if yscale:
         plt.yscale(yscale)
+    
+    for ax in axes:
+        vvv = np.arange(0, 1, .01)
+        ax.plot(vvv * 1, vvv * 1e-10 + 1e20)
+        ax.ticklabel_format(useMathText=True)    
+    
     if labels:
         fig.legend(
             labels,
