@@ -130,29 +130,28 @@ def save_each_pinn(
     for N in ["X", "P", "S", "V"]:
         pinn_dNdt_dict[f"d{N}dt"] = None
         pinn_dNdt_2_dict[f"d{N}dt_2"] = None
+        dNdt_keys.append(f"d{N}dt")
+        dNdt_2_keys.append(f"d{N}dt_2")
 
     for N in _out.order:
         N_index = _out.get_index_for(N)
-        dNdtkey = f"d{N}dt"
-        dNdt_keys.append(dNdtkey)
-        dNdt_2key = f"d{N}dt_2"
-        dNdt_2_keys.append(dNdt_2key)
         N_pinn[N] = prediction_y[:, N_index]
 
-        pinn_dNdt_dict[dNdtkey] = np.array(
+        pinn_dNdt_dict[f"d{N}dt"] = np.array(
             pinn.model.predict(
                 input_x_dde,
                 operator=lambda x, y: dde.grad.jacobian(y, x, i=N_index, j=_in.t_index),
             )
         ).tolist()
 
-        pinn_dNdt_2_dict[dNdt_2key] = np.array(
+        pinn_dNdt_2_dict[f"d{N}dt_2"] = np.array(
             pinn.model.predict(
                 input_x_dde,
                 operator=lambda x, y: dde.grad.hessian(
                     y,
                     x,
-                    component=N_index,
+                    # Deepxde throws => ::Do not use component for 1D y::
+                    component=N_index if len(_out.order) > 1 else None,
                     i=_in.t_index,
                     j=_in.t_index,
                     # Se ligar isso ele quebra:
@@ -160,7 +159,8 @@ def save_each_pinn(
                 ),
             )
         ).tolist()
-
+    
+    
     file_dict = {
         "name": pinn.model_name,
         "solver_params": pinn.solver_params.toDict(),
@@ -280,8 +280,6 @@ def save_each_pinn(
             :, index : index + 1
         ].tolist()
 
-    
-    
     # tain data
     file_dict["train time"] = pinn.total_training_time
     file_dict["train time"]: pinn.total_training_time
@@ -317,7 +315,6 @@ def save_each_pinn(
     pretty_json = json.dumps(file_dict, indent=1)
     file.write(pretty_json)
     file.close()
-
 
     units = ["g/L", "g/L", "g/L", "L"]
 
@@ -366,9 +363,10 @@ def save_each_pinn(
             # Se não os valores de Y ficam como None e se não estiverem no último não
             # serão exibidos
             if pinn_vals[i] is None:
+                pinn_x = 0
                 pinn_y = 0
                 deriv_pinn_y = 0
-                pinn_x = 0
+                deriv_pinn_y_2 = 0
             else:
                 pinn_y = pinn_vals[i]
                 deriv_pinn_y = pinn_derivative_vals[i]
@@ -543,7 +541,7 @@ def save_each_pinn(
         color=pinn_colors[-3],
         label="LoT",
     )
-    line, = plt.plot(
+    (line,) = plt.plot(
         pinn.loss_history.steps,
         np.sum(pinn.loss_history.loss_test, axis=1),
         color=pinn_colors[-1],
@@ -552,7 +550,7 @@ def save_each_pinn(
     # ref: https://matplotlib.org/stable/gallery/lines_bars_and_markers/line_demo_dash_control.html
     line.set_dashes([2, 3, 5, 3])
     line.set_dash_capstyle("round")
-    
+
     plt.yscale("log")
     plt.xlabel("i")
     plt.ylabel("Loss")
@@ -582,7 +580,7 @@ def save_each_pinn(
         plt.xlabel("i")
         plt.ylabel("Loss")
         plt.title("LoT x i")
-        plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+        plt.legend(loc="center left", bbox_to_anchor=(1, 0.5))
         if folder_to_save:
             file_path = os.path.join(folder_to_save, f"LoT-{pinn.model_name}.png")
         plt.savefig(file_path, bbox_inches="tight", dpi=120)
@@ -603,7 +601,7 @@ def save_each_pinn(
         plt.xlabel("i")
         plt.ylabel("Loss")
         plt.title("LoV x i")
-        plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+        plt.legend(loc="center left", bbox_to_anchor=(1, 0.5))
         if folder_to_save:
             file_path = os.path.join(folder_to_save, f"LoV-{pinn.model_name}.png")
         plt.savefig(file_path, bbox_inches="tight", dpi=120)
@@ -623,7 +621,7 @@ def save_each_pinn(
         plt.xlabel("i")
         plt.ylabel("Loss")
         plt.title("IC LoV x i")
-        plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+        plt.legend(loc="center left", bbox_to_anchor=(1, 0.5))
         if folder_to_save:
             file_path = os.path.join(folder_to_save, f"LoV_IC-{pinn.model_name}.png")
         plt.savefig(file_path, bbox_inches="tight", dpi=120)
