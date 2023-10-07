@@ -25,14 +25,13 @@
 
 ## by date
 
-TODOS: t2-f1d10 mas na rede 30NL, aí comparo com a 20...
-- Eu acho que aquele teste que tinha ficado bom foi praquele reator que a variação de volume era quase nada e que eu tava tentando ver a partir de quanto a simulação desandava e beirava o impossível de treinar.
-TODO: testa alguma rede maior tipo 80x5, aí nem precisa fazer micro variações de outras coisas. Só pra ver se sai algo que preste mesmo.
-TODO faça novos com o reator de 4.5L pra 5, não lembro qual é ou se era 4 pra 5 com 1L/h
 
-### 2023-10-07
+### 2023-10-08 
 
-2023-10-06 @ 6:47 PM ué rodei e pareceram OK no batelada até com a nondim to ficando é doido ????
+Coisas que ficaram do dia 7:
+
+LOSSV7 :: TODO veja se só a loss d2 é o suficiente pra representar apenas a variação do volume, que é a mais fácil. Se não, pode ter algo errado nos meus cálculos. O valor dela é até maior que a d1 e pode ser mais fácil o treinamento por d2...
+
 TODOS: 
 1) ORGANIZA. TEM COISA DEMAIS, MUITO LERO LERO. BOTA NO ARQUIVO DE TODOS MESMO...
 2) Faz um teste tirando o volume da equação de XPS. Ele consegue dar um output OK? Claro que vai estar tecnicamente errado, mas é só pra saber se ele sai um volume variando e o xps do batelada simultaneamente
@@ -44,6 +43,59 @@ Comece 1) usando a loss v5 pra ver se ainda ficam resultados nada a ver quando u
 Agora tenho que ver as derivadas 1ª que não fazem nenhum sentido. As 2 tão batendo ok.
 Ok testei pro batch a 0.35 do tempo e deu certo nos 3. tem nada errado não zzzz.
 2) fuxicando loss v7. Pela ordem, de grandeza já sei que a derivada 2 não é tão baixinha a ponto de precisar daquele super acréscimo gigantesco de 1e12. Começa por aí.
+
+TODOS: t2-f1d10 mas na rede 30NL, aí comparo com a 20...
+- Eu acho que aquele teste que tinha ficado bom foi praquele reator que a variação de volume era quase nada e que eu tava tentando ver a partir de quanto a simulação desandava e beirava o impossível de treinar.
+TODO: testa alguma rede maior tipo 80x5, aí nem precisa fazer micro variações de outras coisas. Só pra ver se sai algo que preste mesmo.
+TODO faça novos com o reator de 4.5L pra 5, não lembro qual é ou se era 4 pra 5 com 1L/h
+
+### 2023-10-07
+
+- Loss weight now can be iterated using dictionaries
+- Implemented Upscale toNondim and fromNondim, like:
+  - N_A = LB + N/N_S
+  - N = N_S*(N_A - LB)
+  * where N_A = nondimensional "N", N_s = "N" scaler, LB = lower bound, a parameter
+- Apagar comentários
+-  json solver_params => colocar nondimscaler
+- upscale testar se indo e voltando dá certo
+- separar nondim de input e output, agora serão 2. Talvez fique ruim só pq adimensionalizei o t tb com esses desvios estranhos
+- Incluir input e output order no json de saída
+- Estrutura de pasta. O que deve ir pra pasta: 
+    1) tipo de reator (já tava)
+    2) input string/order - output string/order => Pq agrupa por tipo de modelo
+    3) range treino
+    4) Init function
+    5) func. distribuicao treino
+    6) func. ativacao
+- Agrupamento por pasta
+- Remoção de conversão desnecessária de variáveis para numpy arrays
+- Botar legendas do lado e não por cima nos gráficos de loss
+- arredondar linha cheia da loss plot
+- Reorganizar arquivo "main.py" para reaproveitar código
+
+Loss v7
+- Checar a loss. Já vi que como tava fazendo antes dNdt_2 calc e predita eram na verdade o mesmo valor, só tava aumentando o custo computacional. Tenho que fazer as contas certas e comparar corretamente.
+  - Realmente, o sinal e a loss da d2 não tavam fazendo nada porque estavam subtraindo o mesmo valor e dando 0. Agora que consertei, elas pioram MUITO a loss... E olha que ainda to no batelada. Termina com loss alta e todo mundo com preguiça de mudar, em 0 ou na condição inicial.
+  - 2:34 PM => parece que como montei eu estou incentivando ele a zerar a própria derivada segunda, e não a diferença entre o calculado e o predito...
+  - Testar com o batch num tempo maior pra ver o que acontece e comparar as 2...
+  - A lerdeza da L7 não é meramente na loss d2 existir, mas apenas quando ela é retornada na fração. Então deve ter algum valor errado, dividindo por zero ou afins que tá causando essa lerdeza. Possivelmente são erros lançados no background e que o tensorflow v1 não exibe...
+  - Veja se só com o volume variando e sendo predito (in t => out V) ele presta...
+    - Loss = loss_deriv1 => deu certo no geral
+    - Loss = 
+    - Bug no pinn saver: como tem dXdt se a saída é só V??? Resolvido. Eram dXdt e afins do NUM não do PINN. To ficando é doido.
+  - FIXED: Alguns desses gráficos saem tortos por causa da faixa de variação permitida que botei. Daí quando ela é grande ele corta as bordas, sendo que a ideia era fazer o contrário (que funcionou) de tirar a escala exagerada de variações minúculas.
+  - Ainda resta um problema: tá aparecendo 1e5 ao invés de x10² por exemplo. 
+  ref: https://matplotlib.org/stable/gallery/ticks/scalarformatter.html#sphx-glr-gallery-ticks-scalarformatter-py
+  O exemplo deles funciona perfeitamente no arquivo main, mas não funcioana dentro da função de plot em plot_comparer_multiple_grid.py
+  - Deleted sciformatter
+  - Ok, já descobri que é só o último plot que não pega essa formatação. Só não sei o pq.
+    - Achei. Era o plt.yscale, que estava redefinindo as configurações do último ax (o de V). Não sei o pq e sinceramente não vou atrás.
+- Atualizar fonte (deixar mais grossinha = mais legível)
+- Mudar fonte padrão
+  -  Não tava prestando, era o cache que precisei deletar. Fica em user/.matplotlib
+
+2023-10-06 @ 6:47 PM ué rodei e pareceram OK no batelada até com a nondim to ficando é doido ????
 
 ### 2023-10-06
 
