@@ -111,10 +111,10 @@ def run_reactor(
 
     # Initial condition, with dimension
     N0_dim = {
-        "X": initial_state.X[0],
-        "P": initial_state.P[0],
-        "S": initial_state.S[0],
-        "V": initial_state.volume[0],
+        "X": initial_state.X,
+        "P": initial_state.P,
+        "S": initial_state.S,
+        "V": initial_state.volume,
     }
 
     ## X
