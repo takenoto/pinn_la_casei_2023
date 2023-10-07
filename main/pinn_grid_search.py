@@ -1,5 +1,3 @@
-import numpy as np
-
 from domain.params.altiok_2006_params import Altiok2006Params
 from domain.params.process_params import ProcessParams
 from domain.params.solver_params import (
@@ -11,7 +9,6 @@ from domain.run_reactor.plot_params import PlotParams
 from domain.optimization.ode_system_caller import RunReactorSystemCaller
 from domain.optimization.grid_search import grid_search
 from domain.reactor.reactor_state import ReactorState
-from domain.flow.concentration_flow import ConcentrationFlow
 
 
 # Parâmetros default
@@ -43,7 +40,6 @@ def run_pinn_grid_search(
         def get_thing_for_key(case_key, thing_key, default=1):
             return cases_to_try[case_key].get(thing_key, default)
 
-
         solver_params_list = [
             SolverParams(
                 name=f"{case_key}",
@@ -71,8 +67,12 @@ def run_pinn_grid_search(
                     case_key, "initializer", default="Glorot uniform"
                 ),
                 loss_weights=get_thing_for_key(case_key, "loss_weights", None),
-                input_non_dim_scaler=get_thing_for_key(case_key, "input_scaler", default=None),
-                output_non_dim_scaler=get_thing_for_key(case_key, "output_scaler", default=None),
+                input_non_dim_scaler=get_thing_for_key(
+                    case_key, "input_scaler", default=None
+                ),
+                output_non_dim_scaler=get_thing_for_key(
+                    case_key, "output_scaler", default=None
+                ),
                 mini_batch=get_thing_for_key(case_key, "mini_batch", default=None),
                 hyperfolder=get_thing_for_key(case_key, "hyperfolder", default=None),
                 isplot=get_thing_for_key(case_key, "isplot", default=False),
@@ -101,28 +101,6 @@ def run_pinn_grid_search(
         ]
 
     # ---------------------------------------
-
-    # Create a default initial state if it is not given
-    initial_state = (
-        initial_state
-        if initial_state
-        else ReactorState(
-            volume=np.array([4]),
-            X=eq_params.Xo,
-            P=eq_params.Po,
-            S=eq_params.So,
-        )
-    )
-
-    if process_params is None:
-        # If the inlet flow is not specified, it is assumed that it is 0 L/h
-        inlet = ConcentrationFlow(
-            volume=0,
-            X=eq_params.Xo,
-            P=eq_params.Po,
-            S=eq_params.So,
-        )
-        process_params = ProcessParams(max_reactor_volume=5, inlet=inlet, t_final=16)
 
     # Define um caller para os parâmetros atuais (só necessita do solver depois)
     run_reactor_system_caller = RunReactorSystemCaller(
