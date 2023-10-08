@@ -1,0 +1,6 @@
+O objetivo é de forma geral ver o impacto que a escala pra cima e pra baixo, tanto de variáveis quanto tempo, tem nas predições quando a variação é pouquinha.
+Também é visto a influência de 2 diferentes funções de ativação
+A adimensionalização para diversos casos com escalonamento x10 e d10, bem como lin-lin, lin-upx1 e upx1-upx1
+Só foram testadas duas LRs
+
+(obs: todos foram feitos enquanto mexi no pc, então train_time e pred_time não deve ser levados em conta)
