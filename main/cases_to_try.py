@@ -101,7 +101,6 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         # "selu",
         # RELU IS NOT SECOND ORDER DIFFERENTIABLE AND SHOULD NOT BE USED FOR THIS PROJECT
         # REF: https://github.com/lululxvi/deepxde/issues/80
-        
     ]
     mini_batch = [None]  # [None] [20] [40] [80] [2]
     # O padrão era Glorot Uniform
@@ -150,8 +149,8 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         # "E-7_1", # = 1e-7
     ]
 
-    lbfgs_pre = 1  # 0 1
-    lbfgs_post = 0  # 1  # 0 1
+    lbfgs_pre = 0  # 0 1
+    lbfgs_post = 1  # 1  # 0 1
     ADAM_EPOCHS_list = [
         # "100",
         # "1k",
@@ -198,123 +197,38 @@ def change_layer_fix_neurons_number(eq_params, process_params):
     # NONDIMENSIONALIZER
     # -------------------------------
     # Se irá aplicar a estratégia de adimensionalização padrão
+    # Testes com blocos facilitam a vida porque basta dizer quais terão
     NDList = [
         # Order:
         # (tscode, scalers_code, input strategy, output strategy)
+        # ex: ("t2", "F1", "Lin", "Upx1"),
+        # Bota a padrão quase sempre, que é pra ter uma base de comparação
+        ("t1", "1", "Lin", "Lin"),
+        # ---------------------------------
         #
         # CURRENT ITERATION
         #
-        # 1º Noção geral do impacto de t crescendo e diminuindo
-        # 1º F1 d10 e X10
-        ("t1", "1", "Lin", "Lin"),
-        ("t1", "F1", "Lin", "Lin"),
-        ("t1", "F1d10", "Lin", "Lin"),
-        ("t1", "F1x10", "Lin", "Lin"),
-        # 2º t nondim, x10 e d10 LIN LIN
-        ("t2", "1", "Lin", "Lin"),
-        ("t2x10", "1", "Lin", "Lin"),
-        ("t2d10", "1", "Lin", "Lin"),
-        # 3º upscale LIN UPX1
-        ("t1", "F1", "Lin", "Upx1"),
-        ("t2", "F1", "Upx1", "Upx1"),
-        ("t2", "F1d10", "Lin", "Upx1"),
-        ("t2", "F1x10", "Lin", "Upx1"),
-        #
-        # ---------------------------------
-        #
-        # ("Lin", "t1", "F1x10"),
-        # ("Lin", "t2", "1"),
-        # ==> ("Lin", "t2", "F1d10"),
-        # ("Lin", "t1", "F1d100"),
-        # ("Lin", "t1", "F1x10"),
-        # ("Lin", "t6", "F1d10"),
-        # ("Lin", "t7", "F1d10"),
-        # ("Lin", "t2", "F1d10"),
-        # ("Lin", "t2d10", "F1d10"),
-        # ("Lin", "t2x10", "F1d10"),
-        # ("Lin", "t2", "F1"),
-        # ("Lin", "t2d10", "F1"),
-        # ("Lin", "t2x10", "F1"),
-        # -----------------------------------
-        #
-        # DEFAULT VALUES:
-        #
-        #
-        # Esse é o mesmo que ser sem adimensionalização
-        # ("None", "t1", "1"),
-        #
-        # ----------
-        # # Linear comum: t normal o resto nondim
-        # ("Lin", "t1", "F1"),
-        #
-        # ----------
-        # # Escalados por 10
-        # ("Lin", "t1", "F1x10"),
-        #
-        # ----------
-        # # Divididos por 10
-        # ("Lin", "t1", "F1d10"),
-        #
-        # ---------------------------
-        # Escala tempo E F1
-        # ("Lin", "t2x5", "F1"),
-        # ("Lin", "t2x10", "F1"),
-        # ("Lin", "t2x100", "F1"),
-        # ("Lin", "t2d5", "F1"),
-        # ("Lin", "t2d5", "F1d10"),
-        # ("Lin", "t2d10", "F1"),
-        # ("Lin", "t2d100", "F1"),
-        ## F1 "d" e "x"
-        # ("Lin", "t2d10", "F1d10"),
-        # ("Lin", "t2d10", "F1d5"),
-        # ("Lin", "t2x10", "F1d10"),
-        # ("Lin", "t2x10", "F1d5"),
-        # ("Lin", "t2d10", "F1"),
-        # ("Lin", "t2x10", "F1d10"),
-        # ("Lin", "t2d10", "F1d10"),
-        #
-        # ---------------------------
-        # Apenas o tempo nondim:
-        # ("Lin", "t2", "1"),
-        # ("Lin", "t3", "1"),
-        # ("Lin", "t4", "1"),
-        # ("Lin", "t5", "1"),
-        # ("Lin", "t6", "1"),
-        # ("Lin", "t7", "1"),
-        # ("Lin", "t8", "1"),
-        # ("Lin", "t9", "1"),
-        #
-        # ---------------------------
-        # Tudo nondim (XPSV) incluindo o tempo:
-        # ("Lin", "t2", "F1"),
-        # ("Lin", "t3", "F1"),
-        # ("Lin", "t4", "F1"),
-        # ("Lin", "t5", "F1"),
-        # ("Lin", "t6", "F1"),
-        # ("Lin", "t7", "F1"),
-        # ("Lin", "t8", "F1"),
-        # ("Lin", "t9", "F1"),
-        #
-        # ---------------------------
-        # Tudo nondim F1d5 (XPSV) incluindo o tempo:
-        # ("Lin", "t6", "F1d5"),
-        #
-        # ---------------------------
-        # Tudo nondim F1d10 (XPSV) incluindo o tempo:
-        # ("Lin", "t2", "F1d10"),
-        # ("Lin", "t3", "F1d10"),
-        # ("Lin", "t4", "F1d10"),
-        # ("Lin", "t5", "F1d10"),
-        # ("Lin", "t6", "F1d10"),
-        # ("Lin", "t7", "F1d10"),
-        # ("Lin", "t8", "F1d10"),
-        # ## ATENÇÃO: T9 NÃO FAZ SENTIDO QUANDO VIN = 0!!!
-        # ("Lin", "t9", "F1d10"),
-        # ---------------------------
-        # Tudo nondim F1d20 (XPSV) incluindo o tempo:
-        # ("Lin", "t6", "F1d20"),
-        # ("Lin", "t7", "F1d20"),
+        # Add here the ones to try
     ]
+    ndlist_additional_blocks = [
+        "1",
+        "2.1-LinUpx1",
+        "2.2-t2F1-Lin<>Upx1"
+        # -----------------
+        # "1" => Itera rapidamente por lin escalonando t e "N"s individualmente
+        #
+        # -----------------
+        # "2.1-LinUpx1" => testa combinação lin => Upx com t2F1
+        # "2.2-t2F1-Lin<>Upx1" => Fixa Lin=>Upx1 e muda escalonamento (x e d)
+        # Guia sobre usar UPx na entrada, saída, ou ambos
+        #
+        # -----------------
+        # "3.1LinLinF"1 => itera todos os tempos por LINLIN usando F1 e cada tempo
+        # "3.1LinLinF1d10" => memsoque 3.1F1 mas com F1d10
+        # "3.2LinUpx1F1" => Mesma coisa que 3.1F1 mas usa Lin-Upx1
+        # "3.2LinUpx1F1d10" => Mesma coisa que 3.2Upx1F1 mas usa Lin-Upx1
+    ]
+    nondimlist_add_from_blocks(NDList, ndlist_additional_blocks)
 
     # Loss Weight
     loss_weights_list = ["A1"]  # All weights = 0
@@ -329,11 +243,11 @@ def change_layer_fix_neurons_number(eq_params, process_params):
                 for adam_str in ADAM_EPOCHS_list:
                     for train_distribution in train_distribution_list:
                         for n_points in N_POINTS:
-                            for loss_version in loss_version_list:
-                                for NL in neurons:
-                                    for HL in layers:
-                                        for mb in mini_batch:
-                                            for nd in NDList:
+                            for nd in NDList:
+                                for loss_version in loss_version_list:
+                                    for NL in neurons:
+                                        for HL in layers:
+                                            for mb in mini_batch:
                                                 for LR_str in LR_list:
                                                     for (
                                                         loss_weight_str
@@ -432,7 +346,7 @@ def _insert_into_list(dictionary, args):
         + f" {input_nondim_scaler.strategy_str}-{output_nondim_scaler.strategy_str}"
         + f" p{n_init}-{n_domain}-{n_test}"
         + f" {adam_str}ep"
-        + f" lbfgs-{lbfgs_post}"
+        + f" lbfgs-{lbfgs_pre}-{lbfgs_post}"
         + f" {minibatch_str}"
     )
 
@@ -486,11 +400,102 @@ def _insert_into_list(dictionary, args):
     internal_dict["hyperfolder"] = os.path.join(
         f"{input_str}-{output_str} tr- {train_input_range_key}"
         + f" {initializer}-{train_distribution}",
-        f"ND-{input_nondim_scaler.strategy_str}-{output_nondim_scaler.strategy_str}-{nd_tscode}-{nd_scalers_code}",
         func,
+        f"ND-{input_nondim_scaler.strategy_str}-{output_nondim_scaler.strategy_str}-{nd_tscode}-{nd_scalers_code}",
     )
 
     dictionary[key] = internal_dict
+
+
+def nondimlist_add_from_blocks(NDList, blocks_to_add):
+    registered_blocs = {
+        # --------------------------------------
+        # --------------------------------------
+        # 1º Bloco: LINLIN Noção geral do impacto de t e vars crescendo e diminuindo
+        #
+        # F1 d10 e X10
+        "1": [
+            ("t1", "F1", "Lin", "Lin"),
+            ("t1", "F1d10", "Lin", "Lin"),
+            ("t1", "F1x10", "Lin", "Lin"),
+            #
+            # 2º t nondim, x10 e d10 LIN LIN
+            ("t2", "1", "Lin", "Lin"),
+            ("t2x10", "1", "Lin", "Lin"),
+            ("t2d10", "1", "Lin", "Lin"),
+        ],
+        # --------------------------------------
+        # --------------------------------------
+        # 2º Bloco: UPX Noção geral do impacto de t e vars crescendo e diminuindo
+        #
+        "2.1-LinUpx1": [
+            ("t1", "F1", "Lin", "Upx1"),
+            ("t1", "F1d10", "Lin", "Upx1"),
+            ("t1", "F1x10", "Lin", "Upx1"),
+            #
+            ("t2", "1", "Lin", "Upx1"),
+            ("t2x10", "1", "Lin", "Upx1"),
+            ("t2d10", "1", "Lin", "Upx1"),
+        ],
+        "2.2-t2F1-Lin<>Upx1": [
+            ("t2", "F1", "Lin", "Upx1"),
+            ("t2", "F1", "Upx1", "Upx1"),
+            ("t2", "F1", "Upx1", "Lin"),
+        ],
+        # --------------------------------------
+        # --------------------------------------
+        # 3º Bloco: Testes de tempo nondim
+        # 3.1 - LINLIN t e F1
+        "3.1LinLinF1": [
+            ("t1", "F1", "Lin", "Lin"),
+            ("t2", "F1", "Lin", "Lin"),
+            ("t3", "F1", "Lin", "Lin"),
+            ("t4", "F1", "Lin", "Lin"),
+            ("t5", "F1", "Lin", "Lin"),
+            ("t6", "F1", "Lin", "Lin"),
+            ("t7", "F1", "Lin", "Lin"),
+            ("t8", "F1", "Lin", "Lin"),
+            ("t9", "F1", "Lin", "Lin"),
+        ],
+        "3.1LinLinF1d10": [
+            ("t1", "F1d10", "Lin", "Lin"),
+            ("t2", "F1d10", "Lin", "Lin"),
+            ("t3", "F1d10", "Lin", "Lin"),
+            ("t4", "F1d10", "Lin", "Lin"),
+            ("t5", "F1d10", "Lin", "Lin"),
+            ("t6", "F1d10", "Lin", "Lin"),
+            ("t7", "F1d10", "Lin", "Lin"),
+            ("t8", "F1d10", "Lin", "Lin"),
+            ("t9", "F1d10", "Lin", "Lin"),
+        ],
+        #
+        # 3.2 - Lin Upx
+        "3.2LinUpx1F1": [
+            ("t1", "F1", "Lin", "Upx1"),
+            ("t2", "F1", "Lin", "Upx1"),
+            ("t3", "F1", "Lin", "Upx1"),
+            ("t4", "F1", "Lin", "Upx1"),
+            ("t5", "F1", "Lin", "Upx1"),
+            ("t6", "F1", "Lin", "Upx1"),
+            ("t7", "F1", "Lin", "Upx1"),
+            ("t8", "F1", "Lin", "Upx1"),
+            ("t9", "F1", "Lin", "Upx1"),
+        ],
+        "3.2LinUpx1F1d10": [
+            ("t1", "F1d10", "Lin", "Upx1"),
+            ("t2", "F1d10", "Lin", "Upx1"),
+            ("t3", "F1d10", "Lin", "Upx1"),
+            ("t4", "F1d10", "Lin", "Upx1"),
+            ("t5", "F1d10", "Lin", "Upx1"),
+            ("t6", "F1d10", "Lin", "Upx1"),
+            ("t7", "F1d10", "Lin", "Upx1"),
+            ("t8", "F1d10", "Lin", "Upx1"),
+            ("t9", "F1d10", "Lin", "Upx1"),
+        ],
+    }
+
+    for block in blocks_to_add:
+        NDList.extend(registered_blocs[block])
 
 
 def get_nondim_scaler(
