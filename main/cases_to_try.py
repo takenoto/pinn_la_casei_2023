@@ -100,9 +100,9 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
         # Default
         "E-3_1",
         "E-4_3"
-        #--------------------
+        # --------------------
         # FULL LIST:
-        #--------------------
+        # --------------------
         # "E-2_1",
         # "E-3_9",  # = 9e-3
         # "E-3_8",  # = 8e-3
@@ -137,7 +137,7 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
     ]
 
     lbfgs_pre = 0  # 0 1
-    lbfgs_post = 0#1  # 0 1
+    lbfgs_post = 0  # 1  # 0 1
     ADAM_EPOCHS_list = [
         # "100",
         # "1k",
@@ -153,13 +153,13 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
     ]
     # SGD_EPOCHS = 0  # 1000
     neurons = [
-        2,
-        4,
-        6,
-        8,
+        # 2,
+        # 4,
+        # 6,
+        # 8,
         10,
-        12,
-        16,
+        # 12,
+        # 16,
         # 20,
         # 30,
         # 32,
@@ -170,8 +170,8 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
         # 160
     ]
     layers = [
-        1,
-        2,
+        # 1,
+        # 2,
         3,
         # 4,
         # 5,
@@ -192,10 +192,10 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
         #
         # 1º Noção geral do impacto de t crescendo e diminuindo
         ("t1", "1", "Lin", "Lin"),
-        ("t1", "F1", "Lin", "UPx1"),
-        ("t1", "F1d10", "Lin", "Lin"),
-        ("t7", "1", "Lin", "Lin"),
-        ("t7", "F1", "Lin", "UPx1"),
+        # ("t1", "F1", "Lin", "UPx1"),
+        # ("t1", "F1d10", "Lin", "Lin"),
+        # ("t7", "1", "Lin", "Lin"),
+        # ("t7", "F1", "Lin", "UPx1"),
         #
         # ---------------------------------
         #
@@ -314,7 +314,7 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
                                                 for (
                                                     loss_weight_str
                                                 ) in loss_weights_list:
-                                                    insert_into_dict(
+                                                    _insert_into_list(
                                                         dictionary,
                                                         args=(
                                                             hyperfolder,
@@ -345,7 +345,7 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
     return (dictionary, cols, rows)
 
 
-def insert_into_dict(dictionary, args):
+def _insert_into_list(dictionary, args):
     (
         hyperfolder,
         process_params,
@@ -401,7 +401,7 @@ def insert_into_dict(dictionary, args):
     # Montando o nome:
     minibatch_str = f"m{mb}" if mb is not None else "m-"
 
-    key = (
+    name = (
         f"{NL}x{HL}"
         + f" {func}"
         + f" L{loss_version}"
@@ -413,47 +413,61 @@ def insert_into_dict(dictionary, args):
         + f" {minibatch_str}"
     )
 
+    key = (
+        f"{NL}x{HL}"
+        + f" {func}"
+        + f" L{loss_version}"
+        + f" LR-{LR_str}"
+        + f" w{loss_weight_str}"
+        + f" p{n_init}-{n_domain}-{n_test}"
+        + f" {adam_str}ep"
+        + f" lbfgs-{lbfgs_post}"
+        + f" {minibatch_str}"
+        + f" {input_str} {output_str}"
+        + f" tr-{train_input_range_key}"
+        + f"ND-{input_nondim_scaler.strategy_str}-{output_nondim_scaler.strategy_str}"
+        + f"-{nd_tscode}-{nd_scalers_code}"
+        + f" p{n_init}-{n_domain}-{n_test}"
+        + f" TD-{train_distribution}"
+    )
+
     # Executando ações:
-    dictionary[key] = {
+    internal_dict = {
+        "name": name,
         "layer_size": [len(input_variables)] + [NL] * HL + [len(output_variables)],
         "adam_epochs": ADAM_EPOCHS,
+        "input_str": input_str,
+        "output_str": output_str,
+        "input_scaler": input_nondim_scaler,
+        "output_scaler": output_nondim_scaler,
+        "loss_weights": loss_weights(config=loss_weight_str),
+        "activation": func,
+        "mini_batch": mb,
+        "num_domain": n_domain,
+        "num_test": n_test,
+        "num_init": n_init,
+        "num_bound": NUM_BOUNDARY,
+        "lbfgs_pre": lbfgs_pre,
+        "lbfgs_post": lbfgs_post,
+        "LR": LR,
+        "isplot": False,
+        "initializer": initializer,
+        "output_variables": output_variables,
+        "input_variables": input_variables,
+        "loss_version": loss_version,
+        "custom_loss_version": {},  # 'X':3, 'V':3,
+        "train_distribution": train_distribution,
+        "train_input_range": train_input_range,
     }
 
-    dictionary[key]["input_str"] = input_str
-    dictionary[key]["output_str"] = output_str
-
-    dictionary[key]["input_scaler"] = input_nondim_scaler
-    dictionary[key]["output_scaler"] = output_nondim_scaler
-
-    dictionary[key]["loss_weights"] = loss_weights(config=loss_weight_str)
-
-    dictionary[key]["activation"] = func
-    dictionary[key]["mini_batch"] = mb
-    dictionary[key]["num_domain"] = n_domain
-    dictionary[key]["num_test"] = n_test
-    dictionary[key]["num_init"] = n_init
-    dictionary[key]["num_bound"] = NUM_BOUNDARY
-    dictionary[key]["lbfgs_pre"] = lbfgs_pre
-    dictionary[key]["lbfgs_post"] = lbfgs_post
-    dictionary[key]["LR"] = LR
-    dictionary[key]["isplot"] = False
-    dictionary[key]["initializer"] = initializer
-    dictionary[key]["output_variables"] = output_variables
-    dictionary[key]["input_variables"] = input_variables
-    dictionary[key]["loss_version"] = loss_version
-    dictionary[key]["custom_loss_version"] = {
-        # 'X':3,
-        # 'V':3,
-    }
-    dictionary[key]["train_distribution"] = train_distribution
-    dictionary[key]["train_input_range"] = train_input_range
-
-    dictionary[key]["hyperfolder"] = os.path.join(
+    internal_dict["hyperfolder"] = os.path.join(
         f"{input_str}-{output_str} tr- {train_input_range_key}"
         + f" {initializer}-{train_distribution}",
         f"ND-{input_nondim_scaler.strategy_str}-{output_nondim_scaler.strategy_str}-{nd_tscode}-{nd_scalers_code}",
         func,
     )
+
+    dictionary[key] = internal_dict
 
 
 def get_nondim_scaler(
