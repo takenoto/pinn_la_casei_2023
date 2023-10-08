@@ -199,6 +199,7 @@ def main():
                         S=eq_params.So,
                     ),
                     t_final=22,
+                    S_max= float("inf")
                 )
                 initial_state = ReactorState(
                     volume=1,
@@ -245,6 +246,7 @@ def main():
                             S=eq_params.So,
                         ),
                         t_final=t_sim,
+                        Smax=So
                     )
                     initial_state = ReactorState(
                         volume=5,
@@ -279,6 +281,7 @@ def main():
                             S=eq_params.So,
                         ),
                         t_final=24 * 3,
+                        Smax=float("inf")
                     )
                     initial_state = ReactorState(
                         volume=V0,
