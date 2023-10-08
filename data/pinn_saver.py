@@ -243,21 +243,12 @@ def save_each_pinn(
 
             error_L.append(total_error / len(pinn_vals[u]))
         else:
-            error_L.append(np.nan)
+            error_L.append(None)
 
-    # -------------
-    # ERROR XPSV
-    error_lines = []
-    if _out.X:
-        error_lines.append(f'"X": {error_L[0]}')
-    if _out.P:
-        error_lines.append(f'"P": {error_L[1]}')
-    if _out.S:
-        error_lines.append(f'"S": {error_L[2]}')
-    if _out.V:
-        error_lines.append(f'"V": {error_L[3]}')
-
-    error_lines.append(f'"Total": {np.nansum(error_L)}')
+    error_mad_dict = {}
+    for o in _out.order:
+        index = _out.order.index(o)
+        error_mad_dict[o] = error_L[index]
 
     pinn_vals_dict = {
         # "t" = num.t, nem precisa repetir zzz
@@ -288,6 +279,7 @@ def save_each_pinn(
     file_dict["pred time"]: pred_time
     file_dict["initializer"]: pinn.solver_params.initializer
     file_dict["train_distribution"]: pinn.solver_params.train_distribution
+    file_dict["error_MAD"]: error_mad_dict
     file_dict["pinn_x_test"]: np.array(pinn.train_state.X_test).tolist()
     file_dict["pinn_x_train"]: np.array(pinn.train_state.X_train).tolist()
     file_dict["pinn_input_oder"] = _in.order
