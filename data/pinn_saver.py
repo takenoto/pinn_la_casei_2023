@@ -159,8 +159,7 @@ def save_each_pinn(
                 ),
             )
         ).tolist()
-    
-    
+
     file_dict = {
         "name": pinn.model_name,
         "solver_params": pinn.solver_params.toDict(),
@@ -245,11 +244,13 @@ def save_each_pinn(
         else:
             error_L.append(None)
 
-    error_mad_dict = {}
-    for o in _out.order:
-        index = _out.order.index(o)
-        error_mad_dict[o] = error_L[index]
-
+    error_mad_dict = {
+        "X": error_L[0],
+        "P": error_L[1],
+        "S": error_L[2],
+        "V": error_L[3],
+    }
+    
     pinn_vals_dict = {
         # "t" = num.t, nem precisa repetir zzz
         "X": np.array(pinn_vals[0]).tolist(),
@@ -273,15 +274,15 @@ def save_each_pinn(
 
     # tain data
     file_dict["train time"] = pinn.total_training_time
-    file_dict["train time"]: pinn.total_training_time
-    file_dict["best loss test"]: np.array(pinn.best_loss_test).tolist()
-    file_dict["best loss train"]: np.array(pinn.best_loss_train).tolist()
-    file_dict["pred time"]: pred_time
-    file_dict["initializer"]: pinn.solver_params.initializer
-    file_dict["train_distribution"]: pinn.solver_params.train_distribution
-    file_dict["error_MAD"]: error_mad_dict
-    file_dict["pinn_x_test"]: np.array(pinn.train_state.X_test).tolist()
-    file_dict["pinn_x_train"]: np.array(pinn.train_state.X_train).tolist()
+    file_dict["train time"] = pinn.total_training_time
+    file_dict["best loss test"] = np.array(pinn.best_loss_test).tolist()
+    file_dict["best loss train"] = np.array(pinn.best_loss_train).tolist()
+    file_dict["pred time"] = pred_time
+    file_dict["initializer"] = pinn.solver_params.initializer
+    file_dict["train_distribution"] = pinn.solver_params.train_distribution
+    file_dict["error_MAD"] = error_mad_dict
+    file_dict["pinn_x_test"] = np.array(pinn.train_state.X_test).tolist()
+    file_dict["pinn_x_train"] = np.array(pinn.train_state.X_train).tolist()
     file_dict["pinn_input_oder"] = _in.order
     file_dict["pinn_output_oder"] = _out.order
     file_dict["num_vals"] = num_vals_dict
