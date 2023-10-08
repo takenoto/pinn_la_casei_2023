@@ -99,7 +99,8 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         "tanh",
         "swish",
         # "selu",
-        # RELU IS NOT SECOND ORDER DIFFERENTIABLE AND SHOULD NOT BE USED FOR THIS PROJECT
+        # RELU IS NOT SECOND ORDER DIFFERENTIABLE
+        # AND SHOULD NOT BE USED FOR THIS PROJECT
         # REF: https://github.com/lululxvi/deepxde/issues/80
     ]
     mini_batch = [None]  # [None] [20] [40] [80] [2]
