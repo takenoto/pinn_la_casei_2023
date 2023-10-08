@@ -1,6 +1,7 @@
 
 from domain.params.altiok_2006_params import Altiok2006Params
 from domain.params.process_params import ProcessParams
+from domain.params.solver_params import SolverParams
 
 
 class PINNReactorModelResults:
@@ -10,7 +11,7 @@ class PINNReactorModelResults:
         model=None,
         loss_history=None,
         train_state=None,
-        solver_params=None,
+        solver_params:SolverParams=None,
         eq_params:Altiok2006Params=None,
         process_params:ProcessParams=None,
         initial_state=None,
