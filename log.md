@@ -28,6 +28,56 @@
 
 ### 2023-10-08 
 
+- !!!!!!! fui muito burro. Não podia ter tirado as strings da key porque são elas que garantem que os projetos são únicos e não vão se sobrepor. Voltando... em cases_to_try.py
+- Talvez a solução seja trocar o dict por uma lista. Mas a ideia do dict era justamente proibir casos iguais usando o nome pra tirar os conflitos automaticamente...
+- Trocar estrutura de dict por list. Provavelmente resolverá.
+  - Decidi preservar a estrutura de dict porque ela proíbe duplicatas. Aí a key e o name são 2 coisas distintas
+
+pinn_saver
+  - Corrigido erro: MAD não era exportado
+  - Corridigo erro: várias variáveis não eram exportadas no json por estarem sendo passadas com ":" e não "="
+  - Mas ainda precisei dar clear no cache do python (VSCode => control shift p => clear python cache)
+  - add ao json:
+    - process_params
+    - eq_params
+    - altiok params
+      - E implementar to_dict em cada respectiva classe
+      - FIXED problema ref circular pinn_saver e pinn_results chamando um ao outro
+        - Fiz do jeito mais fácil e burro, que foi tirar o tipo de pinn_model do pinn_saver e trabalhar "no escuro"
+
+- Add useMathText to stylesheet
+- on "plot_comparer_multiple_grid.py"
+  - Apply scilimits (-1, +1) only for axis y
+  - Remove previous code for settings the y lims manually (now irrelevant)
+- Loss v7 (test: t => V for CR):
+  - Loss = Sign of d1 => Resultados péssimos, a loss trava e não consegue mais descer (sendo que se tá lá é porque tem algo errado). talvez eu esteja usando a função sign de forma errada???
+  - Testei loss = (1+sign_dif_d1)*loss_derivative_abs  e  loss = loss_derivative_abs
+    - Resultados parecido, mas a loss pareceu reduzir mais rápido com o (1+sign_dif_d1)
+  - Testando loss = (1) * (loss_derivative_abs + loss_minmax) e loss = (1 + sign_dif_d1) * (loss_derivative_abs + loss_minmax)
+    - A deriv + loss_minmax pareceu ser PIOR que a versão sem a loss minmax. Talvez ele esteja com muito "medo" dos valores que ultrapassam os limites e isso esteja atrapalhando.
+    - Novamente, os resultados que usaram o signal pareceram melhores
+  - Teste rede 10x3:
+    - loss = (1 + sign_dif_d1 + sign_dif_d2) * (loss_derivative_abs + loss_minmax + loss_d2) oscilou de 1 a 1.004 e loss = loss_d2 oscilou de 1 a 1.2. Sendo que os valores ficam entre 1 e 1.003. Então claramente a que tem tudo foi melhor. Agora é simplificar.
+    - loss d1 solo foi pior que loss d2 solo porque fez com que tivesse aquela queda brusca no t imediatamente após 0.
+    - tudo sem sign foi pior que tudo com sign..
+
+1) TODO testar variações de L7 em 4 tipos de reator (tudo padrão, tanh, etc), sem nondim, rede 10x3, LR1e-3:
+  - 1.1) TODO Rede t => V
+    - CR (1, 5, "1", "-4"), baixa vazão quase nada
+    - CR (1, 5, "25", "-2"), vazão normal
+  - 1.2) TODO- Rede t => XPS
+    - batch (11, "Xo", "Po", "So")
+    - batch (24, "Xo", "Po", "So"),
+- TODO bota esses 2 testes anteriores já na pasta de testes definitivos, acho que rola
+- TODO tentar abrir e comprarar MADs no plot 3D. Preciso saber se o modelo do json está certo antes de seguir em frente...
+2) TODO Para o reator batch testar:
+  - Contra todas as loss v7, uns 10 tipos de nondim (já inclui t escalado e não escalado...)
+  - Nas melhores 3 ou 4 loss testar diferença de vários LRs e npoints. Isso já me diz se faz sentido aumentar ou diminuir ambos.
+3) TODO Faz modelos t=>XPSV para CR com variação baixa (4.5L a 5L) porque é capaz de funcionar e validar. Depois que vou pros de 1 a 5.
+4) TODO Faz Modelo batch com hypercube entrando tudo. Esse vai ser bem mais trabalhoso pq vou ter que mexer em cases_to_try, run_reactor e no pinn_saver pra usar as condições. E pode me salvar se o modelo de (3) acabar não prestando.
+
+ TODO veja se consegue fazer a generalização com entrada tipo AllA => (todos os parâmetros e afins fornecidos como variáveis de entrada, menos Xm, Pm)
+
 Coisas que ficaram do dia 7:
 
 LOSSV7 :: TODO veja se só a loss d2 é o suficiente pra representar apenas a variação do volume, que é a mais fácil. Se não, pode ter algo errado nos meus cálculos. O valor dela é até maior que a d1 e pode ser mais fácil o treinamento por d2...
