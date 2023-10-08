@@ -97,7 +97,9 @@ def lossV7(o, args, loss_version):
     #
     # ----------------------
     # calc loss 1 derivative signal
-    sign_dif_d1 = tf.abs(tf.math.sign(dNdt) - tf.math.sign(dNdt_calc))
+    sign_d1_pred = tf.math.sign(dNdt) 
+    sign_d1_calc = tf.math.sign(dNdt_calc)
+    sign_dif_d1 = tf.abs(sign_d1_pred- sign_d1_calc)
     #
     # ----------------------
     # calc loss second derivative
@@ -105,7 +107,9 @@ def lossV7(o, args, loss_version):
     #
     # ----------------------
     # calc loss 2 derivative signal
-    sign_dif_d2 = tf.abs(tf.math.sign(dNdt_2) - tf.math.sign(dNdt_2_calc))
+    sign_d2_pred = tf.math.sign(dNdt_2)
+    sign_d2_calc = tf.math.sign(dNdt_2_calc)
+    sign_dif_d2 = tf.abs(sign_d2_pred - sign_d2_calc)
     #
     # ----------------------
     # calc loss
@@ -130,5 +134,11 @@ def lossV7(o, args, loss_version):
             loss = tf.add(tf.add(1.0, sign_dif_d1), sign_dif_d2) * (
                 loss_d1 + loss_minmax + loss_d2
             )
+        case "7H":
+            # Sign d2 na loss d1
+            loss = tf.add(1.0, sign_dif_d2) * loss_d1
+        case "7I":
+            # Sign d1 na loss d2
+            loss = tf.add(1.0, sign_dif_d1) * loss_d2
 
     return loss
