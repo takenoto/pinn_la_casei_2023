@@ -158,27 +158,14 @@ def plot_comparer_multiple_grid(
             ax.yaxis.set_major_locator(y_majlocator)
         if y_minlocator:
             ax.yaxis.set_minor_locator(y_minlocator)
-
-        # Set lims Y na força
-        diffY = biggestY - lowestY
-        average = (biggestY + lowestY) / 2
-        diffYPerc = (biggestY - lowestY) / (biggestY)
-
-        # Se diff < 1% força pra não ficar tão ruim de ler,
-        # ou se a dif absoluta for menor que 0.001
-        if diffY < 0.005:
-            ax.set_ylim(top=average + 0.005, bottom=average - 0.005)
-        if diffYPerc <= 0.03:
-            ax.set_ylim(
-                top=biggestY + 0.03 * abs(average), bottom=lowestY - 0.03 * abs(average)
-            )
-        pass
     
     if yscale:
         plt.yscale(yscale)
     
     for ax in axes:
-        ax.ticklabel_format(useMathText=True, scilimits=(-2, +2))    
+        # Só para o eixo y:
+        ax.ticklabel_format(useMathText=True, scilimits=(-1,+1), axis="y")    
+        
     
     if labels:
         fig.legend(
