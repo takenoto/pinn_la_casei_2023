@@ -3,7 +3,7 @@ import tensorflow as tf
 import deepxde as dde
 
 
-def lossV7(o, args):
+def lossV7(o, args, loss_version):
     (
         X,
         P,
@@ -78,44 +78,58 @@ def lossV7(o, args):
         dNdt = dVdt
         dNdt_calc = f_in - f_out
 
+    # ----------------------
     # Second derivative
     dNdt_2 = dde.grad.hessian(N, nn_input, j=inputSimulationType.t_index, grad_y=dNdt)
-
+    dNdt_2_calc = dde.grad.jacobian(
+        tf.convert_to_tensor(dNdt_calc * tf.ones_like(N)),
+        nn_input,
+        j=inputSimulationType.t_index,
+        i=0,
+    )
+    #
+    # ----------------------
+    # ---      LOSS      ---
+    # ----------------------
     #
     # ----------------------
     # calc loss derivative
+    loss_d1 = tf.abs(dNdt - dNdt_calc)
+    #
     # ----------------------
-    loss_derivative = dNdt - dNdt_calc
-    loss_derivative_abs = tf.abs(loss_derivative)
-
+    # calc loss 1 derivative signal
+    sign_dif_d1 = tf.abs(tf.math.sign(dNdt) - tf.math.sign(dNdt_calc))
     #
     # ----------------------
     # calc loss second derivative
-    # ----------------------
-
-    # TODO faz direto a diferença ou faz pelo sinal?
-    # Pode ficar um número muito minusculinho...
-    # Talvez o sinal x 100 x a diferença??
-    sign_d2_pred = tf.math.sign(dNdt_2)
-    dNdt_2_calc = dde.grad.jacobian(
-        tf.convert_to_tensor(dNdt_calc), nn_input, j=inputSimulationType.t_index, i=0
-    )
     loss_d2 = tf.abs(dNdt_2 - dNdt_2_calc)
-
+    #
     # ----------------------
-    # calc loss second derivative signal
-    # ----------------------
-    sign_d2_calc = tf.cast(tf.math.sign(dNdt_2_calc), dtype=float32)
-    loss_multiplier = tf.abs(sign_d2_pred - sign_d2_calc)
-
+    # calc loss 2 derivative signal
+    sign_dif_d2 = tf.abs(tf.math.sign(dNdt_2) - tf.math.sign(dNdt_2_calc))
     #
     # ----------------------
     # calc loss
     # ----------------------
-    # loss = (1 + loss_multiplier/2) * (loss_derivative_abs + loss_minmax + loss_d2)
-    loss = (1 + loss_multiplier) * (loss_derivative_abs + loss_minmax + loss_d2)
-    loss = loss_derivative_abs
-    loss = loss_d2
     # ----------------------
+
+    match loss_version:
+        case "7A":
+            loss = loss_d1
+        case "7B":
+            loss = loss_d1 + loss_minmax
+        case "7C":
+            loss = loss_d2
+        case "7D":
+            loss = loss_d2 + loss_minmax
+        case "7E":
+            loss = tf.add(1, sign_dif_d1) * loss_d1
+        case "7F":
+            loss = tf.add(1, sign_dif_d2) * loss_d2
+        case "7G":
+            # (1 + sing1 + sing2) * sum loss
+            loss = tf.add(tf.add(1, sign_dif_d1), sign_dif_d2) * (
+                loss_d1 + loss_minmax + loss_d2
+            )
 
     return loss
