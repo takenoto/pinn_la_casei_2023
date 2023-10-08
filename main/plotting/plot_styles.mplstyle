@@ -13,6 +13,7 @@ axes.labelweight: semibold
 
 axes.titlepad: 11
 axes.labelpad: 9
+axes.formatter.use_mathtext: True
 
 legend.title_fontsize: 14
 legend.fontsize: 12
