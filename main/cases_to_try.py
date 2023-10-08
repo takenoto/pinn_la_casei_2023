@@ -199,12 +199,12 @@ def change_layer_fix_neurons_number(eq_params, process_params):
     # -------------------------------
     # Se irá aplicar a estratégia de adimensionalização padrão
     # Testes com blocos facilitam a vida porque basta dizer quais terão
+    # Blocos custom:
     NDList = [
         # Order:
         # (tscode, scalers_code, input strategy, output strategy)
         # ex: ("t2", "F1", "Lin", "Upx1"),
         # Bota a padrão quase sempre, que é pra ter uma base de comparação
-        ("t1", "1", "Lin", "Lin"),
         # ---------------------------------
         #
         # CURRENT ITERATION
@@ -212,9 +212,14 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         # Add here the ones to try
     ]
     ndlist_additional_blocks = [
+        # Using now:
+        # faz um a um pq aí pode parar e continuar depois
+        "default", # só ("t1", "1", "Lin", "Lin"),
         "1",
-        "2.1-LinUpx1",
-        "2.2-t2F1-Lin<>Upx1"
+        # "2.1-LinUpx1",
+        # "2.2-t2F1-Lin<>Upx1"
+        #
+        # -- DOCs:
         # -----------------
         # "1" => Itera rapidamente por lin escalonando t e "N"s individualmente
         #
@@ -410,6 +415,7 @@ def _insert_into_list(dictionary, args):
 
 def nondimlist_add_from_blocks(NDList, blocks_to_add):
     registered_blocs = {
+        "default": ("t1", "1", "Lin", "Lin"),
         # --------------------------------------
         # --------------------------------------
         # 1º Bloco: LINLIN Noção geral do impacto de t e vars crescendo e diminuindo
