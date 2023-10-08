@@ -14,7 +14,7 @@ from domain.params.process_params import ProcessParams
 def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None):
     dictionary = {}
     # --------- LOSS FUNCTION -----------
-    loss_version = 7  # 5 # 7 6 5 4 3 2
+    loss_version_list = ["7A", "7B", "7C", "7D", "7E", "7F", "7G"]  # 7A-G 6 5 4 3 2
 
     input_output_variables_list = [
         # ----------------------
@@ -48,7 +48,7 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
         # "0-10pa",
         # "0-15pa",
         # "0-25pa",
-        "0-35pa",
+        # "0-35pa",
         # "0-60pa",
         # "0-90pa",
         "0-100pa",
@@ -58,14 +58,22 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
     N_POINTS = [
         # initial points, domain points, test points
         # TESTANDO:
-        # (64, 64, 64),
-        (8, 24, 24),
+        (20, 20, 20),
+        (4, 20, 20),
+        (4, 20, 800),
+        (4, 200, 20),
         #
         # PADRÃO:
         # (16, 32, 32),
+        # (8, 24, 24),
         #
         # ---------------
         # Ppontos que avaliam se compensa ou não aumentar npoints
+        # (20, 20, 20),
+        # (4, 20, 20),
+        # (4, 20, 800),
+        # (4, 200, 20),
+        # ou
         # (16, 32, 32),
         # (100, 32, 32),
         # (16, 300, 300),
@@ -99,7 +107,7 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
     LR_list = [
         # Default
         "E-3_1",
-        "E-4_3"
+        # "E-4_3"
         # --------------------
         # FULL LIST:
         # --------------------
@@ -153,11 +161,11 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
     ]
     # SGD_EPOCHS = 0  # 1000
     neurons = [
-        # 2,
+        2,
         # 4,
         # 6,
         # 8,
-        10,
+        # 10,
         # 12,
         # 16,
         # 20,
@@ -306,41 +314,42 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
                 for adam_str in ADAM_EPOCHS_list:
                     for train_distribution in train_distribution_list:
                         for n_points in N_POINTS:
-                            for NL in neurons:
-                                for HL in layers:
-                                    for mb in mini_batch:
-                                        for nd in NDList:
-                                            for LR_str in LR_list:
-                                                for (
-                                                    loss_weight_str
-                                                ) in loss_weights_list:
-                                                    _insert_into_list(
-                                                        dictionary,
-                                                        args=(
-                                                            hyperfolder,
-                                                            process_params,
-                                                            eq_params,
-                                                            input_output_variables,
-                                                            loss_version,
-                                                            lbfgs_pre,
-                                                            lbfgs_post,
-                                                            loss_version,
-                                                            func,
-                                                            initializer,
-                                                            train_input_range_key,
-                                                            adam_str,
-                                                            train_distribution,
-                                                            train_input_range_dict,
-                                                            n_points,
-                                                            NUM_BOUNDARY,
-                                                            NL,
-                                                            HL,
-                                                            mb,
-                                                            nd,
-                                                            LR_str,
-                                                            loss_weight_str,
-                                                        ),
-                                                    )
+                            for loss_version in loss_version_list:
+                                for NL in neurons:
+                                    for HL in layers:
+                                        for mb in mini_batch:
+                                            for nd in NDList:
+                                                for LR_str in LR_list:
+                                                    for (
+                                                        loss_weight_str
+                                                    ) in loss_weights_list:
+                                                        _insert_into_list(
+                                                            dictionary,
+                                                            args=(
+                                                                hyperfolder,
+                                                                process_params,
+                                                                eq_params,
+                                                                input_output_variables,
+                                                                loss_version,
+                                                                lbfgs_pre,
+                                                                lbfgs_post,
+                                                                loss_version,
+                                                                func,
+                                                                initializer,
+                                                                train_input_range_key,
+                                                                adam_str,
+                                                                train_distribution,
+                                                                train_input_range_dict,
+                                                                n_points,
+                                                                NUM_BOUNDARY,
+                                                                NL,
+                                                                HL,
+                                                                mb,
+                                                                nd,
+                                                                LR_str,
+                                                                loss_weight_str,
+                                                            ),
+                                                        )
 
     return (dictionary, cols, rows)
 
