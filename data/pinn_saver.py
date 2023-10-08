@@ -6,6 +6,7 @@ from timeit import default_timer as timer
 import deepxde as dde
 
 from data.plot.plot_comparer_multiple_grid import plot_comparer_multiple_grid
+from domain.run_reactor.pinn_reactor_model_results import PINNReactorModelResults
 
 xp_colors = ["#F2545B"]
 """
@@ -68,7 +69,7 @@ class PINNSaveCaller:
 
 def save_each_pinn(
     num_results,
-    pinn,
+    pinn: PINNReactorModelResults,
     showPINN=True,
     showNondim=False,
     folder_to_save=None,
@@ -162,7 +163,6 @@ def save_each_pinn(
 
     file_dict = {
         "name": pinn.model_name,
-        "solver_params": pinn.solver_params.toDict(),
     }
 
     items = {}
@@ -250,7 +250,7 @@ def save_each_pinn(
         "S": error_L[2],
         "V": error_L[3],
     }
-    
+
     pinn_vals_dict = {
         # "t" = num.t, nem precisa repetir zzz
         "X": np.array(pinn_vals[0]).tolist(),
@@ -273,33 +273,39 @@ def save_each_pinn(
         ].tolist()
 
     # tain data
-    file_dict["train time"] = pinn.total_training_time
-    file_dict["train time"] = pinn.total_training_time
-    file_dict["best loss test"] = np.array(pinn.best_loss_test).tolist()
-    file_dict["best loss train"] = np.array(pinn.best_loss_train).tolist()
+    file_dict["pinn_model"] = {
+        "params": {
+            "input_order": _in.order,
+            "output_order": _out.order,
+            "eq_params": pinn.eq_params.to_dict(),
+            "process_params": pinn.process_params.to_dict(),
+            "solver_params": pinn.solver_params.to_dict(),
+        },
+        "train": {
+            "epochs": np.array(pinn.loss_history.steps).tolist(),
+            "x_test": np.array(pinn.train_state.X_test).tolist(),
+            "x_train": np.array(pinn.train_state.X_train).tolist(),
+            "train time": pinn.total_training_time,
+            "best loss test": np.array(pinn.best_loss_test).tolist(),
+            "best loss train": np.array(pinn.best_loss_train).tolist(),
+            "loss_history_train_SUM": [
+                loss for loss in np.sum(pinn.loss_history.loss_train, axis=1).tolist()
+            ],
+            "loss_history_train": np.array(pinn.loss_history.loss_train).tolist(),
+            "loss_history_test": np.array(pinn.loss_history.loss_test).tolist(),
+            "loss_history_test_ICSBCS": loss_icsbcs_test,
+            "loss_history_test_SUM": [
+                loss
+                for loss in np.array(
+                    np.sum(pinn.loss_history.loss_test, axis=1)
+                ).tolist()
+            ],
+        },
+    }
     file_dict["pred time"] = pred_time
-    file_dict["initializer"] = pinn.solver_params.initializer
-    file_dict["train_distribution"] = pinn.solver_params.train_distribution
     file_dict["error_MAD"] = error_mad_dict
-    file_dict["pinn_x_test"] = np.array(pinn.train_state.X_test).tolist()
-    file_dict["pinn_x_train"] = np.array(pinn.train_state.X_train).tolist()
-    file_dict["pinn_input_oder"] = _in.order
-    file_dict["pinn_output_oder"] = _out.order
     file_dict["num_vals"] = num_vals_dict
-    file_dict["pinn_vals"] = pinn_vals_dict
-    file_dict["pinn_epochs"] = np.array(pinn.loss_history.steps).tolist()
-    file_dict["pinn_loss_history_test"] = np.array(pinn.loss_history.loss_test).tolist()
-    file_dict["pinn_loss_history_test_ICSBCS"] = loss_icsbcs_test
-    file_dict["pinn_loss_history_test_SUM"] = [
-        loss for loss in np.array(np.sum(pinn.loss_history.loss_test, axis=1)).tolist()
-    ]
-    file_dict["pinn_loss_history_train"] = np.array(
-        pinn.loss_history.loss_train
-    ).tolist()
-    file_dict["pinn_loss_history_train_SUM"] = [
-        loss for loss in np.sum(pinn.loss_history.loss_train, axis=1).tolist()
-    ]
-    file_dict["total_training_time"] = [pinn.total_training_time]
+    file_dict["pinn_vals_predicted"] = pinn_vals_dict
 
     # ------------------------
     # SAVING THE FILE
