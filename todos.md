@@ -1,5 +1,10 @@
 # Todo List
 
+## Ler papers
+### 1) DeepOnet
+https://arxiv.org/abs/1910.03193
+### 2) os que ficaram no celular e o que eles me mandaram que li mas faltou olhar a fundo
+
 - No desenho do fluxorama que vai representar o processo, incluir a etapa de limpar objetos da memória
 - Talvez testar a função de inicialização seja ainda mais importante e eu esteja negligenciando
 https://stats.stackexchange.com/questions/229669/when-should-i-use-the-normal-distribution-or-the-uniform-distribution-when-using

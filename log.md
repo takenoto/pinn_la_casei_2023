@@ -45,6 +45,10 @@ pinn_saver
       - FIXED problema ref circular pinn_saver e pinn_results chamando um ao outro
         - Fiz do jeito mais fácil e burro, que foi tirar o tipo de pinn_model do pinn_saver e trabalhar "no escuro"
 
+- cases_to_try:
+  - atualizar nomenclatura e lógica de pastas, bem como ordem de preparação dos modelos
+  - separar em blocos os nondim porque são muitos e ficar comentando/descomentando é trabalhoso
+
 - Add useMathText to stylesheet
 - on "plot_comparer_multiple_grid.py"
   - Apply scilimits (-1, +1) only for axis y
@@ -61,11 +65,15 @@ pinn_saver
     - loss d1 solo foi pior que loss d2 solo porque fez com que tivesse aquela queda brusca no t imediatamente após 0.
     - tudo sem sign foi pior que tudo com sign..
 
+Testes: (obs: todos foram feitos enquanto mexi no pc, então train_time e pred_time não deve ser levados em conta)
 1) TODO testar variações de L7 em 4 tipos de reator (tudo padrão, tanh, etc), sem nondim, rede 10x3, LR1e-3:
   - 1.1) TODO Rede t => V
     - CR (1, 5, "1", "-4"), baixa vazão quase nada
+      - Ainda não terminou mas no geral a "7G" parece ser a melhor. C e H também ok em alguns pontos.
+      TODO 1º rode os 2 blocos default e 1, depois os 2.coisas
     - CR (1, 5, "25", "-2"), vazão normal
   - 1.2) TODO- Rede t => XPS
+    - TODO INCLUIR OS TEMPOS NONDIM TAMBÉM!!! E Loss weights. Vai demorar bem umas 4h mas vai me dar tudo quanto é resposta PRO BATCH.
     - batch (11, "Xo", "Po", "So")
     - batch (24, "Xo", "Po", "So"),
 - TODO bota esses 2 testes anteriores já na pasta de testes definitivos, acho que rola

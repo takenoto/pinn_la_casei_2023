@@ -1,5 +1,10 @@
 # Thinking
 
+
+## Nondim Scalers
+Talvez a upscale evite o 0, que pode ser um problema pra derivadas
+ref: https://datascience.stackexchange.com/questions/12744/backpropagation-in-second-order-methods-would-relu-derivative-be-0-and-what-i
+
 ## Falar com eles
 
 - Achei uma adimensionalização que torna praticamente todos as LRs válidas pra rede 10x3. Isso já é bom.
