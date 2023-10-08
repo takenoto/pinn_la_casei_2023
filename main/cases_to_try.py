@@ -309,6 +309,7 @@ def _insert_into_list(dictionary, args):
         LR_str,
         loss_weight_str,
     ) = args
+    
 
     input_variables, output_variables = input_output_variables
     # Globais
@@ -412,7 +413,7 @@ def _insert_into_list(dictionary, args):
 
 def nondimlist_add_from_blocks(NDList, blocks_to_add):
     registered_blocs = {
-        "default": ("t1", "1", "Lin", "Lin"),
+        "default": [("t1", "1", "Lin", "Lin")],
         # --------------------------------------
         # --------------------------------------
         # 1º Bloco: LINLIN Noção geral do impacto de t e vars crescendo e diminuindo
