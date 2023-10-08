@@ -1,3 +1,4 @@
+import math
 from domain.flow.concentration_flow import ConcentrationFlow
 
 class ProcessParams:
@@ -12,5 +13,5 @@ class ProcessParams:
             "max_reactor_volume":self.max_reactor_volume,
             "inlet": self.inlet.to_dict(),
             "t_final": self.t_final,
-            "Smax": self.Smax,
+            "Smax": "inf" if math.isinf(self.Smax) else  self.Smax,
         }
