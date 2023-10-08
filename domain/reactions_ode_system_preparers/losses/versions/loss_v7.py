@@ -1,4 +1,3 @@
-from numpy import float32
 import tensorflow as tf
 import deepxde as dde
 
