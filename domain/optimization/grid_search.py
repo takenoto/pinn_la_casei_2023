@@ -55,39 +55,4 @@ def grid_search(
         
     # ---------------------------------------------------------
 
-    path_to_file = os.path.join(solver_params_list[0].hyperfolder, "best_pinn.txt")
-    file = open(path_to_file, "a")
-    file.writelines(
-        [
-            f"Pinn best index = {best_pinn_test_index}\n",
-            f"Pinn best error = {best_pinn_test_error}",
-        ]
-    )
-    file.close()
-
-    path_to_file = os.path.join(solver_params_list[0].hyperfolder, "pinns.json")
-    file = open(path_to_file, "a")
-    file.writelines(
-        [
-            "{\n",
-            f'"pinn_best_index": {best_pinn_test_index},\n',
-            f'"pinn_best_error": {best_pinn_test_error},\n',
-            '"pinns":{',
-        ]
-    )
-    # Name of each pinn simulated
-    for i in range(len(solver_params_list)):
-        endChar = "\n"
-        if i < (len(solver_params_list) - 1):
-            endChar = ",\n"
-        file.writelines([f'"{i}":', f'"{solver_params_list[i].name}"', endChar])
-
-    file.writelines(
-        [
-            "}\n" "}",
-        ]
-    )
-    
-    file.close()
-
     return (best_pinn_test_index, best_pinn_test_error)
