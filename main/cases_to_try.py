@@ -11,10 +11,11 @@ from domain.params.process_params import ProcessParams
 # ----------------------------
 
 
-def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None):
+def change_layer_fix_neurons_number(eq_params, process_params):
     dictionary = {}
     # --------- LOSS FUNCTION -----------
-    loss_version_list = ["7A", "7B", "7C", "7D", "7E", "7F", "7G"]  # 7A-G 6 5 4 3 2
+    # "7A-I" e 6 5 4 3 2
+    loss_version_list = ["7A", "7B", "7C", "7D", "7E", "7F", "7G", "7H", "7I"]
 
     input_output_variables_list = [
         # ----------------------
@@ -56,12 +57,15 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
     ]
 
     N_POINTS = [
-        # initial points, domain points, test points
-        # TESTANDO:
+        # ORDER:
+        ## initial points, domain points, test points
+        #
+        # --------------------
+        # USING:
         (20, 20, 20),
-        (4, 20, 20),
-        (4, 20, 800),
-        (4, 200, 20),
+        # (4, 20, 20),
+        # (4, 20, 800),
+        # (4, 200, 20),
         #
         # PADRÃO:
         # (16, 32, 32),
@@ -93,9 +97,11 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
     #'tanh' 'swish' 'selu' 'relu'
     activation_functions = [
         "tanh",
-        # "swish",
+        "swish",
         # "selu",
-        # "relu",
+        # RELU IS NOT SECOND ORDER DIFFERENTIABLE AND SHOULD NOT BE USED FOR THIS PROJECT
+        # REF: https://github.com/lululxvi/deepxde/issues/80
+        
     ]
     mini_batch = [None]  # [None] [20] [40] [80] [2]
     # O padrão era Glorot Uniform
@@ -107,7 +113,7 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
     LR_list = [
         # Default
         "E-3_1",
-        # "E-4_3"
+        "E-4_3"
         # --------------------
         # FULL LIST:
         # --------------------
@@ -144,7 +150,7 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
         # "E-7_1", # = 1e-7
     ]
 
-    lbfgs_pre = 0  # 0 1
+    lbfgs_pre = 1  # 0 1
     lbfgs_post = 0  # 1  # 0 1
     ADAM_EPOCHS_list = [
         # "100",
@@ -161,11 +167,11 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
     ]
     # SGD_EPOCHS = 0  # 1000
     neurons = [
-        2,
+        # 2,
         # 4,
         # 6,
         # 8,
-        # 10,
+        10,
         # 12,
         # 16,
         # 20,
@@ -199,11 +205,20 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
         # CURRENT ITERATION
         #
         # 1º Noção geral do impacto de t crescendo e diminuindo
+        # 1º F1 d10 e X10
         ("t1", "1", "Lin", "Lin"),
-        # ("t1", "F1", "Lin", "UPx1"),
-        # ("t1", "F1d10", "Lin", "Lin"),
-        # ("t7", "1", "Lin", "Lin"),
-        # ("t7", "F1", "Lin", "UPx1"),
+        ("t1", "F1", "Lin", "Lin"),
+        ("t1", "F1d10", "Lin", "Lin"),
+        ("t1", "F1x10", "Lin", "Lin"),
+        # 2º t nondim, x10 e d10 LIN LIN
+        ("t2", "1", "Lin", "Lin"),
+        ("t2x10", "1", "Lin", "Lin"),
+        ("t2d10", "1", "Lin", "Lin"),
+        # 3º upscale LIN UPX1
+        ("t1", "F1", "Lin", "Upx1"),
+        ("t2", "F1", "Upx1", "Upx1"),
+        ("t2", "F1d10", "Lin", "Upx1"),
+        ("t2", "F1x10", "Lin", "Upx1"),
         #
         # ---------------------------------
         #
@@ -326,7 +341,6 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
                                                         _insert_into_list(
                                                             dictionary,
                                                             args=(
-                                                                hyperfolder,
                                                                 process_params,
                                                                 eq_params,
                                                                 input_output_variables,
@@ -356,7 +370,6 @@ def change_layer_fix_neurons_number(eq_params, process_params, hyperfolder=None)
 
 def _insert_into_list(dictionary, args):
     (
-        hyperfolder,
         process_params,
         eq_params,
         input_output_variables,
@@ -416,6 +429,7 @@ def _insert_into_list(dictionary, args):
         + f" L{loss_version}"
         + f" LR-{LR_str}"
         + f" w{loss_weight_str}"
+        + f" {input_nondim_scaler.strategy_str}-{output_nondim_scaler.strategy_str}"
         + f" p{n_init}-{n_domain}-{n_test}"
         + f" {adam_str}ep"
         + f" lbfgs-{lbfgs_post}"
