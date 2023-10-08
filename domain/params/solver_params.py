@@ -174,7 +174,7 @@ class SolverParams:
             loss_version = custom_loss_version
         return loss_version
 
-    def toDict(self) -> str:
+    def to_dict(self) -> str:
         return {
             "num_init": self.num_init,
             "num_domain": self.num_domain,
