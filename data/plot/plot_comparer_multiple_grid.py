@@ -164,7 +164,7 @@ def plot_comparer_multiple_grid(
     
     for ax in axes:
         # Só para o eixo y:
-        ax.ticklabel_format(useMathText=True, scilimits=(-1,+1), axis="y")    
+        ax.ticklabel_format(useMathText=True, scilimits=(-2,+2), axis="y")    
         
     
     if labels:
