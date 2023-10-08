@@ -29,6 +29,24 @@ class Altiok2006Params:
         self.Xm = Xm
         pass
 
+    def to_dict(self):
+        return {
+            "xp_id": self.xp_id,
+            "Xo": self.Xo,
+            "Po": self.Po,
+            "So": self.So,
+            "mu_max": self.mu_max,
+            "K_S": self.K_S,
+            "alpha": self.alpha,
+            "beta": self.beta,
+            "Y_PS": self.Y_PS,
+            "ms": self.ms,
+            "f": self.f,
+            "h": self.h,
+            "Pm": self.Pm,
+            "Xm": self.Xm,
+        }
+
     def copy_with(
         self,
         xp_id=None,
