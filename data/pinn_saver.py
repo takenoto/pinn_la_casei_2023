@@ -6,7 +6,6 @@ from timeit import default_timer as timer
 import deepxde as dde
 
 from data.plot.plot_comparer_multiple_grid import plot_comparer_multiple_grid
-from domain.run_reactor.pinn_reactor_model_results import PINNReactorModelResults
 
 xp_colors = ["#F2545B"]
 """
@@ -69,7 +68,7 @@ class PINNSaveCaller:
 
 def save_each_pinn(
     num_results,
-    pinn: PINNReactorModelResults,
+    pinn,
     showPINN=True,
     showNondim=False,
     folder_to_save=None,
