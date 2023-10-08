@@ -194,6 +194,7 @@ class SolverParams:
             "nondim_scaler_input": self.input_non_dim_scaler.toDict(),
             "nondim_scaler_output": self.output_non_dim_scaler.toDict(),
             "train_input_range": np.array(self.train_input_range).tolist(),
+            "train_distribution": self.train_distribution,
             "loss_weights": np.array(self.loss_weights).tolist(),
         }
 
