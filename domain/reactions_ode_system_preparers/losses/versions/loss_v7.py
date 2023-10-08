@@ -34,7 +34,7 @@ def lossV7(o, args, loss_version):
         # value itself, min, max
         "X": (X, 0, Xm),
         "P": (P, 0, Pm),
-        "S": (S, 0, initial_state.S),
+        "S": (S, 0, process_params.Smax if process_params.Smax else initial_state.S),
         "V": (V, 0, process_params.max_reactor_volume),
     }
 
