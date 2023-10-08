@@ -1,4 +1,8 @@
 
+from domain.params.altiok_2006_params import Altiok2006Params
+from domain.params.process_params import ProcessParams
+
+
 class PINNReactorModelResults:
     def __init__(
         self,
@@ -7,8 +11,8 @@ class PINNReactorModelResults:
         loss_history=None,
         train_state=None,
         solver_params=None,
-        eq_params=None,
-        process_params=None,
+        eq_params:Altiok2006Params=None,
+        process_params:ProcessParams=None,
         initial_state=None,
         f_out_value_calc=None,
         best_step=None,
