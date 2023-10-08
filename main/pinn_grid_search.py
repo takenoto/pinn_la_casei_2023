@@ -42,7 +42,7 @@ def run_pinn_grid_search(
 
         solver_params_list = [
             SolverParams(
-                name=f"{case_key}",
+                name=get_thing_for_key(case_key, "name", default="AAA"),
                 num_domain=get_thing_for_key(case_key, "num_domain", default=600),
                 num_boundary=get_thing_for_key(case_key, "num_boundary", default=10),
                 num_init=get_thing_for_key(case_key, "num_init", default=10),
