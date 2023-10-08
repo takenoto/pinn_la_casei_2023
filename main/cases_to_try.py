@@ -239,9 +239,6 @@ def change_layer_fix_neurons_number(eq_params, process_params):
     # Loss Weight
     loss_weights_list = ["A1"]  # All weights = 0
 
-    cols = len(neurons) * len(train_distribution_list) * len(NDList)
-    rows = len(layers) * len(N_POINTS) * len(mini_batch) * len(LR_list)
-
     # Específicos
     for input_output_variables in input_output_variables_list:
         for func in activation_functions:
@@ -285,7 +282,7 @@ def change_layer_fix_neurons_number(eq_params, process_params):
                                                             ),
                                                         )
 
-    return (dictionary, cols, rows)
+    return dictionary
 
 
 def _insert_into_list(dictionary, args):

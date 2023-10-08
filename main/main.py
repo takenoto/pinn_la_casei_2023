@@ -80,7 +80,7 @@ def compute_num_and_pinn(
         showPINN=showPINN,
         showNondim=showNondim,
     )
-    cases, cols, rows = change_layer_fix_neurons_number(eq_params, process_params)
+    cases = change_layer_fix_neurons_number(eq_params, process_params)
     for case_name in cases:
         cases[case_name]["save_caller"] = save_caller
         hyperfolder_updated = os.path.join(base_folder, cases[case_name]["hyperfolder"])
@@ -163,7 +163,8 @@ def main():
     # --------------------------------------------
     # ----------------MAIN CODE-------------------
     # --------------------------------------------
-
+    start_time = timer()
+    
     altiok_models_to_run = [get_altiok2006_params().get(2)]  # roda só a fig2
 
     # Parâmetros de processo (será usado em todos)
@@ -309,6 +310,13 @@ def main():
                         cases,
                     )
                     pass
+    #-----------------------------------        
+    end_time = timer()
+    print(
+        f"""
+        time for all tests = {end_time - start_time} s
+        = {(end_time - start_time)/60} min"""
+    )
 
 
 def batch_get_variables(params, eq_params: Altiok2006Params):
