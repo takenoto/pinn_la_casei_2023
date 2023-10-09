@@ -13,159 +13,20 @@ from domain.params.process_params import ProcessParams
 
 def change_layer_fix_neurons_number(eq_params, process_params):
     dictionary = {}
-    # --------- LOSS FUNCTION -----------
-    # "7A-I" e 6 5 4 3 2
-    loss_version_list = ["7A", "7B", "7C", "7D", "7E", "7F", "7G", "7H", "7I"]
-
-    input_output_variables_list = [
-        # ----------------------
-        # Input, output
-        # ----------------------
-        #
-        # t => XPSV
-        (["t"], ["X", "P", "S", "V"]),
-        # t => V
-        # (["t"], ["V"]),
-        # # t => XPS
-        # (["t"], ["X", "P", "S"]),
-        # # t, V => XPS
-        # (["t", "V"], ["X", "P", "S"]),
-    ]
+    #
     # -------------------------------
-    # DATA SAMPLING
+    # ---------------- NN -----------
     # -------------------------------
-    # List (each_input)
-    # each_input = List (input1, input2, input3)
-    # input...N = List(min, max)
-    train_input_range_dict = get_train_input_range_dict(
-        process_params,
-        percent_min_range=[
-            0,
-        ],  # [0,50] => iria fazer modelos iniciando em 0 e em 50
-        percent_max_range=[10, 15, 25, 35, 50, 60, 90, 100, 200],
-    )
-
-    train_input_range_list = [
-        # "0-10pa",
-        # "0-15pa",
-        # "0-25pa",
-        # "0-35pa",
-        # "0-60pa",
-        # "0-90pa",
-        "0-100pa",
-        # "0-200pa",
-    ]
-
-    N_POINTS = [
-        # ORDER:
-        ## initial points, domain points, test points
-        #
-        # --------------------
-        # USING:
-        (20, 20, 20),
-        # (4, 20, 20),
-        # (4, 20, 800),
-        # (4, 200, 20),
-        #
-        # PADRÃO:
-        # (16, 32, 32),
-        # (8, 24, 24),
-        #
-        # ---------------
-        # Ppontos que avaliam se compensa ou não aumentar npoints
-        # (20, 20, 20),
-        # (4, 20, 20),
-        # (4, 20, 800),
-        # (4, 200, 20),
-        # ou
-        # (16, 32, 32),
-        # (100, 32, 32),
-        # (16, 300, 300),
-        # (300, 300, 300),
-        #
-        # ---------------
-        # (16, 100, 100),
-        # (16, 70, 70),
-        # (16, 10, 10),
-        # (16, 300, 300),
-    ]  # [1600] [800] [400] [300] [80] [40] [20]
-
-    NUM_BOUNDARY = 0
-
-    # -------------------------------
-    # ---------------- NN ------------------
+    #
     #'tanh' 'swish' 'selu' 'relu'
     activation_functions = [
         "tanh",
-        # "swish",
+        "swish",
         # "selu",
         # RELU IS NOT SECOND ORDER DIFFERENTIABLE
         # AND SHOULD NOT BE USED FOR THIS PROJECT
         # REF: https://github.com/lululxvi/deepxde/issues/80
     ]
-    mini_batch = [None]  # [None] [20] [40] [80] [2]
-    # O padrão era Glorot Uniform
-    initializer = "Glorot uniform"  #'Glorot normal' #'Glorot uniform' #'Orthogonal'
-    # Quando for fazer hypercube acho que posso boar distribution
-    # começando com _ underline e usar isso pra checar
-    train_distribution_list = ["Hammersley"]  # "LHS" "Hammersley" "uniform"
-    # GLOROT UNIFORM # Era Glorot Normal nos testes sem swish
-    LR_list = [
-        # Default
-        "E-3_1",
-        "E-4_5",
-        # --------------------
-        # FULL LIST:
-        # --------------------
-        # "E-2_1",
-        # "E-3_9",  # = 9e-3
-        # "E-3_8",  # = 8e-3
-        # "E-3_7",  # = 7e-3
-        # "E-3_6",  # = 6e-3
-        # "E-3_5",  # = 5e-3
-        # "E-3_4",  # = 4e-3
-        # "E-3_3",  # = 3e-3
-        # "E-3_2",  # = 2e-3
-        # "E-3_1",  # = 1e-3
-        # "E-4_9",  # = 9e-4
-        # "E-4_8",  # = 8e-4
-        # "E-4_7",  # = 7e-4
-        # "E-4_6",  # = 6e-4
-        # "E-4_5",  # = 5e-4
-        # "E-4_4",  # = 4e-4
-        # "E-4_3",  # = 3e-4
-        # "E-4_2",  # = 2e-4
-        # "E-4_1",  # = 1e-4
-        # "E-5_9",  # = 9e-5
-        # "E-5_8",  # = 8e-5
-        # "E-5_7",  # = 7e-5
-        # "E-5_6",  # = 6e-5
-        # "E-5_5",  # = 5e-5
-        # "E-5_4",  # = 4e-5
-        # "E-5_3",  # = 3e-5
-        # "E-5_2",  # = 2e-5
-        # "E-5_1",  # = 1e-5
-        # "E-6_5",  # = 5e-6
-        # "E-6_1",  # = 1e-6
-        # "E-7_1", # = 1e-7
-    ]
-
-    lbfgs_pre = 0  # 0 1
-    lbfgs_post = 1  # 1  # 0 1
-    ADAM_EPOCHS_list = [
-        # "100",
-        # "1k",
-        # "10k",
-        # "25k",
-        # "30k",
-        "35k",
-        # "45k",
-        # "60k",
-        # "90k",
-        # "120k",
-        # "150k",
-    ]
-    # SGD_EPOCHS = 0  # 1000
     neurons = [
         # 2,
         # 4,
@@ -175,7 +36,7 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         # 12,
         # 16,
         # 20,
-        # 30,
+        30,
         # 32,
         # 45,
         # 60,
@@ -184,8 +45,8 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         # 160
     ]
     layers = [
-        # 1,
-        2,
+        1,
+        # 2,
         3,
         # 4,
         # 5,
@@ -215,24 +76,19 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         ("t1", "1", "Lin", "Lin"),
         #
         # -----------------------------------
-        # ---------------- F1, d10 e x10
-        ("t1", "F1d10", "Lin", "Lin"),
-        ("t1", "F1x10", "Lin", "Lin"),
-        #
-        # -----------------------------------
         # ---------------- t2 e F1, d10 e x10
-        # LIN-LIN
-        ("t2", "F1", "Lin", "Lin"),
-        ("t2", "F1d10", "Lin", "Lin"),
-        ("t2", "F1x10", "Lin", "Lin"),
-        ("t2x10", "F1", "Lin", "Lin"),
-        ("t2d10", "F1", "Lin", "Lin"),
-        # LIN-UPX1
-        ("t2", "F1", "Lin", "Upx1"),
-        ("t2", "F1d10", "Lin", "Upx1"),
-        ("t2", "F1x10", "Lin", "Upx1"),
-        ("t2x10", "F1", "Lin", "Upx1"),
-        ("t2d10", "F1", "Lin", "Upx1"),
+        # # LIN-LIN
+        # ("t2", "F1", "Lin", "Lin"),
+        # ("t2", "F1d10", "Lin", "Lin"),
+        # ("t2", "F1x10", "Lin", "Lin"),
+        # ("t2x10", "F1", "Lin", "Lin"),
+        # ("t2d10", "F1", "Lin", "Lin"),
+        # # LIN-UPX1
+        # ("t2", "F1", "Lin", "Upx1"),
+        # ("t2", "F1d10", "Lin", "Upx1"),
+        # ("t2", "F1x10", "Lin", "Upx1"),
+        # ("t2x10", "F1", "Lin", "Upx1"),
+        # ("t2d10", "F1", "Lin", "Upx1"),
         #
         # -----------------------------------
         # ---------------- var times lin-lin
@@ -303,6 +159,157 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         # "3.2LinUpx1F1d10" => Mesma coisa que 3.2Upx1F1 mas usa Lin-Upx1
     ]
     nondimlist_add_from_blocks(NDList, ndlist_additional_blocks)
+
+    #
+    # --------------------------------
+    # -------- TRAINING
+    # --------------------------------
+    #
+
+    # --------- LOSS FUNCTION -----------
+    # "7A-I" e 6 5 4 3 2
+    # loss_version_list = ["7A", "7B", "7C", "7D", "7E", "7F", "7G", "7H", "7I"]
+    loss_version_list = ["7B", "7D", "7G"]
+
+    input_output_variables_list = [
+        # ----------------------
+        # Input, output
+        # ----------------------
+        #
+        # t => XPSV
+        # (["t"], ["X", "P", "S", "V"]),
+        # t => V
+        # (["t"], ["V"]),
+        # # t => XPS
+        (["t"], ["X", "P", "S"]),
+        # # t, V => XPS
+        # (["t", "V"], ["X", "P", "S"]),
+    ]
+    # -------------------------------
+    # DATA SAMPLING
+    # -------------------------------
+    # List (each_input)
+    # each_input = List (input1, input2, input3)
+    # input...N = List(min, max)
+    train_input_range_dict = get_train_input_range_dict(
+        process_params,
+        percent_min_range=[
+            0,
+        ],  # [0,50] => iria fazer modelos iniciando em 0 e em 50
+        percent_max_range=[10, 15, 25, 35, 50, 60, 90, 100, 200],
+    )
+
+    train_input_range_list = [
+        # "0-10pa",
+        # "0-15pa",
+        # "0-25pa",
+        # "0-35pa",
+        # "0-60pa",
+        # "0-90pa",
+        "0-100pa",
+        # "0-200pa",
+    ]
+
+    N_POINTS = [
+        # ORDER:
+        ## initial points, domain points, test points
+        #
+        # --------------------
+        # USING:
+        (10, 20, 20),
+        # (4, 20, 20),
+        # (4, 20, 800),
+        # (4, 200, 20),
+        #
+        # PADRÃO:
+        # (16, 32, 32),
+        # (8, 24, 24),
+        #
+        # ---------------
+        # Ppontos que avaliam se compensa ou não aumentar npoints
+        # (20, 20, 20),
+        # (4, 20, 20),
+        # (4, 20, 800),
+        # (4, 200, 20),
+        # ou
+        # (16, 32, 32),
+        # (100, 32, 32),
+        # (16, 300, 300),
+        # (300, 300, 300),
+        #
+        # ---------------
+        # (16, 100, 100),
+        # (16, 70, 70),
+        # (16, 10, 10),
+        # (16, 300, 300),
+    ]  # [1600] [800] [400] [300] [80] [40] [20]
+
+    NUM_BOUNDARY = 0
+
+    mini_batch = [None]  # [None] [20] [40] [80] [2]
+    # O padrão era Glorot Uniform
+    initializer = "Glorot uniform"  #'Glorot normal' #'Glorot uniform' #'Orthogonal'
+    # Quando for fazer hypercube acho que posso boar distribution
+    # começando com _ underline e usar isso pra checar
+    train_distribution_list = ["Hammersley"]  # "LHS" "Hammersley" "uniform"
+    # GLOROT UNIFORM # Era Glorot Normal nos testes sem swish
+    LR_list = [
+        # Default
+        "E-3_4",
+        "E-3_1",
+        "E-4_5",
+        # --------------------
+        # FULL LIST:
+        # --------------------
+        # "E-2_1",
+        # "E-3_9",  # = 9e-3
+        # "E-3_8",  # = 8e-3
+        # "E-3_7",  # = 7e-3
+        # "E-3_6",  # = 6e-3
+        # "E-3_5",  # = 5e-3
+        # "E-3_4",  # = 4e-3
+        # "E-3_3",  # = 3e-3
+        # "E-3_2",  # = 2e-3
+        # "E-3_1",  # = 1e-3
+        # "E-4_9",  # = 9e-4
+        # "E-4_8",  # = 8e-4
+        # "E-4_7",  # = 7e-4
+        # "E-4_6",  # = 6e-4
+        # "E-4_5",  # = 5e-4
+        # "E-4_4",  # = 4e-4
+        # "E-4_3",  # = 3e-4
+        # "E-4_2",  # = 2e-4
+        # "E-4_1",  # = 1e-4
+        # "E-5_9",  # = 9e-5
+        # "E-5_8",  # = 8e-5
+        # "E-5_7",  # = 7e-5
+        # "E-5_6",  # = 6e-5
+        # "E-5_5",  # = 5e-5
+        # "E-5_4",  # = 4e-5
+        # "E-5_3",  # = 3e-5
+        # "E-5_2",  # = 2e-5
+        # "E-5_1",  # = 1e-5
+        # "E-6_5",  # = 5e-6
+        # "E-6_1",  # = 1e-6
+        # "E-7_1", # = 1e-7
+    ]
+
+    lbfgs_pre = 0  # 0 1
+    lbfgs_post = 1  # 0 1
+    ADAM_EPOCHS_list = [
+        # "100",
+        # "1k",
+        # "10k",
+        # "25k",
+        # "30k",
+        "35k",
+        # "45k",
+        # "60k",
+        # "90k",
+        # "120k",
+        # "150k",
+    ]
+    # SGD_EPOCHS = 0  # 1000
 
     # Loss Weight
     loss_weights_list = ["A1"]  # All weights = 0
@@ -643,24 +650,30 @@ def get_nondim_scaler(
 def loss_weights(config: str):
     # Sempre cadastra XPSV mesmo que não vá usar todos
     # e lá por dentro eu me resolvo
+    lw = []
     match config:
         # X P S V X0 P0 S0 V0
         case "A1":
-            return [1, 1, 1, 1, 1, 1, 1, 1]
+            lw = [1, 1, 1, 1, 1, 1, 1, 1]
         case "X10":
-            return [10, 1, 1, 1, 10, 1, 1, 1]
+            lw = [10, 1, 1, 1, 10, 1, 1, 1]
         case "P10":
-            return [1, 10, 1, 1, 1, 10, 1, 1]
+            lw = [1, 10, 1, 1, 1, 10, 1, 1]
         case "S10":
-            return [1, 1, 10, 1, 1, 1, 10, 1]
+            lw = [1, 1, 10, 1, 1, 1, 10, 1]
         case "V10":
-            return [1, 1, 1, 10, 1, 1, 1, 10]
+            lw = [1, 1, 1, 10, 1, 1, 1, 10]
         case "B":  # Focus on X and V
-            return [100, 1, 1, 100, 1, 1, 1, 1]
+            lw = [100, 1, 1, 100, 1, 1, 1, 1]
         case "B2":  # Focus on X and V including initial conditions
-            return [100, 1, 1, 100, 10, 1, 1, 10]
+            lw = [100, 1, 1, 100, 10, 1, 1, 10]
         case "B3":  # Focus on XPS
-            return [40, 40, 40, 1, 10, 10, 10, 1]
+            lw = [40, 40, 40, 1, 10, 10, 10, 1]
+
+    # Converte para float
+    lw = [float(_lossw) for _lossw in lw]
+
+    return lw
 
 
 def get_nondim_scaler_values(
@@ -773,11 +786,9 @@ def get_nondim_scaler_values(
             print(scalers_code)
             assert False, "case must exist"
 
-    # ref: https://stackoverflow.com/questions/16807011/python-how-to-identify-if-a-variable-is-an-array-or-a-scalar
-    if isinstance(ts, (list, tuple, np.ndarray)):
-        ts = np.array(ts)[0]
-
-    return (ts, Xs, Ps, Ss, Vs)
+    vals = (ts, Xs, Ps, Ss, Vs)
+    # Converte pra float antes de retornar
+    return tuple(float(val) for val in vals)
 
 
 LRs_dict = {
