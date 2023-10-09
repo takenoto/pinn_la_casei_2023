@@ -118,7 +118,7 @@ def plot_comparer_multiple_grid(
                 if ___x is None or ___y is None:
                     pass
                 else:
-                    ax.plot(
+                    line, = ax.plot(
                         ___x,
                         ___y,
                         linestyle=___line_args,
@@ -126,6 +126,9 @@ def plot_comparer_multiple_grid(
                         marker=___marker,
                         markersize=3,
                     )
+                    line.set_dash_capstyle("round")
+                    line.set_solid_capstyle("round")
+                    
 
                 if ___axvspan is not None:
                     ax.axvspan(
