@@ -16,7 +16,6 @@ def change_layer_fix_neurons_number(eq_params, process_params):
     # --------- LOSS FUNCTION -----------
     # "7A-I" e 6 5 4 3 2
     loss_version_list = ["7A", "7B", "7C", "7D", "7E", "7F", "7G", "7H", "7I"]
-    loss_version_list = ["7G"]
 
     input_output_variables_list = [
         # ----------------------
@@ -186,7 +185,7 @@ def change_layer_fix_neurons_number(eq_params, process_params):
     ]
     layers = [
         # 1,
-        # 2,
+        2,
         3,
         # 4,
         # 5,
@@ -214,6 +213,11 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         # -----------------
         # # NO NONDIM:
         ("t1", "1", "Lin", "Lin"),
+        #
+        # -----------------------------------
+        # ---------------- F1, d10 e x10
+        ("t1", "F1d10", "Lin", "Lin"),
+        ("t1", "F1x10", "Lin", "Lin"),
         #
         # -----------------------------------
         # ---------------- t2 e F1, d10 e x10
