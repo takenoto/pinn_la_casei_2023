@@ -158,15 +158,14 @@ def plot_comparer_multiple_grid(
             ax.yaxis.set_major_locator(y_majlocator)
         if y_minlocator:
             ax.yaxis.set_minor_locator(y_minlocator)
-    
+
     if yscale:
         plt.yscale(yscale)
-    
+
     for ax in axes:
         # Só para o eixo y:
-        ax.ticklabel_format(useMathText=True, scilimits=(-2,+2), axis="y")    
-        
-    
+        ax.ticklabel_format(useMathText=True, scilimits=(-2, +2), axis="y")
+
     if labels:
         fig.legend(
             labels,
@@ -187,7 +186,7 @@ def plot_comparer_multiple_grid(
         plt.savefig(file_path, bbox_inches="tight", dpi=600)
         plt.cla()
         plt.close(fig)
-        
+
         if showPlot:
             plt.show()
     else:
