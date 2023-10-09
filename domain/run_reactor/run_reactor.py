@@ -256,6 +256,12 @@ def run_reactor(
     # https://github.com/lululxvi/deepxde/issues/504
     # https://github.com/lululxvi/deepxde/issues/467
     loss = "MSE"  # "MSE"
+    
+    # para definir uma loss custom, por exemplo, poderia ser feito algo do tipo:
+    # def loss_test(y_true, y_pred):
+    #     return tf.math.reduce_mean(tf.abs(y_true - y_pred))
+    # loss = loss_test
+    
     metrics = None  # ["l2 relative error"] # ["MSE"]
     mini_batch = solver_params.mini_batch  # None # Tamanho da mini-batch
 
