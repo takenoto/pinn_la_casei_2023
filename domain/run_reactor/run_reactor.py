@@ -69,9 +69,9 @@ def run_reactor(
     elif len(inputSimulationType.order) == 2:
         # Valores adimensionalizados das variáveis em t0
         XPSVboundsMultipliers = {
-            "X": eq_params.Xm[0],
-            "P": eq_params.Pm[0],
-            "S": initial_state.S[0],
+            "X": eq_params.Xm,
+            "P": eq_params.Pm,
+            "S": initial_state.S,
             "V": process_params.max_reactor_volume,
         }
 
@@ -79,10 +79,6 @@ def run_reactor(
             "N is the variable (X, P, S, V, etc)"
             minVal = 0
             maxVal = XPSVboundsMultipliers[N]
-            if isinstance(maxVal, (list, tuple, np.ndarray)):
-                maxVal = np.array(maxVal)[0].astype(float)
-            if isinstance(minVal, (list, tuple, np.ndarray)):
-                minVal = np.array(minVal)[0].astype(float)
 
             return minVal, maxVal
 
