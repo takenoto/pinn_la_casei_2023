@@ -174,10 +174,12 @@ def plot_comparer_multiple_grid(
 
         # Se diff < 1% força pra não ficar tão ruim de ler,
         # ou se a dif absoluta for menor que 0.001
-        if diffY < 0.005:
-            ax.set_ylim(average - 0.006, average + 0.006)
-        if diffYPerc <= 0.03:
-            ax.set_ylim(lowestY - 0.03 * abs(average), biggestY + 0.03 * abs(average))
+        if diffY != 0: # Pra quando o valor for realmente o mesmo
+            ax.set_ylim(lowestY - 0.1, biggestY + 0.1)
+            if diffY < 0.005:
+                ax.set_ylim(average - 0.006, average + 0.006)
+            if diffYPerc <= 0.03:
+                ax.set_ylim(lowestY - 0.03 * abs(average), biggestY + 0.03 * abs(average))
 
     if yscale:
         plt.yscale(yscale)

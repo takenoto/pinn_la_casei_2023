@@ -354,10 +354,10 @@ def save_each_pinn(
             # Se não os valores de Y ficam como None e se não estiverem no último não
             # serão exibidos
             if pinn_vals[i] is None:
-                pinn_x = 0
-                pinn_y = 0
-                deriv_pinn_y = 0
-                deriv_pinn_y_2 = 0
+                pinn_x = None
+                pinn_y = None
+                deriv_pinn_y = None
+                deriv_pinn_y_2 = None
             else:
                 pinn_y = pinn_vals[i]
                 deriv_pinn_y = pinn_derivative_vals[i]
