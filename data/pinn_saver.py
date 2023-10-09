@@ -483,7 +483,7 @@ def save_each_pinn(
         supxlabel="t (h)",
         # supylabel=pinn.model_name,
         folder_to_save=folder_to_save,
-        filename=f"{pinn.model_name}.png" if folder_to_save else None,
+        filename=f"XPSV-{pinn.model_name}.png" if folder_to_save else None,
         showPlot=False if folder_to_save else True,
         legend_bbox_to_anchor=(0.5, -0.1),
         dpi=dpi_medium,
