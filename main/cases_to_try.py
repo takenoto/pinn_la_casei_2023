@@ -213,12 +213,7 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         # Add here the ones to try
         # -----------------
         # # NO NONDIM:
-        ("t1", "1", "Lin", "Lin")
-        #
-        # -----------------------------------
-        # ---------------- LIN EXPLORING x10 AND d10
-        ("t1", "F1d10", "Lin", "Lin"),
-        ("t1", "F1x10", "Lin", "Lin"),
+        ("t1", "1", "Lin", "Lin"),
         #
         # -----------------------------------
         # ---------------- t2 e F1, d10 e x10
@@ -238,32 +233,20 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         # -----------------------------------
         # ---------------- var times lin-lin
         # F1
-        ("t1", "F1", "Lin", "Lin"),
-        ("t2", "F1", "Lin", "Lin"),
-        ("t3", "F1", "Lin", "Lin"),
-        ("t4", "F1", "Lin", "Lin"),
-        ("t5", "F1", "Lin", "Lin"),
-        ("t6", "F1", "Lin", "Lin"),
-        ("t7", "F1", "Lin", "Lin"),
-        ("t8", "F1", "Lin", "Lin"),
-        ("t9", "F1", "Lin", "Lin"),
+        # ("t5", "F1", "Lin", "Lin"),
+        # ("t6", "F1", "Lin", "Lin"),
+        # ("t7", "F1", "Lin", "Lin"),
+        # ("t8", "F1", "Lin", "Lin"),
+        # ("t9", "F1", "Lin", "Lin"),
         #
         # F1d10
-        ("t1", "F1d10", "Lin", "Lin"),
-        ("t2", "F1d10", "Lin", "Lin"),
-        ("t3", "F1d10", "Lin", "Lin"),
-        ("t4", "F1d10", "Lin", "Lin"),
-        ("t5", "F1d10", "Lin", "Lin"),
-        ("t6", "F1d10", "Lin", "Lin"),
-        ("t7", "F1d10", "Lin", "Lin"),
-        ("t8", "F1d10", "Lin", "Lin"),
-        ("t9", "F1d10", "Lin", "Lin"),
+        # ("t5", "F1d10", "Lin", "Lin"),
+        # ("t6", "F1d10", "Lin", "Lin"),
+        # ("t7", "F1d10", "Lin", "Lin"),
+        # ("t8", "F1d10", "Lin", "Lin"),
+        # ("t9", "F1d10", "Lin", "Lin"),
         #
         # F1x10 - por padrão nem faz porque já sei que fica ruim
-        # ("t1", "F1x10", "Lin", "Lin"),
-        # ("t2", "F1x10", "Lin", "Lin"),
-        # ("t3", "F1x10", "Lin", "Lin"),
-        # ("t4", "F1x10", "Lin", "Lin"),
         # ("t5", "F1x10", "Lin", "Lin"),
         # ("t6", "F1x10", "Lin", "Lin"),
         # ("t7", "F1x10", "Lin", "Lin"),
@@ -274,15 +257,11 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         # ---------------- var times lin-upx1
         #
         # F1d10
-        ("t1", "F1d10", "Lin", "Upx1"),
-        ("t2", "F1d10", "Lin", "Upx1"),
-        ("t3", "F1d10", "Lin", "Upx1"),
-        ("t4", "F1d10", "Lin", "Upx1"),
-        ("t5", "F1d10", "Lin", "Upx1"),
-        ("t6", "F1d10", "Lin", "Upx1"),
-        ("t7", "F1d10", "Lin", "Upx1"),
-        ("t8", "F1d10", "Lin", "Upx1"),
-        ("t9", "F1d10", "Lin", "Upx1"),
+        # ("t5", "F1d10", "Lin", "Upx1"),
+        # ("t6", "F1d10", "Lin", "Upx1"),
+        # ("t7", "F1d10", "Lin", "Upx1"),
+        # ("t8", "F1d10", "Lin", "Upx1"),
+        # ("t9", "F1d10", "Lin", "Upx1"),
     ]
     ndlist_additional_blocks = [
         # Using now:
