@@ -4,7 +4,7 @@ import deepxde as dde
 
 
 def sign_dif_abs(x, y):
-    return tf.cast(tf.abs(tf.sign(x) - tf.sign(y)), dtype=float32)
+    return tf.abs(tf.sign(x) - tf.sign(y))
 
 
 def lossV7(o, args, loss_version):
