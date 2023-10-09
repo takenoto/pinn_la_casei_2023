@@ -1,4 +1,4 @@
-xp_colors = ["#7e35b5"]
+xp_colors = ["#2c292e"]
 """
 Cores apra dados experimentais
 """
