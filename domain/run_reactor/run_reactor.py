@@ -6,7 +6,7 @@
 import deepxde as dde
 from timeit import default_timer as timer
 
-import numpy as np
+
 import tensorflow as tf
 
 # Local imports
@@ -77,9 +77,8 @@ def run_reactor(
 
         def getNondimBoundary(N):
             "N is the variable (X, P, S, V, etc)"
-            minVal = 0
+            minVal = 0.0
             maxVal = XPSVboundsMultipliers[N]
-
             return minVal, maxVal
 
         if inputSimulationType.X:
