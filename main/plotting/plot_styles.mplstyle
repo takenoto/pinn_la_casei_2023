@@ -14,7 +14,7 @@ axes.labelweight: semibold
 axes.titlepad: 11
 axes.labelpad: 9
 axes.formatter.use_mathtext: True
-axes.formatter.useoffset: True
+axes.formatter.useoffset: False
 axes.formatter.offset_threshold: 3
 
 legend.title_fontsize: 14
