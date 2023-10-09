@@ -95,7 +95,7 @@ class SolverParams:
         loss_weights=None,
         input_non_dim_scaler: NonDimScaler = None,
         output_non_dim_scaler: NonDimScaler = None,
-        mini_batch=None,
+        resample_every=None,
         hyperfolder=None,
         isplot=False,
         is_save_model=False,
@@ -130,7 +130,7 @@ class SolverParams:
         self.loss_weights = loss_weights
         self.input_non_dim_scaler = input_non_dim_scaler
         self.output_non_dim_scaler = output_non_dim_scaler
-        self.mini_batch = mini_batch
+        self.resample_every = resample_every
         # Hyperfolder é a pasta padrão
         # onde salvar os resultados daquele trambei
         self.hyperfolder = hyperfolder
@@ -190,7 +190,7 @@ class SolverParams:
             "activation": self.activation,
             "initializer": self.initializer,
             "loss_version": self.loss_version,
-            "mini_batch": self.mini_batch,
+            "resample_every": self.resample_every,
             "nondim_scaler_input": self.input_non_dim_scaler.toDict(),
             "nondim_scaler_output": self.output_non_dim_scaler.toDict(),
             "train_input_range": np.array(self.train_input_range).tolist(),

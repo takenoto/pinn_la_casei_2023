@@ -20,7 +20,7 @@ def change_layer_fix_neurons_number(eq_params, process_params):
     #'tanh' 'swish' 'selu' 'relu'
     activation_functions = [
         "tanh",
-        "swish",
+        # "swish",
         # "selu",
         # RELU IS NOT SECOND ORDER DIFFERENTIABLE
         # AND SHOULD NOT BE USED FOR THIS PROJECT
@@ -31,11 +31,11 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         # 4,
         # 6,
         # 8,
-        10,
+        # 10,
         # 12,
         # 16,
-        # 20,
-        30,
+        20,
+        # 30,
         # 32,
         # 45,
         # 60,
@@ -44,7 +44,7 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         # 160
     ]
     layers = [
-        1,
+        # 1,
         # 2,
         3,
         # 4,
@@ -72,19 +72,19 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         # Add here the ones to try
         # -----------------
         # # NO NONDIM:
-        ("t1", "1", "Lin", "Lin"),
+        # ("t1", "1", "Lin", "Lin"),
         #
         # -----------------------------------
         # ---------------- t2 e F1, d10 e x10
         # # LIN-LIN
         # ("t2", "F1", "Lin", "Lin"),
-        # ("t2", "F1d10", "Lin", "Lin"),
+        ("t2", "F1d10", "Lin", "Lin"),
         # ("t2", "F1x10", "Lin", "Lin"),
-        # ("t2x10", "F1", "Lin", "Lin"),
+        ("t2x10", "F1d10", "Lin", "Lin"),
         # ("t2d10", "F1", "Lin", "Lin"),
         # # LIN-UPX1
         # ("t2", "F1", "Lin", "Upx1"),
-        # ("t2", "F1d10", "Lin", "Upx1"),
+        ("t2", "F1d10", "Lin", "Upx1"),
         # ("t2", "F1x10", "Lin", "Upx1"),
         # ("t2x10", "F1", "Lin", "Upx1"),
         # ("t2d10", "F1", "Lin", "Upx1"),
@@ -168,7 +168,8 @@ def change_layer_fix_neurons_number(eq_params, process_params):
     # --------- LOSS FUNCTION -----------
     # "7A-I" e 6 5 4 3 2
     # loss_version_list = ["7A", "7B", "7C", "7D", "7E", "7F", "7G", "7H", "7I"]
-    loss_version_list = ["7B", "7D", "7G"]
+    # loss_version_list = ["7B", "7D", "7G"]
+    loss_version_list = ["7B", "7G"]
 
     input_output_variables_list = [
         # ----------------------
@@ -176,11 +177,11 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         # ----------------------
         #
         # t => XPSV
-        # (["t"], ["X", "P", "S", "V"]),
+        (["t"], ["X", "P", "S", "V"]),
         # t => V
         # (["t"], ["V"]),
         # # t => XPS
-        (["t"], ["X", "P", "S"]),
+        # (["t"], ["X", "P", "S"]),
         # # t, V => XPS
         # (["t", "V"], ["X", "P", "S"]),
     ]
@@ -215,48 +216,34 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         #
         # --------------------
         # USING:
-        (10, 20, 20),
-        # (4, 20, 20),
-        # (4, 20, 800),
-        # (4, 200, 20),
-        #
-        # PADRÃO:
-        # (16, 32, 32),
-        # (8, 24, 24),
-        #
-        # ---------------
-        # Ppontos que avaliam se compensa ou não aumentar npoints
-        # (20, 20, 20),
-        # (4, 20, 20),
-        # (4, 20, 800),
-        # (4, 200, 20),
-        # ou
-        # (16, 32, 32),
-        # (100, 32, 32),
-        # (16, 300, 300),
-        # (300, 300, 300),
-        #
-        # ---------------
-        # (16, 100, 100),
-        # (16, 70, 70),
-        # (16, 10, 10),
-        # (16, 300, 300),
-    ]  # [1600] [800] [400] [300] [80] [40] [20]
+        (4, 8, 8),
+        # (4, 400, 10),
+        # (4, 400, 400),
+        # (4, 1200, 1200),
+        # (100, 100, 100),
+        # (10, 800, 10),
+        # (10, 800, 800),
+        # (10, 10, 800),
+    ]
 
     NUM_BOUNDARY = 0
 
-    mini_batch = [None]  # [None] [20] [40] [80] [2]
+    # NÃO É MINI_BATCH DE FATO, É UM RESAMPLER MDS
+    resample_every_list = [4, 10, 100, None]  # [None] [20] [40] [80] [2]
     # O padrão era Glorot Uniform
     initializer = "Glorot uniform"  #'Glorot normal' #'Glorot uniform' #'Orthogonal'
     # Quando for fazer hypercube acho que posso boar distribution
     # começando com _ underline e usar isso pra checar
-    train_distribution_list = ["Hammersley"]  # "LHS" "Hammersley" "uniform"
+    train_distribution_list = [
+        "pseudo"
+    ]  # ["Hammersley", "LHS"]  # "LHS" "Hammersley" "uniform"
     # GLOROT UNIFORM # Era Glorot Normal nos testes sem swish
     LR_list = [
         # Default
-        "E-3_4",
+        "E-3_5",
         "E-3_1",
-        "E-4_5",
+        # "E-4_5",
+        # "E-5_5",
         # --------------------
         # FULL LIST:
         # --------------------
@@ -300,8 +287,8 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         # "1k",
         # "10k",
         # "25k",
-        # "30k",
-        "35k",
+        "30k",
+        # "35k",
         # "45k",
         # "60k",
         # "90k",
@@ -324,7 +311,7 @@ def change_layer_fix_neurons_number(eq_params, process_params):
                                 for loss_version in loss_version_list:
                                     for NL in neurons:
                                         for HL in layers:
-                                            for mb in mini_batch:
+                                            for resample_every in resample_every_list:
                                                 for LR_str in LR_list:
                                                     for (
                                                         loss_weight_str
@@ -349,7 +336,7 @@ def change_layer_fix_neurons_number(eq_params, process_params):
                                                                 NUM_BOUNDARY,
                                                                 NL,
                                                                 HL,
-                                                                mb,
+                                                                resample_every,
                                                                 nd,
                                                                 LR_str,
                                                                 loss_weight_str,
@@ -378,7 +365,7 @@ def _insert_into_list(dictionary, args):
         NUM_BOUNDARY,
         NL,
         HL,
-        mb,
+        resample_every,
         nd,
         LR_str,
         loss_weight_str,
@@ -412,7 +399,7 @@ def _insert_into_list(dictionary, args):
         scalers_code=nd_scalers_code,
     )
     # Montando o nome:
-    minibatch_str = f"m{mb}" if mb is not None else "m-"
+    minibatch_str = f"m{resample_every}" if resample_every is not None else "m-"
 
     name = (
         f"{NL}x{HL}"
@@ -456,7 +443,7 @@ def _insert_into_list(dictionary, args):
         "output_scaler": output_nondim_scaler,
         "loss_weights": loss_weights(config=loss_weight_str),
         "activation": func,
-        "mini_batch": mb,
+        "resample_every": resample_every,
         "num_domain": n_domain,
         "num_test": n_test,
         "num_init": n_init,

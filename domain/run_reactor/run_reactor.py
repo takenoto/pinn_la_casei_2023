@@ -258,7 +258,7 @@ def run_reactor(
     # loss = loss_test
     
     metrics = None  # ["l2 relative error"] # ["MSE"]
-    mini_batch = solver_params.mini_batch  # None # Tamanho da mini-batch
+    resample_every = solver_params.resample_every  # None # Tamanho da mini-batch
 
     # Caminho pra pasta. Já vem com  a barra ou em branco caso não tenha hyperfolder
     # Pra facilitar a vida e poder botar ele direto
@@ -281,8 +281,8 @@ def run_reactor(
 
     ### Step 2: Solving by "adam"
     pde_resampler = None
-    if mini_batch:
-        pde_resampler = dde.callbacks.PDEPointResampler(period=mini_batch)
+    if resample_every:
+        pde_resampler = dde.callbacks.PDEPointResampler(period=resample_every)
 
     if solver_params.adam_epochs:
         model.compile(
