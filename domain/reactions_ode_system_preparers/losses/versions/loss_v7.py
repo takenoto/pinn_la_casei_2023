@@ -1,5 +1,10 @@
+from numpy import float32
 import tensorflow as tf
 import deepxde as dde
+
+
+def sign_dif_abs(x, y):
+    return tf.cast(tf.abs(tf.sign(x) - tf.sign(y)), dtype=float32)
 
 
 def lossV7(o, args, loss_version):
@@ -47,7 +52,7 @@ def lossV7(o, args, loss_version):
         tf.where(
             tf.greater(N, Nmax),
             N - Nmax,
-            tf.zeros_like(N),
+            tf.zeros_like(N, dtype=float32),
         ),
     )
 
@@ -64,10 +69,12 @@ def lossV7(o, args, loss_version):
         elif o == "S":
             dNdt, rN, inletN, concN = dSdt, rS, inlet.S, S
 
-        # Se V for zero, usar um valor limite de 1e-7
-        volume_threshold = tf.constant(1e-5)
+        # Se V for zero, usar um valor limite de 1e-10
+        volume_threshold = tf.constant(1e-10)
         V_th = tf.where(
-            tf.math.equal(V, tf.zeros_like(V)), tf.ones_like(V) * volume_threshold, V
+            tf.math.equal(V, tf.zeros_like(V)),
+            tf.ones_like(V) * volume_threshold,
+            V,
         )
 
         # V como divisor, e não multiplicando:
@@ -96,20 +103,10 @@ def lossV7(o, args, loss_version):
     loss_d1 = tf.abs(dNdt - dNdt_calc)
     #
     # ----------------------
-    # calc loss 1 derivative signal
-    sign_d1_pred = tf.math.sign(dNdt) 
-    sign_d1_calc = tf.math.sign(dNdt_calc)
-    sign_dif_d1 = tf.abs(sign_d1_pred- sign_d1_calc)
-    #
-    # ----------------------
     # calc loss second derivative
     loss_d2 = tf.abs(dNdt_2 - dNdt_2_calc)
     #
     # ----------------------
-    # calc loss 2 derivative signal
-    sign_d2_pred = tf.math.sign(dNdt_2)
-    sign_d2_calc = tf.math.sign(dNdt_2_calc)
-    sign_dif_d2 = tf.abs(sign_d2_pred - sign_d2_calc)
     #
     # ----------------------
     # calc loss
@@ -126,19 +123,20 @@ def lossV7(o, args, loss_version):
         case "7D":
             loss = loss_d2 + loss_minmax
         case "7E":
-            loss = tf.add(1.0, sign_dif_d1) * loss_d1
+            loss = tf.add(1.0, sign_dif_abs(dNdt, dNdt_calc)) * loss_d1
         case "7F":
-            loss = tf.add(1.0, sign_dif_d2) * loss_d2
+            loss = tf.add(1.0, sign_dif_abs(dNdt_2, dNdt_2_calc)) * loss_d2
         case "7G":
             # (1 + sing1 + sing2) * sum loss
-            loss = tf.add(tf.add(1.0, sign_dif_d1), sign_dif_d2) * (
-                loss_d1 + loss_minmax + loss_d2
-            )
+            loss = tf.add(
+                tf.add(1.0, sign_dif_abs(dNdt, dNdt_calc)),
+                sign_dif_abs(dNdt_2, dNdt_2_calc),
+            ) * (loss_d1 + loss_minmax + loss_d2)
         case "7H":
             # Sign d2 na loss d1
-            loss = tf.add(1.0, sign_dif_d2) * loss_d1
+            loss = tf.add(1.0, sign_dif_abs(dNdt_2, dNdt_2_calc)) * loss_d1
         case "7I":
             # Sign d1 na loss d2
-            loss = tf.add(1.0, sign_dif_d1) * loss_d2
+            loss = tf.add(1.0, sign_dif_abs(dNdt, dNdt_calc)) * loss_d2
 
     return loss

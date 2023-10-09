@@ -183,7 +183,7 @@ def main():
 
     # Zero vezes volume para já converter por si só quando for um tensor
     def f_out_0(max_reactor_volume, f_in_v, volume):
-        return 0 * volume
+        return 0.0 * volume
 
     for current_reactor in reactors_to_run:
         f_out_num = f_out_0
@@ -203,21 +203,21 @@ def main():
                 f_out_num = f_out_0
                 f_out_pinn = f_out_0
                 process_params = ProcessParams(
-                    max_reactor_volume=10,
+                    max_reactor_volume=10.0,
                     inlet=ConcentrationFlow(
                         volume=0.25,  # L/h
-                        X=eq_params.Xo,
-                        P=eq_params.Po,
-                        S=eq_params.So,
+                        X=eq_params.Xo*1.0,
+                        P=eq_params.Po*1.0,
+                        S=eq_params.So*1.0,
                     ),
-                    t_final=22,
+                    t_final=22.0,
                     S_max=float("inf"),
                 )
                 initial_state = ReactorState(
-                    volume=1,
-                    X=eq_params.Xo,
-                    P=eq_params.Po,
-                    S=eq_params.So,
+                    volume=1.0,
+                    X=eq_params.Xo*1.0,
+                    P=eq_params.Po*1.0,
+                    S=eq_params.So*1.0,
                 )
 
                 current_test_folder = mega_reactor_folder
@@ -245,7 +245,8 @@ def main():
                         mega_reactor_folder,
                         f"t{t_sim}-{Xo}-{Po}-{So}",
                     )
-
+                    
+                    # Show XP data
                     if Xo == "Xo" and Po == "Po" and So == "So":
                         xpdata = get_altiok2006_xp_data(xp_num=2)
                         XPSvals = {
@@ -269,26 +270,27 @@ def main():
                             }
                         }
 
+                    # Get the real values
                     t_sim, Xo, Po, So = batch_get_variables(
                         params=params, eq_params=eq_params
                     )
 
                     process_params = ProcessParams(
-                        max_reactor_volume=5,
+                        max_reactor_volume=5.0,
                         inlet=ConcentrationFlow(
                             volume=0.0,
-                            X=eq_params.Xo,
-                            P=eq_params.Po,
-                            S=eq_params.So,
+                            X=eq_params.Xo*1.0,
+                            P=eq_params.Po*1.0,
+                            S=eq_params.So*1.0,
                         ),
-                        t_final=t_sim,
+                        t_final=t_sim + 0.0,
                         Smax=So,
                     )
                     initial_state = ReactorState(
-                        volume=5,
-                        X=Xo,
-                        P=Po,
-                        S=So,
+                        volume=5.0,
+                        X=Xo*1.0,
+                        P=Po*1.0,
+                        S=So*1.0,
                     )
                     compute_num_and_pinn(
                         current_test_folder,
@@ -310,21 +312,21 @@ def main():
                         cr_id,
                     )
                     process_params = ProcessParams(
-                        max_reactor_volume=Vmax,
+                        max_reactor_volume=Vmax*1.0,
                         inlet=ConcentrationFlow(
-                            volume=Fin,
-                            X=eq_params.Xo * 0,
-                            P=eq_params.Po * 0,
+                            volume=Fin*1.0,
+                            X=eq_params.Xo * 0.0,
+                            P=eq_params.Po * 0.0,
                             S=eq_params.So,
                         ),
-                        t_final=24 * 3,
+                        t_final=24 * 3*1.0,
                         Smax=float("inf"),
                     )
                     initial_state = ReactorState(
-                        volume=V0,
-                        X=eq_params.Xo,
-                        P=eq_params.Po,
-                        S=eq_params.So,
+                        volume=V0*1.0,
+                        X=eq_params.Xo*1.0,
+                        P=eq_params.Po*1.0,
+                        S=eq_params.So*1.0,
                     )
 
                     def cr_f_out_calc_numeric(max_reactor_volume, f_in_v, volume):
@@ -360,21 +362,21 @@ def batch_get_variables(params, eq_params: Altiok2006Params):
 
     match Xo:
         case "0":
-            Xo = 0
+            Xo = 0.0
         case "Xo":
             Xo = eq_params.Xo
     match Po:
         case "0":
-            Po = 0
+            Po = 0.0
         case "Po":
             Po = eq_params.Po
     match So:
         case "0":
-            So = 0
+            So = 0.0
         case "So":
             So = eq_params.So
 
-    return t_sim, Xo, Po, So
+    return t_sim*1.0, Xo*1.0, Po*1.0, So*1.0
 
 
 def cr_get_variables(params: List):

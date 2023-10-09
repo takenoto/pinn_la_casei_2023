@@ -58,10 +58,10 @@ class ODEPreparer:
             initial_state = self.initial_state
 
             # Init with 0s for safety when no value is given
-            X, P, S = 0, 0, 0
-            V = 1
-            dXdt, dPdt, dSdt, dVdt = 0, 0, 0, 0
-            rX, rP, rS = 0, 0, 0
+            X, P, S = 0.0, 0.0, 0.0
+            V = 1.0
+            dXdt, dPdt, dSdt, dVdt = 0.0, 0.0, 0.0, 0.0
+            rX, rP, rS = 0.0, 0.0, 0.0
 
             # ---------------------
             # OUTPUT VARIABLES
