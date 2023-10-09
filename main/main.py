@@ -131,7 +131,7 @@ def main():
     # ----------------------
     # -CHOSE OPERATION MODE-
     # ----------------------
-    reactors_to_run = ["batch"]  # "batch" "fed-batch" "CR"
+    reactors_to_run = ["CR"]  # "batch" "fed-batch" "CR"
 
     batch_versions = [
         # tempo de simulação, Xo, Po, So
@@ -159,7 +159,7 @@ def main():
         # ---------------
         # CRs:
         # Aumentando muito MUITO lentamente
-        (1, 5, "1", "-4"),
+        # (1, 5, "1", "-4"),
         # Aumentando muito lentamente
         # (1, 5, "1", "-2"),
         # Normal
@@ -346,6 +346,7 @@ def main():
                         f_out_num,
                         f_out_pinn,
                         cases,
+                        additional_plotting_points=None
                     )
                     pass
     # -----------------------------------
