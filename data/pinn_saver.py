@@ -12,6 +12,7 @@ from data.plot.plot_comparer_multiple_grid import plot_comparer_multiple_grid
 dpi_medium = 200
 dpi_low = 80
 
+
 class PINNSaveCaller:
     def __init__(self, num_results, showPINN, showNondim, additional_plotting_points):
         self.num_results = num_results
@@ -304,7 +305,7 @@ def save_each_pinn(
         pinn_time_normal = pinn.train_state.X_test[:, _in.t_index : _in.t_index + 1]
     else:
         pinn_time_normal = pinn.train_state.X_test
-    
+
     # ref: https://matplotlib.org/stable/gallery/lines_bars_and_markers/line_demo_dash_control.html
     pinn_line_style = (0, (2, 2, 4, 2))
 
@@ -317,12 +318,6 @@ def save_each_pinn(
                 {"x": num.t, "y": num_vals[i], "color": pinn_colors[0], "l": "-"},
             ],
         }
-
-        if "XPSV" in additional_plotting_points:
-            if titles[i] in additional_plotting_points["XPSV"].get("cases", {}):
-                items[i + 1]["cases"].append(
-                    additional_plotting_points["XPSV"]["cases"][titles[i]]
-                )
 
         derivatives[i + 1] = {
             "title": derivatives_titles[i],
@@ -392,6 +387,13 @@ def save_each_pinn(
                 }
             )
 
+        # Extra plotting points
+        if "XPSV" in additional_plotting_points:
+            if titles[i] in additional_plotting_points["XPSV"].get("cases", {}):
+                items[i + 1]["cases"].append(
+                    additional_plotting_points["XPSV"]["cases"][titles[i]]
+                )
+
         if showNondim:
             items[i + 1]["cases"].append(
                 # PINN nondim
@@ -451,18 +453,17 @@ def save_each_pinn(
 
     labels = ["Num"]
     XPSV_labels = ["Num"]
-    
-    if "XPSV" in additional_plotting_points:
-        XPSV_labels.append(additional_plotting_points["XPSV"].get("title", "XP"))
 
     if showPINN:
         labels.append("PINN")
         XPSV_labels.append("PINN")
 
+    if "XPSV" in additional_plotting_points:
+        XPSV_labels.append(additional_plotting_points["XPSV"].get("title", "XP"))
+
     if showNondim:
         labels.append("ND PINN")
         XPSV_labels.append("ND PINN")
-
 
     if showTimeSpan:
         labels.append("$t_{TR}$")
@@ -541,7 +542,7 @@ def save_each_pinn(
         pinn.loss_history.steps,
         np.sum(pinn.loss_history.loss_train, axis=1),
         linestyle="solid",
-        color=pinn_colors[-3],
+        color=pinn_colors[-2],
         label="LoT",
     )
     (line,) = plt.plot(
