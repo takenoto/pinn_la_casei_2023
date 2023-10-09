@@ -6,40 +6,16 @@ import numpy as np
 from timeit import default_timer as timer
 import deepxde as dde
 
+from utils.colors import pinn_colors
 from data.plot.plot_comparer_multiple_grid import plot_comparer_multiple_grid
-
-xp_colors = ["#F2545B"]
-"""
-Cores apra dados experimentais
-"""
-pinn_colors = [
-    "olivedrab",  # "#7293A0",
-    "darkorange",  # "#C2E812",
-    "#ED9B40",
-    "#B4869F",
-    "#45B69C",
-    "#FFE66D",
-    "#E78F8E",
-    "#861388",
-    "#045275",
-]
-"""
-Lista de cores que representam diversos pinns
-Ordem: RGBA
-"""
-
-num_colors = [
-    "b",
-    "#F39B6D",
-    "#F0C987",
-]
 
 
 class PINNSaveCaller:
-    def __init__(self, num_results, showPINN, showNondim):
+    def __init__(self, num_results, showPINN, showNondim, additional_plotting_points):
         self.num_results = num_results
         self.showPINN = showPINN
         self.showNondim = showNondim
+        self.additional_plotting_points = additional_plotting_points
 
     def save_pinn(
         self,
@@ -53,6 +29,7 @@ class PINNSaveCaller:
         plot_derivatives_2=True,
         # Individual losses of each output and inicial conditions
         plot_individual_losses=True,
+        additional_plotting_points=None,
     ):
         "Saves the plot and json of the pinn"
         save_each_pinn(
@@ -64,6 +41,9 @@ class PINNSaveCaller:
             plot_derivatives_2=plot_derivatives_2,
             plot_individual_losses=plot_individual_losses,
             folder_to_save=folder_to_save,
+            additional_plotting_points=additional_plotting_points
+            if additional_plotting_points
+            else self.additional_plotting_points,
         )
 
 
@@ -78,6 +58,7 @@ def save_each_pinn(
     plot_individual_losses=True,
     showTimeSpan=True,
     create_time_points_plot=False,
+    additional_plotting_points=None,
 ):
     # PRINTAR O MELHOR DOS PINNS
     items = {}
@@ -332,6 +313,12 @@ def save_each_pinn(
             ],
         }
 
+        if "XPSV" in additional_plotting_points:
+            if titles[i] in additional_plotting_points["XPSV"].get("cases", {}):
+                items[i + 1]["cases"].append(
+                    additional_plotting_points["XPSV"]["cases"][titles[i]]
+                )
+
         derivatives[i + 1] = {
             "title": derivatives_titles[i],
             "y_label": None,
@@ -458,18 +445,27 @@ def save_each_pinn(
             )
 
     labels = ["Euler"]
+    XPSV_labels = ["Euler"]
+    
+    if "XPSV" in additional_plotting_points:
+        XPSV_labels.append(additional_plotting_points["XPSV"].get("title", "XP"))
+
     if showPINN:
         labels.append("PINN")
+        XPSV_labels.append("PINN")
 
     if showNondim:
         labels.append("ND PINN")
+        XPSV_labels.append("ND PINN")
+
 
     if showTimeSpan:
         labels.append("$t_{TR}$")
+        XPSV_labels.append("$t_{TR}$")
 
     plot_comparer_multiple_grid(
         suptitle=pinn.model_name,
-        labels=labels,
+        labels=XPSV_labels,
         figsize=(8, 6),
         gridspec_kw={"hspace": 0.042, "wspace": 0.03},
         yscale="linear",
@@ -557,7 +553,7 @@ def save_each_pinn(
     plt.legend()
     if folder_to_save:
         file_path = os.path.join(folder_to_save, f"LOSS-{pinn.model_name}.png")
-    plt.savefig(file_path, bbox_inches="tight", dpi=240)
+    plt.savefig(file_path, bbox_inches="tight", dpi=210)
     plt.close(fig)
 
     # ---------------------

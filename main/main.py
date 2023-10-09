@@ -21,10 +21,12 @@ import tensorflow as tf
 from data.pinn_saver import PINNSaveCaller
 from domain.optimization.non_dim_scaler import NonDimScaler
 
+from utils.colors import xp_colors
 
 from domain.params.altiok_2006_params import (
     Altiok2006Params,
     get_altiok2006_params,
+    get_altiok2006_xp_data,
 )
 from domain.reactor.reactor_state import ReactorState
 from domain.params.process_params import ProcessParams
@@ -40,7 +42,6 @@ mpl.rcParams.update(mpl.rcParamsDefault)
 deepxde.config.set_random_seed(0)
 # Increasing precision
 # dde.config.real.set_float64()
-
 
 
 def create_folder_to_save(subfolder):
@@ -62,7 +63,14 @@ showPINN = True
 
 # -------- END MATCH
 def compute_num_and_pinn(
-    base_folder, eq_params, process_params, initial_state, f_out_num, f_out_pinn, cases
+    base_folder,
+    eq_params,
+    process_params,
+    initial_state,
+    f_out_num,
+    f_out_pinn,
+    cases,
+    additional_plotting_points,
 ):
     print("-------STARTING---------")
 
@@ -79,6 +87,7 @@ def compute_num_and_pinn(
         num_results=num_results,
         showPINN=showPINN,
         showNondim=showNondim,
+        additional_plotting_points=additional_plotting_points,
     )
     cases = change_layer_fix_neurons_number(eq_params, process_params)
     for case_name in cases:
@@ -126,12 +135,14 @@ def main():
 
     batch_versions = [
         # tempo de simulação, Xo, Po, So
-        #-----------
+        # -----------
+        # Original xp time
+        (10, "Xo", "Po", "So"),
         # Default 11
         (11, "Xo", "Po", "So"),
         # Default 24
         (24, "Xo", "Po", "So"),
-        #-----------
+        # -----------
         # Alternatives:
         # (11, "Xo", "Po", "So"),
         # (11, "Xo", "0", "So"),
@@ -164,7 +175,7 @@ def main():
     # ----------------MAIN CODE-------------------
     # --------------------------------------------
     start_time = timer()
-    
+
     altiok_models_to_run = [get_altiok2006_params().get(2)]  # roda só a fig2
 
     # Parâmetros de processo (será usado em todos)
@@ -200,7 +211,7 @@ def main():
                         S=eq_params.So,
                     ),
                     t_final=22,
-                    S_max= float("inf")
+                    S_max=float("inf"),
                 )
                 initial_state = ReactorState(
                     volume=1,
@@ -234,6 +245,30 @@ def main():
                         mega_reactor_folder,
                         f"t{t_sim}-{Xo}-{Po}-{So}",
                     )
+
+                    if Xo == "Xo" and Po == "Po" and So == "So":
+                        xpdata = get_altiok2006_xp_data(xp_num=2)
+                        XPSvals = {
+                            "X": xpdata.X,
+                            "P": xpdata.P,
+                            "S": xpdata.S,
+                            # "V": None,
+                        }
+                        additional_plotting_points = {
+                            "XPSV": {
+                                "title": "XP",
+                                "cases": {
+                                    key: {
+                                        "x": xpdata.t,
+                                        "y": XPSvals[key],
+                                        "marker": "o",
+                                        "color": xp_colors[0],
+                                    }
+                                    for key in XPSvals
+                                }
+                            }
+                        }
+
                     t_sim, Xo, Po, So = batch_get_variables(
                         params=params, eq_params=eq_params
                     )
@@ -247,7 +282,7 @@ def main():
                             S=eq_params.So,
                         ),
                         t_final=t_sim,
-                        Smax=So
+                        Smax=So,
                     )
                     initial_state = ReactorState(
                         volume=5,
@@ -263,6 +298,7 @@ def main():
                         f_out_num,
                         f_out_pinn,
                         cases,
+                        additional_plotting_points,
                     )
                     pass
 
@@ -282,7 +318,7 @@ def main():
                             S=eq_params.So,
                         ),
                         t_final=24 * 3,
-                        Smax=float("inf")
+                        Smax=float("inf"),
                     )
                     initial_state = ReactorState(
                         volume=V0,
@@ -310,7 +346,7 @@ def main():
                         cases,
                     )
                     pass
-    #-----------------------------------        
+    # -----------------------------------
     end_time = timer()
     print(
         f"""
