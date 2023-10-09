@@ -20,7 +20,6 @@ def plot_comparer_multiple_grid(
     sharex=True,
     yscale="log",
     figsize=(5.5, 3.5),
-    labels=None,  # lista estilo ['a', 'b', 'c']
     folder_to_save=None,
     filename=None,
     showPlot=False,
@@ -94,6 +93,7 @@ def plot_comparer_multiple_grid(
                 ___x = d["x"]
                 ___y = d["y"]
                 ___line_args = d.get("l", "None")
+                ___label = d.get("label", None)
                 ___marker = d.get("marker", None)
                 ___axvspan = d.get("axvspan", None)
                 if ___x is None or ___y is None:
@@ -102,6 +102,7 @@ def plot_comparer_multiple_grid(
                     (line,) = ax.plot(
                         ___x,
                         ___y,
+                        label=___label,
                         linestyle=___line_args,
                         color=___color,
                         marker=___marker,
@@ -114,6 +115,7 @@ def plot_comparer_multiple_grid(
                     ax.axvspan(
                         ___axvspan["from"],
                         ___axvspan["to"],
+                        label=___label,
                         edgecolor=___axvspan.get("edgecolor", None),
                         facecolor=___axvspan.get("facecolor", None),
                         hatch=___axvspan.get("hatch", "X"),
@@ -148,12 +150,19 @@ def plot_comparer_multiple_grid(
     if yscale:
         plt.yscale(yscale)
 
+    
+    
     for ax in axes:
         # Só para o eixo y:
         ax.ticklabel_format(useMathText=True, scilimits=(-2, +2), axis="y")
 
+    # O último já pega o de todo mundo
+    # ref: https://matplotlib.org/stable/users/explain/axes/legend_guide.html#sphx-glr-users-explain-axes-legend-guide-py
+    handles, labels = ax.get_legend_handles_labels()
+
     if labels:
         fig.legend(
+            handles,
             labels,
             loc="lower center",
             # loc="best",#"upper right",#"upper center",

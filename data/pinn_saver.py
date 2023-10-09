@@ -315,7 +315,11 @@ def save_each_pinn(
             "y_label": units[i],
             "cases": [
                 # Numeric
-                {"x": num.t, "y": num_vals[i], "color": pinn_colors[0], "l": "-"},
+                {"x": num.t, 
+                 "y": num_vals[i], 
+                 "label": "Num",
+                 "color": pinn_colors[0], 
+                 "l": "-"},
             ],
         }
 
@@ -326,6 +330,7 @@ def save_each_pinn(
                 {
                     "x": num.t,
                     "y": num_dNdt[i],
+                    "label": "Num",
                     "color": pinn_colors[0],
                     "l": "-",
                 },
@@ -339,6 +344,7 @@ def save_each_pinn(
                 {
                     "x": num.t,
                     "y": num_dNdt_2[i],
+                    "label": "Num",
                     "color": pinn_colors[0],
                     "l": "-",
                 },
@@ -363,6 +369,7 @@ def save_each_pinn(
                 {
                     "x": pinn_x,
                     "y": pinn_y,
+                    "label": "PINN",
                     "color": pinn_colors[1],
                     "l": pinn_line_style,
                 }
@@ -373,6 +380,7 @@ def save_each_pinn(
                 {
                     "x": pinn_x,
                     "y": deriv_pinn_y,
+                    "label": "PINN",
                     "color": pinn_colors[1],
                     "l": pinn_line_style,
                 }
@@ -382,6 +390,7 @@ def save_each_pinn(
                 {
                     "x": pinn_x,
                     "y": deriv_pinn_y_2,
+                    "label": "PINN",
                     "color": pinn_colors[1],
                     "l": pinn_line_style,
                 }
@@ -400,6 +409,7 @@ def save_each_pinn(
                 {
                     "x": num.t,
                     "y": pinn_nondim_vals[i],
+                    "label": "ND-PINN",
                     "color": pinn_colors[2],
                     "l": ":",
                 }
@@ -411,6 +421,7 @@ def save_each_pinn(
                 {
                     "x": None,
                     "y": None,
+                    "label":"$t_{TR}$",
                     "axvspan": {
                         "from": np.min(pinn_time_normal),
                         "to": np.max(pinn_time_normal),
@@ -426,6 +437,7 @@ def save_each_pinn(
                 {
                     "x": None,
                     "y": None,
+                    "label":"$t_{TR}$",
                     "axvspan": {
                         "from": np.min(pinn_time_normal),
                         "to": np.max(pinn_time_normal),
@@ -441,6 +453,7 @@ def save_each_pinn(
                 {
                     "x": None,
                     "y": None,
+                    "label":"$t_{TR}$",
                     "axvspan": {
                         "from": np.min(pinn_time_normal),
                         "to": np.max(pinn_time_normal),
@@ -451,27 +464,9 @@ def save_each_pinn(
                 },
             )
 
-    labels = ["Num"]
-    XPSV_labels = ["Num"]
-
-    if showPINN:
-        labels.append("PINN")
-        XPSV_labels.append("PINN")
-
-    if "XPSV" in additional_plotting_points:
-        XPSV_labels.append(additional_plotting_points["XPSV"].get("title", "XP"))
-
-    if showNondim:
-        labels.append("ND PINN")
-        XPSV_labels.append("ND PINN")
-
-    if showTimeSpan:
-        labels.append("$t_{TR}$")
-        XPSV_labels.append("$t_{TR}$")
 
     plot_comparer_multiple_grid(
         suptitle=pinn.model_name,
-        labels=XPSV_labels,
         figsize=(8, 6),
         gridspec_kw={"hspace": 0.042, "wspace": 0.03},
         yscale="linear",
@@ -495,7 +490,6 @@ def save_each_pinn(
     if plot_derivatives:
         plot_comparer_multiple_grid(
             suptitle=f"Derivatives ({pinn.model_name})",
-            labels=labels,
             figsize=(8, 6),
             gridspec_kw={"hspace": 0.042, "wspace": 0.03},
             yscale="linear",
@@ -516,7 +510,6 @@ def save_each_pinn(
         if plot_derivatives_2:
             plot_comparer_multiple_grid(
                 suptitle=f"2 order derivatives ({pinn.model_name})",
-                labels=labels,
                 figsize=(8, 6),
                 gridspec_kw={"hspace": 0.042, "wspace": 0.03},
                 yscale="linear",
