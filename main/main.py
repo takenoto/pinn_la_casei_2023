@@ -122,7 +122,7 @@ def main():
     # ----------------------
     # -CHOSE OPERATION MODE-
     # ----------------------
-    reactors_to_run = ["CR"]  # "batch" "fed-batch" "CR"
+    reactors_to_run = ["batch"]  # "batch" "fed-batch" "CR"
 
     batch_versions = [
         # tempo de simulação, Xo, Po, So
@@ -232,7 +232,7 @@ def main():
                     t_sim, Xo, Po, So = params
                     current_test_folder = os.path.join(
                         mega_reactor_folder,
-                        f" - t{t_sim}-{Xo}-{Po}-{So}",
+                        f"t{t_sim}-{Xo}-{Po}-{So}",
                     )
                     t_sim, Xo, Po, So = batch_get_variables(
                         params=params, eq_params=eq_params
