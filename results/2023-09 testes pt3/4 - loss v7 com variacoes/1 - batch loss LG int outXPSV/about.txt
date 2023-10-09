@@ -1,0 +1,1 @@
+Fiz com a loss LG que pareceu ser a melhor em testes preliminares. Depois justifico comparando com as outras. Agora to nem afim.
