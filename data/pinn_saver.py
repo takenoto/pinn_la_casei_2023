@@ -9,6 +9,8 @@ import deepxde as dde
 from utils.colors import pinn_colors
 from data.plot.plot_comparer_multiple_grid import plot_comparer_multiple_grid
 
+dpi_medium = 200
+dpi_low = 80
 
 class PINNSaveCaller:
     def __init__(self, num_results, showPINN, showNondim, additional_plotting_points):
@@ -291,7 +293,7 @@ def save_each_pinn(
     # ------------------------
     # SAVING THE FILE
     path_to_file = os.path.join(folder_to_save, f"{pinn.model_name}.json")
-    file = open(path_to_file, "a")
+    file = open(path_to_file, "w")
     pretty_json = json.dumps(file_dict, indent=1)
     file.write(pretty_json)
     file.close()
@@ -302,6 +304,9 @@ def save_each_pinn(
         pinn_time_normal = pinn.train_state.X_test[:, _in.t_index : _in.t_index + 1]
     else:
         pinn_time_normal = pinn.train_state.X_test
+    
+    # ref: https://matplotlib.org/stable/gallery/lines_bars_and_markers/line_demo_dash_control.html
+    pinn_line_style = (0, (2, 2, 4, 2))
 
     for i in range(4):
         items[i + 1] = {
@@ -364,7 +369,7 @@ def save_each_pinn(
                     "x": pinn_x,
                     "y": pinn_y,
                     "color": pinn_colors[1],
-                    "l": "-",
+                    "l": pinn_line_style,
                 }
             )
 
@@ -374,7 +379,7 @@ def save_each_pinn(
                     "x": pinn_x,
                     "y": deriv_pinn_y,
                     "color": pinn_colors[1],
-                    "l": "-",
+                    "l": pinn_line_style,
                 }
             )
 
@@ -383,7 +388,7 @@ def save_each_pinn(
                     "x": pinn_x,
                     "y": deriv_pinn_y_2,
                     "color": pinn_colors[1],
-                    "l": "-",
+                    "l": pinn_line_style,
                 }
             )
 
@@ -444,8 +449,8 @@ def save_each_pinn(
                 },
             )
 
-    labels = ["Euler"]
-    XPSV_labels = ["Euler"]
+    labels = ["Num"]
+    XPSV_labels = ["Num"]
     
     if "XPSV" in additional_plotting_points:
         XPSV_labels.append(additional_plotting_points["XPSV"].get("title", "XP"))
@@ -480,6 +485,7 @@ def save_each_pinn(
         filename=f"{pinn.model_name}.png" if folder_to_save else None,
         showPlot=False if folder_to_save else True,
         legend_bbox_to_anchor=(0.5, -0.1),
+        dpi=dpi_medium,
     )
 
     # --------------------
@@ -502,6 +508,7 @@ def save_each_pinn(
             filename=f"DERIV-{pinn.model_name}.png" if folder_to_save else None,
             showPlot=False if folder_to_save else True,
             legend_bbox_to_anchor=(0.5, -0.1),
+            dpi=dpi_medium,
         )
         pass
 
@@ -522,6 +529,7 @@ def save_each_pinn(
                 filename=f"DERIV2-{pinn.model_name}.png" if folder_to_save else None,
                 showPlot=False if folder_to_save else True,
                 legend_bbox_to_anchor=(0.5, -0.1),
+                dpi=dpi_medium,
             )
         pass
 
@@ -553,7 +561,7 @@ def save_each_pinn(
     plt.legend()
     if folder_to_save:
         file_path = os.path.join(folder_to_save, f"LOSS-{pinn.model_name}.png")
-    plt.savefig(file_path, bbox_inches="tight", dpi=210)
+    plt.savefig(file_path, bbox_inches="tight", dpi=dpi_medium)
     plt.close(fig)
 
     # ---------------------
@@ -578,7 +586,7 @@ def save_each_pinn(
         plt.legend(loc="center left", bbox_to_anchor=(1, 0.5))
         if folder_to_save:
             file_path = os.path.join(folder_to_save, f"LoT-{pinn.model_name}.png")
-        plt.savefig(file_path, bbox_inches="tight", dpi=80)
+        plt.savefig(file_path, bbox_inches="tight", dpi=dpi_low)
         plt.close(fig)
 
         # TEST/VALIDATION LOSS
@@ -599,7 +607,7 @@ def save_each_pinn(
         plt.legend(loc="center left", bbox_to_anchor=(1, 0.5))
         if folder_to_save:
             file_path = os.path.join(folder_to_save, f"LoV-{pinn.model_name}.png")
-        plt.savefig(file_path, bbox_inches="tight", dpi=80)
+        plt.savefig(file_path, bbox_inches="tight", dpi=dpi_low)
         plt.close(fig)
 
         # LoV of boundary conditions
@@ -619,7 +627,7 @@ def save_each_pinn(
         plt.legend(loc="center left", bbox_to_anchor=(1, 0.5))
         if folder_to_save:
             file_path = os.path.join(folder_to_save, f"LoV_IC-{pinn.model_name}.png")
-        plt.savefig(file_path, bbox_inches="tight", dpi=80)
+        plt.savefig(file_path, bbox_inches="tight", dpi=dpi_low)
         plt.close(fig)
 
     # ------------------------
@@ -653,7 +661,7 @@ def save_each_pinn(
             file_path = os.path.join(folder_to_save, f"TIME-{pinn.model_name}.png")
         # Save the figure
         # plt.savefig(file_path)
-        plt.savefig(file_path, bbox_inches="tight", dpi=80)
+        plt.savefig(file_path, bbox_inches="tight", dpi=dpi_low)
         plt.close(fig)
 
     plt.close("all")
