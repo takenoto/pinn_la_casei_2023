@@ -87,9 +87,6 @@ def plot_comparer_multiple_grid(
         # Se tiver a key 'cases', então os ys e xs estão vindo em pares
         # (o x não é o mesmo pra todos)
 
-        # Lims Y for current axis
-        lowestY = None
-        biggestY = None
 
         if "cases" in i[s + 1].keys():
             for d in i[s + 1]["cases"]:
@@ -97,21 +94,6 @@ def plot_comparer_multiple_grid(
                 ___color = d.get("color", "b")
                 ___x = d["x"]
                 ___y = d["y"]
-
-                if ___y is not None:
-                    if lowestY is None:
-                        lowestY = np.min(___y)
-                    else:
-                        newLowY = np.min(___y)
-                        lowestY = np.min([lowestY, newLowY])
-
-                if ___x is not None:
-                    if biggestY is None:
-                        biggestY = np.max(___y)
-                    else:
-                        newBigY = np.max(___y)
-                        biggestY = np.max([biggestY, newBigY])
-
                 ___line_args = d.get("l", "None")
                 ___marker = d.get("marker", None)
                 ___axvspan = d.get("axvspan", None)
@@ -162,25 +144,7 @@ def plot_comparer_multiple_grid(
         if y_minlocator:
             ax.yaxis.set_minor_locator(y_minlocator)
 
-        # Set lims Y na força
-        diffY = biggestY - lowestY
-        average = (biggestY + lowestY) / 2
-        diffYPerc = 1
-        if biggestY != 0:
-            diffYPerc = abs((biggestY - lowestY) / (biggestY))
-        elif lowestY != 0:
-            diffYPerc = abs((biggestY - lowestY) / (lowestY))
-
-        # Se diff < 1% força pra não ficar tão ruim de ler,
-        # ou se a dif absoluta for menor que 0.001
-        if diffY != 0:  # Pra quando o valor for realmente o mesmo
-            ax.set_ylim(lowestY - 0.1, biggestY + 0.1)
-            if diffY < 0.005:
-                ax.set_ylim(average - 0.006, average + 0.006)
-            if diffYPerc <= 0.03:
-                ax.set_ylim(
-                    lowestY - 0.03 * abs(average), biggestY + 0.03 * abs(average)
-                )
+        ax.margins(y=0.15)
 
     if yscale:
         plt.yscale(yscale)
