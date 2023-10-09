@@ -149,23 +149,17 @@ class ODEPreparer:
             # o valor da expressão não ser NaN, não presta, não adianta.
 
             def f_x_calc_func():
-                loss_version = solver_params.get_loss_version_for_type("X")
-                X_for_calc = X
-                if loss_version > 2:
-                    X_for_calc = tf.where(
-                        tf.less(X, Xm), X, tf.ones_like(X) * 0.9999 * Xm
-                    )
+                X_for_calc = tf.where(
+                    tf.less(X, Xm), X, tf.ones_like(X) * 0.9999 * Xm
+                )
 
                 value = tf.pow(1 - X_for_calc / Xm, f)
                 return value
 
             def h_p_calc_func():
-                loss_version = solver_params.get_loss_version_for_type("P")
-                P_for_calc = P
-                if loss_version > 2:
-                    P_for_calc = tf.where(
-                        tf.less(P, Pm), P, tf.ones_like(P) * 0.9999 * Pm
-                    )
+                P_for_calc = tf.where(
+                    tf.less(P, Pm), P, tf.ones_like(P) * 0.9999 * Pm
+                )
 
                 value = tf.pow(
                     1 - (P_for_calc / Pm),
