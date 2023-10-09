@@ -26,6 +26,7 @@ def plot_comparer_multiple_grid(
     filename=None,
     showPlot=False,
     legend_bbox_to_anchor=(0.5, -0.07),
+    dpi=600,
 ):
     """
     x and y are the keys to access the x and y values in the dictionary
@@ -199,7 +200,7 @@ def plot_comparer_multiple_grid(
             file_path = os.path.join(folder_to_save, filename)
         # Save the figure
         # plt.savefig(file_path)
-        plt.savefig(file_path, bbox_inches="tight", dpi=270)
+        plt.savefig(file_path, bbox_inches="tight", dpi=dpi)
         plt.cla()
         plt.close(fig)
 
