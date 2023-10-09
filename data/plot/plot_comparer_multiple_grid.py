@@ -1,5 +1,4 @@
 import os
-import numpy as np
 from textwrap import wrap
 from matplotlib import pyplot as plt
 
