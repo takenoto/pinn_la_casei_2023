@@ -16,6 +16,7 @@ def change_layer_fix_neurons_number(eq_params, process_params):
     # --------- LOSS FUNCTION -----------
     # "7A-I" e 6 5 4 3 2
     loss_version_list = ["7A", "7B", "7C", "7D", "7E", "7F", "7G", "7H", "7I"]
+    loss_version_list = ["7G"]
 
     input_output_variables_list = [
         # ----------------------
@@ -23,9 +24,9 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         # ----------------------
         #
         # t => XPSV
-        # (["t"], ["X", "P", "S", "V"]),
+        (["t"], ["X", "P", "S", "V"]),
         # t => V
-        (["t"], ["V"]),
+        # (["t"], ["V"]),
         # # t => XPS
         # (["t"], ["X", "P", "S"]),
         # # t, V => XPS
@@ -97,7 +98,7 @@ def change_layer_fix_neurons_number(eq_params, process_params):
     #'tanh' 'swish' 'selu' 'relu'
     activation_functions = [
         "tanh",
-        "swish",
+        # "swish",
         # "selu",
         # RELU IS NOT SECOND ORDER DIFFERENTIABLE
         # AND SHOULD NOT BE USED FOR THIS PROJECT
@@ -113,7 +114,7 @@ def change_layer_fix_neurons_number(eq_params, process_params):
     LR_list = [
         # Default
         "E-3_1",
-        "E-4_3"
+        "E-4_5",
         # --------------------
         # FULL LIST:
         # --------------------
@@ -155,10 +156,10 @@ def change_layer_fix_neurons_number(eq_params, process_params):
     ADAM_EPOCHS_list = [
         # "100",
         # "1k",
-        "10k",
+        # "10k",
         # "25k",
         # "30k",
-        # "35k",
+        "35k",
         # "45k",
         # "60k",
         # "90k",
@@ -214,10 +215,22 @@ def change_layer_fix_neurons_number(eq_params, process_params):
     ndlist_additional_blocks = [
         # Using now:
         # faz um a um pq aí pode parar e continuar depois
-        "default", # só ("t1", "1", "Lin", "Lin"),
-        "1",
+        # "default", # só ("t1", "1", "Lin", "Lin"),
+        #----------------------
+        # PARTE 1
+        # "1",
+        #----------------------
+        # PARTE 2
         # "2.1-LinUpx1",
-        # "2.2-t2F1-Lin<>Upx1"
+        # "2.2-t2F1-Lin<>Upx1",
+        #----------------------
+        #----------------------
+        # PARTE 3
+        # "3.1LinLinF1",
+        "3.1LinLinF1d10",
+        # "3.2LinUpx1F1",
+        "3.2LinUpx1F1d10",
+        #----------------------
         #
         # -- DOCs:
         # -----------------
@@ -229,7 +242,7 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         # Guia sobre usar UPx na entrada, saída, ou ambos
         #
         # -----------------
-        # "3.1LinLinF"1 => itera todos os tempos por LINLIN usando F1 e cada tempo
+        # "3.1LinLinF1" => itera todos os tempos por LINLIN usando F1 e cada tempo
         # "3.1LinLinF1d10" => memsoque 3.1F1 mas com F1d10
         # "3.2LinUpx1F1" => Mesma coisa que 3.1F1 mas usa Lin-Upx1
         # "3.2LinUpx1F1d10" => Mesma coisa que 3.2Upx1F1 mas usa Lin-Upx1
@@ -418,14 +431,15 @@ def nondimlist_add_from_blocks(NDList, blocks_to_add):
         # --------------------------------------
         # 1º Bloco: LINLIN Noção geral do impacto de t e vars crescendo e diminuindo
         #
-        # F1 d10 e X10
+        # F1 e t d10 e X10
         "1": [
-            ("t1", "F1", "Lin", "Lin"),
+            # ("t1", "F1", "Lin", "Lin"), # NOW IS THE "DEFAULT"
             ("t1", "F1d10", "Lin", "Lin"),
             ("t1", "F1x10", "Lin", "Lin"),
             #
             # 2º t nondim, x10 e d10 LIN LIN
             ("t2", "1", "Lin", "Lin"),
+            ("t2", "F1d10", "Lin", "Lin"),
             ("t2x10", "1", "Lin", "Lin"),
             ("t2d10", "1", "Lin", "Lin"),
         ],
@@ -650,8 +664,8 @@ def get_nondim_scaler_values(
             )
         case "t9":
             # Proíbe que volumes iguais a zero ou valores não numéricos sejam executados
-            assert np.array(process_params.inlet.volume)[0] != 0
-            assert 0 * np.array(process_params.inlet.volume)[0] == 0
+            assert process_params.inlet.volume != 0
+            assert 0 * process_params.inlet.volume == 0
             ts = process_params.max_reactor_volume / process_params.inlet.volume
         case _:
             assert False, "case must exist"
