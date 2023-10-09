@@ -1,5 +1,4 @@
 import os
-import numpy as np
 
 from domain.optimization.non_dim_scaler import NonDimScaler
 from domain.params import altiok_2006_params
