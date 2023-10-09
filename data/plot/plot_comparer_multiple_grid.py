@@ -195,7 +195,7 @@ def plot_comparer_multiple_grid(
             file_path = os.path.join(folder_to_save, filename)
         # Save the figure
         # plt.savefig(file_path)
-        plt.savefig(file_path, bbox_inches="tight", dpi=600)
+        plt.savefig(file_path, bbox_inches="tight", dpi=320)
         plt.cla()
         plt.close(fig)
 

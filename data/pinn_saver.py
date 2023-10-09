@@ -1,3 +1,4 @@
+import gc
 import os
 import json
 from matplotlib import pyplot as plt
@@ -556,7 +557,7 @@ def save_each_pinn(
     plt.legend()
     if folder_to_save:
         file_path = os.path.join(folder_to_save, f"LOSS-{pinn.model_name}.png")
-    plt.savefig(file_path, bbox_inches="tight", dpi=300)
+    plt.savefig(file_path, bbox_inches="tight", dpi=240)
     plt.close(fig)
 
     # ---------------------
@@ -581,7 +582,7 @@ def save_each_pinn(
         plt.legend(loc="center left", bbox_to_anchor=(1, 0.5))
         if folder_to_save:
             file_path = os.path.join(folder_to_save, f"LoT-{pinn.model_name}.png")
-        plt.savefig(file_path, bbox_inches="tight", dpi=120)
+        plt.savefig(file_path, bbox_inches="tight", dpi=80)
         plt.close(fig)
 
         # TEST/VALIDATION LOSS
@@ -602,7 +603,7 @@ def save_each_pinn(
         plt.legend(loc="center left", bbox_to_anchor=(1, 0.5))
         if folder_to_save:
             file_path = os.path.join(folder_to_save, f"LoV-{pinn.model_name}.png")
-        plt.savefig(file_path, bbox_inches="tight", dpi=120)
+        plt.savefig(file_path, bbox_inches="tight", dpi=80)
         plt.close(fig)
 
         # LoV of boundary conditions
@@ -622,7 +623,7 @@ def save_each_pinn(
         plt.legend(loc="center left", bbox_to_anchor=(1, 0.5))
         if folder_to_save:
             file_path = os.path.join(folder_to_save, f"LoV_IC-{pinn.model_name}.png")
-        plt.savefig(file_path, bbox_inches="tight", dpi=120)
+        plt.savefig(file_path, bbox_inches="tight", dpi=80)
         plt.close(fig)
 
     # ------------------------
@@ -656,5 +657,9 @@ def save_each_pinn(
             file_path = os.path.join(folder_to_save, f"TIME-{pinn.model_name}.png")
         # Save the figure
         # plt.savefig(file_path)
-        plt.savefig(file_path, bbox_inches="tight", dpi=120)
+        plt.savefig(file_path, bbox_inches="tight", dpi=80)
         plt.close(fig)
+
+    plt.close("all")
+
+    gc.collect()
