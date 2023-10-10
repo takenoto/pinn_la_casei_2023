@@ -33,25 +33,25 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         # 8,
         # 10,
         # 12,
-        16,
+        # 16,
         # 20,
         # 30,
         # 32,
         # 45,
         # 60,
-        # 80,
+        80,
         # 100,
         # 160
     ]
     layers = [
-        # 1,
-        # 2,
+        1,
+        2,
         3,
-        # 4,
-        # 5,
-        # 6,
-        # 7,
-        # 8
+        4,
+        5,
+        6,
+        7,
+        8,
     ]
 
     # -------------------------------
@@ -206,13 +206,14 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         percent_min_range=[
             0,
         ],  # [0,50] => iria fazer modelos iniciando em 0 e em 50
-        percent_max_range=[15, 60, 100, 200],
+        percent_max_range=[15, 45, 60, 100, 200],
     )
 
     train_input_range_list = [
         # "0-10pa",
         # "0-60pa",
         "0-100pa",
+        "0-45pa",
         # "0-200pa",
     ]
 
@@ -252,7 +253,10 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         # Default
         # "E-2_4",
         # "E-3_7",
+        "E-3_5",
+        "E-3_3",
         "E-3_1",
+        "E-4_8",
         # --------------------
         # FULL LIST:
         # --------------------
@@ -297,9 +301,9 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         # "10k",
         # "25k",
         # "30k",
-        "35k",
+        # "35k",
         # "45k",
-        # "60k",
+        "60k",
         # "90k",
         # "120k",
         # "150k",
@@ -473,7 +477,6 @@ def _insert_into_list(dictionary, args):
     internal_dict["hyperfolder"] = os.path.join(
         f"{input_str}-{output_str} tr- {train_input_range_key}"
         + f" {initializer}-{train_distribution}",
-        func,
         f"ND-{input_nondim_scaler.strategy_str}-{output_nondim_scaler.strategy_str}-{nd_tscode}-{nd_scalers_code}",
     )
 
