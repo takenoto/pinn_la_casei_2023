@@ -115,28 +115,28 @@ def lossV7(o, args, loss_version):
 
     match loss_version:
         case "7A":
-            loss = loss_d1
+            return loss_d1
         case "7B":
-            loss = loss_d1 + loss_minmax
+            return loss_d1 + loss_minmax
         case "7C":
-            loss = loss_d2
+            return loss_d2
         case "7D":
-            loss = loss_d2 + loss_minmax
+            return loss_d2 + loss_minmax
         case "7E":
-            loss = tf.add(1.0, sign_dif_abs(dNdt, dNdt_calc)) * loss_d1
+            return tf.add(1.0, sign_dif_abs(dNdt, dNdt_calc)) * loss_d1
         case "7F":
-            loss = tf.add(1.0, sign_dif_abs(dNdt_2, dNdt_2_calc)) * loss_d2
+            return tf.add(1.0, sign_dif_abs(dNdt_2, dNdt_2_calc)) * loss_d2
         case "7G":
-            # (1 + sing1 + sing2) * sum loss
-            loss = tf.add(
-                tf.add(1.0, sign_dif_abs(dNdt, dNdt_calc)),
-                sign_dif_abs(dNdt_2, dNdt_2_calc),
-            ) * (loss_d1 + loss_minmax + loss_d2)
+            # Tudo
+            return (
+                sign_dif_abs(dNdt, dNdt_calc) + sign_dif_abs(dNdt_2, dNdt_2_calc) + 1.0
+            ) * (loss_d1 + loss_d2 + loss_minmax)
         case "7H":
             # Sign d2 na loss d1
-            loss = tf.add(1.0, sign_dif_abs(dNdt_2, dNdt_2_calc)) * loss_d1
+            return tf.add(1.0, sign_dif_abs(dNdt_2, dNdt_2_calc)) * loss_d1
         case "7I":
             # Sign d1 na loss d2
-            loss = tf.add(1.0, sign_dif_abs(dNdt, dNdt_calc)) * loss_d2
-
-    return loss
+            return tf.add(1.0, sign_dif_abs(dNdt, dNdt_calc)) * loss_d2
+        case "7J":
+            # Tudo
+            return loss_d1 + loss_d2 + loss_minmax
