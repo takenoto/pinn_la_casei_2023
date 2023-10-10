@@ -131,7 +131,7 @@ def main():
     # ----------------------
     # -CHOSE OPERATION MODE-
     # ----------------------
-    reactors_to_run = ["CR"]  # "batch" "fed-batch" "CR"
+    reactors_to_run = ["batch"]  # "batch" "fed-batch" "CR"
 
     batch_versions = [
         # tempo de simulação, Xo, Po, So
@@ -139,9 +139,9 @@ def main():
         # Original xp time
         (10, "Xo", "Po", "So"),
         # Default 11
-        (11, "Xo", "Po", "So"),
+        # (11, "Xo", "Po", "So"),
         # Default 24
-        (24, "Xo", "Po", "So"),
+        # (24, "Xo", "Po", "So"),
         # -----------
         # Alternatives:
         # (11, "Xo", "Po", "So"),
@@ -262,6 +262,11 @@ def main():
                                     key: {
                                         "x": xpdata.t,
                                         "y": XPSvals[key],
+                                        # Essa label é o tipo pro gráfico
+                                        # Então tipo X é XP porque já vai estar
+                                        # no subplot de X
+                                        # vai apenas dizer se é PINN, XP, Num...
+                                        "label": "XP",
                                         "marker": "o",
                                         "color": xp_colors[0],
                                     }
@@ -346,7 +351,7 @@ def main():
                         f_out_num,
                         f_out_pinn,
                         cases,
-                        additional_plotting_points=None
+                        additional_plotting_points={}
                     )
                     pass
     # -----------------------------------
