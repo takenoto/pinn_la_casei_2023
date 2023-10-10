@@ -237,13 +237,13 @@ def run_reactor(
             loss_weights.append(w[3])
         # Boundary conditions
         if outputSimulationType.X:
-            loss_weights.append(w[0 + int(len(w)/2)])
+            loss_weights.append(w[0 + int(len(w) / 2)])
         if outputSimulationType.P:
-            loss_weights.append(w[1 + int(len(w)/2)])
+            loss_weights.append(w[1 + int(len(w) / 2)])
         if outputSimulationType.S:
-            loss_weights.append(w[2 + int(len(w)/2)])
+            loss_weights.append(w[2 + int(len(w) / 2)])
         if outputSimulationType.V:
-            loss_weights.append(w[3 + int(len(w)/2)])
+            loss_weights.append(w[3 + int(len(w) / 2)])
 
     # ------- CUSTOM LOSS --------------
     # REFS:
@@ -251,12 +251,12 @@ def run_reactor(
     # https://github.com/lululxvi/deepxde/issues/504
     # https://github.com/lululxvi/deepxde/issues/467
     loss = "MSE"  # "MSE"
-    
+
     # para definir uma loss custom, por exemplo, poderia ser feito algo do tipo:
     # def loss_test(y_true, y_pred):
     #     return tf.math.reduce_mean(tf.abs(y_true - y_pred))
     # loss = loss_test
-    
+
     metrics = None  # ["l2 relative error"] # ["MSE"]
     resample_every = solver_params.resample_every  # None # Tamanho da mini-batch
 
@@ -330,7 +330,6 @@ def run_reactor(
             )
     end_time = timer()
     total_training_time = end_time - start_time
-    
 
     # Por algum motivo o plot não funciona nem aqui nem no saveplot de baixo aff
     if solver_params.isplot:
