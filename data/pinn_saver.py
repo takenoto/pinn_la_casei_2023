@@ -31,7 +31,7 @@ class PINNSaveCaller:
         # Second order derivatives:
         plot_derivatives_2=True,
         # Individual losses of each output and inicial conditions
-        plot_individual_losses=True,
+        plot_individual_losses=False,
         additional_plotting_points=None,
     ):
         "Saves the plot and json of the pinn"
@@ -58,7 +58,7 @@ def save_each_pinn(
     folder_to_save=None,
     plot_derivatives=True,
     plot_derivatives_2=True,
-    plot_individual_losses=True,
+    plot_individual_losses=False,
     showTimeSpan=True,
     create_time_points_plot=False,
     additional_plotting_points=None,
