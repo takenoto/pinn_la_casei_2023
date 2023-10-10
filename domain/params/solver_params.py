@@ -76,6 +76,23 @@ class SolverLBFGSParams:
         self.LR = LR
 
 
+class LossWeights:
+    def __init__(self, values, name, of_type, settings):
+        self.values = values
+        self.name = name  # nome do tipo
+        self.type = of_type  # nome completo com subvariações
+        self.settings = settings
+        # Ex: settings:{"scale_to":1e2} => vai tentar deixar as loss em i0 em 10²
+
+    def to_dict(self):
+        return {
+            "name": self.name,
+            "type": self.type,
+            "values": self.values,
+            "settings": self.settings,
+        }
+
+
 class SolverParams:
     def __init__(
         self,
@@ -92,7 +109,7 @@ class SolverParams:
         layer_size=None,
         activation=None,
         initializer=None,
-        loss_weights=None,
+        loss_weights: LossWeights = None,
         input_non_dim_scaler: NonDimScaler = None,
         output_non_dim_scaler: NonDimScaler = None,
         resample_every=None,
@@ -195,7 +212,7 @@ class SolverParams:
             "nondim_scaler_output": self.output_non_dim_scaler.toDict(),
             "train_input_range": np.array(self.train_input_range).tolist(),
             "train_distribution": self.train_distribution,
-            "loss_weights": np.array(self.loss_weights).tolist(),
+            "loss_weights": self.loss_weights.to_dict(),
         }
 
 

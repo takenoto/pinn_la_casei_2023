@@ -5,6 +5,7 @@
 # Foreign imports
 import deepxde as dde
 from timeit import default_timer as timer
+import numpy as np
 
 
 import tensorflow as tf
@@ -44,7 +45,7 @@ def run_reactor(
     """
 
     inputSimulationType = solver_params.inputSimulationType
-    outputSimulationType = solver_params.outputSimulationType
+    _out = solver_params.outputSimulationType
 
     # ---------------------------------------
     # ------------- Geometry ----------------
@@ -117,28 +118,28 @@ def run_reactor(
         geom,
         lambda x: N0_dim["X"],
         boundary,
-        component=outputSimulationType.X_index,  # 0
+        component=_out.X_index,  # 0
     )
     ## P
     icP = dde.icbc.IC(
         geom,
         lambda x: N0_dim["P"],
         boundary,
-        component=outputSimulationType.P_index,  # 1,
+        component=_out.P_index,  # 1,
     )
     ## S
     icS = dde.icbc.IC(
         geom,
         lambda x: N0_dim["S"],
         boundary,
-        component=outputSimulationType.S_index,  # 2,
+        component=_out.S_index,  # 2,
     )
     ## Volume
     icV = dde.icbc.IC(
         geom,
         lambda x: N0_dim["V"],
         boundary,
-        component=outputSimulationType.V_index,  # 3,
+        component=_out.V_index,  # 3,
     )
 
     # ---------------------------------------
@@ -148,13 +149,13 @@ def run_reactor(
     # agora 0 -> x, 1 -> P, 2 -> S, 3 -> V
     ics = []
 
-    if outputSimulationType.X:
+    if _out.X:
         ics.append(icX)
-    if outputSimulationType.P:
+    if _out.P:
         ics.append(icP)
-    if outputSimulationType.S:
+    if _out.S:
         ics.append(icS)
-    if outputSimulationType.V:
+    if _out.V:
         ics.append(icV)
 
     # Setting the data for the NN
@@ -207,8 +208,8 @@ def run_reactor(
     # OUTPUT
     def output_transform(x, y):
         transformed_outputs = []
-        for N in outputSimulationType.order:
-            N_output_index = outputSimulationType.get_index_for(N)
+        for N in _out.order:
+            N_output_index = _out.get_index_for(N)
             # If it is not None, then it is valid
             # Era aqui o problema. Se for if is ignora o 0 também, não só nones
             # !!!!!!!!! que comportamento questionvel pelo amor viu.
@@ -221,29 +222,6 @@ def run_reactor(
     net.apply_output_transform(output_transform)
 
     model = dde.Model(data, net)
-
-    # Loss Weights
-    w = solver_params.loss_weights
-    loss_weights = []
-    # Os pesos vem primeiro todos na ordem depois repetem
-    for i in [1]:
-        if outputSimulationType.X:
-            loss_weights.append(w[0])
-        if outputSimulationType.P:
-            loss_weights.append(w[1])
-        if outputSimulationType.S:
-            loss_weights.append(w[2])
-        if outputSimulationType.V:
-            loss_weights.append(w[3])
-        # Boundary conditions
-        if outputSimulationType.X:
-            loss_weights.append(w[0 + int(len(w) / 2)])
-        if outputSimulationType.P:
-            loss_weights.append(w[1 + int(len(w) / 2)])
-        if outputSimulationType.S:
-            loss_weights.append(w[2 + int(len(w) / 2)])
-        if outputSimulationType.V:
-            loss_weights.append(w[3 + int(len(w) / 2)])
 
     # ------- CUSTOM LOSS --------------
     # REFS:
@@ -269,6 +247,76 @@ def run_reactor(
     # ---------------------------
     ## SOLVING
     # ---------------------------
+    # A lws SEMPRE terá todas, na ordem: XPSV
+    # Loss Weights
+    loss_weights = []
+    lws = solver_params.loss_weights
+
+    def refactor_loss_to_output_format():
+        "Transforms the loss from 0-4 to 0-N where N is the number of output variables"
+        loss_weights.clear()
+        # Sempre é XPSV, e aqui converte pra as saídas que tem de fato:
+        if _out.X:
+            loss_weights.append(lws.values[0])
+        if _out.P:
+            loss_weights.append(lws.values[1])
+        if _out.S:
+            loss_weights.append(lws.values[2])
+        if _out.V:
+            loss_weights.append(lws.values[3])
+        # Boundary conditions
+        if _out.X:
+            loss_weights.append(lws.values[0 + int(len(lws.values) / 2)])
+        if _out.P:
+            loss_weights.append(lws.values[1 + int(len(lws.values) / 2)])
+        if _out.S:
+            loss_weights.append(lws.values[2 + int(len(lws.values) / 2)])
+        if _out.V:
+            loss_weights.append(lws.values[3 + int(len(lws.values) / 2)])
+
+    refactor_loss_to_output_format()
+    # Os pesos vem primeiro todos na ordem depois repetem
+    if lws.type == "auto":
+        model.compile(
+            "adam",
+            lr=solver_params.adam_lr,
+            loss_weights=loss_weights,
+            loss=loss,
+            metrics=metrics,
+        )
+        loss_history, train_state = model.train(
+            iterations=1,
+            display_every=1,
+        )
+
+        # O número que tentaremos deixar todas as loss próximas escalonando
+        scale_to = lws.settings["scale_to"]
+        multi_exponent_op = lws.settings.get("multi_exponent_op", 1)
+        # Index a partir do qual começam as loss de ics e bcs
+
+        for N in ["X", "P", "S", "V"]:
+            if N in _out.order:
+                N_index = _out.get_index_for(N)
+                ics_index = N_index + len(_out.order)
+                loss_first_it = np.array(loss_history.loss_test)[
+                    :, N_index : N_index + 1
+                ].tolist()[0][0]
+                multiplier = scale_to / loss_first_it
+                loss_first_it_IC = np.array(loss_history.loss_test)[
+                    :, ics_index : ics_index + 1
+                ].tolist()[0][0]
+
+                multiplier_IC = scale_to / loss_first_it_IC
+
+                # Index de cada um no loss weights que tem tudo:
+                base_index = {"X": 0, "P": 1, "S": 2, "V": 3}
+
+                lws.values[base_index[N]] = multiplier**multi_exponent_op
+                lws.values[base_index[N] + 4] = multiplier_IC**multi_exponent_op
+
+
+    # Agora ajusta pra usar daqui pra baixo novamente
+    refactor_loss_to_output_format()
 
     start_time = timer()
     ### Step 1: Pre-solving by "L-BFGS"

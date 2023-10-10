@@ -3,6 +3,7 @@ import os
 from domain.optimization.non_dim_scaler import NonDimScaler
 from domain.params import altiok_2006_params
 from domain.params.process_params import ProcessParams
+from domain.params.solver_params import LossWeights
 
 # ----------------------------
 # CAUTION
@@ -19,40 +20,33 @@ def change_layer_fix_neurons_number(eq_params, process_params):
     #
     #'tanh' 'swish' 'selu' 'relu'
     activation_functions = [
-        "tanh",
         # "swish",
+        "tanh",
         # "selu",
         # RELU IS NOT SECOND ORDER DIFFERENTIABLE
         # AND SHOULD NOT BE USED FOR THIS PROJECT
         # REF: https://github.com/lululxvi/deepxde/issues/80
     ]
+    
     neurons = [
-        # 2,
-        # 4,
-        # 6,
-        # 8,
-        # 10,
-        # 12,
-        # 16,
-        # 20,
-        # 30,
-        # 32,
-        # 45,
-        # 60,
-        80,
-        # 100,
-        # 160
+        # 4
+        8,
+        # 16, 30, 45, 64
     ]
     layers = [
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8,
+        # 1, 2,
+        # 3, 4
+        5, 6, 
     ]
+    NLHL_list = [
+        # Todos:
+        (NL, HL) for NL in neurons for HL in layers
+    ]
+    NLHL_list.extend([
+         # Valores fixos
+        #(30, 3),
+    ])
+    
 
     # -------------------------------
     # NONDIMENSIONALIZER
@@ -68,6 +62,22 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         # ---------------------------------
         #
         # CURRENT ITERATION
+        ("t2", "F1", "Lin", "Lin"),
+        #
+        # ("t2", "F1d10", "Lin", "UPx1"),
+        # ("t2", "F1d10", "Lin", "Lin"),
+        #
+        # ("t8", "F1d10", "Lin", "UPx1"),
+        # ("t7", "F1d10", "Lin", "UPx1"),
+        # ("t6", "F1d10", "Lin", "UPx1"),
+        # ("t5", "F1d10", "Lin", "UPx1"),
+        # ("t3", "F1d10", "Lin", "UPx1"),
+        # ("t4", "F1d10", "Lin", "UPx1"),
+        # ("t2", "F1d10", "Lin", "UPx1"),
+        # ("t1", "F1d10", "Lin", "UPx1"),
+        #
+        # ("t2x10", "F1d100", "Lin", "UPx1"),
+        #
         # ("t1", "1", "Lin", "Lin"),
         # ("t2", "F1d10", "Lin", "Lin"),
         # ("t2x10", "F1d10", "Lin", "Lin"),
@@ -76,7 +86,7 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         # ("t2", "F1x10", "Lin", "UPx1"),
         # ("t2x10", "F1", "Lin", "UPx1"),
         # ("t2x10", "F1d100", "Lin", "Lin"),
-        ("t2x10", "F1d100", "Lin", "UPx1"),
+        # ("t2x10", "F1d100", "Lin", "UPx1"),
         # ("t2x100", "F1d100", "Lin", "UPx1"),
         #
         # Add here the ones to try
@@ -213,7 +223,7 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         # "0-10pa",
         # "0-60pa",
         "0-100pa",
-        "0-45pa",
+        # "0-45pa",
         # "0-200pa",
     ]
 
@@ -224,8 +234,8 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         # --------------------
         # USING:
         (8, 32, 32),
-        # (8, 300, 300),
         # (20, 300, 300),
+        # (4, 1200, 1200),
         # (10, 32, 32),
         # (4, 8, 8),
         # (4, 400, 10),
@@ -240,7 +250,7 @@ def change_layer_fix_neurons_number(eq_params, process_params):
     NUM_BOUNDARY = 0
 
     # NÃO É MINI_BATCH DE FATO, É UM RESAMPLER MDS
-    resample_every_list = [2000] # , 1000]  # [None] [2000, 200, 10000]
+    resample_every_list = [2000]  # , 1000]  # [None] [2000, 200, 10000]
     # O padrão era Glorot Uniform
     initializer = "Glorot uniform"  #'Glorot normal' #'Glorot uniform' #'Orthogonal'
     # Quando for fazer hypercube acho que posso boar distribution
@@ -251,12 +261,17 @@ def change_layer_fix_neurons_number(eq_params, process_params):
     # GLOROT UNIFORM # Era Glorot Normal nos testes sem swish
     LR_list = [
         # Default
-        # "E-2_4",
-        # "E-3_7",
+        ## "E-2_4",
+        "E-3_8",
+        "E-3_7",
         "E-3_5",
+        "E-3_4",
         "E-3_3",
+        "E-3_2",
         "E-3_1",
         "E-4_8",
+        "E-4_1",
+        # "E-4_2",
         # --------------------
         # FULL LIST:
         # --------------------
@@ -296,22 +311,20 @@ def change_layer_fix_neurons_number(eq_params, process_params):
     lbfgs_pre = 0  # 0 1
     lbfgs_post = 1  # 0 1
     ADAM_EPOCHS_list = [
-        # "100",
-        # "1k",
-        # "10k",
-        # "25k",
-        # "30k",
+        "80k"
         # "35k",
         # "45k",
-        "60k",
+        # "60k",
         # "90k",
-        # "120k",
-        # "150k",
     ]
     # SGD_EPOCHS = 0  # 1000
 
     # Loss Weight
-    loss_weights_list = ["A1"]  # All weights = 0
+    loss_weights_list = [
+        "auto-e2-S",
+        # "A1",
+        # "auto-e2",
+    ]
 
     # Específicos
     for input_output_variables in input_output_variables_list:
@@ -322,39 +335,39 @@ def change_layer_fix_neurons_number(eq_params, process_params):
                         for n_points in N_POINTS:
                             for nd in NDList:
                                 for loss_version in loss_version_list:
-                                    for NL in neurons:
-                                        for HL in layers:
-                                            for resample_every in resample_every_list:
-                                                for LR_str in LR_list:
-                                                    for (
-                                                        loss_weight_str
-                                                    ) in loss_weights_list:
-                                                        _insert_into_list(
-                                                            dictionary,
-                                                            args=(
-                                                                process_params,
-                                                                eq_params,
-                                                                input_output_variables,
-                                                                loss_version,
-                                                                lbfgs_pre,
-                                                                lbfgs_post,
-                                                                loss_version,
-                                                                func,
-                                                                initializer,
-                                                                train_input_range_key,
-                                                                adam_str,
-                                                                train_distribution,
-                                                                train_input_range_dict,
-                                                                n_points,
-                                                                NUM_BOUNDARY,
-                                                                NL,
-                                                                HL,
-                                                                resample_every,
-                                                                nd,
-                                                                LR_str,
-                                                                loss_weight_str,
-                                                            ),
-                                                        )
+                                    for NLHLpoint in NLHL_list:
+                                        NL, HL = NLHLpoint
+                                        for resample_every in resample_every_list:
+                                            for LR_str in LR_list:
+                                                for (
+                                                    loss_weight_str
+                                                ) in loss_weights_list:
+                                                    _insert_into_list(
+                                                        dictionary,
+                                                        args=(
+                                                            process_params,
+                                                            eq_params,
+                                                            input_output_variables,
+                                                            loss_version,
+                                                            lbfgs_pre,
+                                                            lbfgs_post,
+                                                            loss_version,
+                                                            func,
+                                                            initializer,
+                                                            train_input_range_key,
+                                                            adam_str,
+                                                            train_distribution,
+                                                            train_input_range_dict,
+                                                            n_points,
+                                                            NUM_BOUNDARY,
+                                                            NL,
+                                                            HL,
+                                                            resample_every,
+                                                            nd,
+                                                            LR_str,
+                                                            loss_weight_str,
+                                                        ),
+                                                    )
 
     return dictionary
 
@@ -454,7 +467,7 @@ def _insert_into_list(dictionary, args):
         "output_str": output_str,
         "input_scaler": input_nondim_scaler,
         "output_scaler": output_nondim_scaler,
-        "loss_weights": loss_weights(config=loss_weight_str),
+        "loss_weights": loss_weights(name=loss_weight_str),
         "activation": func,
         "resample_every": resample_every,
         "num_domain": n_domain,
@@ -645,33 +658,58 @@ def get_nondim_scaler(
     return input_nondim_scaler, output_nondim_scaler
 
 
-def loss_weights(config: str):
+def loss_weights(name: str):
     # Sempre cadastra XPSV mesmo que não vá usar todos
     # e lá por dentro eu me resolvo
-    lw = []
-    match config:
+    # Mas precisa iniciar em 1
+    lw = [1, 1, 1, 1, 1, 1, 1, 1]
+    settings = {}
+    name = name
+    of_type = "traditional"
+    match name:
+        # O name precisa ser modificado em todos os autoX
+        # Se não não tem ocmo o run_reactor pegar
+        case "auto":
+            # Calcula automaticamente, lá no run_reactor
+            of_type="auto"
+            settings = {"scale_to": 1}
+        case "auto-e1":
+            of_type="auto"
+            settings = {"scale_to": 1e1}
+        case "auto-e2":
+            of_type="auto"
+            settings = {"scale_to": 1e2}
+        case "auto-e2-S":
+            of_type="auto"
+            # multi_exponent_op = 1/2 =>
+            # vai fazer a raiz quadrada pra achar o multiplier
+            settings = {"scale_to": 1e2, "multi_exponent_op":1/2,}
         # X P S V X0 P0 S0 V0
         case "A1":
             lw = [1, 1, 1, 1, 1, 1, 1, 1]
-        case "X10":
-            lw = [10, 1, 1, 1, 10, 1, 1, 1]
-        case "P10":
-            lw = [1, 10, 1, 1, 1, 10, 1, 1]
-        case "S10":
-            lw = [1, 1, 10, 1, 1, 1, 10, 1]
-        case "V10":
-            lw = [1, 1, 1, 10, 1, 1, 1, 10]
-        case "B":  # Focus on X and V
-            lw = [100, 1, 1, 100, 1, 1, 1, 1]
-        case "B2":  # Focus on X and V including initial conditions
-            lw = [100, 1, 1, 100, 10, 1, 1, 10]
-        case "B3":  # Focus on XPS
-            lw = [40, 40, 40, 1, 10, 10, 10, 1]
+        case "X3":
+            lw = [1e3, 1, 1, 1, 1e3, 1, 1, 1]
+        case "P3":
+            lw = [1, 1e3, 1, 1, 1, 1e3, 1, 1]
+        case "S3":
+            lw = [1, 1, 1e3, 1, 1, 1, 1e3, 1]
+        case "V3":
+            lw = [1, 1, 1, 1e3, 1, 1, 1, 1e3]
+        # Previously C1: (XV3)
+        case "XV3":  # Focus on X and V
+            lw = [1e3, 1, 1e3, 1, 1e3, 1, 1, 1e3]
+        case "XP3i":  # Focus on XP with initial conds. for all
+            lw = [1e3, 1e3, 1, 1, 1e2, 1e2, 1e2, 1e2]
+        case "XPS322":  # Focus on XPS
+            lw = [1e3, 1e2, 1e2, 1, 1e3, 1e2, 1e2, 1]
+        case "XV4":  # Focus on XV
+            lw = [1e4, 1, 1, 1e4, 1e3, 1, 1, 1e2]
 
     # Converte para float
-    lw = [float(_lossw) for _lossw in lw]
+    if isinstance(lw, (list, tuple)):
+        lw = [float(_lossw) for _lossw in lw]
 
-    return lw
+    return LossWeights(values=lw, name=name, of_type=of_type, settings=settings)
 
 
 def get_nondim_scaler_values(
