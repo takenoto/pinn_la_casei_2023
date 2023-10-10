@@ -1,0 +1,10 @@
+Testar 1 config pouquíssimos points e uma MUITOS
+
+=> A melhoria no erro não tem muito a ver com ter mais pontos, é muito mais por pegar a região onde acontece a zerada e assim contabilizar ela na loss e penalizar sua ocorrência
+
+=> Testar 3 tipos de loss principais 7b, 7D e 7G e validar as 3. No fim das contas, com muitos pontos tudo dá certo. Então talvez seja melhor eu iterar mini-batch pra avaliar se precisa de menos steps pra chegar no mesmo resultado.
+
+L7D parece não ter ficado legal, já posso descartar e ficar só com 7B e 7G mesmo.
+
+
+Todos os testes foram feitos SEM adimensionalização

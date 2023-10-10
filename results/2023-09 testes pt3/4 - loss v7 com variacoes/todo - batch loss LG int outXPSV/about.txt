@@ -1,0 +1,3 @@
+Fiz com a loss LG que pareceu ser a melhor em testes preliminares. Depois justifico comparando com as outras. Agora to nem afim.
+
+DEMOROU MUITO, COMEÇOU A LERDAR. 8H SÓ CHEGOU EM 200 ITERACOES SENDO QUE COM UNS 30MIN DEVE FAZER UMAS 15. Chegou a consumir 91% da memória do computador antes de interromper. Enfim, não faça mais tantos modelos de uma vez.

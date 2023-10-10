@@ -1,0 +1,7 @@
+Quando a rede aumenta o HL ou NL aumenta aquela frescuragem oscilando em t próximo de 0.
+
+Aumentar de 2x1 pra 2x3 já ajudou muito na pred. mesmo sem mudar a func. loss
+
+Prova que L7J diminui aquela oscilação no começo em comparação com a loss L7B. Mas isso só foi significativo SEM o uso de adimensionalização.
+
+Mais uma vez, t2x100 é má ideia

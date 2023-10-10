@@ -1,0 +1,9 @@
+de 16x3 pra 16x5 praticamente não apresenta diferença
+
+L7J chega em valores próximos mas no geral L7B é simplesmente melhor e mais rápida então é melhor ficar nela mesmo
+
+Lin lin aqui e acolá fica levemente melhor que lin upx1
+
+Mas no geral lin upx1 perdoa mais erros
+
+E CONSEGUIU EVITAR A IDA PRA ZERO EM UM DOS CASOS. ISSO É MUITO, MUITO IMPORTANTE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

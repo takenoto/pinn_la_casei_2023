@@ -1,0 +1,9 @@
+Esse teste vê o impacto do sampling no processo. Sampling = train_distribution e o antigo mini_batch, que diz de quantas em quantas iterações vai fazer o resampling.
+
+A loss7D parece ter essa tendência horrível de ir pra região de zerar tudo
+
+A lG ficou ruim mas pode ter sido só a LR baixa
+
+Rodei com o task manager aberto, a memória consumida aumenta em 50mb a cada 1 ou 2 ciclos. Não tem justificativa, só aumenta. De toda forma, isso limita fortemente a qtde máxima que posso fazer por vez. Então é bom eu fixar algo pra facilitar e já ir produzindo os resultados certos
+
+Não vi muita diferença de 100 pra 1000.

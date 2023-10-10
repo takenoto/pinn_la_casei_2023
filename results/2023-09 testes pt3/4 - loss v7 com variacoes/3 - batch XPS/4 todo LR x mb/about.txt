@@ -1,0 +1,17 @@
+Numa única rede fixada, variar LR e resampler size.
+Isso sozinha já daria um gráfico numérico que pode ter informações interessantes.
+
+1º Loss LG
+2º Loss LB
+
+Todos Linlin e lin-upx1
+
+LJ => F1x10 dá NAN. Então nem vá pro x100. Acabou-se F1x é ruim. Nem teste mais. Ponto final.
+
+ND-Lin-UPx1-t2x100-F1d100 ficou bom
+
+ND-Lin-UPx1-t2x10-F1d100 foi o melhor e se comportou melhor em mais LRs distintos
+
+Loss 7B é beeeem mais rápida que a 7J, então é preferível se funcionar. Ficou na pasta de Lin-UPx1 t2x10F1d100
+
+A pasta (3) é de longe a mais útil. Nela fica claro que J e B tem bons resultados, B demora muito menos, ambas apresentam alguma sensibilidade à LR e a nondim melhor foi a t2x10F1d100 com UPx1 na saída
