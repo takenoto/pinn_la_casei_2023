@@ -1,12 +1,8 @@
 # ref: https://matplotlib.org/stable/gallery/subplots_axes_and_figures/subplots_demo.html
 # marker style ref : https://matplotlib.org/stable/api/markers_api.html
-import os
 import matplotlib.pyplot as plt
-from textwrap import wrap
 
 from data.plot.plot_comparer_multiple_grid import plot_comparer_multiple_grid
-
-
 
 
 if __name__ == "__main__":
@@ -28,7 +24,8 @@ if __name__ == "__main__":
                 "y_label": "y turbo colorido",
                 "title": "multiple ys",
                 "cases": [
-                    # "l" são os line_args, pra dizer se é tracejado -- linha - pontilhado : etc
+                    # "l" são os line_args,
+                    # pra dizer se é tracejado -- linha - pontilhado : etc
                     {
                         "x": [-2, 2, 3],
                         "y": [4, 5, 1.5],
@@ -53,7 +50,8 @@ if __name__ == "__main__":
                 "y_label": "y turbo colorido",
                 "title": "multiple ys",
                 "cases": [
-                    # "l" são os line_args, pra dizer se é tracejado -- linha - pontilhado : etc
+                    # "l" são os line_args,
+                    # pra dizer se é tracejado -- linha - pontilhado : etc
                     {
                         "x": [-2, 2, 3],
                         "y": [4, 4, 4],
@@ -61,7 +59,12 @@ if __name__ == "__main__":
                         "l": "None",
                         "marker": "D",
                     },
-                    {"x": [1, 0, 5], "y": [3.99999, 4, 4.000001], "color": "green", "l": "-"},
+                    {
+                        "x": [1, 0, 5],
+                        "y": [3.99999, 4, 4.000001],
+                        "color": "green",
+                        "l": "-",
+                    },
                 ],
             },
             3: {
