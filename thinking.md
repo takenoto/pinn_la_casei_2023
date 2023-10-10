@@ -3,6 +3,7 @@
 
 ## Nondim Scalers
 Talvez a upscale evite o 0, que pode ser um problema pra derivadas
+- !!!! Talvez essa caída pra 0 súbita em X se dê num ponto de t que está fora dos discretizados. Assim, em todos os discretizados, a loss vai ser baixa, porque ela vai estar certa. E nesse que foi perdido foi perdido, vida que segue, a loss fica baixa mesmo sem nenhum sentido de fato. Tanto que essa queda sempre é muito súbita e num intervalo beeem estreitinho. 
 ref: https://datascience.stackexchange.com/questions/12744/backpropagation-in-second-order-methods-would-relu-derivative-be-0-and-what-i
 
 ## Falar com eles

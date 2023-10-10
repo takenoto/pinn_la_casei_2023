@@ -25,6 +25,105 @@
 
 ## by date
 
+### 2023-10-10
+
+-  TODO pegar artigos deles
+- Deixe rodando redes do batch pra testar o plot 3D
+- NL: 4, 8, 10, 16, 32, 45, 64
+- HL: 1-10
+- 4 LRs
+=> Como vai ser muito grande, faça um NL por vez e deixa o resto pronto, só vai dando comment e uncomment nos NLs
+Na sequência fazer o plot 3D pra poder conversar com eles... To lerdando muito mesmo trabalhando tanto affff
+
+
+# De verdade, antes de começar, organize os dos dias anteriores. Já tá gigantesco.
+
+Testes: (obs: todos foram feitos enquanto mexi no pc, então train_time e pred_time não deve ser levados em conta)
+1) TODO testar 3 variações de L7 em 4 tipos de reator (tudo padrão, tanh, etc), sem nondim, rede 10x3, LR1e-3:
+  - OBS: todas as redes 10x3, e só com tanh, pontos 20-20-20. Depois olho outras redes e afins. Já sei que a 10x3 presta então vamo nela. Veja que são muitas variações de L7 então demora MUITOOOOOOOOO nem vale a pena. Então vou fazer só a 7G.
+  - Rever: Olha, acho que a ordem de testes de nondim deve ser impacto do t => impacto de F1 e d10 e x10 já nos melhores ts sinceramente, poupa muito trabalho
+  1º Roda os LINLIN LINUPX1  e No nodim simples
+  2º roda os testes que exploram todo o tempo??
+  - 1.1) TODO- Rede t => XPS :: Foi uma péssima ideia rodar tudo junto. Demorando demais, vai terminar nunca zzzz... A memória continua se acumulando por causa do python, mesmo com tudo mds. Chegou a 91% de memória em 200 iterações ainda do primeiro batch, o segundo nem ia conseguir rodar. Deixei a noite toda rodando, mais de 8h... Então vou trocar tudo, até a rede padrão. Só o 7A ficou bom em algumas dessas. F, G, H e I ficaram bons pro volume e ruim pras outras. F foi a melhor. Então farei uma híbrida.
+    - batch (11, "Xo", "Po", "So")
+    - batch (24, "Xo", "Po", "So")
+    - TODO default => HORRÍVEL ENTÃO PULEI PRO PARTE 1
+    - TODO parte1
+    - TODO parte 2
+    - TODO escolhe um único caso e faz todas as variações de 7 só pra mostrar que fica boa.
+    - TODO comecei fazendo um pedaço da parte 3 que deve ficar melhor pra já me dar uma ajuda zzzz
+  - 1.2) TODO Rede t => V
+    - CR (1, 5, "1", "-4"), baixa vazão quase nada
+      - Ainda não terminou mas no geral a "7G" parece ser a melhor. C e H também ok em alguns pontos.
+      TODO 1º rode os 2 blocos default e 1, depois os 2.coisas
+    - CR (1, 5, "25", "-2"), vazão normal
+- TODO bota esses 2 testes anteriores já na pasta de testes definitivos, acho que rola
+- TODO tentar abrir e comprarar MADs no plot 3D. Preciso saber se o modelo do json está certo antes de seguir em frente...
+2) TODO Para o reator batch testar:
+  - Contra todas as loss v7, uns 10 tipos de nondim (já inclui t escalado e não escalado...)
+  - Nas melhores 3 ou 4 loss testar diferença de vários LRs e npoints. Isso já me diz se faz sentido aumentar ou diminuir ambos.
+3) TODO Faz modelos t=>XPSV para CR com variação baixa (4.5L a 5L) porque é capaz de funcionar e validar. Depois que vou pros de 1 a 5.
+4) TODO Faz Modelo batch com hypercube entrando tudo. Esse vai ser bem mais trabalhoso pq vou ter que mexer em cases_to_try, run_reactor e no pinn_saver pra usar as condições. E pode me salvar se o modelo de (3) acabar não prestando.
+
+ TODO veja se consegue fazer a generalização com entrada tipo AllA => (todos os parâmetros e afins fornecidos como variáveis de entrada, menos Xm, Pm)
+
+Coisas que ficaram do dia 7:
+
+LOSSV7 :: TODO veja se só a loss d2 é o suficiente pra representar apenas a variação do volume, que é a mais fácil. Se não, pode ter algo errado nos meus cálculos. O valor dela é até maior que a d1 e pode ser mais fácil o treinamento por d2...
+
+TODOS: 
+1) ORGANIZA. TEM COISA DEMAIS, MUITO LERO LERO. BOTA NO ARQUIVO DE TODOS MESMO...
+2) Faz um teste tirando o volume da equação de XPS. Ele consegue dar um output OK? Claro que vai estar tecnicamente errado, mas é só pra saber se ele sai um volume variando e o xps do batelada simultaneamente
+4) Bota uma variação de volume grande 3 executa num intervalo minúsculo tipo 0-1h que pareça o batelada. Preciso ver se errei no equacionamento do balanço de volume pelamor
+5) Bota artigos numa pasta do zotero pra ler
+3) Comece a preparar psicologicamente para ter como entrada todas as variáveis (Xo, Po, Vmax, etc). O padrão de saída do reator a gente pode manter daí não precisa de eq. saída, só da vazão de entrada mesmo.
+TODO lembre que ainda ficou tudo pelo meio de ver o pq a adimensionalização de variáveis esculhambava valores e a do tempo não dá em nada. Isso é a prioridade pra que eu possa fazer novos testes.
+Comece 1) usando a loss v5 pra ver se ainda ficam resultados nada a ver quando usa nondim que não a do tempo. Preciso encontrar o erro zzzz.
+Agora tenho que ver as derivadas 1ª que não fazem nenhum sentido. As 2 tão batendo ok.
+Ok testei pro batch a 0.35 do tempo e deu certo nos 3. tem nada errado não zzzz.
+2) fuxicando loss v7. Pela ordem, de grandeza já sei que a derivada 2 não é tão baixinha a ponto de precisar daquele super acréscimo gigantesco de 1e12. Começa por aí.
+
+### 2023-10-09
+
+- Resolvi tirar as adimensionalizações parciais (ex: só as saídas ou só as entradas). Adimensionaliza logo tudo. Reduz muito os testes.
+- Separar cores em arquivo em utils/colors
+- Permitir plotagem de pontos extras por injeção de dependência
+- Implementar plotagem dos pontos experimentais automaticamente pro batelada quando condições forem idênticas
+- parece que não é nem a questão da variação de volume, mas passar um tempo grande o suficiente pra ter aquela inflexão de queda na curva. Tanto é que o batelada em tempos maiores também sofre.
+- Change plots default dpi
+- mudar cor pontos experimentais
+- mudar pontos de treino, tem muitos de bc nem precisa. Uns 4 devem dar conta sinceramente.
+- A rede 10x1 parece ter menos problema de zerar o X do que a 10x3, o perfil fica errado mas mais coerente
+- Aumentar npoints definitivamente resolveu!!! 10x3 ficou pro só batch sem volume
+  - Acho que já poderia tentar fazer em redes menores, tipo 4 e 8 neurons já pra produzir gráficos. E reduzir as formas de nondim já que todas deram certo com muitos pontos...
+  - E tb iterar os npoints pra achar o mínimo necessário pra fazer funcionar...
+- parei batelada pra fazer volume variando e ver se consigo botar pra prestar.
+- era bom testar mini-batch, porque aí boto muitos pontos mas treino durante um período menor, possivelmente
+  - **O mini-batch dele nem é mini-batch de fato, é um resampler**
+  - E 2, não tá valendo a pena esse monte de pontos. Demora muito mais e os resultados continuam ruins...
+  - Francamente, acho que trabalhar com mini-batch (que na verdade é um resampler!!!!) minúsculo pra pegar pontos novos toda iteração deve ser uma estratégia melhor do que usar pontos demais.
+  - Voltei pra 300p de iteração. É mais seguro do que 32, definitavamente.
+  - Upx1 parece que vai ficar melhor que o lin
+  - FIXED meu Upx1 tá errado por algum motivo. Não tá criando o Upx, tá criando o lin-lin mesmo e não sei o pq.
+    - Era um erro na forma de escrever upx1  tava Upx1 no lugar de UPx1 mds.
+
+- Preciso aumentar epochs. Várias vezes corto o treino justo quando ia começar a dar certo...
+- Terminei criando a 7J, que exclui aquele besteirol de signal que deve atrapalhar muito.
+- talvez o que vá resolver minha vida é usar uma rede mais complexa, tipo 80x4, como padrão, 
+- F1x deu Nan no UPx1. Então já posso começar pulando ele.
+- Testei F1d100 no UPx1 com esperança mas também pareceu bem péssimo. Pelo visto vou ter que abandonar, foi uma ideia sem futuro.
+  - Mas daí aumentei a LR e resolveu, ficou bem melhor zzzz
+  - Pois vamos fazer assim: pra t2-F1d100 Lin-UPX1 varia LR e faz uma busca de HL e NL
+  - Repete isso pra t2-F1d100 do LinLin
+  - OK, t2x10 e F1d100 novamente ficou excelente mesmo no Lin-UPX1. Agora é bom eu testar o t2x100 só pra ver se fica ainda melhor. Isso ajuda demais... Mas novamente LR importantíssima zzz....
+  - Do meio pro fim o melhor foi o t2x10F1d100. Então vou usar ele pra tudo enquanto acho uma boa...
+  - NEssas settings tanto a 7B quanto a 7J deram certo, com a diferença que a 7B foi MUITO mais rápida, ficou um pouquinho pior nos gráficos normais e levemente pior no gráfico da derivada segunda.
+
+- O volume é tão bestinha mesmo no CR que uma rede 2x1 deu conta do recado. Então ele sim pode ser visto pra ver as dificuldades de 7B, 7J e outras formas nondim. Além de ser muito mais rápido de rodar.
+- A partir de hoje, tudo faz na L7B que é muito mais rápida, depois penso no caso da 7J.
+
+
+-----------------------------------------
 
 ### 2023-10-08 
 
@@ -64,48 +163,6 @@ pinn_saver
     - loss = (1 + sign_dif_d1 + sign_dif_d2) * (loss_derivative_abs + loss_minmax + loss_d2) oscilou de 1 a 1.004 e loss = loss_d2 oscilou de 1 a 1.2. Sendo que os valores ficam entre 1 e 1.003. Então claramente a que tem tudo foi melhor. Agora é simplificar.
     - loss d1 solo foi pior que loss d2 solo porque fez com que tivesse aquela queda brusca no t imediatamente após 0.
     - tudo sem sign foi pior que tudo com sign..
-
-Testes: (obs: todos foram feitos enquanto mexi no pc, então train_time e pred_time não deve ser levados em conta)
-1) TODO testar variações de L7 em 4 tipos de reator (tudo padrão, tanh, etc), sem nondim, rede 10x3, LR1e-3:
-  - 1.1) TODO Rede t => V
-    - CR (1, 5, "1", "-4"), baixa vazão quase nada
-      - Ainda não terminou mas no geral a "7G" parece ser a melhor. C e H também ok em alguns pontos.
-      TODO 1º rode os 2 blocos default e 1, depois os 2.coisas
-    - CR (1, 5, "25", "-2"), vazão normal
-  - 1.2) TODO- Rede t => XPS
-    - TODO INCLUIR OS TEMPOS NONDIM TAMBÉM!!! E Loss weights. Vai demorar bem umas 4h mas vai me dar tudo quanto é resposta PRO BATCH.
-    - batch (11, "Xo", "Po", "So")
-    - batch (24, "Xo", "Po", "So"),
-- TODO bota esses 2 testes anteriores já na pasta de testes definitivos, acho que rola
-- TODO tentar abrir e comprarar MADs no plot 3D. Preciso saber se o modelo do json está certo antes de seguir em frente...
-2) TODO Para o reator batch testar:
-  - Contra todas as loss v7, uns 10 tipos de nondim (já inclui t escalado e não escalado...)
-  - Nas melhores 3 ou 4 loss testar diferença de vários LRs e npoints. Isso já me diz se faz sentido aumentar ou diminuir ambos.
-3) TODO Faz modelos t=>XPSV para CR com variação baixa (4.5L a 5L) porque é capaz de funcionar e validar. Depois que vou pros de 1 a 5.
-4) TODO Faz Modelo batch com hypercube entrando tudo. Esse vai ser bem mais trabalhoso pq vou ter que mexer em cases_to_try, run_reactor e no pinn_saver pra usar as condições. E pode me salvar se o modelo de (3) acabar não prestando.
-
- TODO veja se consegue fazer a generalização com entrada tipo AllA => (todos os parâmetros e afins fornecidos como variáveis de entrada, menos Xm, Pm)
-
-Coisas que ficaram do dia 7:
-
-LOSSV7 :: TODO veja se só a loss d2 é o suficiente pra representar apenas a variação do volume, que é a mais fácil. Se não, pode ter algo errado nos meus cálculos. O valor dela é até maior que a d1 e pode ser mais fácil o treinamento por d2...
-
-TODOS: 
-1) ORGANIZA. TEM COISA DEMAIS, MUITO LERO LERO. BOTA NO ARQUIVO DE TODOS MESMO...
-2) Faz um teste tirando o volume da equação de XPS. Ele consegue dar um output OK? Claro que vai estar tecnicamente errado, mas é só pra saber se ele sai um volume variando e o xps do batelada simultaneamente
-4) Bota uma variação de volume grande 3 executa num intervalo minúsculo tipo 0-1h que pareça o batelada. Preciso ver se errei no equacionamento do balanço de volume pelamor
-5) Bota artigos numa pasta do zotero pra ler
-3) Comece a preparar psicologicamente para ter como entrada todas as variáveis (Xo, Po, Vmax, etc). O padrão de saída do reator a gente pode manter daí não precisa de eq. saída, só da vazão de entrada mesmo.
-TODO lembre que ainda ficou tudo pelo meio de ver o pq a adimensionalização de variáveis esculhambava valores e a do tempo não dá em nada. Isso é a prioridade pra que eu possa fazer novos testes.
-Comece 1) usando a loss v5 pra ver se ainda ficam resultados nada a ver quando usa nondim que não a do tempo. Preciso encontrar o erro zzzz.
-Agora tenho que ver as derivadas 1ª que não fazem nenhum sentido. As 2 tão batendo ok.
-Ok testei pro batch a 0.35 do tempo e deu certo nos 3. tem nada errado não zzzz.
-2) fuxicando loss v7. Pela ordem, de grandeza já sei que a derivada 2 não é tão baixinha a ponto de precisar daquele super acréscimo gigantesco de 1e12. Começa por aí.
-
-TODOS: t2-f1d10 mas na rede 30NL, aí comparo com a 20...
-- Eu acho que aquele teste que tinha ficado bom foi praquele reator que a variação de volume era quase nada e que eu tava tentando ver a partir de quanto a simulação desandava e beirava o impossível de treinar.
-TODO: testa alguma rede maior tipo 80x5, aí nem precisa fazer micro variações de outras coisas. Só pra ver se sai algo que preste mesmo.
-TODO faça novos com o reator de 4.5L pra 5, não lembro qual é ou se era 4 pra 5 com 1L/h
 
 ### 2023-10-07
 
