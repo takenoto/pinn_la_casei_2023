@@ -73,7 +73,9 @@ def run_pinn_grid_search(
                 output_non_dim_scaler=get_thing_for_key(
                     case_key, "output_scaler", default=None
                 ),
-                resample_every=get_thing_for_key(case_key, "resample_every", default=None),
+                resample_every=get_thing_for_key(
+                    case_key, "resample_every", default=None
+                ),
                 hyperfolder=get_thing_for_key(case_key, "hyperfolder", default=None),
                 isplot=get_thing_for_key(case_key, "isplot", default=False),
                 outputSimulationType=SystemSimulationType(
