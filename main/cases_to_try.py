@@ -33,8 +33,8 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         # 8,
         # 10,
         # 12,
-        # 16,
-        20,
+        16,
+        # 20,
         # 30,
         # 32,
         # 45,
@@ -63,11 +63,21 @@ def change_layer_fix_neurons_number(eq_params, process_params):
     NDList = [
         # Order:
         # (tscode, scalers_code, input strategy, output strategy)
-        # ex: ("t2", "F1", "Lin", "Upx1"),
+        # ex: ("t2", "F1", "Lin", "UPx1"),
         # Bota a padrão quase sempre, que é pra ter uma base de comparação
         # ---------------------------------
         #
         # CURRENT ITERATION
+        # ("t1", "1", "Lin", "Lin"),
+        # ("t2", "F1d10", "Lin", "Lin"),
+        # ("t2x10", "F1d10", "Lin", "Lin"),
+        # ("t2", "F1d10", "Lin", "UPx1"),
+        # ("t2", "F1", "Lin", "UPx1"),
+        # ("t2", "F1x10", "Lin", "UPx1"),
+        # ("t2x10", "F1", "Lin", "UPx1"),
+        # ("t2x10", "F1d100", "Lin", "Lin"),
+        ("t2x10", "F1d100", "Lin", "UPx1"),
+        # ("t2x100", "F1d100", "Lin", "UPx1"),
         #
         # Add here the ones to try
         # -----------------
@@ -78,16 +88,16 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         # ---------------- t2 e F1, d10 e x10
         # # LIN-LIN
         # ("t2", "F1", "Lin", "Lin"),
-        ("t2", "F1d10", "Lin", "Lin"),
+        # ("t2", "F1d10", "Lin", "Lin"),
         # ("t2", "F1x10", "Lin", "Lin"),
-        ("t2x10", "F1d10", "Lin", "Lin"),
+        # ("t2x10", "F1d10", "Lin", "Lin"),
         # ("t2d10", "F1", "Lin", "Lin"),
-        # # LIN-UPX1
-        # ("t2", "F1", "Lin", "Upx1"),
-        ("t2", "F1d10", "Lin", "Upx1"),
-        # ("t2", "F1x10", "Lin", "Upx1"),
-        # ("t2x10", "F1", "Lin", "Upx1"),
-        # ("t2d10", "F1", "Lin", "Upx1"),
+        # # LIN-UPx1
+        # ("t2", "F1", "Lin", "UPx1"),
+        # ("t2", "F1d10", "Lin", "UPx1"),
+        # ("t2", "F1x10", "Lin", "UPx1"),
+        # ("t2x10", "F1", "Lin", "UPx1"),
+        # ("t2d10", "F1", "Lin", "UPx1"),
         #
         # -----------------------------------
         # ---------------- var times lin-lin
@@ -113,14 +123,14 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         # ("t9", "F1x10", "Lin", "Lin"),
         #
         # -----------------------------------
-        # ---------------- var times lin-upx1
+        # ---------------- var times lin-UPx1
         #
         # F1d10
-        # ("t5", "F1d10", "Lin", "Upx1"),
-        # ("t6", "F1d10", "Lin", "Upx1"),
-        # ("t7", "F1d10", "Lin", "Upx1"),
-        # ("t8", "F1d10", "Lin", "Upx1"),
-        # ("t9", "F1d10", "Lin", "Upx1"),
+        # ("t5", "F1d10", "Lin", "UPx1"),
+        # ("t6", "F1d10", "Lin", "UPx1"),
+        # ("t7", "F1d10", "Lin", "UPx1"),
+        # ("t8", "F1d10", "Lin", "UPx1"),
+        # ("t9", "F1d10", "Lin", "UPx1"),
     ]
     ndlist_additional_blocks = [
         # Using now:
@@ -131,15 +141,15 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         # "1",
         # ----------------------
         # PARTE 2
-        # "2.1-LinUpx1",
-        # "2.2-t2F1-Lin<>Upx1",
+        # "2.1-LinUPx1",
+        # "2.2-t2F1-Lin<>UPx1",
         # ----------------------
         # ----------------------
         # PARTE 3
         # "3.1LinLinF1",
         # "3.1LinLinF1d10",
-        # "3.2LinUpx1F1",
-        # "3.2LinUpx1F1d10",
+        # "3.2LinUPx1F1",
+        # "3.2LinUPx1F1d10",
         # ----------------------
         #
         # -- DOCs:
@@ -147,15 +157,15 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         # "1" => Itera rapidamente por lin escalonando t e "N"s individualmente
         #
         # -----------------
-        # "2.1-LinUpx1" => testa combinação lin => Upx com t2F1
-        # "2.2-t2F1-Lin<>Upx1" => Fixa Lin=>Upx1 e muda escalonamento (x e d)
+        # "2.1-LinUPx1" => testa combinação lin => Upx com t2F1
+        # "2.2-t2F1-Lin<>UPx1" => Fixa Lin=>UPx1 e muda escalonamento (x e d)
         # Guia sobre usar UPx na entrada, saída, ou ambos
         #
         # -----------------
         # "3.1LinLinF1" => itera todos os tempos por LINLIN usando F1 e cada tempo
         # "3.1LinLinF1d10" => memsoque 3.1F1 mas com F1d10
-        # "3.2LinUpx1F1" => Mesma coisa que 3.1F1 mas usa Lin-Upx1
-        # "3.2LinUpx1F1d10" => Mesma coisa que 3.2Upx1F1 mas usa Lin-Upx1
+        # "3.2LinUPx1F1" => Mesma coisa que 3.1F1 mas usa Lin-UPx1
+        # "3.2LinUPx1F1d10" => Mesma coisa que 3.2UPx1F1 mas usa Lin-UPx1
     ]
     nondimlist_add_from_blocks(NDList, ndlist_additional_blocks)
 
@@ -168,8 +178,8 @@ def change_layer_fix_neurons_number(eq_params, process_params):
     # --------- LOSS FUNCTION -----------
     # "7A-I" e 6 5 4 3 2
     # loss_version_list = ["7A", "7B", "7C", "7D", "7E", "7F", "7G", "7H", "7I"]
-    # loss_version_list = ["7B", "7D", "7G"]
-    loss_version_list = ["7B", "7G"]
+    # loss_version_list = ["7B", "7D", "7G", "7J"]
+    loss_version_list = ["7B"]
 
     input_output_variables_list = [
         # ----------------------
@@ -196,16 +206,12 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         percent_min_range=[
             0,
         ],  # [0,50] => iria fazer modelos iniciando em 0 e em 50
-        percent_max_range=[10, 15, 25, 35, 50, 60, 90, 100, 200],
+        percent_max_range=[15, 60, 100, 200],
     )
 
     train_input_range_list = [
         # "0-10pa",
-        # "0-15pa",
-        # "0-25pa",
-        # "0-35pa",
         # "0-60pa",
-        # "0-90pa",
         "0-100pa",
         # "0-200pa",
     ]
@@ -216,7 +222,11 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         #
         # --------------------
         # USING:
-        (4, 8, 8),
+        (8, 32, 32),
+        # (8, 300, 300),
+        # (20, 300, 300),
+        # (10, 32, 32),
+        # (4, 8, 8),
         # (4, 400, 10),
         # (4, 400, 400),
         # (4, 1200, 1200),
@@ -229,21 +239,20 @@ def change_layer_fix_neurons_number(eq_params, process_params):
     NUM_BOUNDARY = 0
 
     # NÃO É MINI_BATCH DE FATO, É UM RESAMPLER MDS
-    resample_every_list = [4, 10, 100, None]  # [None] [20] [40] [80] [2]
+    resample_every_list = [2000] # , 1000]  # [None] [2000, 200, 10000]
     # O padrão era Glorot Uniform
     initializer = "Glorot uniform"  #'Glorot normal' #'Glorot uniform' #'Orthogonal'
     # Quando for fazer hypercube acho que posso boar distribution
     # começando com _ underline e usar isso pra checar
     train_distribution_list = [
-        "pseudo"
-    ]  # ["Hammersley", "LHS"]  # "LHS" "Hammersley" "uniform"
+        "Hammersley"
+    ]  # ["Hammersley", "LHS", "pseudo"]  # "LHS" "Hammersley" "uniform"
     # GLOROT UNIFORM # Era Glorot Normal nos testes sem swish
     LR_list = [
         # Default
-        "E-3_5",
+        # "E-2_4",
+        # "E-3_7",
         "E-3_1",
-        # "E-4_5",
-        # "E-5_5",
         # --------------------
         # FULL LIST:
         # --------------------
@@ -287,8 +296,8 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         # "1k",
         # "10k",
         # "25k",
-        "30k",
-        # "35k",
+        # "30k",
+        "35k",
         # "45k",
         # "60k",
         # "90k",
@@ -494,19 +503,19 @@ def nondimlist_add_from_blocks(NDList, blocks_to_add):
         # --------------------------------------
         # 2º Bloco: UPX Noção geral do impacto de t e vars crescendo e diminuindo
         #
-        "2.1-LinUpx1": [
-            ("t1", "F1", "Lin", "Upx1"),
-            ("t1", "F1d10", "Lin", "Upx1"),
-            ("t1", "F1x10", "Lin", "Upx1"),
+        "2.1-LinUPx1": [
+            ("t1", "F1", "Lin", "UPx1"),
+            ("t1", "F1d10", "Lin", "UPx1"),
+            ("t1", "F1x10", "Lin", "UPx1"),
             #
-            ("t2", "1", "Lin", "Upx1"),
-            ("t2x10", "1", "Lin", "Upx1"),
-            ("t2d10", "1", "Lin", "Upx1"),
+            ("t2", "1", "Lin", "UPx1"),
+            ("t2x10", "1", "Lin", "UPx1"),
+            ("t2d10", "1", "Lin", "UPx1"),
         ],
-        "2.2-t2F1-Lin<>Upx1": [
-            ("t2", "F1", "Lin", "Upx1"),
-            ("t2", "F1", "Upx1", "Upx1"),
-            ("t2", "F1", "Upx1", "Lin"),
+        "2.2-t2F1-Lin<>UPx1": [
+            ("t2", "F1", "Lin", "UPx1"),
+            ("t2", "F1", "UPx1", "UPx1"),
+            ("t2", "F1", "UPx1", "Lin"),
         ],
         # --------------------------------------
         # --------------------------------------
@@ -536,27 +545,27 @@ def nondimlist_add_from_blocks(NDList, blocks_to_add):
         ],
         #
         # 3.2 - Lin Upx
-        "3.2LinUpx1F1": [
-            ("t1", "F1", "Lin", "Upx1"),
-            ("t2", "F1", "Lin", "Upx1"),
-            ("t3", "F1", "Lin", "Upx1"),
-            ("t4", "F1", "Lin", "Upx1"),
-            ("t5", "F1", "Lin", "Upx1"),
-            ("t6", "F1", "Lin", "Upx1"),
-            ("t7", "F1", "Lin", "Upx1"),
-            ("t8", "F1", "Lin", "Upx1"),
-            ("t9", "F1", "Lin", "Upx1"),
+        "3.2LinUPx1F1": [
+            ("t1", "F1", "Lin", "UPx1"),
+            ("t2", "F1", "Lin", "UPx1"),
+            ("t3", "F1", "Lin", "UPx1"),
+            ("t4", "F1", "Lin", "UPx1"),
+            ("t5", "F1", "Lin", "UPx1"),
+            ("t6", "F1", "Lin", "UPx1"),
+            ("t7", "F1", "Lin", "UPx1"),
+            ("t8", "F1", "Lin", "UPx1"),
+            ("t9", "F1", "Lin", "UPx1"),
         ],
-        "3.2LinUpx1F1d10": [
-            ("t1", "F1d10", "Lin", "Upx1"),
-            ("t2", "F1d10", "Lin", "Upx1"),
-            ("t3", "F1d10", "Lin", "Upx1"),
-            ("t4", "F1d10", "Lin", "Upx1"),
-            ("t5", "F1d10", "Lin", "Upx1"),
-            ("t6", "F1d10", "Lin", "Upx1"),
-            ("t7", "F1d10", "Lin", "Upx1"),
-            ("t8", "F1d10", "Lin", "Upx1"),
-            ("t9", "F1d10", "Lin", "Upx1"),
+        "3.2LinUPx1F1d10": [
+            ("t1", "F1d10", "Lin", "UPx1"),
+            ("t2", "F1d10", "Lin", "UPx1"),
+            ("t3", "F1d10", "Lin", "UPx1"),
+            ("t4", "F1d10", "Lin", "UPx1"),
+            ("t5", "F1d10", "Lin", "UPx1"),
+            ("t6", "F1d10", "Lin", "UPx1"),
+            ("t7", "F1d10", "Lin", "UPx1"),
+            ("t8", "F1d10", "Lin", "UPx1"),
+            ("t9", "F1d10", "Lin", "UPx1"),
         ],
     }
 
