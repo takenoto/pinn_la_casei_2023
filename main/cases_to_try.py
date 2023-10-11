@@ -38,12 +38,13 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         # 16, 30, 45, 64,
     ]
     layers = [
-        1,
-        2,
-        3, 
-        # 4,
-        # 5,
-        # 6, 
+        # 1,
+        # 2,
+        # 3, 
+        # TODO ficou faltando 9 x 4,5,6... Depois o 10 pra acabar esse sofrimento.
+        4,
+        5,
+        6, 
     ]
     NLHL_list = [
         # Todos:
