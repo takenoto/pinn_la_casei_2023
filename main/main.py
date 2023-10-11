@@ -35,6 +35,7 @@ from main.cases_to_try import change_layer_fix_neurons_number
 from main.pinn_grid_search import run_pinn_grid_search
 from main.numerical_methods import run_numerical_methods
 
+
 # Supostamente conserta erros pelo caminho
 mpl.rcParams.update(mpl.rcParamsDefault)
 
@@ -138,10 +139,8 @@ def main():
         # -----------
         # Original xp time
         (10, "Xo", "Po", "So"),
-        # Default 11
-        # (11, "Xo", "Po", "So"),
-        # Default 24
-        # (24, "Xo", "Po", "So"),
+        # Default 20
+        # (20, "Xo", "Po", "So"),
         # -----------
         # Alternatives:
         # (11, "Xo", "Po", "So"),
@@ -163,10 +162,10 @@ def main():
         # Aumentando muito lentamente
         # (1, 5, "1", "-2"),
         # Normal
-        (1, 5, "25", "-2"),
+        # (1, 5, "25", "-2"),
         # (3, 5, "25", "-2"),
         # Curva suave
-        # (4, 5, "5", "-1"),
+        (4, 5, "5", "-1"),
         # Enchimento rápido
         # (0, 5, "5", "0"),
     ]

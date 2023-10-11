@@ -25,15 +25,14 @@
 
 ## by date
 
-### 2023-10-10
+TODO aí esses mesmos testes exatamente os mesmos repito pra sem nondim e pra nondim Lin-Upx1 nas redes 8X. tendo os gráficos erro e Lr e HL pras 3 já posso fazer muita conclusão.
+TODO comece fazendo uma figura explicando as etapas de verificação de como funciona o PINN.
+1) Screening => Validar só XPS do batelada. Ver questão da adimensionalização, loss weights e10S vs A1 e besteirol afim.
+2) Volume constante e variando. Validar modelo e predição. É tão fácil que nem compensa comparar formas de adimensionalização, sinceramente. É só pra não questionarem se o volume tá errado mesmo.
+3) Batch XPSV. Foi esse o que fiz por último.
 
--  TODO pegar artigos deles
-- Deixe rodando redes do batch pra testar o plot 3D
-- NL: 4, 8, 10, 16, 32, 45, 64
-- HL: 1-10
-- 4 LRs
-=> Como vai ser muito grande, faça um NL por vez e deixa o resto pronto, só vai dando comment e uncomment nos NLs
-Na sequência fazer o plot 3D pra poder conversar com eles... To lerdando muito mesmo trabalhando tanto affff
+- Terminar esse batch já faça o CR que varia bem pouquinho o volume, pra ver se ao menos ele funciona.
+
 
 
 # De verdade, antes de começar, organize os dos dias anteriores. Já tá gigantesco.
@@ -82,6 +81,40 @@ Comece 1) usando a loss v5 pra ver se ainda ficam resultados nada a ver quando u
 Agora tenho que ver as derivadas 1ª que não fazem nenhum sentido. As 2 tão batendo ok.
 Ok testei pro batch a 0.35 do tempo e deu certo nos 3. tem nada errado não zzzz.
 2) fuxicando loss v7. Pela ordem, de grandeza já sei que a derivada 2 não é tão baixinha a ponto de precisar daquele super acréscimo gigantesco de 1e12. Começa por aí.
+
+### 2023-10-11
+
+- Obtenção de vários resultados e ver opções do matplotlib pra fazer o gráfico. Tlavez seja melhor um heatmap 2D mesmo.
+
+
+### 2023-10-10
+
+- Talvez a questão sequer seja meramente o CR, mas sim o tempo que passou de X desanda pq chega no pico de máximo. Todos aqueles artigos morrem antes disso e não tem essa inflexão de descida...  Então testar com o batch de 20h...
+- Deixe rodando redes do batch pra testar o plot 3D
+- NL: (2, 4, 6), (8, 10), 16, 32, 45, 64
+- HL: 1-10, grupos: (1-4), (4-7), (8-10) pra maior que 16
+- 4 LRs (8e-4, 1e-3, 3e-3, 5e-3,)
+=> Como vai ser muito grande, faça um NL por vez e deixa o resto pronto, só vai dando comment e uncomment nos NLs
+Na sequência fazer o plot 3D pra poder conversar com eles... To lerdando muito mesmo trabalhando tanto affff
+- Terminei abandonando vários, demorando demaaaais.
+- A loss XV3 funcionou em um dos casos mas foi MUITO epecífico, dependeu de LR até, uma faixa bem estreitinha.
+- Então farei uma auto loss que roda 1 epoch e dessa 1 epoch tenta tirar a loss de cada ponto e já fazer o ajuste automático.
+- FEITO: veja se os número ficam != 1, se deu certo... no json de saída
+- Já tive um resultado com UPx1 que deu aquela zerada então ele sozinho não resolve não zzz
+
+loss_ajustada = valor desejado
+Ex: loss deu 1e-3 mas queria 10. O ajuste multiplicador tem que ser 1e4
+Então é multiplier = scale_to/loss_firstiteration
+loss_adjusted = multiplier*loss_first_iteration. Então tenho que usar a loss do 
+- O auto normal favorece excessivamente quem tá errado no inicio, podendo esculhambar os outros. Tentar com raiz quadrada ao invés de puro.
+- O e-2S tá MUITO melhor que o e-2, nem se compara. Já posso usar ele como base.
+  Mas terminou sendo super dependente da LR. De toda forma, vou fixar o e-2S e usar ele daqui pra frente.
+  - To começando a suspeitar que essa zerada é uma solução mais fácil pras redes com HL e NL muito altos, porque como tem muitos neurônios disponíveis, conseguem fazer eles "desconversarem" e cada um ter mais impacto numa região específica. Nas menores, se alguns deles desandarem pra zerar numa região pra fazer a zerada, outros podem acabar sendo obrigados a acompanhar pela dependência.
+
+- Automatizei tudo e vou voltar a fazer de 10 em 10 pq senão ele n aguenta, fica muito lerdo. De lascar.
+- Agora que to usando peso de loss adaptado, nem adianta usar a loss pra comparar, vai ter que ser na MAD mesmo ou algo equivalente.
+- Fiz teste de sobrescrever json, tá funcionando bem, não estraga o arquivo.
+
 
 ### 2023-10-09
 

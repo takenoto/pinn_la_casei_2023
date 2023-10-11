@@ -1,5 +1,34 @@
 # Todo List
 
+- TODO os gráficos batch NÃO ESTÃO MAIS EXIBINDO OS PONTOS DE XPDATA. VOLTAMOS À ESTACA ZERO? SÓ EXIBE OS QUE FORAM USADOS NO ÚLTIMO, É ISSO???
+- e tb pode tirar aquelas loss de bounadery e afins
+- TODO repetir esses testes de cima pra 3, 4, 5, 6, 7, 9, 10 neurônios por camada. Nisso já tenho gráficos pra praticamente tudo.
+Vou ter NL de 3-10 e HL de 1-6
+Acho que ficariam bem bonitos os gráficos XPSV por HL. Tipo pego 8 neurons e ploto em 3D lado a lado os pontos. Sò talvez fique ruim de ler e aí seria melhor o erro?
+
+NLs: 
+3, 4
+5, 6
+7
+9
+10
+
+- Acho que nem preciso ir apagando. vai ficando tudo por cima e acumulando pra se precisar já ter feito.
+- E aí só no máximo copio e colo numa pasta os de interesse. Mas até isso talvez seja desnecessário, porque acabo duplicando testes desnecessariamente e vai ficar cada vez mais difícil de achar onde tá cada um.
+
+- Enquanto isso asssitir e ler artigos
+
+1) Terminar outros valores do batch 8x
+  -  Faltam camadas 1-4
+  -  Faça gráfico LR x HL x MAD
+  -  Depois LR x HL x erro absoluto %
+    - Aí faz gráfico triplo: erro de N, dNdt e da derivada 2ª
+      - 6 figuras: 3 de erro % absoluto e 3 de log(erro absoluto)
+2) Faz o processo novamente pra
+  1) Sem nondim
+  2) Nondim com Lin-UPx1 ao invés de Lin-lin
+  3) O melhor dos anteriores, mas trocar a loss pela A1 normal.
+
 ## Ler papers
 ### 1) DeepOnet
 https://arxiv.org/abs/1910.03193
