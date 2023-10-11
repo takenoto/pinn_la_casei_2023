@@ -1,0 +1,12 @@
+Me ajudar a escolher o tempo
+
+Fixei LRs em 3
+Fixei rede em 16x3
+Funcs testadas tanh e swish
+Loss_ewights fixadas em 4
+
+testar 1º Lin-Upx1 normal e com tempos
+
+Depois Linlin
+
+Olha nem compensa fazer pra todos os weights pq é algo muito relativo, tem que ser ajustado 1 a 1 mesmo...

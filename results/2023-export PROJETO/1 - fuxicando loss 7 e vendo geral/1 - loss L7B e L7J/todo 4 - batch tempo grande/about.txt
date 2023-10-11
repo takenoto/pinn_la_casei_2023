@@ -1,0 +1,15 @@
+- Talvez a questão sequer seja meramente o CR, mas sim o tempo que passou de X desanda pq chega no pico de máximo. Todos aqueles artigos morrem antes disso e não tem essa inflexão de descida...  Então testar com o batch de 20h...
+- Deixe rodando redes do batch pra testar o plot 3D
+- NL: (2, 4, 6), (8, 10), 16, 32, 45, 64
+- HL: 1-8, grupos: (1-4), (4-5), (7-8), (9-10) pra maior que 16
+- 4 LRs (8e-4, 1e-3, 3e-3, 5e-3,)
+
+A 100% do tempo e a 45% pra ter o antigo junto
+
+Começar pelas mais complexas que talvez saia algo que preste...
+
+1º roda a 0-45pa e depois a 0-100pa % pra ter o antigo junto
+
+Loss weights resolveu lindamente. talvez seja até melhor ir por aí. To perdendo tempo com o resto :((((((((((((((
+
+Favorecer X porque se a solução sem o X tiver OK, depois não tem como arrumar, porque ele influencia tudo...

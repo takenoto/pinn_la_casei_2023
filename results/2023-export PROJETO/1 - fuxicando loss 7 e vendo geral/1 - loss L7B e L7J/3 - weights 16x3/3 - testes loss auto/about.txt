@@ -1,0 +1,20 @@
+1º faz linupx1  pra todos os ts e pra sempre F1d10
+2º faz pra lin-lin
+
+Subordem: 
+.1) pontos p8-32-32
+.2) pontos 20-300-300
+
+TODOS com loss_0 auto
+
+Redes 16x3
+
+60k adam
+
+
+
+-------
+
+Confirmou oficialmente que meu UPx1 não evita a zerada
+
+Usarei e-2S daqui pra frente

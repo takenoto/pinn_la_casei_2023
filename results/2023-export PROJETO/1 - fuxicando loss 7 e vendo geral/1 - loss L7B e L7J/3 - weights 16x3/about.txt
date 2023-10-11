@@ -1,0 +1,1 @@
+Fixar loss em 7B, redes em 10x3, nondim em UPx1 e variar a loss weights
