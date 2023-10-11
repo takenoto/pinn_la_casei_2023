@@ -85,7 +85,6 @@ def plot_comparer_multiple_grid(
         # Se tiver a key 'cases', então os ys e xs estão vindo em pares
         # (o x não é o mesmo pra todos)
 
-
         if "cases" in i[s + 1].keys():
             for d in i[s + 1]["cases"]:
                 # Itera lista de cases, plotando x, y e color
@@ -150,17 +149,20 @@ def plot_comparer_multiple_grid(
     if yscale:
         plt.yscale(yscale)
 
-    
-    
+    by_label = {}
+    # Esse é o jeito certo! # pra cada nome só vai ter uma legenda
+    # ref: https://stackoverflow.com/questions/13588920/stop-matplotlib-repeating-labels-in-legend
     for ax in axes:
         # Só para o eixo y:
         ax.ticklabel_format(useMathText=True, scilimits=(-2, +2), axis="y")
+        axis_handles, axis_labels = ax.get_legend_handles_labels()
+        for _l, _h in zip(axis_labels, axis_handles):
+            by_label[_l] = _h
 
-    # O último já pega o de todo mundo
-    # ref: https://matplotlib.org/stable/users/explain/axes/legend_guide.html#sphx-glr-users-explain-axes-legend-guide-py
-    handles, labels = ax.get_legend_handles_labels()
+    labels = by_label.keys()
+    handles = by_label.values()
 
-    if labels:
+    if len(by_label.values()) >= 1:
         fig.legend(
             handles,
             labels,
