@@ -123,6 +123,7 @@ class SolverParams:
         train_distribution="Hammersley",
         save_caller: PINNSaveCaller = None,
         train_input_range=None,
+        pre_train_ics_epochs=None,
     ):
         self.name = name if name else None
         """
@@ -180,6 +181,8 @@ class SolverParams:
         self.save_caller = save_caller
         self.train_input_range = train_input_range
 
+        self.pre_train_ics_epochs = pre_train_ics_epochs
+
     def get_loss_version_for_type(self, type):
         """
         type é "X", "P", etc
@@ -213,6 +216,7 @@ class SolverParams:
             "train_input_range": np.array(self.train_input_range).tolist(),
             "train_distribution": self.train_distribution,
             "loss_weights": self.loss_weights.to_dict(),
+            "pre_train_ics_epochs": self.pre_train_ics_epochs,
         }
 
 

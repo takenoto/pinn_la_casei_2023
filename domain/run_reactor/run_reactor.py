@@ -317,6 +317,29 @@ def run_reactor(
 
     # Agora ajusta pra usar daqui pra baixo novamente
     refactor_loss_to_output_format()
+    
+    if (solver_params.pre_train_ics_epochs is not None):
+        
+        # Zera tudo que não for IC
+        ics_only_lw = []
+        for l_index in range(len(loss_weights)):
+            if l_index < int(len(loss_weights)/2):
+                ics_only_lw.append(0)
+            else:
+                ics_only_lw.append(1)
+
+                
+        model.compile(
+            "adam",
+            lr=solver_params.adam_lr,
+            loss_weights=ics_only_lw,
+            loss=loss,
+            metrics=metrics,
+        )
+        loss_history, train_state = model.train(
+            iterations=solver_params.pre_train_ics_epochs,
+            display_every=solver_params.adam_display_every,
+        )
 
     start_time = timer()
     ### Step 1: Pre-solving by "L-BFGS"

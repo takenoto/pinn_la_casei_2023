@@ -97,6 +97,9 @@ def run_pinn_grid_search(
                 train_input_range=get_thing_for_key(
                     case_key, "train_input_range", default=None
                 ),
+                pre_train_ics_epochs=get_thing_for_key(
+                    case_key, "pre_train_ics_epochs", default=None
+                ),
             )
             # Basicamente um teste com adimensionalização e um sem
             for case_key in cases_to_try
