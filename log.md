@@ -25,6 +25,36 @@
 
 ## by date
 
+### 2023-10-16
+
+ - 1) Pegue os TODOs dos dias anteriores
+ - 2) Rode o batch de maior tempo (40h) pra ver se ele também apresenta dificuldade em ser resolvido.
+  - Já vi que batch muito tempo ele também desanda, então isso com certeza também tá impactando lá no cstr.
+  - TODO Olha eu poderia té continuar tentando, mas esse problema não merce tomar tanto do meu tempo. ganho mais indo terminar de fazer os ajusstes pedidos no trbalho escrito e as novas ilustrações. Não tem nem cabimento perder tanto tempo nisso. Não deu certo e pronto, acabou. Chega de sofrer com isso.
+
+### 2023-10-15
+
+- Parei nos outrs dias porque tava lascado de gripado
+- Finalizei redes 3-9x1-6 pra batch tempo normal
+-  redes 16-100x1-6 pra batch tempo normal pra LR 1e-3
+  - Demorou 207.28 min = 3.45 horas
+- Desisti: esse 16-100x1-6 sem nondim, loss weights trocado de "auto-e2-S" pra "A1" (sem weights, =1 pra tudo) e sem o resampler (=None).
+  - Eu tenho que fazer beeem menos rede e variar mais params, pq se não a comparação é totalmente injusta.
+- Então vou fazer redes minúsculas, 3-6-16 x 3-6.  Já tenho dados o suficiente pra nondim anterior, agora vou testar outras... Então faço as nondim 1 a 1 e vejo quais produzem redes boas mesmo com pouquíssimos neurônios.
+  - Ameaçou prestar mas desanda fáciL: XPSV-8x3 tanh L7B LR-E-4_5 wauto-e2-S Lin-UPx1 p8-32-32 35kep lbfgs-0-1 m-
+  - Continua parecendo um problema de sampling, então deveria investir mais nisso, sinceramente...
+- Feito: Já seria bom eu testar uns CRs com pouca variação de volume. Aí pego só umas 3 tipos de rede, vario um pouco a LR e testo 2 nondim
+  - É, ainda tá bem ruim. Mesmo com LJ e muitos pontos e resampling não deu conta.
+  - Feito: implementar treinar primeiro ICs com adam 2k depois tudo como tava antes. Porque o problema de algumas é que usa as ICs erradas (loss IC alto) até o fim e só se ajeita no final, assim também não dá.
+  - Fiz isso e continuou dando em NADA. Alta densidade de pontos, mais de um tipo de nondim, resampling, treino prévio de ICs. Absolutamente nada resolveu. O volume tá ok, são as outras que ele tá indo pra outro ponto de solução, como se fosse (mas sem ser exatamente) uma solução trivial.
+  - Então isso dos pontos muitos já posso remover, deu em NADA.
+  - mESMO REDE 80X3 TAMBÉM NÃO ROLOU
+  - O valor de best loss que ele tá printando sempre é multiplicando só os pesos das ICSs, que foram os primeiros a serem usados, mas não tem nada a ver com o exibido pelo gráfico que são muito mais altos mds. Os do gráfico estão certos, é esse print usando sempre o 1º LW que tá totalmente errado.
+    - Mentira, tá certo. É pq a menor loss, de fato, foi quando treinou só as ICs.
+  - Bom, as redes 30x3 e 80x3 não deram conta então não é um problema meramente de mais neurônios. É uma outra coisa. E que eu não consegui resolver e vai ficar pra próxima, porque tenho que encerrar esse trabalho.
+- A fazer: depois validar novamente resampler e essa estratégia de setar pesos automaticamente
+
+
 TODO aí esses mesmos testes exatamente os mesmos repito pra sem nondim e pra nondim Lin-Upx1 nas redes 8X. tendo os gráficos erro e Lr e HL pras 3 já posso fazer muita conclusão.
 TODO comece fazendo uma figura explicando as etapas de verificação de como funciona o PINN.
 1) Screening => Validar só XPS do batelada. Ver questão da adimensionalização, loss weights e10S vs A1 e besteirol afim.
