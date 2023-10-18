@@ -132,7 +132,7 @@ def main():
     # ----------------------
     # -CHOSE OPERATION MODE-
     # ----------------------
-    reactors_to_run = ["batch"]  # "batch" "fed-batch" "CR"
+    reactors_to_run = ["CR"]  # "batch" "fed-batch" "CR"
 
     batch_versions = [
         # tempo de simulação, Xo, Po, So
@@ -140,8 +140,8 @@ def main():
         # Original xp time
         # (10, "Xo", "Po", "So"),
         # Default 20
-        # (20, "Xo", "Po", "So"),
-        (40, "Xo", "Po", "So"),
+        (20, "Xo", "Po", "So"),
+        # (40, "Xo", "Po", "So"),
         # -----------
         # Alternatives:
         # (11, "Xo", "Po", "So"),
@@ -149,6 +149,10 @@ def main():
         # (11, "0", "Po", "So"),
     ]
 
+    cr_XPS_flags = [
+        # None,  # traditional
+        "Xino0",  # zera entrada de X e X0 também.
+    ]
     cr_versions = [
         # (V0, Vmax, F_in, F_inE)
         # F_inE é o multiplicador por 10 de notação científica de Fin
@@ -163,12 +167,14 @@ def main():
         # Aumentando muito lentamente
         # (1, 5, "1", "-2"),
         # Normal
-        # (1, 5, "25", "-2"),
+        (1, 5, "25", "-2"),
         # (3, 5, "25", "-2"),
         # Curva suave
-        (4, 5, "5", "-1"),
+        # (4, 5, "5", "-1"),
         # Enchimento rápido
-        # (0, 5, "5", "0"),
+        # (4, 5, "5", "0"),
+        # CR as batch
+        # (4, 5, "0", "0"),
     ]
 
     # --------------------------------------------
@@ -206,18 +212,18 @@ def main():
                     max_reactor_volume=10.0,
                     inlet=ConcentrationFlow(
                         volume=0.25,  # L/h
-                        X=eq_params.Xo*1.0,
-                        P=eq_params.Po*1.0,
-                        S=eq_params.So*1.0,
+                        X=eq_params.Xo * 1.0,
+                        P=eq_params.Po * 1.0,
+                        S=eq_params.So * 1.0,
                     ),
                     t_final=22.0,
                     S_max=float("inf"),
                 )
                 initial_state = ReactorState(
                     volume=1.0,
-                    X=eq_params.Xo*1.0,
-                    P=eq_params.Po*1.0,
-                    S=eq_params.So*1.0,
+                    X=eq_params.Xo * 1.0,
+                    P=eq_params.Po * 1.0,
+                    S=eq_params.So * 1.0,
                 )
 
                 current_test_folder = mega_reactor_folder
@@ -245,7 +251,7 @@ def main():
                         mega_reactor_folder,
                         f"t{t_sim}-{Xo}-{Po}-{So}",
                     )
-                    
+
                     # Show XP data
                     if Xo == "Xo" and Po == "Po" and So == "So":
                         xpdata = get_altiok2006_xp_data(xp_num=2)
@@ -271,7 +277,7 @@ def main():
                                         "color": xp_colors[0],
                                     }
                                     for key in XPSvals
-                                }
+                                },
                             }
                         }
 
@@ -284,18 +290,18 @@ def main():
                         max_reactor_volume=5.0,
                         inlet=ConcentrationFlow(
                             volume=0.0,
-                            X=eq_params.Xo*1.0,
-                            P=eq_params.Po*1.0,
-                            S=eq_params.So*1.0,
+                            X=eq_params.Xo * 1.0,
+                            P=eq_params.Po * 1.0,
+                            S=eq_params.So * 1.0,
                         ),
                         t_final=t_sim + 0.0,
                         Smax=So,
                     )
                     initial_state = ReactorState(
                         volume=5.0,
-                        X=Xo*1.0,
-                        P=Po*1.0,
-                        S=So*1.0,
+                        X=Xo * 1.0,
+                        P=Po * 1.0,
+                        S=So * 1.0,
                     )
                     compute_num_and_pinn(
                         current_test_folder,
@@ -310,50 +316,69 @@ def main():
                     pass
 
             case "CR":
-                for cr_version in cr_versions:
-                    cr_id, V0, Vmax, Fin = cr_get_variables(cr_version)
-                    current_test_folder = os.path.join(
-                        mega_reactor_folder,
-                        cr_id,
-                    )
-                    process_params = ProcessParams(
-                        max_reactor_volume=Vmax*1.0,
-                        inlet=ConcentrationFlow(
-                            volume=Fin*1.0,
-                            X=eq_params.Xo * 0.0,
-                            P=eq_params.Po * 0.0,
-                            S=eq_params.So,
-                        ),
-                        t_final=24 * 3*1.0,
-                        Smax=float("inf"),
-                    )
-                    initial_state = ReactorState(
-                        volume=V0*1.0,
-                        X=eq_params.Xo*1.0,
-                        P=eq_params.Po*1.0,
-                        S=eq_params.So*1.0,
-                    )
+                for cr_flag in cr_XPS_flags:
+                    X_in = eq_params.Xo * 0.0
+                    P_in = eq_params.Po * 0.0
+                    S_in = eq_params.So
+                    Xo = eq_params.Xo * 1.0
+                    Po = eq_params.Po * 1.0
+                    So = eq_params.So * 1.0
+                    if cr_flag is None:
+                        pass
+                    elif cr_flag == "Xino0":
+                        X_in = 0.0
+                        Xo = 0.0
 
-                    def cr_f_out_calc_numeric(max_reactor_volume, f_in_v, volume):
-                        return f_in_v * pow(volume / max_reactor_volume, 7)
+                    for cr_version in cr_versions:
+                        cr_id, V0, Vmax, Fin = cr_get_variables(cr_version)
 
-                    f_out_num = cr_f_out_calc_numeric
+                        cr_flag_str = ""
+                        if cr_flag is not None:
+                            cr_flag_str = f"f-{cr_flag}"
 
-                    def cr_f_out_calc_tensorflow(max_reactor_volume, f_in_v, volume):
-                        return f_in_v * tf.math.pow(volume / max_reactor_volume, 7)
+                        current_test_folder = os.path.join(
+                            mega_reactor_folder, cr_id + " " + cr_flag_str
+                        )
+                        process_params = ProcessParams(
+                            max_reactor_volume=Vmax * 1.0,
+                            inlet=ConcentrationFlow(
+                                volume=Fin * 1.0,
+                                X=X_in,
+                                P=P_in,
+                                S=S_in,
+                            ),
+                            t_final=24 * 3 * 1.0,
+                            Smax=float("inf"),
+                        )
+                        initial_state = ReactorState(
+                            volume=V0 * 1.0,
+                            X=Xo,
+                            P=Po,
+                            S=So,
+                        )
 
-                    f_out_pinn = cr_f_out_calc_tensorflow
-                    compute_num_and_pinn(
-                        current_test_folder,
-                        eq_params,
-                        process_params,
-                        initial_state,
-                        f_out_num,
-                        f_out_pinn,
-                        cases,
-                        additional_plotting_points={}
-                    )
-                    pass
+                        def cr_f_out_calc_numeric(max_reactor_volume, f_in_v, volume):
+                            return f_in_v * pow(volume / max_reactor_volume, 7)
+
+                        f_out_num = cr_f_out_calc_numeric
+
+                        def cr_f_out_calc_tensorflow(
+                            max_reactor_volume, f_in_v, volume
+                        ):
+                            return f_in_v * tf.math.pow(volume / max_reactor_volume, 7)
+
+                        f_out_pinn = cr_f_out_calc_tensorflow
+                        compute_num_and_pinn(
+                            current_test_folder,
+                            eq_params,
+                            process_params,
+                            initial_state,
+                            f_out_num,
+                            f_out_pinn,
+                            cases,
+                            additional_plotting_points={},
+                        )
+                        pass
     # -----------------------------------
     end_time = timer()
     print(
@@ -382,7 +407,7 @@ def batch_get_variables(params, eq_params: Altiok2006Params):
         case "So":
             So = eq_params.So
 
-    return t_sim*1.0, Xo*1.0, Po*1.0, So*1.0
+    return t_sim * 1.0, Xo * 1.0, Po * 1.0, So * 1.0
 
 
 def cr_get_variables(params: List):
