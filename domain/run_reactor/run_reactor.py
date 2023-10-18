@@ -305,8 +305,11 @@ def run_reactor(
                 loss_first_it_IC = np.array(loss_history.loss_test)[
                     :, ics_index : ics_index + 1
                 ].tolist()[0][0]
-
-                multiplier_IC = scale_to / loss_first_it_IC
+                
+                # Prevent float division by zero
+                multiplier_IC = scale_to 
+                if loss_first_it_IC >= 0:
+                    multiplier_IC = scale_to / loss_first_it_IC
 
                 # Index de cada um no loss weights que tem tudo:
                 base_index = {"X": 0, "P": 1, "S": 2, "V": 3}
