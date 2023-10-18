@@ -143,14 +143,11 @@ class EulerMethod:
         dS_dt_normal_array[0] = (S_array[1] - S_array[0]) / dt
         dV_dt_normal_array[0] = (V_array[1] - V_array[0]) / dt
 
-        # TODO
         # ------------------------------
         # Calculate 2 order derivatives
         # ------------------------------
         # ref: https://personal.math.ubc.ca/~jfeng/CHBE553/Example7/Formulae.pdf
-        # A função "f" são os próprios valores de XPSV calculados, posso usar eles!!!
-        # TODO declara XPSV como vetor e itera todos, acho que é mais fácil
-        # e não precisa se repetir
+        # A função "f" são os próprios valores de XPSV calculados, posso usar eles!!
         XPSV = {
             "X": X_array,
             "P": P_array,
