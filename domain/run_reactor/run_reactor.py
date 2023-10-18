@@ -275,6 +275,51 @@ def run_reactor(
             loss_weights.append(lws.values[3 + int(len(lws.values) / 2)])
 
     refactor_loss_to_output_format()
+
+    # O número que tentaremos deixar todas as loss próximas escalonando
+    scale_to = lws.settings["scale_to"]
+    multi_exponent_op = lws.settings.get("multi_exponent_op", 1)
+
+    def update_lw_values(loss_history, update_ICs=False):
+        for N in ["X", "P", "S", "V"]:
+            if N in _out.order:
+                #
+                # Outputs normal
+                N_index = _out.get_index_for(N)
+                ics_index = N_index + len(_out.order)
+                loss_first_it = np.array(loss_history.loss_test)[
+                    :, N_index : N_index + 1
+                ].tolist()[-1][0]
+                #
+                # Prevent division by 0
+                multiplier = scale_to
+                if loss_first_it > 0:
+                    multiplier = scale_to / loss_first_it
+                #
+                # -----------------------
+                # ICs
+                loss_first_it_IC = np.array(loss_history.loss_test)[
+                    :, ics_index : ics_index + 1
+                ].tolist()[-1][0]
+                #
+                # Prevent float division by zero
+                multiplier_IC = scale_to
+                if loss_first_it_IC > 0:
+                    multiplier_IC = scale_to / loss_first_it_IC
+
+                # Index de cada um no loss weights que tem tudo:
+                base_index = {"X": 0, "P": 1, "S": 2, "V": 3}
+
+                lws.values[base_index[N]] = multiplier**multi_exponent_op
+
+                if update_ICs:
+                    lws.values[base_index[N] + 4] = multiplier_IC**multi_exponent_op
+                else:
+                    pass  # do not update
+
+    #
+    # LWs Auto
+    #
     # Os pesos vem primeiro todos na ordem depois repetem
     if lws.type == "auto":
         model.compile(
@@ -289,49 +334,21 @@ def run_reactor(
             display_every=1,
         )
 
-        # O número que tentaremos deixar todas as loss próximas escalonando
-        scale_to = lws.settings["scale_to"]
-        multi_exponent_op = lws.settings.get("multi_exponent_op", 1)
-        # Index a partir do qual começam as loss de ics e bcs
+        update_lw_values(loss_history=loss_history, update_ICs=True)
+        # Agora ajusta pra usar daqui pra baixo novamente
+        refactor_loss_to_output_format()
 
-        for N in ["X", "P", "S", "V"]:
-            if N in _out.order:
-                N_index = _out.get_index_for(N)
-                ics_index = N_index + len(_out.order)
-                loss_first_it = np.array(loss_history.loss_test)[
-                    :, N_index : N_index + 1
-                ].tolist()[0][0]
-                multiplier = scale_to / loss_first_it
-                loss_first_it_IC = np.array(loss_history.loss_test)[
-                    :, ics_index : ics_index + 1
-                ].tolist()[0][0]
-                
-                # Prevent float division by zero
-                multiplier_IC = scale_to 
-                if loss_first_it_IC > 0:
-                    multiplier_IC = scale_to / loss_first_it_IC
-
-                # Index de cada um no loss weights que tem tudo:
-                base_index = {"X": 0, "P": 1, "S": 2, "V": 3}
-
-                lws.values[base_index[N]] = multiplier**multi_exponent_op
-                lws.values[base_index[N] + 4] = multiplier_IC**multi_exponent_op
-
-
-    # Agora ajusta pra usar daqui pra baixo novamente
-    refactor_loss_to_output_format()
-    
-    if (solver_params.pre_train_ics_epochs is not None):
-        
+    #
+    # Initial Conditions pre trainning
+    if solver_params.pre_train_ics_epochs is not None:
         # Zera tudo que não for IC
         ics_only_lw = []
         for l_index in range(len(loss_weights)):
-            if l_index < int(len(loss_weights)/2):
+            if l_index < int(len(loss_weights) / 2):
                 ics_only_lw.append(0)
             else:
                 ics_only_lw.append(1)
 
-                
         model.compile(
             "adam",
             lr=solver_params.adam_lr,
@@ -343,6 +360,26 @@ def run_reactor(
             iterations=solver_params.pre_train_ics_epochs,
             display_every=solver_params.adam_display_every,
         )
+
+    #
+    # LWs autic
+    # autic => otimização é feita após pré-treino e NÃO leva em consideração ICs
+    if lws.type == "autic":
+        model.compile(
+            "adam",
+            lr=solver_params.adam_lr,
+            loss_weights=loss_weights,
+            loss=loss,
+            metrics=metrics,
+        )
+        loss_history, train_state = model.train(
+            iterations=1,
+            display_every=1,
+        )
+        # Index a partir do qual começam as loss de ics e bcs
+        update_lw_values(loss_history=loss_history, update_ICs=False)
+        # Agora ajusta pra usar daqui pra baixo novamente
+        refactor_loss_to_output_format()
 
     start_time = timer()
     ### Step 1: Pre-solving by "L-BFGS"

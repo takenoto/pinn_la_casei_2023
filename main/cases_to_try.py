@@ -40,13 +40,13 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         # 30,
         # 45,
         # 64,
-        80,
+        # 80,
         # 100
     ]
     layers = [
         # 1,
         # 2,
-        3,
+        # 3,
         # 4,
         # 5,
         # 6,
@@ -60,7 +60,9 @@ def change_layer_fix_neurons_number(eq_params, process_params):
     NLHL_list.extend(
         [
             # Valores fixos
-            # (30, 3),
+            # (8, 3),
+            (8, 6),
+            (30, 3),
         ]
     )
 
@@ -78,8 +80,26 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         # ---------------------------------
         #
         # CURRENT ITERATION
+        # #1 group
+        # TODO ficaram faltando esses dois 2 aí:
+        ("t1", "1", "Lin", "Lin"),
         ("t2", "F1", "Lin", "Lin"),
+        ("t2", "F1d10", "Lin", "Lin"),
+        # ("t3", "F1", "Lin", "Lin"),
+        #
+        # #2 group
+        # ("t4", "F1", "Lin", "Lin"),
         # ("t2", "F1d10", "Lin", "UPx1"),
+        # ("t5", "F1d10", "Lin", "UPx1"),
+        #
+        # #3 group
+        # ("t6", "F1d10", "Lin", "UPx1"),
+        # ("t7", "F1d10", "Lin", "UPx1"),
+        # ("t8", "F1d10", "Lin", "UPx1"),
+        #
+        # ("t9", "F1d10", "Lin", "UPx1"),
+        # ("t1", "1", "Lin", "Lin"),
+        #
         # Base, tá faltando? Eu acho.. Conferir
         # ("t1", "1", "Lin", "Lin"),
         # Tempos diferntes:
@@ -220,7 +240,7 @@ def change_layer_fix_neurons_number(eq_params, process_params):
     # "7A-I" e 6 5 4 3 2
     # loss_version_list = ["7A", "7B", "7C", "7D", "7E", "7F", "7G", "7H", "7I"]
     # loss_version_list = ["7B", "7D", "7G", "7J"]
-    loss_version_list = ["7B"]
+    loss_version_list = ["7B"] #7B era o padrão
 
     input_output_variables_list = [
         # ----------------------
@@ -247,11 +267,13 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         percent_min_range=[
             0,
         ],  # [0,50] => iria fazer modelos iniciando em 0 e em 50
-        percent_max_range=[15, 45, 60, 100, 200],
+        percent_max_range=[10, 15, 45, 50, 60, 100, 200],
     )
 
     train_input_range_list = [
         # "0-10pa",
+        # "0-15pa",
+        "0-50pa",
         # "0-60pa",
         "0-100pa",
         # "0-45pa",
@@ -294,7 +316,7 @@ def change_layer_fix_neurons_number(eq_params, process_params):
     LR_list = [
         # ----------------
         # Minimum
-        # "E-3_8",
+        "E-3_8",
         "E-3_1",
         "E-4_5",
         # "E-4_8",
@@ -351,13 +373,13 @@ def change_layer_fix_neurons_number(eq_params, process_params):
     # N epochs que vai treinar só as condições iniciais
     # (loss weights = 0 pro que não for IC)
     pre_train_ics_epochs_list = [
-        # None
+        # "0", #=> 0 é nada
         "2k",
     ]
     ADAM_EPOCHS_list = [
         # "80k"
-        "35k",
-        # "45k",
+        # "35k",
+        "45k",
         # "60k",
         # "90k",
     ]
@@ -365,9 +387,9 @@ def change_layer_fix_neurons_number(eq_params, process_params):
 
     # Loss Weight
     loss_weights_list = [
-        "auto-e2-S",
-        "A1",
-        # "auto-e2",
+        # "auto-e2-S",
+        # "A1",
+        "autic-e2"
     ]
 
     # Específicos
@@ -379,7 +401,9 @@ def change_layer_fix_neurons_number(eq_params, process_params):
                         for n_points in N_POINTS:
                             for nd in NDList:
                                 for loss_version in loss_version_list:
-                                    for pre_train_ics_epochs_str in pre_train_ics_epochs_list:
+                                    for (
+                                        pre_train_ics_epochs_str
+                                    ) in pre_train_ics_epochs_list:
                                         for NLHLpoint in NLHL_list:
                                             NL, HL = NLHLpoint
                                             for resample_every in resample_every_list:
@@ -485,7 +509,9 @@ def _insert_into_list(dictionary, args):
         + f" {adam_str}ep"
         + f" lbfgs-{lbfgs_pre}-{lbfgs_post}"
         + f" {minibatch_str}"
-        + f" ic-{pre_train_ics_epochs_str}" if pre_train_ics_epochs_str else ""
+        + f" ic-{pre_train_ics_epochs_str}"
+        if pre_train_ics_epochs_str
+        else ""
     )
 
     key = (
@@ -504,7 +530,9 @@ def _insert_into_list(dictionary, args):
         + f"-{nd_tscode}-{nd_scalers_code}"
         + f" p{n_init}-{n_domain}-{n_test}"
         + f" TD-{train_distribution}"
-        + f" ic-{pre_train_ics_epochs_str}" if pre_train_ics_epochs_str else ""
+        + f" ic-{pre_train_ics_epochs_str}"
+        if pre_train_ics_epochs_str
+        else ""
     )
 
     # Executando ações:
@@ -534,7 +562,7 @@ def _insert_into_list(dictionary, args):
         "custom_loss_version": {},  # 'X':3, 'V':3,
         "train_distribution": train_distribution,
         "train_input_range": train_input_range,
-        "pre_train_ics_epochs": ADAM_EPOCHS_dict[pre_train_ics_epochs_str]
+        "pre_train_ics_epochs": ADAM_EPOCHS_dict[pre_train_ics_epochs_str],
     }
 
     internal_dict["hyperfolder"] = os.path.join(
@@ -737,6 +765,13 @@ def loss_weights(name: str):
                 "scale_to": 1e2,
                 "multi_exponent_op": 1 / 2,
             }
+        # autic são os autos em que faz o cálculo APÓS a otimização inicial se houver
+        case "autic-e2":
+            of_type="autic"
+            settings = {
+                "scale_to": 1e2,
+                "multi_exponent_op": 1 / 2,
+            }
         # X P S V X0 P0 S0 V0
         case "A1":
             lw = [1, 1, 1, 1, 1, 1, 1, 1]
@@ -886,7 +921,7 @@ LRs_dict = {
 
 ADAM_EPOCHS_dict = {
     f"{num}{'k' if mult==1000 else ''}": num * mult
-    for num in range(1, 201)
+    for num in range(0, 201)
     for mult in [1, 1000]
 }
 
