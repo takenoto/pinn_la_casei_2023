@@ -308,7 +308,7 @@ def run_reactor(
                 
                 # Prevent float division by zero
                 multiplier_IC = scale_to 
-                if loss_first_it_IC >= 0:
+                if loss_first_it_IC > 0:
                     multiplier_IC = scale_to / loss_first_it_IC
 
                 # Index de cada um no loss weights que tem tudo:
