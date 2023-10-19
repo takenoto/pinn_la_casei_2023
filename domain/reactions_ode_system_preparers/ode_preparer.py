@@ -63,6 +63,21 @@ class ODEPreparer:
             dXdt, dPdt, dSdt, dVdt = 0.0, 0.0, 0.0, 0.0
             rX, rP, rS = 0.0, 0.0, 0.0
 
+            #
+            # Volume
+            if outputSimulationType.V:
+                V = y[
+                    :, outputSimulationType.V_index : outputSimulationType.V_index + 1
+                ]
+                dVdt = dde.grad.jacobian(
+                    y, x, i=outputSimulationType.V_index, j=inputSimulationType.t_index
+                )
+            elif inputSimulationType.V:
+                V = x[:, inputSimulationType.V_index : inputSimulationType.V_index + 1]
+                dVdt = dde.grad.jacobian(
+                    x, x, i=inputSimulationType.V_index, j=inputSimulationType.t_index
+                )
+
             # ---------------------
             # OUTPUT VARIABLES
             # ---------------------
@@ -87,13 +102,6 @@ class ODEPreparer:
                 dSdt = dde.grad.jacobian(
                     y, x, i=outputSimulationType.S_index, j=inputSimulationType.t_index
                 )
-            if outputSimulationType.V:
-                V = y[
-                    :, outputSimulationType.V_index : outputSimulationType.V_index + 1
-                ]
-                dVdt = dde.grad.jacobian(
-                    y, x, i=outputSimulationType.V_index, j=inputSimulationType.t_index
-                )
 
             # ---------------------
             # INPUT VARIABLES
@@ -112,11 +120,6 @@ class ODEPreparer:
                 S = x[:, inputSimulationType.S_index : inputSimulationType.S_index + 1]
                 dSdt = dde.grad.jacobian(
                     x, x, i=inputSimulationType.S_index, j=inputSimulationType.t_index
-                )
-            if inputSimulationType.V:
-                V = x[:, inputSimulationType.V_index : inputSimulationType.V_index + 1]
-                dVdt = dde.grad.jacobian(
-                    x, x, i=inputSimulationType.V_index, j=inputSimulationType.t_index
                 )
 
             # ------------------------
@@ -149,17 +152,13 @@ class ODEPreparer:
             # o valor da expressão não ser NaN, não presta, não adianta.
 
             def f_x_calc_func():
-                X_for_calc = tf.where(
-                    tf.less(X, Xm), X, tf.ones_like(X) * 0.9999 * Xm
-                )
+                X_for_calc = tf.where(tf.less(X, Xm), X, tf.ones_like(X) * 0.9999 * Xm)
 
                 value = tf.pow(1 - X_for_calc / Xm, f)
                 return value
 
             def h_p_calc_func():
-                P_for_calc = tf.where(
-                    tf.less(P, Pm), P, tf.ones_like(P) * 0.9999 * Pm
-                )
+                P_for_calc = tf.where(tf.less(P, Pm), P, tf.ones_like(P) * 0.9999 * Pm)
 
                 value = tf.pow(
                     1 - (P_for_calc / Pm),
