@@ -407,6 +407,7 @@ def run_reactor(
             iterations=solver_params.adam_epochs,
             display_every=solver_params.adam_display_every,
             callbacks=[pde_resampler] if pde_resampler else None,
+            disregard_previous_best=True,
             # model_save_path=f"{hyperfolder_path}{solver_params.name}/adam"
             # if solver_params.name
             # else None,
