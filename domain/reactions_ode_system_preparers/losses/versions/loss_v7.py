@@ -77,8 +77,7 @@ def lossV7(o, args, loss_version):
             V,
         )
 
-        # V como divisor, e não multiplicando:
-        dNdt_calc = rN + (f_in * inletN - f_out * concN) / V_th
+        dNdt_calc = -(concN/V_th)*dVdt + rN + (f_in*inletN - f_out*concN)/V_th
 
     elif o == "V":
         dNdt = dVdt
