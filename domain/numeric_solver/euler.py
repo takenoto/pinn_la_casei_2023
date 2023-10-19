@@ -132,17 +132,17 @@ class EulerMethod:
             S_array[t] = S
             V_array[t] = V
 
-            dX_dt_normal_array[t] = dX_dt
-            dP_dt_normal_array[t] = dP_dt
-            dS_dt_normal_array[t] = dS_dt
-            dV_dt_normal_array[t] = dV_dt
+            dX_dt_normal_array[t] = (X_array[t] - X_array[t-1])/dt
+            dP_dt_normal_array[t] = (P_array[t] - P_array[t-1])/dt
+            dS_dt_normal_array[t] = (S_array[t] - S_array[t-1])/dt
+            dV_dt_normal_array[t] = (V_array[t] - V_array[t-1])/dt
 
         # Seta a derivada em 0 como igual à em 1 pra não bagunçar muito o gráfico
         dX_dt_normal_array[0] = (X_array[1] - X_array[0]) / dt
         dP_dt_normal_array[0] = (P_array[1] - P_array[0]) / dt
         dS_dt_normal_array[0] = (S_array[1] - S_array[0]) / dt
         dV_dt_normal_array[0] = (V_array[1] - V_array[0]) / dt
-
+        
         # ------------------------------
         # Calculate 2 order derivatives
         # ------------------------------
