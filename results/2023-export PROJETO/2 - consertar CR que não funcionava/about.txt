@@ -1,0 +1,20 @@
+O problema real era que o balanço não contava com a diluição. Tem que começar da massa e ir pra concentração depois. E usar a regra da cadeia pra fazer os cálculos.
+
+
+N = No + N_rx + N_in - N_out
+
+como N = C_N*V:
+
+C_N*V = No + N_rx + N_in - N_out
+
+Então
+
+d(C_N*V)/dt = d/dt(No + N_rx + N_in - N_out)
+
+* POSSO FAZER NO TRABALHO JÁ DAQUI PRA BAIXO*
+d(C_N*V)/dt = rx*V + f_in*C_in - f_out*C
+
+
+VdCdt + CdVdt = rx*V + f_in*C_in - f_out*C
+
+dCdt = - (C/V)dVdt + rx + (f_in*C_in - f_out*C)/V
