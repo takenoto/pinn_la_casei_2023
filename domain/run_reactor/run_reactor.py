@@ -217,6 +217,9 @@ def run_reactor(
                 N_nondim = y[:, N_output_index : N_output_index + 1]
                 N_val = solver_params.output_non_dim_scaler.fromNondim({N: N_nondim}, N)
                 transformed_outputs.append(N_val)
+
+        # --------------------------------
+        # --------------------------------
         return tf.concat(transformed_outputs, axis=1)
 
     net.apply_output_transform(output_transform)
