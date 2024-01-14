@@ -96,6 +96,14 @@ def plot3D(
                     _plotContourf(ax=ax, item=item, fig=fig)
                     ax.tick_params(axis="x", labelsize=internal_figures_label_fontsize)
                     ax.tick_params(axis="y", labelsize=internal_figures_label_fontsize)
+                elif plot_type == "heatmap":
+                    _plot_heatmap(ax=ax, item=item, fig=fig)
+                    ax.tick_params(axis="x", labelsize=internal_figures_label_fontsize)
+                    ax.tick_params(axis="y", labelsize=internal_figures_label_fontsize)
+                elif plot_type == "imshow":
+                    _plot_imshow(ax=ax, item=item, fig=fig)
+                    ax.tick_params(axis="x", labelsize=internal_figures_label_fontsize)
+                    ax.tick_params(axis="y", labelsize=internal_figures_label_fontsize)
 
             title = internal_figure.get("title", None)
             xlabel = internal_figure.get("xlabel", None)
@@ -109,7 +117,7 @@ def plot3D(
                 ax.set_ylabel(ylabel, fontsize=internal_figures_label_fontsize)
             if zlabel:
                 ax.set_zlabel(zlabel)
-            
+
             # FIXME TODO
             ax.xaxis.set_major_formatter(plotTickFormatter)
             ax.yaxis.set_major_formatter(plotTickFormatter)
@@ -256,6 +264,42 @@ def _plotContourf(ax, item, fig):
     pass
 
 
+def _plot_heatmap(ax, item, fig):
+    # ref: https://matplotlib.org/stable/gallery/images_contours_and_fields/image_annotated_heatmap.html
+    plot_data = item["plot_data"]
+
+    x_ticks = plot_data.get("x_ticks", None)
+    if x_ticks:
+        ax.set_x_ticks(np.arrange(x_ticks), labels=x_ticks)
+
+    y_ticks = plot_data.get("y_ticks", None)
+    if y_ticks:
+        ax.set_x_ticks(np.arrange(y_ticks), labels=y_ticks)
+
+    _kwargs = plot_data["kwargs"]
+
+    img = ax.show(plot_data["data"], **_kwargs)
+    # TODO
+    pass
+
+
+def _plot_imshow(ax, item, fig):
+    plot_data = item["plot_data"]
+    grid = plot_data["grid"]
+    # methods = [None, 'none', 'nearest', 'bilinear', 'bicubic', 'spline16',
+    #        'spline36', 'hanning', 'hamming', 'hermite', 'kaiser', 'quadric',
+    #        'catrom', 'gaussian', 'bessel', 'mitchell', 'sinc', 'lanczos']
+    plot_style = item.get("plot_style", {})
+    interpolation = plot_style.get("interpolation", None)
+    cmap = plot_style.get("cmap", "viridis")
+
+    imshow_plot = ax.imshow(grid, interpolation=interpolation, cmap=cmap)
+    show_colorbar = plot_style.get("show_colorbar", True)
+    if show_colorbar:
+        fig.colorbar(imshow_plot, ax=ax)
+    pass
+
+
 # from https://matplotlib.org/stable/gallery/mplot3d/scatter3d.html
 def randrange(n, vmin, vmax):
     """
@@ -328,7 +372,7 @@ def test():
                     "filename_base": "MY CRAZY FIG",
                     "path_to_save": path_to_save,
                     "gridspec_create": lambda fig: fig.add_gridspec(
-                        2, 3, wspace=0.12, hspace=0.2
+                        2, 3, wspace=0.12, hspace=0.3
                     ),
                     "supxlabel": "NL",
                     "supylabel": "HL",
@@ -336,6 +380,22 @@ def test():
                 },
                 "internal_figures": {
                     # Todos esses plots vão num gráfico só!
+                    "imshow_test": {
+                        "title": "Try imshow now!",
+                        "subplot_gridspec_callback": lambda gs: gs[0, 2],
+                        "xlabel": "Limão",
+                        "ylabel": "Beterraba",
+                        "items": {
+                            1: {
+                                "plot_type": "imshow",
+                                "plot_data": {"grid": np.random.rand(8, 8)},
+                                "plot_style": {
+                                    "cmap": "viridis",
+                                    "interpolation": "hanning",
+                                },
+                            }
+                        },
+                    },
                     "contourf_test": {
                         "title": "Plot filled contourns",
                         "projection": None,
@@ -361,6 +421,7 @@ def test():
                         "projection": "3d",
                         "xlabel": "Coisa1",
                         "ylabel": "Coisa2",
+                        "zlabel": "Coisa3",
                         # subplot_gridspec_callback é pra dizer quais
                         # cols/rows irá ocupar
                         "subplot_gridspec_callback": lambda gs: gs[1, 1],
