@@ -388,10 +388,10 @@ def test():
                         "items": {
                             1: {
                                 "plot_type": "imshow",
-                                "plot_data": {"grid": np.random.rand(8, 8)},
+                                "plot_data": {"grid": np.random.rand(4, 4)},
                                 "plot_style": {
                                     "cmap": "viridis",
-                                    "interpolation": "hanning",
+                                    "interpolation": None, #"hanning",
                                 },
                             }
                         },

@@ -1,5 +1,10 @@
 # Todo List
 
+1) Implemente o heatmap porque talvez precise dele pra exibir os erros mais claramente.
+- Acho que um imshow com blur funcionaria bem. [https://matplotlib.org/stable/gallery/images_contours_and_fields/interpolation_methods.html#sphx-glr-gallery-images-contours-and-fields-interpolation-methods-py]
+- Testar o imshow num exemplo concreto
+2) Faz os gráficos 3D para um exemplo simples de batch. No primeiro caso, vou pegar todos, e printar os erros NLxHL. Só isso.
+
 - TODO os gráficos batch NÃO ESTÃO MAIS EXIBINDO OS PONTOS DE XPDATA. VOLTAMOS À ESTACA ZERO? SÓ EXIBE OS QUE FORAM USADOS NO ÚLTIMO, É ISSO???
 - e tb pode tirar aquelas loss de bounadery e afins
 - TODO repetir esses testes de cima pra 3, 4, 5, 6, 7, 9, 10 neurônios por camada. Nisso já tenho gráficos pra praticamente tudo.

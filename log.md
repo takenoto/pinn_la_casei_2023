@@ -25,44 +25,68 @@
 
 ## by date
 
-### 2023-10-16
+### 2024-10-15
 
- - 1) Pegue os TODOs dos dias anteriores
- - 2) Rode o batch de maior tempo (40h) pra ver se ele também apresenta dificuldade em ser resolvido.
-  - Já vi que batch muito tempo ele também desanda, então isso com certeza também tá impactando lá no cstr.
-  - TODO Olha eu poderia té continuar tentando, mas esse problema não merce tomar tanto do meu tempo. ganho mais indo terminar de fazer os ajusstes pedidos no trbalho escrito e as novas ilustrações. Não tem nem cabimento perder tanto tempo nisso. Não deu certo e pronto, acabou. Chega de sofrer com isso.
+- TODO ler vários dados no plot_caller a partir de uma pasta e agrupar eles. Eu basicamente copio os json da pasta do batch ou algo do gênero.
 
-### 2023-10-15
+### 2024-10-14
 
-- Parei nos outrs dias porque tava lascado de gripado
-- Finalizei redes 3-9x1-6 pra batch tempo normal
--  redes 16-100x1-6 pra batch tempo normal pra LR 1e-3
-  - Demorou 207.28 min = 3.45 horas
-- Desisti: esse 16-100x1-6 sem nondim, loss weights trocado de "auto-e2-S" pra "A1" (sem weights, =1 pra tudo) e sem o resampler (=None).
-  - Eu tenho que fazer beeem menos rede e variar mais params, pq se não a comparação é totalmente injusta.
-- Então vou fazer redes minúsculas, 3-6-16 x 3-6.  Já tenho dados o suficiente pra nondim anterior, agora vou testar outras... Então faço as nondim 1 a 1 e vejo quais produzem redes boas mesmo com pouquíssimos neurônios.
-  - Ameaçou prestar mas desanda fáciL: XPSV-8x3 tanh L7B LR-E-4_5 wauto-e2-S Lin-UPx1 p8-32-32 35kep lbfgs-0-1 m-
-  - Continua parecendo um problema de sampling, então deveria investir mais nisso, sinceramente...
-- Feito: Já seria bom eu testar uns CRs com pouca variação de volume. Aí pego só umas 3 tipos de rede, vario um pouco a LR e testo 2 nondim
-  - É, ainda tá bem ruim. Mesmo com LJ e muitos pontos e resampling não deu conta.
-  - Feito: implementar treinar primeiro ICs com adam 2k depois tudo como tava antes. Porque o problema de algumas é que usa as ICs erradas (loss IC alto) até o fim e só se ajeita no final, assim também não dá.
-  - Fiz isso e continuou dando em NADA. Alta densidade de pontos, mais de um tipo de nondim, resampling, treino prévio de ICs. Absolutamente nada resolveu. O volume tá ok, são as outras que ele tá indo pra outro ponto de solução, como se fosse (mas sem ser exatamente) uma solução trivial.
-  - Então isso dos pontos muitos já posso remover, deu em NADA.
-  - mESMO REDE 80X3 TAMBÉM NÃO ROLOU
-  - O valor de best loss que ele tá printando sempre é multiplicando só os pesos das ICSs, que foram os primeiros a serem usados, mas não tem nada a ver com o exibido pelo gráfico que são muito mais altos mds. Os do gráfico estão certos, é esse print usando sempre o 1º LW que tá totalmente errado.
-    - Mentira, tá certo. É pq a menor loss, de fato, foi quando treinou só as ICs.
-  - Bom, as redes 30x3 e 80x3 não deram conta então não é um problema meramente de mais neurônios. É uma outra coisa. E que eu não consegui resolver e vai ficar pra próxima, porque tenho que encerrar esse trabalho.
-- A fazer: depois validar novamente resampler e essa estratégia de setar pesos automaticamente
+- Consegui implementar um imshow, já com exemplos e funcionando. Já vai funcionar bem pro que queria. Agora é testar e ver se fica legível com os dados que tenho.
 
+### 2024-01-10 
 
-TODO aí esses mesmos testes exatamente os mesmos repito pra sem nondim e pra nondim Lin-Upx1 nas redes 8X. tendo os gráficos erro e Lr e HL pras 3 já posso fazer muita conclusão.
-TODO comece fazendo uma figura explicando as etapas de verificação de como funciona o PINN.
-1) Screening => Validar só XPS do batelada. Ver questão da adimensionalização, loss weights e10S vs A1 e besteirol afim.
-2) Volume constante e variando. Validar modelo e predição. É tão fácil que nem compensa comparar formas de adimensionalização, sinceramente. É só pra não questionarem se o volume tá errado mesmo.
-3) Batch XPSV. Foi esse o que fiz por último.
+- Reler código de plot_3D e plot_caller pra me familiarizar novamente com o que precisava ser feito.
+- fazer um heatmap? Acho que é mais fácil fazer por fora mesmo não? Sei lá
 
-- Terminar esse batch já faça o CR que varia bem pouquinho o volume, pra ver se ao menos ele funciona.
+### 2023-11-28
 
+- Rever código da plotagem de gráfico...
+
+### 2023-10-25
+
+- TODO separar TODOs anteriores e ou deleta ou faz deleta fim
+- TODO faz pelo menos um gráfico 3D pra ver se minha ideia original funcionou...
+- TODO tenho que fazer é um heatmap zzzz
+- TODO ver escopo do trabalho e já deixa uma lista com NL e HL que foram testados, e afins, pra comparar nesse heatmap já sabendo o que será.
+
+### 2023-10-19
+
+- disregard_previous_best=True no solver adam
+- testes modificação equação de balanço dNdt no PINN
+- Erro numérico: dXdt estava apenas dX, não dividia por dt...
+- Fiz o teste de calcular como se fosse em mols a variação, não funcionou
+- Não estou sabendo incluir o efeito de diluição
+- FEITO:: troca tudo e conc pra número de moles
+  - ODE preparer
+  - run_reactor
+  - loss v7
+  - Do jeito que fiz a conc. vai estar sempre errado em V=0 (aliás, em V < V_threshold)... Porque to pegando o número de moles e aí vai pro infinito...
+  - nesse ritmo vou ter que trocar a adimensionalização porque são valores em concentração... E não faz sentido essa "adimensionalização". Talvez eu precise fazer o que?
+  - o grande problema é que, mesmo que não acontecesse nada, só a diluição deveria ser contada já. E não vejo ela aparecendo em nenhum canto. Então não tem como o efeito dela ser contado...
+  -  desfaz tudo isso aí e faz o efeito de diluição, que é o que tá faltando...
+- FIXED: O equacionamento do PINN não estava contabilizando o efeito da diluição:
+  - previous: dNdt_calc = rN + (f_in * inletN - f_out * concN) / V_th
+  - current: dNdt_calc = (f_in-f_out)*concN/V_th  + rN + (f_in * inletN - f_out * concN) / V_th
+- Fiz pra variação de volume com vários pontos de treino diferentes e em todos ficou volume bom e querendo zerar X, de novo, pra zerar a loss mais facilmente.
+  - Vários pontos 8-32-32, 20-300-300 e 40-1200-1200 e todas deram errado.
+  - Mudei camadas também e não deu em nada. Então pelo visto tenho que ir por outro caminho.
+  - O problema continua sendo essa tendência infeliz em zerar o X.
+
+- Todos só 0-50pa:
+  - Cada um desses testes faz pro CR que já inicia no máximo e na curva suave:
+    - Lin-Lin-t1-1, Lin-Lin-t2-F1, Lin-Lin-t2-F1d10
+    - Depois UPx1 F1d10 de t3 a t9
+    - Daí já devo saber se uma dessas formas de nondim é melhor que as demais comparando, por exemplo, o perfil que ultrapassa a região de treino.
+  - TODO: veja se pro cstr sem variação de volume, contínuo do início ao fim, ele fica correto...
+      - E com Xo e Xin = 0
+  - Xo e Xin normais (Xin sempre é 0 mas enfim)
+
+# TODO ficaram faltando esses dois 2 aí: pro XPS do batch
+        ("t1", "1", "Lin", "Lin"),
+        ("t2", "F1", "Lin", "Lin"),
+        ("t2", "F1d10", "Lin", "Lin"),
+        em (8, 6),
+            (30, 3),
 
 
 # De verdade, antes de começar, organize os dos dias anteriores. Já tá gigantesco.
@@ -94,23 +118,86 @@ Testes: (obs: todos foram feitos enquanto mexi no pc, então train_time e pred_t
 3) TODO Faz modelos t=>XPSV para CR com variação baixa (4.5L a 5L) porque é capaz de funcionar e validar. Depois que vou pros de 1 a 5.
 4) TODO Faz Modelo batch com hypercube entrando tudo. Esse vai ser bem mais trabalhoso pq vou ter que mexer em cases_to_try, run_reactor e no pinn_saver pra usar as condições. E pode me salvar se o modelo de (3) acabar não prestando.
 
- TODO veja se consegue fazer a generalização com entrada tipo AllA => (todos os parâmetros e afins fornecidos como variáveis de entrada, menos Xm, Pm)
+ -T-O-D-O veja se consegue fazer a generalização com entrada tipo AllA => (todos os parâmetros e afins fornecidos como variáveis de entrada, menos Xm, Pm)
 
 Coisas que ficaram do dia 7:
 
 LOSSV7 :: TODO veja se só a loss d2 é o suficiente pra representar apenas a variação do volume, que é a mais fácil. Se não, pode ter algo errado nos meus cálculos. O valor dela é até maior que a d1 e pode ser mais fácil o treinamento por d2...
 
-TODOS: 
+-T-O-D-O-S: 
 1) ORGANIZA. TEM COISA DEMAIS, MUITO LERO LERO. BOTA NO ARQUIVO DE TODOS MESMO...
 2) Faz um teste tirando o volume da equação de XPS. Ele consegue dar um output OK? Claro que vai estar tecnicamente errado, mas é só pra saber se ele sai um volume variando e o xps do batelada simultaneamente
 4) Bota uma variação de volume grande 3 executa num intervalo minúsculo tipo 0-1h que pareça o batelada. Preciso ver se errei no equacionamento do balanço de volume pelamor
 5) Bota artigos numa pasta do zotero pra ler
 3) Comece a preparar psicologicamente para ter como entrada todas as variáveis (Xo, Po, Vmax, etc). O padrão de saída do reator a gente pode manter daí não precisa de eq. saída, só da vazão de entrada mesmo.
-TODO lembre que ainda ficou tudo pelo meio de ver o pq a adimensionalização de variáveis esculhambava valores e a do tempo não dá em nada. Isso é a prioridade pra que eu possa fazer novos testes.
+-T-O-D-O lembre que ainda ficou tudo pelo meio de ver o pq a adimensionalização de variáveis esculhambava valores e a do tempo não dá em nada. Isso é a prioridade pra que eu possa fazer novos testes.
 Comece 1) usando a loss v5 pra ver se ainda ficam resultados nada a ver quando usa nondim que não a do tempo. Preciso encontrar o erro zzzz.
 Agora tenho que ver as derivadas 1ª que não fazem nenhum sentido. As 2 tão batendo ok.
 Ok testei pro batch a 0.35 do tempo e deu certo nos 3. tem nada errado não zzzz.
 2) fuxicando loss v7. Pela ordem, de grandeza já sei que a derivada 2 não é tão baixinha a ponto de precisar daquele super acréscimo gigantesco de 1e12. Começa por aí.
+
+
+### 2023-10-18
+- Posso estar errando a derivada em t=0? Como???
+- Tentar loss v7J pra ver se reduz esses picos sem sentido em t próximo de zero.
+- Nova auto LW ("autic") que recalcula APÓS a otimização inicial
+- FEITO testa com esse novo autic
+  -  Atenção: Agora a loss é feita com base no pónto mais recente, e não no primeiro. Na prática, deixou de fazer loss em i=0 e passou a fazer em i=1 para os casos do tipo "auto".
+- Meu cálculos de dS/dt tá errado. Como pode dSdt ser constante e a derivada não ser 0, nem no numérico???
+- Arrumei erro na derivada primeira salva do numérico (o valor calculado em si estava certo)
+- Testar CR novamente com rede 200x4 e 1200 pontos train e teste. Demora uma vida...
+- TODO testa com v7J usando o auto e o autic COM PRÉ-TREINO DE ICs
+- TODO URGENTE veja o equacionamento e fuxique até parar de dar bode. Não é possível. Em todos dá esse pico estranho de S. Parece que o mesmo erro que tinha cometido antes, no numérico, cometi no pinn. mas simplesmente NÃO CONSIGO EXERGAR ONDE.
+  - O problema antes é que eu tinha que multiplicar a conc. pelo volume antigo e dividir pelo novo. Se não fizesse isso, gerava esse acúmulo infinito. E agora tá com algo parecido. como proceder ???????? Porque o dSdt era pra ser zerado e acabou. Será que multiplicar o V ao invés de dividir resolve? Acho que não. O que fazer????????????? Multiplicar por dVdt e multiplicar por dt também? Isso existe? Tem algumn cabimento?????
+
+### 2023-10-16
+
+ - 1) Pegue os TODOs dos dias anteriores
+ - 2) Rode o batch de maior tempo (40h) pra ver se ele também apresenta dificuldade em ser resolvido.
+  - Já vi que batch muito tempo ele também desanda, então isso com certeza também tá impactando lá no cstr. Poderia rodar um tipo 0-10pa só pra constatar de fato...
+  - Teve um que quase prestou em ND-Lin-UPx1-t2-F1d10 de V0-4--Vmax-5--Fin-5E0 em in_t-out_XPSV tr- 0-10pa Glorot uniform-Hammersley. Só o S saiu errado. E usou tudo (nondim, w-Squared e ic 2k)
+  - SÓ REACTION  E depois batch sem volume em ts maiores pra validar t nondim.
+    - São 40 resultados. Primeiro faz 8x3. Depois 8x6. Depois 30x3. E aí acaba eu acho.
+    - Vai validar simultanemante: loss weights e explorar questão do tempo.
+      - Então é melhor fazer todas as redes ao mesmo tempo, mas separar por nondim, pra ser menos, e aumentar LR pra enviesar menos tb.
+      - O caso t6 Upx1 ficou melhor só com 10h pra predizer as 20 do que a 100%. Não acredito que só a densidade de pontos justificaria isso...
+      - Por enquanto o t7 parece ser o melhor de todos, e 0-50pa MUITO melhor que 0-100pa.
+  - -X- roda com outros valores de t nondim OK
+  - -X- faz CRs t=> V só pra mostrar que o volume dá certo.
+  - -X- roda um com Xo e Xin = 0. Isso vai acabar com a variação e ele vai precisar predizer basicamente o volume e 2 linhas retas. Não é possível.
+  - -X- Olha eu poderia té continuar tentando, mas esse problema não merce tomar tanto do meu tempo. ganho mais indo terminar de fazer os ajusstes pedidos no trbalho escrito e as novas ilustrações. Não tem nem cabimento perder tanto tempo nisso. Não deu certo e pronto, acabou. Chega de sofrer com isso.
+
+### 2023-10-15
+
+- Parei nos outrs dias porque tava lascado de gripado
+- Finalizei redes 3-9x1-6 pra batch tempo normal
+-  redes 16-100x1-6 pra batch tempo normal pra LR 1e-3
+  - Demorou 207.28 min = 3.45 horas
+- Desisti: esse 16-100x1-6 sem nondim, loss weights trocado de "auto-e2-S" pra "A1" (sem weights, =1 pra tudo) e sem o resampler (=None).
+  - Eu tenho que fazer beeem menos rede e variar mais params, pq se não a comparação é totalmente injusta.
+- Então vou fazer redes minúsculas, 3-6-16 x 3-6.  Já tenho dados o suficiente pra nondim anterior, agora vou testar outras... Então faço as nondim 1 a 1 e vejo quais produzem redes boas mesmo com pouquíssimos neurônios.
+  - Ameaçou prestar mas desanda fáciL: XPSV-8x3 tanh L7B LR-E-4_5 wauto-e2-S Lin-UPx1 p8-32-32 35kep lbfgs-0-1 m-
+  - Continua parecendo um problema de sampling, então deveria investir mais nisso, sinceramente...
+- Feito: Já seria bom eu testar uns CRs com pouca variação de volume. Aí pego só umas 3 tipos de rede, vario um pouco a LR e testo 2 nondim
+  - É, ainda tá bem ruim. Mesmo com LJ e muitos pontos e resampling não deu conta.
+  - Feito: implementar treinar primeiro ICs com adam 2k depois tudo como tava antes. Porque o problema de algumas é que usa as ICs erradas (loss IC alto) até o fim e só se ajeita no final, assim também não dá.
+  - Fiz isso e continuou dando em NADA. Alta densidade de pontos, mais de um tipo de nondim, resampling, treino prévio de ICs. Absolutamente nada resolveu. O volume tá ok, são as outras que ele tá indo pra outro ponto de solução, como se fosse (mas sem ser exatamente) uma solução trivial.
+  - Então isso dos pontos muitos já posso remover, deu em NADA.
+  - mESMO REDE 80X3 TAMBÉM NÃO ROLOU
+  - O valor de best loss que ele tá printando sempre é multiplicando só os pesos das ICSs, que foram os primeiros a serem usados, mas não tem nada a ver com o exibido pelo gráfico que são muito mais altos mds. Os do gráfico estão certos, é esse print usando sempre o 1º LW que tá totalmente errado.
+    - Mentira, tá certo. É pq a menor loss, de fato, foi quando treinou só as ICs.
+  - Bom, as redes 30x3 e 80x3 não deram conta então não é um problema meramente de mais neurônios. É uma outra coisa. E que eu não consegui resolver e vai ficar pra próxima, porque tenho que encerrar esse trabalho.
+- A fazer: depois validar novamente resampler e essa estratégia de setar pesos automaticamente
+
+
+-X- aí esses mesmos testes exatamente os mesmos repito pra sem nondim e pra nondim Lin-Upx1 nas redes 8X. tendo os gráficos erro e Lr e HL pras 3 já posso fazer muita conclusão.
+-X- comece fazendo uma figura explicando as etapas de verificação de como funciona o PINN.
+1) Screening => Validar só XPS do batelada. Ver questão da adimensionalização, loss weights e10S vs A1 e besteirol afim.
+2) Volume constante e variando. Validar modelo e predição. É tão fácil que nem compensa comparar formas de adimensionalização, sinceramente. É só pra não questionarem se o volume tá errado mesmo.
+3) Batch XPSV. Foi esse o que fiz por último.
+
+- Terminar esse batch já faça o CR que varia bem pouquinho o volume, pra ver se ao menos ele funciona.
+
 
 ### 2023-10-11
 
