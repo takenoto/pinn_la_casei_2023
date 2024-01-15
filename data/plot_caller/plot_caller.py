@@ -1,4 +1,4 @@
-# python -m data.plot_caller
+# python -m data.plot_caller.plot_caller
 
 import os
 
@@ -20,30 +20,26 @@ def main():
     # Input Directory
     input_folder = get_input_dir()
 
-    # TODO implementar callback
-    # Edit this function to implement variations
-
-    values = [
-        # NL, HL, Loss_test (LoV)
-    ]
-
+    jsons = []
     def callback(json):
-        layer_size = json["solver_params"]["layer_size"]
-        NL = layer_size[1]
-        HL = len(layer_size) - 2
-        loss_test = json["best loss test"]
-        values.append((NL, HL, loss_test))
-
-    json_viewer(callback=callback, folder_path=input_folder)
+        jsons.append(json)
+        
+    loss_test = json["best loss test"]
+    layer_size = json["solver_params"]["layer_size"]
+    NL = layer_size[1]
+    HL = len(layer_size) - 2
+    values.append((NL, HL, loss_test))
     
+    json_viewer(callback=callback, folder_path=input_folder)
+
     print("values")
     print(values)
 
     plot1_output = create_file_output_path(
         filename="Plot1 test.png", file_dir=output_folder
     )
-    
-    # OK, parece que tudo que tenho que fazer é 
+
+    # OK, parece que tudo que tenho que fazer é
     # 1) rodar todos os inputs desejados e agrupar eles de forma a facilitar a obtenção de dados
     # 2) criar estilo dos gráficos na plot 3D
     # Pronto. Então seria uma função pra cada coisa. Uma pra gerar os gráficos de loss, outra loss derivada,
@@ -55,6 +51,11 @@ def main():
 
 def get_input_dir():
     current_directory_path = os.getcwd()
+    # Esses ** fazem com que busque dentro das subpastas
+    return os.path.join(
+        current_directory_path, "data", "plot_caller", "plot_caller_input", "**"
+    )
+    # Se estiver dentro da própria pasta de input, sem subpastas, faça assim:
     return os.path.join(
         current_directory_path, "data", "plot_caller", "plot_caller_input"
     )
