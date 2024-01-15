@@ -152,6 +152,7 @@ def main():
     cr_XPS_flags = [
         # None,  # traditional
         "Xino0",  # zera entrada de X e X0 também.
+        "inX0",  # zera entrada de X mas mantém X0
     ]
     cr_versions = [
         # (V0, Vmax, F_in, F_inE)
@@ -159,7 +160,7 @@ def main():
         # Ex: Fin = 2.5*10^-1 ==> Fin=25 e F_inE = -2 ==> 25E-2
         # ---------------
         # CSTR:
-        # (5, 5, "25", "-2"),
+        (5, 5, "25", "-2"),
         # ---------------
         # CRs:
         # Aumentando muito MUITO lentamente
@@ -328,17 +329,27 @@ def main():
                     elif cr_flag == "Xino0":
                         X_in = 0.0
                         Xo = 0.0
+                    elif cr_flag == "inX0":
+                        X_in = 0.0
 
                     for cr_version in cr_versions:
                         cr_id, V0, Vmax, Fin = cr_get_variables(cr_version)
-
-                        cr_flag_str = ""
+                        #
+                        # Folder Creation
+                        #
                         if cr_flag is not None:
-                            cr_flag_str = f"f-{cr_flag}"
+                            current_test_folder = os.path.join(
+                                mega_reactor_folder, cr_id + f" f-{cr_flag}"
+                            )
 
-                        current_test_folder = os.path.join(
-                            mega_reactor_folder, cr_id + " " + cr_flag_str
-                        )
+                        else:
+                            current_test_folder = os.path.join(
+                                mega_reactor_folder, cr_id
+                            )
+
+                        #
+                        # PARAMS
+                        #
                         process_params = ProcessParams(
                             max_reactor_volume=Vmax * 1.0,
                             inlet=ConcentrationFlow(
