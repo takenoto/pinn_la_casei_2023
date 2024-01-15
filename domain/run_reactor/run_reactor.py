@@ -280,7 +280,7 @@ def run_reactor(
     refactor_loss_to_output_format()
 
     # O número que tentaremos deixar todas as loss próximas escalonando
-    scale_to = lws.settings["scale_to"]
+    scale_to = lws.settings.get("scale_to", None)
     multi_exponent_op = lws.settings.get("multi_exponent_op", 1)
 
     def update_lw_values(loss_history, update_ICs=False):
