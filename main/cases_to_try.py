@@ -61,8 +61,13 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         [
             # Valores fixos
             # (8, 3),
-            (8, 6),
+            # (8, 6),
+            # (20,2),
             (30, 3),
+            # (60, 3),
+            # (8, 6),
+            (40, 4),
+            # (200, 4)
         ]
     )
 
@@ -73,6 +78,12 @@ def change_layer_fix_neurons_number(eq_params, process_params):
     # Testes com blocos facilitam a vida porque basta dizer quais terão
     # Blocos custom:
     NDList = [
+        # TODO new CR test - só adimensionais
+        ("t8", "F1", "Lin", "Lin"),
+        # ("t9", "F1", "Lin", "Lin"),
+        # ("t9", "F1d10", "Lin", "Lin"),
+        # ("t9", "F1x10", "Lin", "Lin"),
+        #-
         # Order:
         # (tscode, scalers_code, input strategy, output strategy)
         # ex: ("t2", "F1", "Lin", "UPx1"),
@@ -82,9 +93,11 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         # CURRENT ITERATION
         # #1 group
         # TODO ficaram faltando esses dois 2 aí:
-        ("t1", "1", "Lin", "Lin"),
-        ("t2", "F1", "Lin", "Lin"),
-        ("t2", "F1d10", "Lin", "Lin"),
+        # ("t2", "F1d10", "Lin", "Lin"),
+        # ("t1", "1", "Lin", "Lin"),
+        # ("t2", "F1", "Lin", "Lin"),
+        #
+        #----------------
         # ("t3", "F1", "Lin", "Lin"),
         #
         # #2 group
@@ -187,6 +200,8 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         # ---------------- var times lin-UPx1
         #
         # F1d10
+        # ("t3", "F1d10", "Lin", "UPx1"),
+        # ("t4", "F1d10", "Lin", "UPx1"),
         # ("t5", "F1d10", "Lin", "UPx1"),
         # ("t6", "F1d10", "Lin", "UPx1"),
         # ("t7", "F1d10", "Lin", "UPx1"),
@@ -267,15 +282,16 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         percent_min_range=[
             0,
         ],  # [0,50] => iria fazer modelos iniciando em 0 e em 50
-        percent_max_range=[10, 15, 45, 50, 60, 100, 200],
+        percent_max_range=[10, 15, 25, 45, 50, 60, 100, 200],
     )
 
     train_input_range_list = [
         # "0-10pa",
-        # "0-15pa",
-        "0-50pa",
+        "0-15pa",
+        "0-25pa",
+        # "0-50pa",
         # "0-60pa",
-        "0-100pa",
+        # "0-100pa",
         # "0-45pa",
         # "0-200pa",
     ]
@@ -286,9 +302,11 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         #
         # --------------------
         # USING:
+        (10, 4000, 32),
+        # (10, 1800, 1800),
         (8, 32, 32),
-        # (40, 1200, 1200),
         # (20, 300, 300),
+        # (40, 1200, 1200),
         # (4, 1200, 1200),
         # (10, 32, 32),
         # (4, 8, 8),
@@ -316,9 +334,11 @@ def change_layer_fix_neurons_number(eq_params, process_params):
     LR_list = [
         # ----------------
         # Minimum
-        "E-3_8",
+        # "E-3_8",
+        "E-3_4",
         "E-3_1",
-        "E-4_5",
+        # "E-4_8",
+        # "E-4_5",
         # "E-4_8",
         #
         # ----------------
@@ -388,7 +408,7 @@ def change_layer_fix_neurons_number(eq_params, process_params):
     # Loss Weight
     loss_weights_list = [
         # "auto-e2-S",
-        # "A1",
+        "A1",
         "autic-e2"
     ]
 

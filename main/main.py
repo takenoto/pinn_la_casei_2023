@@ -151,7 +151,7 @@ def main():
 
     cr_XPS_flags = [
         # None,  # traditional
-        "Xino0",  # zera entrada de X e X0 também.
+        # "Xino0",  # zera entrada de X e X0 também.
         "inX0",  # zera entrada de X mas mantém X0
     ]
     cr_versions = [
@@ -168,7 +168,7 @@ def main():
         # Aumentando muito lentamente
         # (1, 5, "1", "-2"),
         # Normal
-        (1, 5, "25", "-2"),
+        # (1, 5, "25", "-2"),
         # (3, 5, "25", "-2"),
         # Curva suave
         # (4, 5, "5", "-1"),
