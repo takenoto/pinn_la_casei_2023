@@ -25,36 +25,29 @@
 
 ## by date
 
+### 2024-10-17
+
+- TODO Rodar mais experimentos. Pega alguns dos que deram certo e simplesmente "anda pros lados" pra poder expandir. Em um único dia já é pra terminar essa parte e poder ir me preocupar em montar gráficos, analisar e reescrever o trabalho.
+
+### 2024-10-16
+
+- 🆗 Fazer um com vazão mais alta (5e-2 L/s) pra ver como fica. De repente tanto é melhor enquanto processo quanto mais fácil de resolver. 
+  - Ficou bom
+- 🆗 0-15pa já sei que presta, voutestar agora 0-25
+  - Pronto! 0-25 ficou perfeito! Basta simplesmente ver os que se saem melhores e acabou.
+  - Rodei nessa ordem: Loop de fora nondim, loop interno n pontos (p8-32-32 etc). Já roda tudo com A1 x autic2 pra comparar também. Deu 36 por rede. Só vou fazer a rede 30x3 por enquanto mesmo.
+    - nondims: 1 por vez, na ordem que estão. t8 demorou ~70 min. t1 demorou 78min, mas já estava assistindo. t9F1 72 min. t9F1d10 69 minutos e ficou MUITO bom.
+      - Nº pontos, 1 por vez, na ordem em que estão.
+  - OBS: sem nondim já pareceu ter ficado significativamente melhor
+    - t1 => a 40x4 tem um autic vs A1 que fica bem melhor no autic.
+  - Aí depois disso pegar os 2 melhores LRs, o melhor entreu autic e A1, e simplesmente faz várias redes pra ter um gráfico. Pode ser no p8-32-32 pra ser mais rápido.
+
 ### 2024-10-15
 
-- TODO novos resultados: CR com Xin=0 mds
-  - Vou ter que fazer um por x porque são mais de 100 redes
-  - TODO preciso fazer ao menos um modelo com os pesos semi automáticos e um sem pra justificar a aplicação.
-  - A mesma coisa não vale pra inicialização das condições de contorno. Basta eu referenciar o estudo de onde tirei a ideia e pronto. Não precisa esmiuçar tanto a ponto de ficar impossível de entender de tanto detalhe, fica horrível.
-  - Esquece o UPx1 e faz só lin-lin
-  - Dos tempos adimensionais, usar só t8 e t9 até porque t2 e t3 de certa forma são valores aleatórios, porque quem escolhe é a pessoa que vai fazer a simulação. Não é muito *reliable*.
-  - Então vou avaliar basicamente a influência de loss weights (A1 vs autic-e2) e das formas de nondim (f1d10, f1x10, tempos t8 e t9)
-  - TODO olha vai acontecer tudo de novo. É caso demais. É melhor eu tentar uns modelos semi-aleatórios, achar um que funcione e nesse que funcione andar pros lados e fazer o imshow. Então faz modelos mais diferentes mesmo.
-  - FIXME TODO Provavelmente minha melhor alternativa é FAZER POUCOS TESTES MAS COM MUITOS PONTOS (p alto). Aí se der errado deu mas pelo menos não vai ficar dando essas zeradas sem sentido.
-    - TODO !!!! Então vou fixar só 2 LRs, só 2 redes, e ir aumentando os pontos. Fim. Realmente, acho que o segredo vai ser variar LR e ponto até achar um que presete e ir depois achando os que não presta. É minha melhor alternativa. E aí faço então 4k pontos de treino, 45k adam e 2 LRs.
-    - Talvez seja mais rápido eu reduzir o tempo de simulação ao invés de ficar aumentando pontos, que vai resultar do mesmo jeito numa malha mais fininha. Na prática, vou fazer 0-15pa. Se não conseguir nem isso quem dirá o resto.
-    - TODO então só 0-15pa por enquanto.
-      - Isso pode me ajudar, inclusive, a mostrar que o possível problema é esse ponto de inflexão, quem sabe.
-      - Pronto, já teve um que prestou. Então faça 0-15 (que é bem no limite) e 0-25 (que é passando um tanto) pra ver no que dá. Qualquer coisa faça 0-20 depois pra ir vendo exatamente o ponto onde falha. E cheque se realmente é necessário tantos pontos ou é mais a região.
-  - São 4 casos, com t8 e t9:
-  - TODO inprogress 1 fiz 8-32-32
-  - TODO repetir o 1 mas agora com mais pontos. Isso deve ajudar a ter resultados e erros mais coerentes com a realidade e a parar esses desvios loucos.
-  - TODO 2
-  - TODO 3
-  - TODO 4
-  - A versão inicia em V=5 e simplesmente mantém. Pode ser mais fácil de simular??
 - OK ler vários dados no plot_caller a partir de uma pasta e agrupar eles. Eu basicamente copio os json da pasta do batch ou algo do gênero.
-- TODO Agora determina os gráficos que vai querer e cria as funções de juntar as coisas. Por exemplo, juntar todos os dados de erro em forma de grid pro imshow, já separados por HL e NL, etc.
-- TODO Agora sim usar esses dados pra gerar um gráfico com imshow e ver como fica.
-- TODO parar pra pensar e decidir principais gráficos e variáveis de interesse a analisa. Erro x NL x HL? Erro x Etapas adam x NL? Talvez fique interessante pra ver a progressão da redução do erro de forma mais visual, pode ficar bonito. Etc.
-- TODO Também comparar função loss, forma de adimensionalização, etc.
-- TODO Escolher um só e fazer erro vs LR vs adam epochs. Devem sair uns gráficos legais daí também.
-- TODO preciso de versões do CR em que Xo!=0 mas Xin=0!!!! Foi uma das coisas que a Luciana havia pedido.
+- OK agrupar dados
+- Fiz alguns testes com o modelo sugerido pela Luciana (sem Xin, com X0) e ele também ficou bem ruim. Entãoa o invés de tentar tanta marmota vou aumentar os pontos e tentar achar um que preste.
+
 
 ### 2024-10-14
 

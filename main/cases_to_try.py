@@ -79,11 +79,14 @@ def change_layer_fix_neurons_number(eq_params, process_params):
     # Blocos custom:
     NDList = [
         # TODO new CR test - só adimensionais
-        ("t8", "F1", "Lin", "Lin"),
+        # ("t8", "F1", "Lin", "Lin"),
+        # ("t1", "1", "Lin", "Lin"), # pra comparar com as adimensionalizações
         # ("t9", "F1", "Lin", "Lin"),
         # ("t9", "F1d10", "Lin", "Lin"),
         # ("t9", "F1x10", "Lin", "Lin"),
-        #-
+        # ("t8", "F1d10", "Lin", "Lin"), # pra validar se F1d10 é melhor que sem ele
+        # ("t1", "F1d10", "Lin", "Lin"), # pra validar se a adimensionalização do tempo ajudou de alguma forma
+        #----------------------------
         # Order:
         # (tscode, scalers_code, input strategy, output strategy)
         # ex: ("t2", "F1", "Lin", "UPx1"),
@@ -287,7 +290,7 @@ def change_layer_fix_neurons_number(eq_params, process_params):
 
     train_input_range_list = [
         # "0-10pa",
-        "0-15pa",
+        # "0-15pa",
         "0-25pa",
         # "0-50pa",
         # "0-60pa",
@@ -302,9 +305,12 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         #
         # --------------------
         # USING:
-        (10, 4000, 32),
-        # (10, 1800, 1800),
         (8, 32, 32),
+        # (8, 300, 300),
+        # (8, 4000, 32),
+        #------------------
+        # (10, 1800, 1800),
+        # (8, 32, 32),
         # (20, 300, 300),
         # (40, 1200, 1200),
         # (4, 1200, 1200),
@@ -335,23 +341,20 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         # ----------------
         # Minimum
         # "E-3_8",
-        "E-3_4",
-        "E-3_1",
-        # "E-4_8",
-        # "E-4_5",
+        # "E-3_1",
         # "E-4_8",
         #
         # ----------------
         # Default
-        # "E-3_8",
-        # "E-3_7",
-        # "E-3_5",
-        # "E-3_4",
-        # "E-3_3",
-        # "E-3_2",
-        # "E-3_1",
-        # "E-4_8",
-        # "E-4_1",
+        "E-3_8",
+        "E-3_7",
+        "E-3_5",
+        "E-3_4",
+        "E-3_3",
+        "E-3_2",
+        "E-3_1",
+        "E-4_8",
+        "E-4_1",
         # --------------------
         # FULL LIST:
         # --------------------
