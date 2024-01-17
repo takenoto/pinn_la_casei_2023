@@ -25,11 +25,17 @@
 
 ## by date
 
-### 2024-10-17
+### 2024-01-18
 
+- TODO seria bom eu botar esses antigos nuuma pasta a parte só pra ficar bem claro quem é quem? E aí os novos fazia todos pras melhores mas variava NL e HL e coisas do tipo pra fazer os gráficos que ficaram faltando.
 - TODO Rodar mais experimentos. Pega alguns dos que deram certo e simplesmente "anda pros lados" pra poder expandir. Em um único dia já é pra terminar essa parte e poder ir me preocupar em montar gráficos, analisar e reescrever o trabalho.
+- TODO rodar resultados de um dos que deu certo variando pontos de treino, iniciais e teste, pra justificar a escolha de apenas 8x32x32. Posso testar 8-20-60-100 pros iniciais e 8-32-60-100-300 pros pontos de treino e teste.
 
-### 2024-10-16
+### 2024-01-17
+
+- 🆗 pegar mais resultados ainda pra rede 30x3 e 40x4: com t2~t7 e F1d10, pra validar adimensionaliação do tempo.
+
+### 2024-01-16
 
 - 🆗 Fazer um com vazão mais alta (5e-2 L/s) pra ver como fica. De repente tanto é melhor enquanto processo quanto mais fácil de resolver. 
   - Ficou bom
@@ -42,14 +48,14 @@
     - t1 => a 40x4 tem um autic vs A1 que fica bem melhor no autic.
   - Aí depois disso pegar os 2 melhores LRs, o melhor entreu autic e A1, e simplesmente faz várias redes pra ter um gráfico. Pode ser no p8-32-32 pra ser mais rápido.
 
-### 2024-10-15
+### 2024-01-15
 
 - OK ler vários dados no plot_caller a partir de uma pasta e agrupar eles. Eu basicamente copio os json da pasta do batch ou algo do gênero.
 - OK agrupar dados
 - Fiz alguns testes com o modelo sugerido pela Luciana (sem Xin, com X0) e ele também ficou bem ruim. Entãoa o invés de tentar tanta marmota vou aumentar os pontos e tentar achar um que preste.
 
 
-### 2024-10-14
+### 2024-01-14
 
 - Consegui implementar um imshow, já com exemplos e funcionando. Já vai funcionar bem pro que queria. Agora é testar e ver se fica legível com os dados que tenho.
 

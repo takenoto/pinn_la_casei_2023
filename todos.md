@@ -1,13 +1,13 @@
 # Todo List
 
-1) Implemente o heatmap porque talvez precise dele pra exibir os erros mais claramente.
-- Acho que um imshow com blur funcionaria bem. [https://matplotlib.org/stable/gallery/images_contours_and_fields/interpolation_methods.html#sphx-glr-gallery-images-contours-and-fields-interpolation-methods-py]
-- Testar o imshow num exemplo concreto
-2) Faz os gráficos 3D para um exemplo simples de batch. No primeiro caso, vou pegar todos, e printar os erros NLxHL. Só isso.
+1) O CR de vazão maior funcionou. As redes da "primeira passada" foram 30x3 e 40x4, então é só olhar nelas pra pegar os gráficos de LR vs erro por exemplo.
+2) Para cada caso, no trabalho, criar uma tabela com os valores dos scalers nondim já calculados e não só a referência à variável. Algunsdão 18, outros 10, etc, isso pode ser importante também.
 
-- TODO os gráficos batch NÃO ESTÃO MAIS EXIBINDO OS PONTOS DE XPDATA. VOLTAMOS À ESTACA ZERO? SÓ EXIBE OS QUE FORAM USADOS NO ÚLTIMO, É ISSO???
+------------ OLD
+
+- os gráficos batch NÃO ESTÃO MAIS EXIBINDO OS PONTOS DE XPDATA. VOLTAMOS À ESTACA ZERO? SÓ EXIBE OS QUE FORAM USADOS NO ÚLTIMO, É ISSO???
 - e tb pode tirar aquelas loss de bounadery e afins
-- TODO repetir esses testes de cima pra 3, 4, 5, 6, 7, 9, 10 neurônios por camada. Nisso já tenho gráficos pra praticamente tudo.
+- repetir esses testes de cima pra 3, 4, 5, 6, 7, 9, 10 neurônios por camada. Nisso já tenho gráficos pra praticamente tudo.
 Vou ter NL de 3-10 e HL de 1-6
 Acho que ficariam bem bonitos os gráficos XPSV por HL. Tipo pego 8 neurons e ploto em 3D lado a lado os pontos. Sò talvez fique ruim de ler e aí seria melhor o erro?
 

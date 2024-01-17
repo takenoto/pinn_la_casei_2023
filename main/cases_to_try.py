@@ -78,7 +78,13 @@ def change_layer_fix_neurons_number(eq_params, process_params):
     # Testes com blocos facilitam a vida porque basta dizer quais terão
     # Blocos custom:
     NDList = [
-        # TODO new CR test - só adimensionais
+        # new CR test - só adimensionais
+        # ("t2", "F1d10", "Lin", "Lin"),
+        # ("t3", "F1d10", "Lin", "Lin"),
+        # ("t4", "F1d10", "Lin", "Lin"),
+        # ("t5", "F1d10", "Lin", "Lin"),
+        # ("t6", "F1d10", "Lin", "Lin"),
+        # ("t7", "F1d10", "Lin", "Lin"),
         # ("t8", "F1", "Lin", "Lin"),
         # ("t1", "1", "Lin", "Lin"), # pra comparar com as adimensionalizações
         # ("t9", "F1", "Lin", "Lin"),
@@ -86,6 +92,10 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         # ("t9", "F1x10", "Lin", "Lin"),
         # ("t8", "F1d10", "Lin", "Lin"), # pra validar se F1d10 é melhor que sem ele
         # ("t1", "F1d10", "Lin", "Lin"), # pra validar se a adimensionalização do tempo ajudou de alguma forma
+        #----------------------------
+        #----------------------------
+        #----------------------------
+        #----------------------------
         #----------------------------
         # Order:
         # (tscode, scalers_code, input strategy, output strategy)
