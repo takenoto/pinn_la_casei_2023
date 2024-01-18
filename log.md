@@ -27,9 +27,30 @@
 
 ### 2024-01-18
 
-- TODO seria bom eu botar esses antigos nuuma pasta a parte só pra ficar bem claro quem é quem? E aí os novos fazia todos pras melhores mas variava NL e HL e coisas do tipo pra fazer os gráficos que ficaram faltando.
-- TODO Rodar mais experimentos. Pega alguns dos que deram certo e simplesmente "anda pros lados" pra poder expandir. Em um único dia já é pra terminar essa parte e poder ir me preocupar em montar gráficos, analisar e reescrever o trabalho.
+- TODO rodar pra p8-32-32, pra montar gráficos: (deixei redes NL40 e 30 reservadas pros testes primários e fim)
+  - Rodar tempos:
+      - TODO t1-1 (sem nondim) pra comparar a performance em redes minúsculas
+      - TODO t9
+        - TODO uma vez pro wA1, uma pro wAutic, pra poder plotar os 2 e comparar
+      - TODO t6
+      - TODO t7
+      - TODO t8
+    - NL: 4, 10, 20, 35, 60, 80,
+    - HL: 2, 3, 4, 5, 6, 8
+    - LR: 1e-3, que foi a do menor erro: "Lin-t9-F1d10 Lin-t9-F1d1040x4 tanh L7B LR-E-3_1 wautic-e2 Lin-Lin p8-32-32 45kep lbfgs-0-1 m2000 ic-2k"
+    - wautic-e2
+    - F1d10
+    - tempos: t9 (menor erro em um caso), t8, t7 e t6. Tá uma dominância BEM ÓBVIA desses 4 tempos. valores de t_nondim aproximado:
+      - t6 = 3.77
+      - t7 = 12.04
+      - t8 = 18.87
+      - t9 = 10.0
+- TODO a conclusão parece que será a mesma de antes: usar nondim viabiliza uma quantidade maior de redes e de LRs, então supostamente ficaria mais fácil encontrar um bom conjunto de hiperparâmetros simplesmente porque existem mais possibilidades. Algumas redes sem nondim ficam até boas, mas as "do lado" variando só um pouco LR, HL ou NL já ficam péssimas ou dão aquela solução zerada que é ainda pior que uma solução trivial, porque a solução trivial pelo menos é válida.
+- TODO faz gráficos com imshow dessas 5 redes de cima. Não é possível que não saiam umas coisas interessantes.
 - TODO rodar resultados de um dos que deu certo variando pontos de treino, iniciais e teste, pra justificar a escolha de apenas 8x32x32. Posso testar 8-20-60-100 pros iniciais e 8-32-60-100-300 pros pontos de treino e teste.
+
+
+
 
 ### 2024-01-17
 
