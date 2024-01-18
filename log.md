@@ -29,9 +29,10 @@
 
 - TODO rodar pra p8-32-32, pra montar gráficos: (deixei redes NL40 e 30 reservadas pros testes primários e fim)
   - Rodar tempos:
-      - TODO t1-1 (sem nondim) pra comparar a performance em redes minúsculas
-      - TODO t9
-        - TODO uma vez pro wA1, uma pro wAutic, pra poder plotar os 2 e comparar
+      - t1-1 (sem nondim) pra comparar a performance em redes minúsculas : 118.554348555 min
+      - t9 132.62632637333328 min
+        - OK uma vez pro wAutic, pra poder plotar os 2 e comparar
+        - TODO uma vez pro wA1
       - TODO t6
       - TODO t7
       - TODO t8
