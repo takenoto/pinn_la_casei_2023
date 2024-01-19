@@ -83,9 +83,9 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         # new CR test - só adimensionais
         # ("t1", "1", "Lin", "Lin"), # pra comparar com as adimensionalizações
         # ("t9", "F1d10", "Lin", "Lin"),
-        ("t6", "F1d10", "Lin", "Lin"),
         # ("t8", "F1d10", "Lin", "Lin"), # pra validar se F1d10 é melhor que sem ele
-        # ("t7", "F1d10", "Lin", "Lin"),
+        ("t7", "F1d10", "Lin", "Lin"),
+        # ("t6", "F1d10", "Lin", "Lin"),
         #------------------------------
         #------------------------------
         # ("t2", "F1d10", "Lin", "Lin"),

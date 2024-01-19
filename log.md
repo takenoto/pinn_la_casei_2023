@@ -25,7 +25,7 @@
 
 ## by date
 
-### 2024-01-18
+### 2024-01-18 + 2024-01-19
 
 - TODO rodar pra p8-32-32, pra montar gráficos: (deixei redes NL40 e 30 reservadas pros testes primários e fim)
   - Rodar tempos:
@@ -33,14 +33,17 @@
       - t9 132.62632637333328 min
         - OK uma vez pro wAutic, pra poder plotar os 2 e comparar
         - TODO uma vez pro wA1
-      - TODO t6
+      - TODO t8 ~ 112.72365334333332 min
       - TODO t7
-      - TODO t8
+      - TODO t6
+  - t9F1d10 para alta vazão e 0-50pa para ver se funciona com mais tempo || t~95.40187755666666 min
+  - [ABANDONADO] t9F1d10 para o reator de baixa vazão e 0-25pa pra ver se presta
     - NL: 4, 10, 20, 35, 60, 80,
     - HL: 2, 3, 4, 5, 6, 8
     - LR: 1e-3, que foi a do menor erro: "Lin-t9-F1d10 Lin-t9-F1d1040x4 tanh L7B LR-E-3_1 wautic-e2 Lin-Lin p8-32-32 45kep lbfgs-0-1 m2000 ic-2k"
     - wautic-e2
     - F1d10
+    - 0-25pa
     - tempos: t9 (menor erro em um caso), t8, t7 e t6. Tá uma dominância BEM ÓBVIA desses 4 tempos. valores de t_nondim aproximado:
       - t6 = 3.77
       - t7 = 12.04
