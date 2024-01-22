@@ -132,15 +132,15 @@ def main():
     # ----------------------
     # -CHOSE OPERATION MODE-
     # ----------------------
-    reactors_to_run = ["CR"]  # "batch" "fed-batch" "CR"
+    reactors_to_run = ["batch"]  # "batch" "fed-batch" "CR"
 
     batch_versions = [
         # tempo de simulação, Xo, Po, So
         # -----------
         # Original xp time
-        # (10, "Xo", "Po", "So"),
+        (10, "Xo", "Po", "So"),
         # Default 20
-        (20, "Xo", "Po", "So"),
+        # (20, "Xo", "Po", "So"),
         # (40, "Xo", "Po", "So"),
         # -----------
         # Alternatives:
@@ -160,8 +160,8 @@ def main():
         # Ex: Fin = 2.5*10^-1 ==> Fin=25 e F_inE = -2 ==> 25E-2
         # ---------------
         # CSTR:
-        # (5, 5, "25", "-2"),
         (5, 5, "5", "-1"),
+        # (5, 5, "25", "-2"),
         # ---------------
         # CRs:
         # Aumentando muito MUITO lentamente

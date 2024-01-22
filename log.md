@@ -25,7 +25,25 @@
 
 ## by date
 
-### 2024-01-18 + 2024-01-19
+### 2024-01-22
+
+- Rodar o CR t9F1d0 mas variando o npoints ao invés de LR e redes. Faz vários npoins pra 30x3 e 40x4.
+  - p(8, 8, 8)
+  - p(3, 32, 32)
+  - p(8, 32, 32)
+  - p(8, 300, 300)
+  - p(300, 300, 300)
+  - p(8, 1200, 1200)
+- Fazer dados para obter rede somente para a cinética (não tem V como output e V=1!) para 30x3 e 40x4 variando LR
+  - t9F1d0 não pode porque Fin precisa ser != 0
+  - t7F1d0 e t1 sem nondim 52.624265469999955 min
+  - t1F1d0 e t1F1x10  84.85971691000013 min
+  - t8 e t6 F1d10 66.99975563499999 min
+- [EM PROGRESSO] Ilustrações para metodologia
+- TODO faz gráfico com imshow => pontos inicias vs pontos testes e treino vs erro
+- TODO a conclusão parece que será a mesma de antes: usar nondim viabiliza uma quantidade maior de redes e de LRs, então supostamente ficaria mais fácil encontrar um bom conjunto de hiperparâmetros simplesmente porque existem mais possibilidades. Algumas redes sem nondim ficam até boas, mas as "do lado" variando só um pouco LR, HL ou NL já ficam péssimas ou dão aquela solução zerada que é ainda pior que uma solução trivial, porque a solução trivial pelo menos é válida.
+
+### 2024-01-18 + 2024-01-19 + 2024-01-21
 
 - TODO rodar pra p8-32-32, pra montar gráficos: (deixei redes NL40 e 30 reservadas pros testes primários e fim)
   - Rodar tempos:
@@ -33,9 +51,9 @@
       - t9 132.62632637333328 min
         - OK uma vez pro wAutic, pra poder plotar os 2 e comparar
         - TODO uma vez pro wA1
-      - TODO t8 ~ 112.72365334333332 min
-      - TODO t7
-      - TODO t6
+      - t8 ~ 112.72365334333332 min
+      - t7 ~ 117.15610333333328 min
+      - t6 ~ 146.886468555 min
   - t9F1d10 para alta vazão e 0-50pa para ver se funciona com mais tempo || t~95.40187755666666 min
   - [ABANDONADO] t9F1d10 para o reator de baixa vazão e 0-25pa pra ver se presta
     - NL: 4, 10, 20, 35, 60, 80,
@@ -49,12 +67,6 @@
       - t7 = 12.04
       - t8 = 18.87
       - t9 = 10.0
-- TODO a conclusão parece que será a mesma de antes: usar nondim viabiliza uma quantidade maior de redes e de LRs, então supostamente ficaria mais fácil encontrar um bom conjunto de hiperparâmetros simplesmente porque existem mais possibilidades. Algumas redes sem nondim ficam até boas, mas as "do lado" variando só um pouco LR, HL ou NL já ficam péssimas ou dão aquela solução zerada que é ainda pior que uma solução trivial, porque a solução trivial pelo menos é válida.
-- TODO faz gráficos com imshow dessas 5 redes de cima. Não é possível que não saiam umas coisas interessantes.
-- TODO rodar resultados de um dos que deu certo variando pontos de treino, iniciais e teste, pra justificar a escolha de apenas 8x32x32. Posso testar 8-20-60-100 pros iniciais e 8-32-60-100-300 pros pontos de treino e teste.
-
-
-
 
 ### 2024-01-17
 

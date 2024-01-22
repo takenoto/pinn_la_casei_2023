@@ -29,7 +29,7 @@ def change_layer_fix_neurons_number(eq_params, process_params):
     ]
 
     neurons = [
-        4, 10, 20, 35, 60, 80,
+        # 4, 10, 20, 35, 60, 80,
         # 2,
         # 3, 4,
         # 5, 6,
@@ -45,7 +45,7 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         # 100
     ]
     layers = [
-        2, 3, 4, 5, 6, 8,
+        # 2, 3, 4, 5, 6, 8,
         # 1,
         # 2,
         # 3,
@@ -65,10 +65,10 @@ def change_layer_fix_neurons_number(eq_params, process_params):
             # (8, 3),
             # (8, 6),
             # (20,2),
-            # (30, 3),
+            (30, 3),
             # (60, 3),
             # (8, 6),
-            # (40, 4),
+            (40, 4),
             # (200, 4)
         ]
     )
@@ -82,10 +82,13 @@ def change_layer_fix_neurons_number(eq_params, process_params):
     NDList = [
         # new CR test - só adimensionais
         # ("t1", "1", "Lin", "Lin"), # pra comparar com as adimensionalizações
+        # ("t7", "F1d10", "Lin", "Lin"),
+        # ("t1", "1", "Lin", "Lin"),
+        # ("t1", "F1d10", "Lin", "Lin"),
+        # ("t1", "F1x10", "Lin", "Lin"),
+        ("t8", "F1d10", "Lin", "Lin"), # pra validar se F1d10 é melhor que sem ele
+        ("t6", "F1d10", "Lin", "Lin"),
         # ("t9", "F1d10", "Lin", "Lin"),
-        # ("t8", "F1d10", "Lin", "Lin"), # pra validar se F1d10 é melhor que sem ele
-        ("t7", "F1d10", "Lin", "Lin"),
-        # ("t6", "F1d10", "Lin", "Lin"),
         #------------------------------
         #------------------------------
         # ("t2", "F1d10", "Lin", "Lin"),
@@ -280,11 +283,11 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         # ----------------------
         #
         # t => XPSV
-        (["t"], ["X", "P", "S", "V"]),
+        # (["t"], ["X", "P", "S", "V"]),
+        # # t => XPS
+        (["t"], ["X", "P", "S"]),
         # t => V
         # (["t"], ["V"]),
-        # # t => XPS
-        # (["t"], ["X", "P", "S"]),
         # # t, V => XPS
         # (["t", "V"], ["X", "P", "S"]),
     ]
@@ -305,10 +308,10 @@ def change_layer_fix_neurons_number(eq_params, process_params):
     train_input_range_list = [
         # "0-10pa",
         # "0-15pa",
-        "0-25pa",
+        # "0-25pa",
         # "0-50pa",
         # "0-60pa",
-        # "0-100pa",
+        "0-100pa",
         # "0-45pa",
         # "0-200pa",
     ]
@@ -319,9 +322,12 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         #
         # --------------------
         # USING:
+        # (8, 8, 8),
+        # (3, 32, 32),
         (8, 32, 32),
         # (8, 300, 300),
-        # (8, 4000, 32),
+        # (300, 300, 300),
+        # (8, 1200, 1200),
         #------------------
         # (10, 1800, 1800),
         # (8, 32, 32),
@@ -355,20 +361,20 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         # ----------------
         # Minimum
         # "E-3_8",
-        "E-3_1",
+        # "E-3_1",
         # "E-4_8",
         #
         # ----------------
         # Default
-        # "E-3_8",
-        # "E-3_7",
-        # "E-3_5",
-        # "E-3_4",
-        # "E-3_3",
-        # "E-3_2",
-        # "E-3_1",
-        # "E-4_8",
-        # "E-4_1",
+        "E-3_8",
+        "E-3_7",
+        "E-3_5",
+        "E-3_4",
+        "E-3_3",
+        "E-3_2",
+        "E-3_1",
+        "E-4_8",
+        "E-4_1",
         # --------------------
         # FULL LIST:
         # --------------------

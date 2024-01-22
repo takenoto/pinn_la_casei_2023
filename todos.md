@@ -1,5 +1,20 @@
 # Todo List
 
+- TODO Metodologia
+  - TODO começa a corrigir metodologia. Ver coisas que precisam ser traduzidas, novas ilustrações e anota aqui.
+  - TODO tem tanto as sugestões delas quanto o que mudei e preciso anotar lá
+  - TODO refaz aquela figura explicando o PINN na metodologia
+  - Preciso colocar a explicação de como foi feita a otimização da rede
+- TODO Ler todas as anotações deles na lista de TODOs do mestrado e ir colocando aqui as que se aplicam
+- TODO resultados
+- TODO reescrever RESUMO e ver correções delas
+  - TODO reescrever Abstract
+  - TODO verificar gramática EN em pelo menos 3 sites
+- TODO Introdução
+- TODO Objetivos
+
+-----------------------------
+
 1) O CR de vazão maior funcionou. As redes da "primeira passada" foram 30x3 e 40x4, então é só olhar nelas pra pegar os gráficos de LR vs erro por exemplo.
 2) Para cada caso, no trabalho, criar uma tabela com os valores dos scalers nondim já calculados e não só a referência à variável. Algunsdão 18, outros 10, etc, isso pode ser importante também.
 
