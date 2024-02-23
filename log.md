@@ -25,6 +25,14 @@
 
 ## by date
 
+### 2024-02-19
+
+- Iniciar correções da metodologia no arquivo.
+
+### 2024-01-28
+
+- TTODO
+
 ### 2024-01-22
 
 - Rodar o CR t9F1d0 mas variando o npoints ao invés de LR e redes. Faz vários npoins pra 30x3 e 40x4.
