@@ -5,6 +5,9 @@ import os
 
 from data.file_viewer.json_viewer import json_viewer
 
+# Essa segunda parte do or é pra converter valores None pra erros altíssimos
+noneVal = 9999999999900
+
 
 def main():
     current_directory_path = os.getcwd()
@@ -23,7 +26,12 @@ def main():
     jsons = []
 
     def callback(json):
-        jsons.append(json)
+        # Apenas pega os jsons que sejam wAutic
+        if (
+            json["pinn_model"]["params"]["solver_params"]["loss_weights"]["name"]
+            == "autic-e2"
+        ):
+            jsons.append(json)
 
     json_viewer(callback=callback, folder_path=input_folder)
 
@@ -31,10 +39,11 @@ def main():
     def sortJsonByMadError(jsons):
         sortedJsons = sorted(
             jsons,
-            key=lambda json: json["error_MAD"]["X"]
-            + json["error_MAD"]["P"]
-            + json["error_MAD"]["S"]
-            + json["error_MAD"]["V"],
+            key=lambda json: (json["error_MAD"]["X"] or noneVal)
+            + (json["error_MAD"]["P"] or noneVal)
+            + (json["error_MAD"]["S"] or noneVal)
+            + (json["error_MAD"]["V"] or noneVal)
+            ,
             reverse=True,
         )
         return sortedJsons
@@ -42,7 +51,13 @@ def main():
     sortedJsons = sortJsonByMadError(jsons)
     for json in sortedJsons:
         MAD = json["error_MAD"]
-        totalMAD = MAD["X"] + MAD["P"] + MAD["S"] + MAD["V"]
+
+        totalMAD = (
+            (MAD["X"] or noneVal)
+            + (MAD["P"] or noneVal)
+            + (MAD["S"] or noneVal)
+            + (MAD["V"] or noneVal)
+        )
         print(totalMAD)  # Tested and working fine
         print(
             json["pinn_model"]["params"]["solver_params"]["nondim_scaler_input"]["name"]
@@ -95,9 +110,9 @@ def get_input_dir():
         "results",
         "exported",
         "reactor_altiok2006",
-        "CR",
-        "V0-5--Vmax-5--Fin-5E-1 f-inX0",
-        "in_t-out_XPSV tr- 0-25pa Glorot uniform-Hammersley",
+        "batch",
+        "t20-Xo-Po-So",
+        "in_t-out_XPS tr- 0-50pa Glorot uniform-Hammersley",
         "**",
     )
 

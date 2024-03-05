@@ -37,21 +37,21 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         # 8,
         # 9,
         # 10,
-        # 16,
+        16,
         # 30,
-        # 45,
+        45,
         # 64,
-        # 80,
+        80,
         # 100
     ]
     layers = [
         # 2, 3, 4, 5, 6, 8,
         # 1,
-        # 2,
+        2,
         # 3,
-        # 4,
+        4,
         # 5,
-        # 6,
+        6,
     ]
     NLHL_list = [
         # Todos:
@@ -65,10 +65,10 @@ def change_layer_fix_neurons_number(eq_params, process_params):
             # (8, 3),
             # (8, 6),
             # (20,2),
-            (30, 3),
+            # (30, 3),
             # (60, 3),
             # (8, 6),
-            (40, 4),
+            # (40, 4),
             # (200, 4)
         ]
     )
@@ -82,15 +82,26 @@ def change_layer_fix_neurons_number(eq_params, process_params):
     NDList = [
         # new CR test - só adimensionais
         # ("t1", "1", "Lin", "Lin"), # pra comparar com as adimensionalizações
+        # ("t2", "F1", "Lin", "Lin"),
+        # ("t2", "F1d10", "Lin", "Lin"),
+        # ("t2", "F1x10", "Lin", "Lin"),
+        # ("t3", "F1d10", "Lin", "Lin"),
+        # ("t4", "F1d10", "Lin", "Lin"),
+        # ("t5", "F1d10", "Lin", "Lin"),
+        # ("t6", "F1d10", "Lin", "Lin"),
+        ("t7", "F1d10", "Lin", "Lin"),
+        ("t8", "F1d10", "Lin", "Lin"),
+        # ("t9", "F1d10", "Lin", "Lin"),
+        #-----------------------------------
         # ("t7", "F1d10", "Lin", "Lin"),
         # ("t1", "1", "Lin", "Lin"),
         # ("t1", "F1d10", "Lin", "Lin"),
         # ("t1", "F1x10", "Lin", "Lin"),
-        ("t8", "F1d10", "Lin", "Lin"), # pra validar se F1d10 é melhor que sem ele
-        ("t6", "F1d10", "Lin", "Lin"),
+        # ("t8", "F1d10", "Lin", "Lin"),  # pra validar se F1d10 é melhor que sem ele
+        # ("t6", "F1d10", "Lin", "Lin"),
         # ("t9", "F1d10", "Lin", "Lin"),
-        #------------------------------
-        #------------------------------
+        # ------------------------------
+        # ------------------------------
         # ("t2", "F1d10", "Lin", "Lin"),
         # ("t3", "F1d10", "Lin", "Lin"),
         # ("t4", "F1d10", "Lin", "Lin"),
@@ -99,11 +110,11 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         # ("t9", "F1", "Lin", "Lin"),
         # ("t9", "F1x10", "Lin", "Lin"),
         # ("t1", "F1d10", "Lin", "Lin"), # pra validar se a adimensionalização do tempo ajudou de alguma forma
-        #----------------------------
-        #----------------------------
-        #----------------------------
-        #----------------------------
-        #----------------------------
+        # ----------------------------
+        # ----------------------------
+        # ----------------------------
+        # ----------------------------
+        # ----------------------------
         # Order:
         # (tscode, scalers_code, input strategy, output strategy)
         # ex: ("t2", "F1", "Lin", "UPx1"),
@@ -117,7 +128,7 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         # ("t1", "1", "Lin", "Lin"),
         # ("t2", "F1", "Lin", "Lin"),
         #
-        #----------------
+        # ----------------
         # ("t3", "F1", "Lin", "Lin"),
         #
         # #2 group
@@ -275,7 +286,7 @@ def change_layer_fix_neurons_number(eq_params, process_params):
     # "7A-I" e 6 5 4 3 2
     # loss_version_list = ["7A", "7B", "7C", "7D", "7E", "7F", "7G", "7H", "7I"]
     # loss_version_list = ["7B", "7D", "7G", "7J"]
-    loss_version_list = ["7B"] #7B era o padrão
+    loss_version_list = ["7B"]  # 7B era o padrão
 
     input_output_variables_list = [
         # ----------------------
@@ -283,9 +294,9 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         # ----------------------
         #
         # t => XPSV
-        # (["t"], ["X", "P", "S", "V"]),
+        (["t"], ["X", "P", "S", "V"]),
         # # t => XPS
-        (["t"], ["X", "P", "S"]),
+        # (["t"], ["X", "P", "S"]),
         # t => V
         # (["t"], ["V"]),
         # # t, V => XPS
@@ -309,9 +320,9 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         # "0-10pa",
         # "0-15pa",
         # "0-25pa",
-        # "0-50pa",
+        "0-50pa",
         # "0-60pa",
-        "0-100pa",
+        # "0-100pa",
         # "0-45pa",
         # "0-200pa",
     ]
@@ -328,7 +339,7 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         # (8, 300, 300),
         # (300, 300, 300),
         # (8, 1200, 1200),
-        #------------------
+        # ------------------
         # (10, 1800, 1800),
         # (8, 32, 32),
         # (20, 300, 300),
@@ -361,20 +372,20 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         # ----------------
         # Minimum
         # "E-3_8",
-        # "E-3_1",
+        "E-3_1",
         # "E-4_8",
         #
         # ----------------
         # Default
-        "E-3_8",
-        "E-3_7",
-        "E-3_5",
-        "E-3_4",
-        "E-3_3",
-        "E-3_2",
-        "E-3_1",
-        "E-4_8",
-        "E-4_1",
+        # "E-3_8",
+        # "E-3_7",
+        # "E-3_5",
+        # "E-3_4",
+        # "E-3_3",
+        # "E-3_2",
+        # "E-3_1",
+        # "E-4_8",
+        # "E-4_1",
         # --------------------
         # FULL LIST:
         # --------------------
@@ -810,7 +821,7 @@ def loss_weights(name: str):
             }
         # autic são os autos em que faz o cálculo APÓS a otimização inicial se houver
         case "autic-e2":
-            of_type="autic"
+            of_type = "autic"
             settings = {
                 "scale_to": 1e2,
                 "multi_exponent_op": 1 / 2,

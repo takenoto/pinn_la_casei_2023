@@ -138,9 +138,9 @@ def main():
         # tempo de simulação, Xo, Po, So
         # -----------
         # Original xp time
-        (10, "Xo", "Po", "So"),
+        # (10, "Xo", "Po", "So"),
         # Default 20
-        # (20, "Xo", "Po", "So"),
+        (20, "Xo", "Po", "So"),
         # (40, "Xo", "Po", "So"),
         # -----------
         # Alternatives:

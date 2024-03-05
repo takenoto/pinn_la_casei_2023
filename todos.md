@@ -19,37 +19,42 @@ Legenda
       - Fala das configurações padrão quando nada for mencionado
         - ✅ agora é sempre uma mesma loss
         - ✅ falar que tem esse pré treino com 2k iterações!
-        - TODO função de ativação é sempre tanh, isso também deve ficar explícito
-      - Adimensionalização
-        - valores de tS XS etc
+        - ✅ função de ativação é sempre tanh, isso também deve ficar explícito
+      - ✅ Adimensionalização
+        - ✅ valores de tS XS etc
     - 3) Validação / MAD
     - 4) Implementação (Design do PINN, loop, etc)
   - Figuras e explicações boas, simples, diretas. Vou escrever menos, vai ser melhor pra mim, pra quem lê, e menos propenso a erro.
   - ✅ Substituir palavra "scaler" por fator de adimensionalização mesmo.
   - ✅ Luciana pediu para evitar termos em inglês. Por mais que sejam usados na computação, evitar em engenharia. Troca startup por partida e loss por erro, por exemplo. O que serão dos scalers? Chamo de quê?
   - ✅ Acho que boa parte pode ser só explicando o algoritmo, MAD e coisas do gênero. Porque de fato isso é o que foi feito.
-  - TODO começa a corrigir metodologia. Ver coisas que precisam ser traduzidas, novas ilustrações e anota aqui.
-  - TODO tem tanto as sugestões delas quanto o que mudei e preciso anotar lá
-  - TODO refaz aquela figura explicando o PINN na metodologia
-  - Explicar o pq do modelo cinético escolhido
-  - Remover o termo design experimental
-  - Preciso colocar a explicação de como foi feita a otimização da rede
-  - Add fluxograma do algoritmo
-  - Tem horas que parece a sessão de revisão bibliográfica, fica lerdando e escrevendo coisa demais sendo que tem que ser uma desscrição bem direta e explícita do que foi feito e como foi feito.
-  - Reatores são contínuos, e não cstr!
-  - Reduzir termos em inglês
-  - Explicar que o foco não está na rede, mas no procedimento de geração de redes, no impacto da adimensionalização e do escalonamento das variáveis adimensionalizadas
-  - Acho que poderia falar logo dos tempos adimensionais e das estratégias de adimensionalização x10 e d10 também
-  - Deixar mais claro que não é treinado um modelo só para várias predições, mas apenas para uma configuração de reator/processo
-  - Falar que irá investigar a capacidade de extrapolar ao usar tempos de simulação maiores que os do intervalo de treino
+  - ✅ Explicar o pq do modelo cinético escolhido
+  - ✅ Remover o termo design experimental
+  - ✅ Preciso colocar a explicação de como foi feita a otimização da rede
+  - ✅ Add fluxograma do algoritmo
+  - ✅ Tem horas que parece a sessão de revisão bibliográfica, fica lerdando e escrevendo coisa demais sendo que tem que ser uma desscrição bem direta e explícita do que foi feito e como foi feito.
+  - ✅ Reatores são contínuos, e não cstr!
+  - ✅ Reduzir termos em inglês
+  - ✅ Explicar que o foco não está na rede, mas no procedimento de geração de redes, no impacto da adimensionalização e do escalonamento das variáveis adimensionalizadas
+  - ✅ Acho que poderia falar logo dos tempos adimensionais e das estratégias de adimensionalização x10 e d10 também
+  - ✅ Deixar mais claro que não é treinado um modelo só para várias predições, mas apenas para uma configuração de reator/processo
+  - ✅ Falar que irá investigar a capacidade de extrapolar ao usar tempos de simulação maiores que os do intervalo de treino
   - ✅ Listar valores de ts e técnicas x10 e d10 utilizadas
-  - TODO Listar parâmetros de entrada dos reatores
+  - ✅ Listar parâmetros de entrada dos reatores
 
 - TODO Ler todas as anotações deles na lista de TODOs do mestrado e ir colocando aqui as que se aplicam
-- TODO resultados
-  - Separar os resultados em 3 grandes tópicos: cinética de reação, batelada e contínuo.
+- Resultados
+  - ✅ fazer mais testes. Batch, XPS, 20h, 0-50pa, autic, redes 30x3 e 40x4!
+  - TODO falar na metodologia como foram distribuidos os pontos de teste e os pontos de treino.
+    - Agora adicionar testes para LR 1e-3, redes 16,15,80 x 2,4,6
+  - TODO comparando t2 F1d10 e F1, já consigo sugereir que F1d10 é melhor e me prender mais nele. Então os novos testes fazer todos F1d10.
+  - ✅ Separar os resultados em 3 grandes tópicos: cinética de reação, batelada e contínuo.
+  - TODO comparar também se alguma das formas de adimensionalização gerou menos resultados incoerentes (valores < 0)
+  - Começa a escrever pra ver o estilo do que vale mais a pena ser abordado. Veja o texto antigo como exemplo.
+  - Uma vez decidido, veja tipos de gráfico.
   - Comparar as versões t9x10 e t9d10 por exemplo. Revelam muito sobre pra qual lado é melhor escalonar os valores. Compara quantidade de modelos, dentre os treinados, que apresentaram resultados aceitáveis (aí colocar um valor de MAD que seja daí pra baixo como "aceitável")
   - Comparar capacidade de generalização. Vários modelos só foram treinados, por exemplo, em sei lá, 25% do tempo total que foi avaliado, isso pode ser usado pra ver se ajuda ou atrapalhar reduzir o tamanho da amostra. De forma geral mais ajuda que atrapalha.
+  - Acho que vou precisar de pelo menos umas 4 citações pra colocar nos resultados. E não faço ideia do que poderia ser. Talvez só citar que as redes são menores que as encontradas em outros trabalhos porque o sistema é mais simples, mas mesmo assim ele não conseguiu representar o volume variando??
 - TODO reescrever RESUMO e ver correções delas
   - TODO reescrever Abstract
     - "Não tá fluido"

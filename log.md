@@ -25,6 +25,10 @@
 
 ## by date
 
+### 2024-02-20~25
+
+- Escrever metodologia
+
 ### 2024-02-19
 
 - Iniciar correções da metodologia no arquivo.
