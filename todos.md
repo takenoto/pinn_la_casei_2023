@@ -45,10 +45,14 @@ Legenda
 - TODO Ler todas as anotações deles na lista de TODOs do mestrado e ir colocando aqui as que se aplicam
 - Resultados
   - ✅ fazer mais testes. Batch, XPS, 20h, 0-50pa, autic, redes 30x3 e 40x4!
-  - TODO falar na metodologia como foram distribuidos os pontos de teste e os pontos de treino.
+  - ✅ falar na metodologia como foram distribuidos os pontos de teste e os pontos de treino.
     - Agora adicionar testes para LR 1e-3, redes 16,15,80 x 2,4,6
-  - TODO comparando t2 F1d10 e F1, já consigo sugereir que F1d10 é melhor e me prender mais nele. Então os novos testes fazer todos F1d10.
+  - ✅ comparando t2 F1d10 e F1, já consigo sugereir que F1d10 é melhor e me prender mais nele. Então os novos testes fazer todos F1d10.
   - ✅ Separar os resultados em 3 grandes tópicos: cinética de reação, batelada e contínuo.
+  - ✅ FIMXME no gráfico parece que o problema é de alguma forma a HL=2. Não entendo o pq. Sem isso funciona OK. Problema era que eu pegava a len e ela dava a len + 2 pq tem a camada de entrada e a de saída.
+  - ✅ faz gráfico ser o mesmo estilo dos outros
+  - ✅ conferir se os eixos NL e HL estão corretos!
+  - TODO fala que os pontos intermediários foram interpolados por algoritmo gaussiano!
   - TODO comparar também se alguma das formas de adimensionalização gerou menos resultados incoerentes (valores < 0)
   - Começa a escrever pra ver o estilo do que vale mais a pena ser abordado. Veja o texto antigo como exemplo.
   - Uma vez decidido, veja tipos de gráfico.
