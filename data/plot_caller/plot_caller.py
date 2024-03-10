@@ -164,6 +164,7 @@ def _create_ts_plot_heatmap(title, jsons_and_MAD, filename=None):
     for nondim_name in nondim_groups:
         nd_number_order += 1
         data = []
+        average_MAD = 0
         for NL in NLs:
             line_data = []
             for HL in HLs:
@@ -178,9 +179,13 @@ def _create_ts_plot_heatmap(title, jsons_and_MAD, filename=None):
 
                     if pinn_NL == NL and pinn_HL == HL and pinn_ND_name == nondim_name:
                         line_data.append(MAD)
+                        average_MAD += MAD
 
             data.append(line_data)
-
+        average_MAD = average_MAD/(len(NLs)*len(HLs))
+        print(nondim_name)
+        print(average_MAD)
+        
         i = nd_number_order // (n_rows)
         j = nd_number_order % (
             n_rows
