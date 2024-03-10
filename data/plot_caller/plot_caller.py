@@ -87,7 +87,7 @@ def main():
     _create_ts_plot_heatmap(
         title="MAD Modelo Cinético: t_S",
         jsons_and_MAD=jsons_and_MAD_sorted,
-        filename="MAD por ts MODELO CINETICO",
+        filename="MAD por ts REATOR BATCH",
     )
 
     # loss_test = json["best loss test"]
@@ -272,7 +272,7 @@ def get_input_dir():
         "reactor_altiok2006",
         "batch",
         "t20-Xo-Po-So",
-        "in_t-out_XPS tr- 0-50pa Glorot uniform-Hammersley",
+        "in_t-out_XPSV tr- 0-50pa Glorot uniform-Hammersley",
         "**",
     )
 
