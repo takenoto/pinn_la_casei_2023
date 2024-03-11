@@ -132,7 +132,7 @@ def main():
     # ----------------------
     # -CHOSE OPERATION MODE-
     # ----------------------
-    reactors_to_run = ["batch"]  # "batch" "fed-batch" "CR"
+    reactors_to_run = ["CR"]  # "batch" "fed-batch" "CR"
 
     batch_versions = [
         # tempo de simulação, Xo, Po, So

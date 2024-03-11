@@ -87,7 +87,7 @@ def main():
     _create_ts_plot_heatmap(
         title="MAD Modelo Cinético: t_S",
         jsons_and_MAD=jsons_and_MAD_sorted,
-        filename="MAD por ts REATOR BATCH",
+        filename="MAD por ts REATOR CONTINUO CR",
     )
 
     # loss_test = json["best loss test"]
@@ -132,7 +132,7 @@ def _create_ts_plot_heatmap(title, jsons_and_MAD, filename=None):
     nondim_groups = [
         "Lin-t1-1",
         "Lin-t2-F1",
-        "Lin-t2-F1x10",
+        # "Lin-t2-F1x10",
         "Lin-t2-F1d10",
         "Lin-t3-F1d10",
         "Lin-t4-F1d10",
@@ -140,10 +140,12 @@ def _create_ts_plot_heatmap(title, jsons_and_MAD, filename=None):
         "Lin-t6-F1d10",
         "Lin-t7-F1d10",
         "Lin-t8-F1d10",
+        "Lin-t9-F1d10",
     ]
 
-    NLs = [80, 45, 16]
-    HLs = [2, 4, 6]
+    # NLs = [80, 45, 16]
+    NLs = [80, 60, 35, 20, 10]
+    HLs = [2, 4, 6, 8]
 
     n_rows = 2
     n_cols = 5
@@ -161,6 +163,8 @@ def _create_ts_plot_heatmap(title, jsons_and_MAD, filename=None):
     images = []
     # Inicializado em -1 pra começar em 0 com a atualização logo no começo
     nd_number_order = -1
+    # Útil para conseguir os valores max e min:
+    all_data = []
     for nondim_name in nondim_groups:
         nd_number_order += 1
         data = []
@@ -179,12 +183,14 @@ def _create_ts_plot_heatmap(title, jsons_and_MAD, filename=None):
 
                     if pinn_NL == NL and pinn_HL == HL and pinn_ND_name == nondim_name:
                         line_data.append(MAD)
+                        all_data.append(MAD)
                         average_MAD += MAD
 
             data.append(line_data)
         average_MAD = average_MAD/(len(NLs)*len(HLs))
-        print(nondim_name)
+        print(f"{nondim_name} || len = {len(line_data)}")
         print(average_MAD)
+        print(data)
         
         i = nd_number_order // (n_rows)
         j = nd_number_order % (
@@ -216,8 +222,10 @@ def _create_ts_plot_heatmap(title, jsons_and_MAD, filename=None):
     # plt.pcolor(x, y, z, cmap="RdBu", vmin=minMAD, vmax=maxMAD)
 
     # Find the min and max of all colors for use in setting the color scale.
-    vmin = min(image.get_array().min() for image in images)
-    vmax = max(image.get_array().max() for image in images)
+    # vmin = min(image.get_array().min() for image in images)
+    vmin = np.min(all_data)
+    # vmax = max(image.get_array().max() for image in images)
+    vmax = np.max(all_data)
     norm = colors.Normalize(vmin=vmin, vmax=vmax)
     for im in images:
         im.set_norm(norm)
@@ -275,9 +283,9 @@ def get_input_dir():
         "results",
         "exported",
         "reactor_altiok2006",
-        "batch",
-        "t20-Xo-Po-So",
-        "in_t-out_XPSV tr- 0-50pa Glorot uniform-Hammersley",
+        "CR",
+        "V0-5--Vmax-5--Fin-5E-1 f-inX0",
+        "in_t-out_XPSV tr- 0-25pa Glorot uniform-Hammersley",
         "**",
     )
 

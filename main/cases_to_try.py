@@ -37,21 +37,25 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         # 8,
         # 9,
         # 10,
-        16,
+        # 16,
         # 30,
-        45,
+        # 45,
         # 64,
-        80,
+        # 80,
         # 100
+        # CR que faltou
+        10, 20, 35,
+        # 60, 80
     ]
     layers = [
+        2, 4, 6, 8,
         # 2, 3, 4, 5, 6, 8,
         # 1,
-        2,
+        # 2,
         # 3,
-        4,
+        # 4,
         # 5,
-        6,
+        # 6,
     ]
     NLHL_list = [
         # Todos:
@@ -80,6 +84,13 @@ def change_layer_fix_neurons_number(eq_params, process_params):
     # Testes com blocos facilitam a vida porque basta dizer quais terão
     # Blocos custom:
     NDList = [
+        # CR - os que faltaram
+        ("t2", "F1", "Lin", "Lin"),
+        # ("t2", "F1d10", "Lin", "Lin"),
+        # ("t3", "F1d10", "Lin", "Lin"),
+        # ("t4", "F1d10", "Lin", "Lin"),
+        # ("t5", "F1d10", "Lin", "Lin"),
+        #-------------
         # new CR test - só adimensionais
         # ("t1", "1", "Lin", "Lin"), # pra comparar com as adimensionalizações
         # ("t2", "F1", "Lin", "Lin"),
@@ -89,8 +100,8 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         # ("t4", "F1d10", "Lin", "Lin"),
         # ("t5", "F1d10", "Lin", "Lin"),
         # ("t6", "F1d10", "Lin", "Lin"),
-        ("t7", "F1d10", "Lin", "Lin"),
-        ("t8", "F1d10", "Lin", "Lin"),
+        # ("t7", "F1d10", "Lin", "Lin"),
+        # ("t8", "F1d10", "Lin", "Lin"),
         # ("t9", "F1d10", "Lin", "Lin"),
         #-----------------------------------
         # ("t7", "F1d10", "Lin", "Lin"),
@@ -319,8 +330,8 @@ def change_layer_fix_neurons_number(eq_params, process_params):
     train_input_range_list = [
         # "0-10pa",
         # "0-15pa",
-        # "0-25pa",
-        "0-50pa",
+        "0-25pa",
+        # "0-50pa",
         # "0-60pa",
         # "0-100pa",
         # "0-45pa",
