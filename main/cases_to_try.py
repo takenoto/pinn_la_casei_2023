@@ -44,8 +44,8 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         # 80,
         # 100
         # CR que faltou
-        10, 20, 35,
-        # 60, 80
+        # 10, 20, 35,
+        60, 80
     ]
     layers = [
         2, 4, 6, 8,
@@ -85,11 +85,16 @@ def change_layer_fix_neurons_number(eq_params, process_params):
     # Blocos custom:
     NDList = [
         # CR - os que faltaram
-        ("t2", "F1", "Lin", "Lin"),
+        ("t1", "1", "Lin", "Lin"),
+        # ("t2", "F1", "Lin", "Lin"),
         # ("t2", "F1d10", "Lin", "Lin"),
         # ("t3", "F1d10", "Lin", "Lin"),
         # ("t4", "F1d10", "Lin", "Lin"),
         # ("t5", "F1d10", "Lin", "Lin"),
+        # ("t6", "F1d10", "Lin", "Lin"),
+        # ("t7", "F1d10", "Lin", "Lin"),
+        # ("t8", "F1d10", "Lin", "Lin"),
+        # ("t9", "F1d10", "Lin", "Lin"),
         #-------------
         # new CR test - só adimensionais
         # ("t1", "1", "Lin", "Lin"), # pra comparar com as adimensionalizações
@@ -324,13 +329,14 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         percent_min_range=[
             0,
         ],  # [0,50] => iria fazer modelos iniciando em 0 e em 50
-        percent_max_range=[10, 15, 25, 45, 50, 60, 100, 200],
+        percent_max_range=[10, 15, 25, 35, 45, 50, 60, 100, 200],
     )
 
     train_input_range_list = [
         # "0-10pa",
         # "0-15pa",
-        "0-25pa",
+        # "0-25pa",
+        "0-35pa",
         # "0-50pa",
         # "0-60pa",
         # "0-100pa",

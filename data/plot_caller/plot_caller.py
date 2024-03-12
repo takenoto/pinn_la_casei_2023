@@ -190,7 +190,7 @@ def _create_ts_plot_heatmap(title, jsons_and_MAD, filename=None):
         average_MAD = average_MAD/(len(NLs)*len(HLs))
         print(f"{nondim_name} || len = {len(line_data)}")
         print(average_MAD)
-        print(data)
+        # print(data)
         
         i = nd_number_order // (n_rows)
         j = nd_number_order % (
@@ -209,6 +209,7 @@ def _create_ts_plot_heatmap(title, jsons_and_MAD, filename=None):
                 # Aspect faz com que não fique uma coisa meio estreita pq os valores são muito diferentes entre os eixos
                 aspect="auto",
                 # Color // RdBu  coolwarm
+                # cmap="RdBu_r",
                 cmap="RdBu_r",
             )
         )
