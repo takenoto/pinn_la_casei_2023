@@ -85,7 +85,7 @@ def change_layer_fix_neurons_number(eq_params, process_params):
     # Blocos custom:
     NDList = [
         # CR - os que faltaram
-        ("t1", "1", "Lin", "Lin"),
+        # ("t1", "1", "Lin", "Lin"),
         # ("t2", "F1", "Lin", "Lin"),
         # ("t2", "F1d10", "Lin", "Lin"),
         # ("t3", "F1d10", "Lin", "Lin"),
@@ -94,7 +94,7 @@ def change_layer_fix_neurons_number(eq_params, process_params):
         # ("t6", "F1d10", "Lin", "Lin"),
         # ("t7", "F1d10", "Lin", "Lin"),
         # ("t8", "F1d10", "Lin", "Lin"),
-        # ("t9", "F1d10", "Lin", "Lin"),
+        ("t9", "F1d10", "Lin", "Lin"),
         #-------------
         # new CR test - só adimensionais
         # ("t1", "1", "Lin", "Lin"), # pra comparar com as adimensionalizações
