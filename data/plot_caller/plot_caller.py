@@ -85,9 +85,9 @@ def main():
     print("{} jsons analisados".format(len(jsons_and_MAD_sorted)))
 
     _create_ts_plot_heatmap(
-        title="MAD Modelo CR1: t_S",
+        title="MAD Modelo CR5: t_S",
         jsons_and_MAD=jsons_and_MAD_sorted,
-        filename="MAD por ts REATOR CONTINUO CR1",
+        filename="MAD por ts REATOR CONTINUO CR5",
     )
 
     # loss_test = json["best loss test"]
@@ -286,12 +286,12 @@ def get_input_dir():
         "reactor_altiok2006",
         "CR",
         # CR 5:
-        # "V0-5--Vmax-5--Fin-5E-1 f-inX0",
-        # "in_t-out_XPSV tr- 0-25pa Glorot uniform-Hammersley",
+        "V0-5--Vmax-5--Fin-5E-1 f-inX0",
+        "in_t-out_XPSV tr- 0-25pa Glorot uniform-Hammersley",
         #----------
         # CR 1:
-        "V0-1--Vmax-5--Fin-5E-1 f-inX0",
-        "in_t-out_XPSV tr- 0-35pa Glorot uniform-Hammersley",
+        # "V0-1--Vmax-5--Fin-5E-1 f-inX0",
+        # "in_t-out_XPSV tr- 0-35pa Glorot uniform-Hammersley",
         "**",
     )
 
