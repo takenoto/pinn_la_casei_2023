@@ -59,7 +59,8 @@ Legenda
   - Comparar as versões t9x10 e t9d10 por exemplo. Revelam muito sobre pra qual lado é melhor escalonar os valores. Compara quantidade de modelos, dentre os treinados, que apresentaram resultados aceitáveis (aí colocar um valor de MAD que seja daí pra baixo como "aceitável")
   - Comparar capacidade de generalização. Vários modelos só foram treinados, por exemplo, em sei lá, 25% do tempo total que foi avaliado, isso pode ser usado pra ver se ajuda ou atrapalhar reduzir o tamanho da amostra. De forma geral mais ajuda que atrapalha.
   - Acho que vou precisar de pelo menos umas 4 citações pra colocar nos resultados. E não faço ideia do que poderia ser. Talvez só citar que as redes são menores que as encontradas em outros trabalhos porque o sistema é mais simples, mas mesmo assim ele não conseguiu representar o volume variando??
-- TODO reescrever RESUMO e ver correções delas
+- TODO reescrever RESUMO e ver correções delas. Tá andado.
+- TODO ver #TODOs
   - TODO reescrever Abstract
     - "Não tá fluido"
     - "Tá difícil encadear o texto, conectar um pedaço ao próximo"
@@ -72,6 +73,7 @@ Legenda
 - TODO recriar/atualizar índices, páginas, BIBLIOGRAFIA ZOTERO, etc
 - TODO Última checagem
 - TODO Enviar FIM
+- TODO tornar projeto privado
 
 -----------------------------
 
