@@ -4,7 +4,7 @@ Legenda
 - ✅ Feito
 - ❌ Removido ou abandonado
 
-- TODO Metodologia
+- ✅ Metodologia
   - ✅ justificar a escolha da cinética empregada
   - ✅ Ver onde tá o erro daquele X da equação que foi adimensionalizada pg 80
   - ✅ Resumir essa parte dos PINNs, é só metodologia, é pra ser bem mais simples pelo amor. Precisa ser claro e sucinto.
@@ -52,8 +52,8 @@ Legenda
   - ✅ FIMXME no gráfico parece que o problema é de alguma forma a HL=2. Não entendo o pq. Sem isso funciona OK. Problema era que eu pegava a len e ela dava a len + 2 pq tem a camada de entrada e a de saída.
   - ✅ faz gráfico ser o mesmo estilo dos outros
   - ✅ conferir se os eixos NL e HL estão corretos!
-  - TODO fala que os pontos intermediários foram interpolados por algoritmo gaussiano!
-  - TODO comparar também se alguma das formas de adimensionalização gerou menos resultados incoerentes (valores < 0)
+  - ✅ fala que os pontos intermediários foram interpolados por algoritmo gaussiano!
+  - ✅ comparar também se alguma das formas de adimensionalização gerou menos resultados incoerentes (valores < 0)
   - Começa a escrever pra ver o estilo do que vale mais a pena ser abordado. Veja o texto antigo como exemplo.
   - Uma vez decidido, veja tipos de gráfico.
   - Comparar as versões t9x10 e t9d10 por exemplo. Revelam muito sobre pra qual lado é melhor escalonar os valores. Compara quantidade de modelos, dentre os treinados, que apresentaram resultados aceitáveis (aí colocar um valor de MAD que seja daí pra baixo como "aceitável")
@@ -65,8 +65,13 @@ Legenda
     - "Tá difícil encadear o texto, conectar um pedaço ao próximo"
   - TODO verificar gramática EN em pelo menos 3 sites
 - TODO Introdução
-- TODO Objetivos
-- TODO recriar/atualizar índices, páginas, etc
+- ✅ Objetivos
+- TODO Anotações luciana
+- TODO Anotações Andrea
+- TODO Tem anotações ivanildo e amaro?
+- TODO recriar/atualizar índices, páginas, BIBLIOGRAFIA ZOTERO, etc
+- TODO Última checagem
+- TODO Enviar FIM
 
 -----------------------------
 
