@@ -1,0 +1,17 @@
+1) ==> TODO talvez eu possa fazer o gráfico só com o escalonamento simples? Tipo os 4 primeiros, sem, com, x10 e d10. E mostra que o d10 é melhor. Então:
+1) Pega a imagem de MAD pro batch e edita pra ter só os 4 primeiros. Mude os nomes pra "Dimensional", "nondimensional", x10 e d10.
+2) Bota no trabalho e veja se o tamanho dá pra ver e não ocupa tanto espaço. De repente funciona ou boto na hoizontal os 4?
+3) Daí tira a tabela do tempo, porque agora o fator de nondim vai ser só t_sim mesmo.
+4) Faz as adaptações da 2 figura, incluindo a nova legenda
+5) Aí pronto é só encerrar. Não deve ter mais nada pra fazer não oxe.
+
+2) Faz nomes dos autores usando o template daquele artigo antigo.
+3) FAZER REFERÊNCIA CONFORME TÁ LÁ. Por enquanto usei um formato pronto que é relativamente parecido.
+3.1) Checar com  o doc original se número de palavras e afins tá certo
+3.2) sync no vscode
+
+4) Pergunta pro allisson da formatação de referência e afins
+
+5) faz img mãe
+
+6) faz vídeo mãe
