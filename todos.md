@@ -8,6 +8,7 @@ Legenda
 - TODO reler docs do DEQ. O que precisa fazer pra dissertação, duração, etc. Listar aqui.
 - TODO slides
 - TODO ensaiar slides e ajustar tempo
+- TODO tabela 3 DE NOVO ZEROU OS VALORES WTF
 - TODO revisão comentários Amaro
 - TODO revisão comentários Banca
 - TODO o que precisa fazer mais pra encerrar o mestrado? Listar aqui
