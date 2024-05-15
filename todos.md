@@ -4,6 +4,16 @@ Legenda
 - ✅ Feito
 - ❌ Removido ou abandonado
 
+*DISSERTAÇÃO - PÓS-DEFESA*
+- TODO reler docs do DEQ. O que precisa fazer pra dissertação, duração, etc. Listar aqui.
+- TODO slides
+- TODO ensaiar slides e ajustar tempo
+- TODO revisão comentários Amaro
+- TODO revisão comentários Banca
+- TODO o que precisa fazer mais pra encerrar o mestrado? Listar aqui
+
+------------------------
+*DISSERTAÇÃO - PRÉVIA*
 - ✅ Metodologia
   - ✅ justificar a escolha da cinética empregada
   - ✅ Ver onde tá o erro daquele X da equação que foi adimensionalizada pg 80
@@ -42,7 +52,7 @@ Legenda
   - ✅ Listar valores de ts e técnicas x10 e d10 utilizadas
   - ✅ Listar parâmetros de entrada dos reatores
 
-- TODO Ler todas as anotações deles na lista de TODOs do mestrado e ir colocando aqui as que se aplicam
+-  ✅ Ler todas as anotações deles na lista de TODOs do mestrado e ir colocando aqui as que se aplicam
 - Resultados
   - ✅ fazer mais testes. Batch, XPS, 20h, 0-50pa, autic, redes 30x3 e 40x4!
   - ✅ falar na metodologia como foram distribuidos os pontos de teste e os pontos de treino.
@@ -59,21 +69,21 @@ Legenda
   - Comparar as versões t9x10 e t9d10 por exemplo. Revelam muito sobre pra qual lado é melhor escalonar os valores. Compara quantidade de modelos, dentre os treinados, que apresentaram resultados aceitáveis (aí colocar um valor de MAD que seja daí pra baixo como "aceitável")
   - Comparar capacidade de generalização. Vários modelos só foram treinados, por exemplo, em sei lá, 25% do tempo total que foi avaliado, isso pode ser usado pra ver se ajuda ou atrapalhar reduzir o tamanho da amostra. De forma geral mais ajuda que atrapalha.
   - Acho que vou precisar de pelo menos umas 4 citações pra colocar nos resultados. E não faço ideia do que poderia ser. Talvez só citar que as redes são menores que as encontradas em outros trabalhos porque o sistema é mais simples, mas mesmo assim ele não conseguiu representar o volume variando??
-- TODO reescrever RESUMO e ver correções delas. Tá andado.
-- TODO ver #TODOs
-  - TODO reescrever Abstract
+-  ✅ reescrever RESUMO e ver correções delas. Tá andado.
+-  ✅ ver TODOs
+  -  ✅ reescrever Abstract
     - "Não tá fluido"
     - "Tá difícil encadear o texto, conectar um pedaço ao próximo"
-  - TODO verificar gramática EN em pelo menos 3 sites
-- TODO Introdução
+  -  ✅ verificar gramática EN em pelo menos 3 sites
+-  ✅ Introdução
 - ✅ Objetivos
-- TODO Anotações luciana
-- TODO Anotações Andrea
-- TODO Tem anotações ivanildo e amaro?
-- TODO recriar/atualizar índices, páginas, BIBLIOGRAFIA ZOTERO, etc
-- TODO Última checagem
-- TODO Enviar FIM
-- TODO tornar projeto privado
+-  ✅ Anotações luciana
+-  ✅ Anotações Andrea
+-  ✅ Tem anotações ivanildo e amaro?
+-  ✅ recriar/atualizar índices, páginas, BIBLIOGRAFIA ZOTERO, etc
+-  ✅ Última checagem
+-  ✅ Enviar FIM
+-  ✅ tornar projeto privado
 
 -----------------------------
 
