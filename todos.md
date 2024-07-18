@@ -5,13 +5,16 @@ Legenda
 - ❌ Removido ou abandonado
 
 *DISSERTAÇÃO - PÓS-DEFESA*
-- TODO reler docs do DEQ. O que precisa fazer pra dissertação, duração, etc. Listar aqui.
-- TODO slides
-- TODO ensaiar slides e ajustar tempo
+- TODO converter Gráfico => Figura
+  - ✅ 1º gráfico 1 pra ver se dá certo e se consigo manter o processo. Talvez possa simplesmente inserir legenda > ocultar a antiga e refazer a referência. Funcionou. É só copiar Figura [num_libreoffice] e colar por cima, depois refazer a cross-reference.
+  - ( ) Checar por erros de referência
+  - ( ) ctrl+F => Gráfico
+  - ( ) Atualiza sumário de gráfico pra ver se sumiu todos
+  - ( ) Apagar sumário de gráficos
 - TODO tabela 3 DE NOVO ZEROU OS VALORES WTF
 - TODO revisão comentários Amaro
 - TODO revisão comentários Banca
-- TODO o que precisa fazer mais pra encerrar o mestrado? Listar aqui
+- TODO email DEQ
 
 ------------------------
 *DISSERTAÇÃO - PRÉVIA*
