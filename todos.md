@@ -7,10 +7,12 @@ Legenda
 *DISSERTAÇÃO - PÓS-DEFESA*
 - TODO converter Gráfico => Figura
   - ✅ 1º gráfico 1 pra ver se dá certo e se consigo manter o processo. Talvez possa simplesmente inserir legenda > ocultar a antiga e refazer a referência. Funcionou. É só copiar Figura [num_libreoffice] e colar por cima, depois refazer a cross-reference.
-  - ( ) Checar por erros de referência
-  - ( ) ctrl+F => Gráfico
-  - ( ) Atualiza sumário de gráfico pra ver se sumiu todos
-  - ( ) Apagar sumário de gráficos
+    - Batelada e Cinético OK
+    - ✅ contínuos
+    - ✅ ctrl+F => Gráfico
+    - ✅ Atualiza sumário de gráfico pra ver se sumiu todos
+    - ✅ Apagar sumário de gráficos
+    - ( ) Checar por erros de referência
 - TODO tabela 3 DE NOVO ZEROU OS VALORES WTF
 - TODO revisão comentários Amaro
 - TODO revisão comentários Banca
