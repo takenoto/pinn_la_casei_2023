@@ -13,9 +13,11 @@ Legenda
     - ✅ Atualiza sumário de gráfico pra ver se sumiu todos
     - ✅ Apagar sumário de gráficos
     - ( ) Checar por erros de referência
+  - ✅ Renomear MODELO CINÉTICO para modelo SEM PREDIÇÃO DE VOLUME (SPV)
 - TODO tabela 3 DE NOVO ZEROU OS VALORES WTF
 - TODO revisão comentários Amaro
 - TODO revisão comentários Banca
+- TODO correção da equação ali perto do reator???
 - TODO email DEQ
 
 ------------------------
