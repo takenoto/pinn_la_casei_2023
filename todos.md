@@ -14,12 +14,13 @@ Legenda
     - ✅ Apagar sumário de gráficos
     - ( ) Checar por erros de referência
   - ✅ Renomear MODELO CINÉTICO para modelo SEM PREDIÇÃO DE VOLUME (SPV)
-  - Correções Andrea: pg 17/135
+  - Correções Andrea: pg 49(53)/135
 - TODO tabela 3 DE NOVO ZEROU OS VALORES WTF
 - TODO revisão comentários Amaro
 - TODO revisão comentários Banca
 - TODO correção da equação ali perto do reator???
 - TODO email DEQ
+- TODO rever se as figuras e tabelas não ficaram desencontradas de novo
 
 ------------------------
 *DISSERTAÇÃO - PRÉVIA*
