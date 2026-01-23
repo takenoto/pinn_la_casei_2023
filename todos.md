@@ -15,13 +15,18 @@ Legenda
     - ( ) Checar por erros de referência
   - ✅ Renomear MODELO CINÉTICO para modelo SEM PREDIÇÃO DE VOLUME (SPV)
   - Correções Andrea: pg 84(88)/135
-    - ( ) Pg49 fluxograma
-    - ( ) Pular uma linha depois de todas as equações
-    - ( ) Pg55 ela marcou mas tá certo. É a derivada do gradient descent não do sistema simulado
-    - ( ) Pg 56 e 57 talvez retirar tópicos
+    - (❌) Pg49 fluxograma
+    - ✅ Pular uma linha depois de todas as equações
+    - (❌) Pg55 ela marcou mas tá certo. É a derivada do gradient descent não do sistema simulado
+    - ❌ Pg 56 e 57 talvez retirar tópicos
     - ( ) Pg70 ????
     - ( ) Pg 79 tirar g Lactose e botar só "g" ???
     - ( ) Pg 83 ela quer algoritmo???? Mas esse é o algoritmo da rede neural, não do meu programa ?????????????? pq eu faria figura disso?
+    - ✅ A andreia tem alguns questionamentos e sugestões nos resultados, mas o amaro aprovou praticamente tudo. Então é melhor nessa parte eu seguir por ele que tem mais experiência e a validação vale mais.
+    - ✅ Tabela de erros médios do SPV
+    - ✅ Atualizar todos os índices
+    - ✅ Exportar
+      - ✅ Verificar se tabelas não zeraram
 
 - TODO tabela 3 DE NOVO ZEROU OS VALORES WTF
 - TODO revisão comentários Amaro

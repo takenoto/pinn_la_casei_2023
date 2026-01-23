@@ -132,7 +132,7 @@ def _create_ts_plot_heatmap(title, jsons_and_MAD, filename=None):
     nondim_groups = [
         "Lin-t1-1",
         "Lin-t2-F1",
-        # "Lin-t2-F1x10",
+        "Lin-t2-F1x10",
         "Lin-t2-F1d10",
         "Lin-t3-F1d10",
         "Lin-t4-F1d10",
@@ -140,11 +140,13 @@ def _create_ts_plot_heatmap(title, jsons_and_MAD, filename=None):
         "Lin-t6-F1d10",
         "Lin-t7-F1d10",
         "Lin-t8-F1d10",
-        "Lin-t9-F1d10",
+        # "Lin-t9-F1d10",
     ]
 
-    # NLs = [80, 45, 16]
-    NLs = [80, 60, 35, 20, 10]
+    # SPV:
+    NLs = [80, 45, 16]
+    # Outros:
+    # NLs = [80, 60, 35, 20, 10]
     HLs = [2, 4, 6, 8]
 
     n_rows = 2
@@ -191,34 +193,34 @@ def _create_ts_plot_heatmap(title, jsons_and_MAD, filename=None):
         print(f"{nondim_name} || len = {len(line_data)}")
         print(average_MAD)
         # print(data)
-        
-        i = nd_number_order // (n_rows)
-        j = nd_number_order % (
-            n_rows
-        )  # barras duplas é a syntaxe pra "floor division"
-  
-        ax = axs[i, j]
-        images.append(
-            ax.imshow(
-                data,
-                # Tipo de desfoque aplicado
-                interpolation="gaussian",
-                # Limites de fundo e topo
-                # Fica desse jeito pq a imagem é construída é de baixo pra cima  e da esquerda pra direita
-                extent=(HLs[0], HLs[-1], NLs[-1], NLs[0]),
-                # Aspect faz com que não fique uma coisa meio estreita pq os valores são muito diferentes entre os eixos
-                aspect="auto",
-                # Color // RdBu  coolwarm
-                # cmap="RdBu_r",
-                cmap="RdBu_r",
+        if(False):
+            i = nd_number_order // (n_rows)
+            j = nd_number_order % (
+                n_rows
+            )  # barras duplas é a syntaxe pra "floor division"
+    
+            ax = axs[i, j]
+            images.append(
+                ax.imshow(
+                    data,
+                    # Tipo de desfoque aplicado
+                    interpolation="gaussian",
+                    # Limites de fundo e topo
+                    # Fica desse jeito pq a imagem é construída é de baixo pra cima  e da esquerda pra direita
+                    extent=(HLs[0], HLs[-1], NLs[-1], NLs[0]),
+                    # Aspect faz com que não fique uma coisa meio estreita pq os valores são muito diferentes entre os eixos
+                    aspect="auto",
+                    # Color // RdBu  coolwarm
+                    # cmap="RdBu_r",
+                    cmap="RdBu_r",
+                )
             )
-        )
-        ax.set_xticks(HLs)
+            ax.set_xticks(HLs)
 
-        ax.set_yticks(NLs)
-        ax.label_outer()
-        # É do 4 em diante pra excluir a parte "Lin-"
-        ax.set_title(nondim_name[4:])
+            ax.set_yticks(NLs)
+            ax.label_outer()
+            # É do 4 em diante pra excluir a parte "Lin-"
+            ax.set_title(nondim_name[4:])
 
     # plt.pcolor(x, y, z, cmap="RdBu", vmin=minMAD, vmax=maxMAD)
 
@@ -284,10 +286,14 @@ def get_input_dir():
         "results",
         "exported",
         "reactor_altiok2006",
-        "CR",
+        "batch",
+        "t20-Xo-Po-So",
+        "in_t-out_XPS tr- 0-50pa Glorot uniform-Hammersley",
+        #---------
+        # "CR",
         # CR 5:
-        "V0-5--Vmax-5--Fin-5E-1 f-inX0",
-        "in_t-out_XPSV tr- 0-25pa Glorot uniform-Hammersley",
+        # "V0-5--Vmax-5--Fin-5E-1 f-inX0",
+        # "in_t-out_XPSV tr- 0-25pa Glorot uniform-Hammersley",
         #----------
         # CR 1:
         # "V0-1--Vmax-5--Fin-5E-1 f-inX0",
